@@ -1,7 +1,6 @@
 <div>
     <div class="p-6 space-y-6">
-        <div class="flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-gray-900">Connect a source</h2>
+        <div class="flex justify-end">
             <x-ui.button size="default" variant="secondary" wire:click="toggleSample">
                 {{ $isSample ? 'Exit sample' : 'Show a sample' }}
             </x-ui.button>
@@ -19,7 +18,7 @@
 
         <form wire:submit="connect" class="space-y-4 mb-6">
             <div>
-                <select wire:model="sourceType" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                <select wire:model="sourceType" class="mt-1 block w-full rounded-md border-rule shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                     @foreach($sourceTypeLabels as $key => $label)
                         <option value="{{ $key }}">{{ $label }}</option>
                     @endforeach
@@ -27,7 +26,7 @@
                 @error('sourceType') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
             <div>
-                <input type="text" wire:model="sourceName" placeholder="Connection name..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                <input type="text" wire:model="sourceName" placeholder="Connection name..." class="mt-1 block w-full rounded-md border-rule shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                 @error('sourceName') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
             <div>
@@ -47,16 +46,16 @@
             @else
                 <div class="space-y-4">
                     @foreach($sources as $s)
-                        <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                        <div class="bg-paper border border-rule rounded-lg p-4 shadow-sm">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <div class="text-sm font-medium text-gray-900">
+                                    <div class="text-sm font-medium text-ink">
                                         {{ $s->source_name }}
                                     </div>
-                                    <div class="text-xs text-gray-500 mt-1">
+                                    <div class="text-xs text-ink-2 mt-1">
                                         {{ $sourceTypeLabels[$s->source_type] ?? $s->source_type }}
                                     </div>
-                                    <div class="text-sm text-gray-700 mt-2">
+                                    <div class="text-sm text-ink-2 mt-2">
                                         @if($s->last_run_time)
                                             {{ $s->last_run_records }} records, {{ \Carbon\Carbon::parse($s->last_run_time)->diffForHumans() }}
                                         @else

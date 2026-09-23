@@ -8,9 +8,11 @@ use App\Modules\X151\Actions\FetchRefreshAction;
 use App\Modules\X151\Models\Fetch;
 use App\Modules\X151\Models\FetchTarget;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Fetch board'])]
 class FetchBoard extends Component
 {
     #[Locked]

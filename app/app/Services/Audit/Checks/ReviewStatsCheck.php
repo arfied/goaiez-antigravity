@@ -9,6 +9,7 @@ use App\Enums\AuditCheckKey;
 use App\Services\Audit\AuditContext;
 use App\Services\Audit\CheckResult;
 use App\Services\Audit\Finding;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Places\PlaceSummary;
 
 /**
@@ -46,7 +47,14 @@ final class ReviewStatsCheck implements AuditCheck
      * Below this, a business is effectively invisible in map results regardless
      * of how good it is. Ours, and stated as a consequence rather than a rule.
      */
-    private const int THIN_REVIEW_COUNT = 10;
+    public const int THIN_REVIEW_COUNT = 10;
+
+    public function __construct(private readonly DefaultsRegistry $defaults) {}
+
+    public function thinReviewCount(): int
+    {
+        return $this->defaults->int('audit.reviews.thin_count');
+    }
 
     public function key(): AuditCheckKey
     {
@@ -139,14 +147,14 @@ final class ReviewStatsCheck implements AuditCheck
                 'You have no Google reviews. This is the single biggest thing standing between you and the businesses above you in search results.',
                 ['review_count' => 0, ...$source],
             ),
-            $reviewCount < self::THIN_REVIEW_COUNT => Finding::attention(
+            $reviewCount < $this->thinReviewCount() => Finding::attention(
                 $this->key(),
                 'reviews.thin',
                 sprintf(
                     'You have %d Google review%s. Below about %d, most people cannot tell whether a rating is real.',
                     $reviewCount,
                     $reviewCount === 1 ? '' : 's',
-                    self::THIN_REVIEW_COUNT,
+                    $this->thinReviewCount(),
                 ),
                 ['review_count' => $reviewCount, ...$source],
             ),

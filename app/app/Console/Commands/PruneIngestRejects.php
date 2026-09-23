@@ -107,10 +107,10 @@ final class PruneIngestRejects extends Command
         Tenancy::forgetAll();
 
         $this->info($deleted === 0
-            ? 'No reject buckets older than '.IngestRejects::RETENTION_DAYS." days across {$accounts} "
+            ? 'No reject buckets older than '.$rejects->retentionDays()." days across {$accounts} "
                 .str('account')->plural($accounts).'.'
             : "Pruned {$deleted} reject ".str('bucket')->plural($deleted)
-                .' older than '.IngestRejects::RETENTION_DAYS." days across {$accounts} "
+                .' older than '.$rejects->retentionDays()." days across {$accounts} "
                 .str('account')->plural($accounts).'.');
 
         return self::SUCCESS;
@@ -138,7 +138,7 @@ final class PruneIngestRejects extends Command
         foreach ($businessIds as $businessId) {
             $deleted += Tenancy::actingAs(
                 (int) $businessId,
-                fn (): int => $rejects->prune(IngestRejects::RETENTION_DAYS),
+                fn (): int => $rejects->prune($rejects->retentionDays()),
             );
         }
 

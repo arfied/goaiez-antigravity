@@ -10,6 +10,7 @@ use App\Enums\OutreachChannel;
 use App\Models\Conversation;
 use App\Models\Customer;
 use App\Models\Message;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -91,6 +92,8 @@ final class ConversationThreads
      */
     public const int THREAD_LIMIT = 200;
 
+    public function __construct(private readonly DefaultsRegistry $defaults) {}
+
     /**
      * Every SMS thread this tenant has, newest activity first.
      *
@@ -113,7 +116,7 @@ final class ConversationThreads
             // `ConventionsTest`'s lint is what found this.
             ->orderByRaw('updated_at DESC NULLS LAST')
             ->orderByDesc('id')
-            ->limit(self::LIST_LIMIT)
+            ->limit($this->defaults->int('conversations.list_limit'))
             ->get();
     }
 

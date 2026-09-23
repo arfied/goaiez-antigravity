@@ -177,6 +177,11 @@ final class SendingControls extends Component
 
     public string $releaseNote = '';
 
+    public function windowHours(): int
+    {
+        return app(SendingHealth::class)->windowHours();
+    }
+
     public function mount(): void
     {
         $this->authorize(AdminAccess::GATE);
@@ -642,7 +647,7 @@ final class SendingControls extends Component
      */
     private function readings(DefaultsRegistry $registry, SendingRates $rates): array
     {
-        $window = SendingHealth::WINDOW_HOURS;
+        $window = app(SendingHealth::class)->windowHours();
 
         return [
             RateReading::settled(
@@ -749,7 +754,7 @@ final class SendingControls extends Component
             delivered: $rates->delivered,
             complaints: $rates->complaints,
             observedBp: $rates->complaintRateBp(),
-            windowHours: SendingHealth::WINDOW_HOURS,
+            windowHours: app(SendingHealth::class)->windowHours(),
             // ⛔ **WITHOUT THESE TWO THIS PANEL CANNOT TELL "NOTHING WAS SENT"
             // FROM "NOTHING CAME BACK", AND IT SAID THE FIRST TO BOTH** (7480).
             // See `TripMath::reportingHasGoneSilent()` for what it rendered.
@@ -823,7 +828,7 @@ final class SendingControls extends Component
      */
     private function emailReadings(DefaultsRegistry $registry, SendingRates $rates): array
     {
-        $window = SendingHealth::WINDOW_HOURS;
+        $window = app(SendingHealth::class)->windowHours();
 
         return [
             RateReading::settled(
@@ -884,7 +889,7 @@ final class SendingControls extends Component
             delivered: $rates->delivered,
             complaints: $rates->complaints,
             observedBp: $rates->complaintRateBp(),
-            windowHours: SendingHealth::WINDOW_HOURS,
+            windowHours: app(SendingHealth::class)->windowHours(),
             // ⛔ **WITHOUT THESE TWO THIS PANEL CANNOT TELL "NOTHING WAS SENT"
             // FROM "NOTHING CAME BACK", AND IT SAID THE FIRST TO BOTH** (7480).
             // See `TripMath::reportingHasGoneSilent()` for what it rendered.
@@ -928,7 +933,7 @@ final class SendingControls extends Component
                 subject: 'everyone',
                 thresholdBp: $threshold,
                 floorDelivered: $floor,
-                windowHours: SendingHealth::WINDOW_HOURS,
+                windowHours: app(SendingHealth::class)->windowHours(),
             );
         }
 

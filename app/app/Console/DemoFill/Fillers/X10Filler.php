@@ -4,6 +4,7 @@ namespace App\Console\DemoFill\Fillers;
 
 use App\Console\DemoFill\DemoFiller;
 use App\Models\Business;
+use App\Modules\X10\Actions\RoutingRulesEnsureAction;
 use App\Modules\X10\Models\RoutingRule;
 use App\Modules\X10\Models\Territory;
 
@@ -20,15 +21,24 @@ class X10Filler implements DemoFiller
             return 0;
         }
 
-        RoutingRule::create(['business_id' => $business->id, 'name' => self::MARKER.'Rule 1', 'rule_type' => 'geo', 'priority' => 1, 'is_active' => true]);
+        $rules = app(RoutingRulesEnsureAction::class)->handle($business->id);
+        foreach ($rules as $i => $rule) {
+            $name = $i === 0 ? 'Rule 1' : $rule->name;
+            $rule->update(['name' => self::MARKER.$name]);
+        }
+
         Territory::create(['business_id' => $business->id, 'name' => self::MARKER.'Area 51', 'polygon_geojson' => [], 'zip_codes' => []]);
 
-        return 2;
+        return $rules->count() + 1;
     }
 
     public function purge(Business $business): int
     {
-        $count = RoutingRule::where('business_id', $business->id)->where('name', 'like', self::MARKER.'%')->delete();
+        $rules = RoutingRule::where('business_id', $business->id)->where('name', 'like', self::MARKER.'%')->get();
+        foreach ($rules as $rule) {
+            $rule->update(['name' => $rule->rule_type->label()]);
+        }
+        $count = $rules->count();
         $count += Territory::where('business_id', $business->id)->where('name', 'like', self::MARKER.'%')->delete();
 
         return $count;

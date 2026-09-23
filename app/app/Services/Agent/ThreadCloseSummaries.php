@@ -11,6 +11,7 @@ use App\Jobs\SummariseClosedThreadJob;
 use App\Models\Conversation;
 use App\Services\Ai\AiRequest;
 use App\Services\Ai\AiRouter;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Conversations\ConversationThreads;
 use App\Services\Reviews\PromptFence;
 use App\Services\Reviews\ReplyGuardrails;
@@ -89,12 +90,18 @@ final class ThreadCloseSummaries
      * ⚠️ **THE MOST RECENT, NOT THE FIRST.** The question rail 9 asks is *how did
      * this end*, and the ending is at the bottom.
      */
-    private const int MESSAGES_READ = 20;
+    public const int MESSAGES_READ = 20;
+
+    public function messagesRead(): int
+    {
+        return $this->defaults->int('agent.summary.messages_read');
+    }
 
     public function __construct(
         private readonly AiRouter $router,
         private readonly ReplyGuardrails $guardrails,
         private readonly ConversationThreads $threads,
+        private readonly DefaultsRegistry $defaults,
     ) {}
 
     /**
@@ -137,6 +144,7 @@ final class ThreadCloseSummaries
             task: AiTask::Conversation,
             prompt: $prompt,
             system: $this->system(),
+            promptKey: 'thread.close_summary',
         ));
 
         if (! $response->isUsable() || $response->text === null) {
@@ -212,7 +220,7 @@ final class ThreadCloseSummaries
         // known: P18 wrote both the store and the lint on a branch this one
         // never saw. `tail()` is that read, moved rather than duplicated, and it
         // adds the tenant check the direct query had no equivalent of.
-        $messages = $this->threads->tail($conversation, self::MESSAGES_READ);
+        $messages = $this->threads->tail($conversation, $this->messagesRead());
 
         $lines = [];
 

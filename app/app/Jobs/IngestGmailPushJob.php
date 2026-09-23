@@ -8,6 +8,7 @@ use App\Exceptions\GmailHistoryUnavailable;
 use App\Exceptions\GmailMessageUnreadable;
 use App\Services\Mail\GmailInbox;
 use App\Services\Mail\MailReplyRouter;
+use App\Support\QueueBackoff;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -109,7 +110,12 @@ final class IngestGmailPushJob implements ShouldQueue
      */
     public function backoff(): array
     {
-        return [60 + random_int(-30, 30), 300 + random_int(-30, 30)];
+        $base = QueueBackoff::fromSetting('queue.backoff.standard_seconds');
+
+        return [
+            $base[0] + random_int(-30, 30),
+            $base[1] + random_int(-30, 30),
+        ];
     }
 
     /**

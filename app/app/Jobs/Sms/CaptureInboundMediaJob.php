@@ -10,6 +10,7 @@ use App\Models\InboundMedia;
 use App\Models\InboundMessage;
 use App\Services\Sms\InboundMediaCapture;
 use App\Services\Sms\InboundMediaFetcher;
+use App\Support\QueueBackoff;
 use App\Support\Tenancy;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -121,10 +122,11 @@ final class CaptureInboundMediaJob implements ShouldQueue
     /**
      * Seconds. Long enough that a CDN having a bad minute has recovered, short
      * enough that an owner still sees the picture the same morning.
-     *
-     * @var list<int>
      */
-    public array $backoff = [60, 600];
+    public function backoff(): array
+    {
+        return QueueBackoff::ladder(QueueBackoff::fromSetting('queue.backoff.media_seconds'));
+    }
 
     public function __construct(
         public readonly int $businessId,

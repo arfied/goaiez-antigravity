@@ -1,6 +1,5 @@
 <div>
     <div class="manifest-queue-view p-4">
-        <h3 class="text-lg font-bold">Manifest Review Queue</h3>
         <div class="flex flex-col gap-2 mt-4">
             @forelse($pending as $item)
                 <div class="bg-surface p-4 border rounded text-ink">

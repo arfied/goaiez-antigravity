@@ -168,7 +168,23 @@ final class PurchaseReconciliation
         private readonly AuthorizeNetApi $authorizeNet = new AuthorizeNetApi,
         private readonly StripeApi $stripe = new StripeApi,
         private readonly AuditService $audit = new AuditService,
+        private readonly DefaultsRegistry $registry = new DefaultsRegistry,
     ) {}
+
+    public function minimumAgeMinutes(): int
+    {
+        return $this->registry->int('billing.reconciliation.minimum_age_minutes');
+    }
+
+    public function lookbackDays(): int
+    {
+        return $this->registry->int('billing.reconciliation.lookback_days');
+    }
+
+    public function defaultBatch(): int
+    {
+        return $this->registry->int('billing.reconciliation.default_batch');
+    }
 
     /**
      * Ask the gateways about every purchase where money may have moved and credit
@@ -182,15 +198,16 @@ final class PurchaseReconciliation
      * @return list<CreditPurchaseReconciliation> What was written, in the order it
      *                                            was written.
      */
-    public function sweep(int $limit = self::DEFAULT_BATCH): array
+    public function sweep(?int $limit = null): array
     {
+        $limit ??= $this->defaultBatch();
         $now = Carbon::now();
         $written = [];
 
         CreditPurchaseReference::query()
             ->whereBetween('created_at', [
-                $now->copy()->subDays(self::LOOKBACK_DAYS),
-                $now->copy()->subMinutes(self::MINIMUM_AGE_MINUTES),
+                $now->copy()->subDays($this->lookbackDays()),
+                $now->copy()->subMinutes($this->minimumAgeMinutes()),
             ])
             // Oldest first: a tenant who has been waiting longest for credit they
             // paid for is the one to serve when the batch cap binds.

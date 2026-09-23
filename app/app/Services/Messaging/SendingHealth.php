@@ -7,6 +7,7 @@ namespace App\Services\Messaging;
 use App\Console\Commands\PruneSendingHealth;
 use App\Enums\OutreachChannel;
 use App\Models\SendingHealthWindow;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Mail\MailSendingHealth;
 use App\Services\Mail\MailSettlement;
 use App\Services\Messaging\Outbound\SendSettlement;
@@ -189,6 +190,16 @@ final class SendingHealth
      */
     public const int WINDOW_HOURS = 24;
 
+    public function windowHours(): int
+    {
+        return app(DefaultsRegistry::class)->int('messaging.health.window_hours');
+    }
+
+    public function retentionDays(): int
+    {
+        return app(DefaultsRegistry::class)->int('messaging.health.retention_days');
+    }
+
     /**
      * How long a tenant's hourly buckets are kept — thirty days (7760-7779).
      *
@@ -202,7 +213,7 @@ final class SendingHealth
      * ## ⛔ THE FLOOR IS ONE DAY, IT IS DERIVED, AND IT IS ENFORCED BY THE CLAMP
      * RATHER THAN BY THIS NUMBER
      *
-     * {@see self::rates()} sums {@see self::WINDOW_HOURS} of buckets and is the
+     * {@see self::rates()} sums {@see $this->windowHours()} of buckets and is the
      * **only** reader this table has: {@see SendingGuard},
      * {@see PlatformComplaintRate} and `Admin\SendingControls` all reach it
      * through that one method and none of them asks for a wider window. So the
@@ -240,7 +251,7 @@ final class SendingHealth
     /**
      * Rows per DELETE — `PruneTrialOriginClaims`' figure and its reasoning.
      */
-    private const int CHUNK = 500;
+    public const int CHUNK = 500;
 
     public function recordSent(OutreachChannel $channel): void
     {
@@ -276,7 +287,7 @@ final class SendingHealth
     public function rates(OutreachChannel $channel, ?CarbonImmutable $now = null): SendingRates
     {
         $now ??= CarbonImmutable::now();
-        $since = $this->bucket($now)->subHours(self::WINDOW_HOURS - 1);
+        $since = $this->bucket($now)->subHours($this->windowHours() - 1);
 
         /** @var object{sent: int|string|null, delivered: int|string|null, failed: int|string|null, opted_out: int|string|null, complaints: int|string|null}|null $totals */
         $totals = SendingHealthWindow::query()
@@ -374,7 +385,7 @@ final class SendingHealth
      * with nothing to delete**, which is what the `warning` is for — a prune
      * failing silently for a year is this table's own shape with a DELETE in it.
      *
-     * @param  int  $keepDays  {@see self::RETENTION_DAYS}, passed by the caller
+     * @param  int  $keepDays  {@see $this->retentionDays()}, passed by the caller
      *                         rather than read here, on `IngestRejects::prune()`'s
      *                         shape
      * @return int rows removed
@@ -389,7 +400,7 @@ final class SendingHealth
             // The oldest bucket `rates()` still sums, written as that method
             // writes it. Derived from the reader rather than restated, so a
             // change to the rolling window moves this floor with it.
-            $reader = $this->bucket($now)->subHours(self::WINDOW_HOURS - 1);
+            $reader = $this->bucket($now)->subHours($this->windowHours() - 1);
 
             $cut = $horizon->lessThan($reader) ? $horizon : $reader;
 

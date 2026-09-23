@@ -97,7 +97,7 @@ final class AssistantAnswers extends Component
      * The sentence an owner reads when the upload endpoint refuses the sheet.
      *
      * ⚠️ THIS SCREEN IS THE ONE WHOSE OWN `max` RULE STILL WORKS, AND THAT IS
-     * WHY THE SENTENCE STILL HAS A JOB (9979). `PriceSheet::MAX_KILOBYTES` is
+     * WHY THE SENTENCE STILL HAS A JOB (9979). `app(PriceSheet::class)->maxKilobytes()` is
      * 256, well under this deployment's `upload_max_filesize = 2M`, so a sheet
      * between 256KB and 2MB is stored, reaches `uploadSheet()`, and gets
      * `sheet.max` — the good message, working as designed. Above 2MB the file
@@ -213,7 +213,7 @@ final class AssistantAnswers extends Component
         Gate::authorize('create', AssistantBrief::class);
 
         $this->validate([
-            'sheet' => ['required', 'file', 'mimes:txt,csv,md,markdown', 'max:'.PriceSheet::MAX_KILOBYTES],
+            'sheet' => ['required', 'file', 'mimes:txt,csv,md,markdown', 'max:'.app(PriceSheet::class)->maxKilobytes()],
         ], [
             'sheet.required' => 'Choose your price sheet.',
             'sheet.mimes' => 'That needs to be a plain text or CSV file. We cannot read PDFs or '

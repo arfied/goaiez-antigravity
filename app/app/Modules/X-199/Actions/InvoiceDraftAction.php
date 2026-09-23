@@ -8,13 +8,24 @@ use App\Modules\X199\Domain\InvoiceNumber;
 use App\Modules\X199\Models\CreditTerm;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\InvoiceLine;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 
 final class InvoiceDraftAction
 {
-    public function handle(int $businessId, int $customerId, array $lines, int $dueDays = 30): Invoice
+    public const DEFAULT_DUE_DAYS = 30;
+
+    private function defaultDueDays(): int
+    {
+        return $this->registry->int('invoices.default_due_days');
+    }
+
+    public function __construct(private DefaultsRegistry $registry) {}
+
+    public function handle(int $businessId, int $customerId, array $lines, ?int $dueDays = null): Invoice
     {
         return DB::transaction(function () use ($businessId, $customerId, $lines, $dueDays) {
+            $dueDays ??= $this->defaultDueDays();
             $totalCents = 0;
             foreach ($lines as $line) {
                 $totalCents += ($line['quantity'] ?? 1) * ($line['unit_price_cents'] ?? 0);

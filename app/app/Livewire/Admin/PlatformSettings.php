@@ -68,6 +68,8 @@ final class PlatformSettings extends Component
 
     public string $draft = '';
 
+    public string $search = '';
+
     /**
      * The switch waiting on a second press, or empty when none is (5883).
      *
@@ -423,8 +425,29 @@ final class PlatformSettings extends Component
         Publishing $publishing,
         MarketingClaims $claims,
     ): View {
+        $groups = $registry->grouped();
+        $matchCount = 0;
+
+        if ($this->search !== '') {
+            $term = strtolower($this->search);
+            foreach ($groups as $heading => $rows) {
+                $filtered = array_filter($rows, function ($row) use ($term) {
+                    return str_contains(strtolower($row['key']), $term)
+                        || str_contains(strtolower((string) $row['description']), $term);
+                });
+
+                if (empty($filtered)) {
+                    unset($groups[$heading]);
+                } else {
+                    $groups[$heading] = array_values($filtered);
+                    $matchCount += count($filtered);
+                }
+            }
+        }
+
         return view('livewire.admin.platform-settings', [
-            'groups' => $registry->grouped(),
+            'groups' => $groups,
+            'matchCount' => $matchCount,
             // ⚠️ **ONE BOOLEAN ABOUT THE ROW UNDER CONFIRMATION RATHER THAN A
             // FLAG ON EVERY ROW** (11705), passed for the reason `doors` is
             // passed rather than folded into `grouped()`: which rows are

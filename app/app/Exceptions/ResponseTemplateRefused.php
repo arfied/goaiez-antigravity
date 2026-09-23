@@ -40,8 +40,8 @@ final class ResponseTemplateRefused extends RuntimeException
             'Refusing to store an example reply longer than its ceiling (%d characters of name, %d of body). '
             .'Three bodies cross the wire on every reply draft, so the ceiling is paid on every AI call this '
             .'tenant ever makes — and what is being exemplified is a two-to-four-sentence Google reply.',
-            ResponseTemplates::MAX_NAME_LENGTH,
-            ResponseTemplates::MAX_BODY_LENGTH,
+            app(ResponseTemplates::class)->maxNameLength(),
+            app(ResponseTemplates::class)->maxBodyLength(),
         ));
     }
 

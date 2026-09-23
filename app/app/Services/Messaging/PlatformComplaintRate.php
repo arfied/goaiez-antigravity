@@ -6,6 +6,7 @@ namespace App\Services\Messaging;
 
 use App\Console\Commands\WatchPlatformComplaintRate;
 use App\Enums\OutreachChannel;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Cache;
@@ -105,9 +106,17 @@ final readonly class PlatformComplaintRate
      * fresh and a sweep that has stopped running expires it — the screen then
      * says nothing has been measured, which is exactly what has happened.
      */
-    private const int LAST_SAMPLE_TTL_HOURS = 24;
+    public const int LAST_SAMPLE_TTL_HOURS = 24;
 
-    public function __construct(private SendingHealth $health) {}
+    public function __construct(
+        private SendingHealth $health,
+        private readonly DefaultsRegistry $registry,
+    ) {}
+
+    public function lastSampleTtlHours(): int
+    {
+        return $this->registry->int('messaging.complaint_rate.last_sample_ttl_hours');
+    }
 
     /**
      * Leave this reading where the sending-controls screen can find it.
@@ -153,7 +162,7 @@ final readonly class PlatformComplaintRate
                 'sent' => $sample->sent,
                 'failed' => $sample->failed,
                 'measured_at' => ($at ?? CarbonImmutable::now())->toIso8601String(),
-            ], now()->addHours(self::LAST_SAMPLE_TTL_HOURS));
+            ], now()->addHours($this->lastSampleTtlHours()));
         } catch (Throwable $e) {
             try {
                 Log::warning('The platform complaint reading could not be stored for display.', [
@@ -318,7 +327,7 @@ final readonly class PlatformComplaintRate
                 delivered: $delivered,
                 complaints: $complaints,
                 tenantCount: $tenants,
-                windowHours: SendingHealth::WINDOW_HOURS,
+                windowHours: app(SendingHealth::class)->windowHours(),
                 sent: $sent,
                 failed: $failed,
             ),

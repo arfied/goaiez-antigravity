@@ -20,6 +20,7 @@ use App\Models\User;
 use App\Notifications\TenantExportReady;
 use App\Services\ActivityService;
 use App\Services\AuditService;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Consent\ConsentService;
 use App\Services\Consent\ConsentTrailEntry;
 use App\Services\Crm\CustomerMerges;
@@ -262,6 +263,7 @@ final class ExportBuilder
     ];
 
     public function __construct(
+        private readonly DefaultsRegistry $defaults,
         private readonly AuditService $audit,
         private readonly ActivityService $activity,
         private readonly PlatformMailer $mailer,
@@ -303,7 +305,7 @@ final class ExportBuilder
      *
      * ⚠️ **AN OWNER'S REPEATED CLICK REUSES THE BUILD IT ALREADY HAS**, and it
      * caps the rate rather than the contents — see
-     * {@see self::REQUEST_COOLDOWN_MINUTES}, which also says why the ops path is
+     * {@see $this->requestCooldownMinutes()}, which also says why the ops path is
      * exempt.
      *
      * @throws ImpersonationRefused when support tries to start
@@ -427,7 +429,7 @@ final class ExportBuilder
      * gets a fresh one.
      *
      * ⚠️ **BOTH BRANCHES ARE BOUNDED, AND THE FIRST ONE WAS NOT** (1995). See
-     * {@see self::IN_FLIGHT_REUSE_MINUTES} for what an unbounded one cost: a
+     * {@see $this->inFlightReuseMinutes()} for what an unbounded one cost: a
      * `queued` row that never completes blocked every future export on that
      * account permanently, with no age cap, no reset method and no ops path to
      * clear it.
@@ -458,7 +460,7 @@ final class ExportBuilder
             // `requested_at` rather than `created_at`: it is NOT NULL on this
             // table and it is the moment the clock this bound belongs to
             // actually started, which `created_at` only happens to match.
-            ->where('requested_at', '>=', now()->subMinutes(self::IN_FLIGHT_REUSE_MINUTES))
+            ->where('requested_at', '>=', now()->subMinutes($this->inFlightReuseMinutes()))
             ->orderByDesc('id')
             ->first();
 
@@ -468,7 +470,7 @@ final class ExportBuilder
 
         $recent = $this->inScope($customerId)
             ->where('status', ExportStatus::Ready->value)
-            ->where('built_at', '>=', now()->subMinutes(self::REQUEST_COOLDOWN_MINUTES))
+            ->where('built_at', '>=', now()->subMinutes($this->requestCooldownMinutes()))
             ->orderByDesc('id')
             ->first();
 
@@ -1147,7 +1149,7 @@ final class ExportBuilder
                 // out for size"* rather than leave a reader to assume it.
                 'limits' => 'No row or byte cap applies to this export — `28` §3.7 '
                     .'forbids a degraded one. Repeat requests inside '
-                    .self::REQUEST_COOLDOWN_MINUTES.' minutes reuse this build rather than '
+                    .$this->requestCooldownMinutes().' minutes reuse this build rather than '
                     .'starting another.',
             ];
 
@@ -1274,7 +1276,7 @@ final class ExportBuilder
                 'excluded' => self::CONTACT_EXCLUSIONS,
                 'limits' => 'No row or byte cap applies to this export — `28` §3.7 forbids a '
                     .'degraded one. Repeat requests for this contact inside '
-                    .self::REQUEST_COOLDOWN_MINUTES.' minutes reuse this build rather than '
+                    .$this->requestCooldownMinutes().' minutes reuse this build rather than '
                     .'starting another; an export of the whole account is a separate build '
                     .'and is never handed back in its place.',
                 'read_before_you_forward' => self::CONTACT_FORWARDING_NOTES,
@@ -1756,5 +1758,15 @@ final class ExportBuilder
         }
 
         return Customer::query()->whereKey($export->customer_id)->first();
+    }
+
+    public function requestCooldownMinutes(): int
+    {
+        return $this->defaults->int('export.request_cooldown_minutes');
+    }
+
+    public function inFlightReuseMinutes(): int
+    {
+        return $this->defaults->int('export.in_flight_reuse_minutes');
     }
 }

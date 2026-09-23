@@ -13,6 +13,7 @@ use App\Modules\X219\Events\ModelResolved;
 use App\Modules\X219\Events\ProviderDegraded;
 use App\Modules\X219\Models\AiModel;
 use App\Modules\X219\Models\AiProvider;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use InvalidArgumentException;
@@ -33,7 +34,7 @@ class X219Test extends TestCase
         parent::setUp();
         $this->resolver = new ModelResolveAction;
         $this->assigner = new ModelAssignAction;
-        $this->health = new ProviderHealthAction;
+        $this->health = new ProviderHealthAction(app(DefaultsRegistry::class));
         $this->roster = new RosterListAction;
     }
 
@@ -56,9 +57,7 @@ class X219Test extends TestCase
         $this->assigner->handle($biz->id, 'X-142', $primary->id, $backup->id);
 
         $res = $this->resolver->handle($biz->id, 'X-142');
-        $this->assertEquals('gemini-1.5-pro', $res['model']);
-        $this->assertFalse($res['is_fallback']);
-
+        $this->assertEquals('gemini-1.5-pro', $res);
         Event::assertDispatched(ModelResolved::class);
     }
 
@@ -81,9 +80,7 @@ class X219Test extends TestCase
         $this->assigner->handle($biz->id, 'X-153', $primary->id, $backup->id);
 
         $res = $this->resolver->handle($biz->id, 'X-153');
-        $this->assertEquals('claude-3-haiku', $res['model']);
-        $this->assertTrue($res['is_fallback']);
-
+        $this->assertEquals('claude-3-haiku', $res);
         Event::assertDispatched(ModelFallback::class);
     }
 

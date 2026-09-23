@@ -76,6 +76,6 @@ final readonly class PixelCollectionStatus
      */
     public function windowDays(): int
     {
-        return intdiv(IngestRejects::TENANT_WINDOW_HOURS, 24);
+        return intdiv(app(IngestRejects::class)->tenantWindowHours(), 24);
     }
 }

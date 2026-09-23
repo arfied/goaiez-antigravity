@@ -65,7 +65,7 @@ class X157Test extends TestCase
             }
         });
         $this->provisionAction = new EdgeProvisionAction;
-        $this->deployAction = new EdgeDeployAction;
+        $this->deployAction = app(EdgeDeployAction::class);
         $this->rollbackAction = new EdgeRollbackAction;
     }
 

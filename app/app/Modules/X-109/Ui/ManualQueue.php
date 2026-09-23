@@ -7,9 +7,11 @@ namespace App\Modules\X109\Ui;
 use App\Modules\X109\Actions\FormSubmitAction;
 use App\Modules\X109\Models\CaptchaQuota;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Manual Form Review Queue'])]
 class ManualQueue extends Component
 {
     #[Locked]

@@ -14,6 +14,7 @@ use App\Modules\X202\Events\ApprovalExpired;
 use App\Modules\X202\Events\ApprovalRaised;
 use App\Modules\X202\Models\ApprovalChain;
 use App\Modules\X202\Models\ApprovalItem;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -31,8 +32,8 @@ class X202Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->engine = new ApprovalDeskEngine;
-        $this->enqueueAction = new ApprovalEnqueueAction($this->engine);
+        $this->engine = new ApprovalDeskEngine(app(DefaultsRegistry::class));
+        $this->enqueueAction = new ApprovalEnqueueAction($this->engine, app(DefaultsRegistry::class));
         $this->decideAction = new ApprovalDecideAction($this->engine);
         $this->escalateAction = new ApprovalEscalateAction;
     }

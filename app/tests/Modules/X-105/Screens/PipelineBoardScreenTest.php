@@ -20,7 +20,8 @@ class PipelineBoardScreenTest extends TestCase
 
         $this->get(route('x-105.pipeline-board'))
             ->assertOk()
-            ->assertSeeText('Cold Outreach Pipeline Board')
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
             ->assertSeeText('No ladders found');
 
         Livewire::test(PipelineBoard::class)->assertOk();

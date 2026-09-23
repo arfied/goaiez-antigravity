@@ -11,6 +11,7 @@ use App\Enums\CarrierVerdict;
 use App\Models\Campaign;
 use App\Models\CampaignRecipient;
 use App\Services\ActivityService;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Sms\SendLogEntry;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Log;
@@ -202,6 +203,7 @@ final class UnknownSendReconciler
     private const int MAX_PER_PASS = 200;
 
     public function __construct(
+        private readonly DefaultsRegistry $defaults,
         private readonly SendLogReader $carrierLog,
     ) {}
 
@@ -241,7 +243,7 @@ final class UnknownSendReconciler
             // clause the same row bought a vendor call an hour for two days and
             // inflated the figure the operator reads.
             ->whereNull('carrier_answered_at')
-            ->where('updated_at', '>=', now()->subHours(self::VENDOR_LOG_WINDOW_HOURS))
+            ->where('updated_at', '>=', now()->subHours($this->vendorLogWindowHours()))
             ->orderBy('updated_at')
             ->limit(self::MAX_PER_PASS)
             ->get();
@@ -536,5 +538,10 @@ final class UnknownSendReconciler
             ],
             $title,
         );
+    }
+
+    public function vendorLogWindowHours(): int
+    {
+        return $this->defaults->int('campaigns.unknown_send.vendor_log_window_hours');
     }
 }

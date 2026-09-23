@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Legal;
 
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Feedback\ConsentDisclosure;
 
 /**
@@ -96,7 +97,12 @@ final class SmsTermsAlignment
      * Long enough for a legal name with a suffix, short enough that a clause
      * cannot be spliced into the middle of the notice and still pass.
      */
-    private const int MAX_NAME_LENGTH = 64;
+    public const int MAX_NAME_LENGTH = 64;
+
+    public static function maxNameLength(): int
+    {
+        return app(DefaultsRegistry::class)->int('legal.sms_terms.max_name_length');
+    }
 
     /**
      * The paragraph a published SMS Terms must contain, ready to paste.
@@ -167,7 +173,7 @@ final class SmsTermsAlignment
             explode(self::BUSINESS_TOKEN, self::normalise(self::notice())),
         );
 
-        return '/'.implode('.{1,'.self::MAX_NAME_LENGTH.'}', $segments).'/u';
+        return '/'.implode('.{1,'.self::maxNameLength().'}', $segments).'/u';
     }
 
     /**

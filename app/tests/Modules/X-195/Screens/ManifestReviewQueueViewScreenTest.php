@@ -18,7 +18,10 @@ class ManifestReviewQueueViewScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-195.manifest-review-queue'))->assertOk();
+        $this->get(route('x-195.manifest-review-queue'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console');
 
         Livewire::test(ManifestReviewQueueView::class)->assertOk();
     }

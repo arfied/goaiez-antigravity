@@ -56,7 +56,7 @@ class X01Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->manager = new UnifiedInboxManager;
+        $this->manager = app(UnifiedInboxManager::class);
         $this->createContact = new ContactCreateAction;
         $this->mergeContact = new ContactMergeAction;
         $this->readConv = new ConversationReadAction;

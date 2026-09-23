@@ -78,7 +78,7 @@ final class SupportMailbox
     /**
      * How much decoded text is carried out of a message.
      *
-     * `SupportDesk::BODY_LIMIT` is what actually gets stored; this is the bound
+     * `app(SupportDesk::class)->bodyLimit()` is what actually gets stored; this is the bound
      * on what is decoded on the way there, so a fifty-megabyte plain-text part
      * cannot become fifty megabytes of PHP string before something trims it.
      */

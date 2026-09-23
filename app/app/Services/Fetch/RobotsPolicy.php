@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Fetch;
 
 use App\Enums\RobotsVerdict;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Content\AuthorByline;
 use App\Services\Content\BylineCheck;
 use Illuminate\Support\Facades\Cache;
@@ -96,7 +97,7 @@ final class RobotsPolicy
      * ⚠️ **THIS IS THE TTL OF A JUDGEMENT AND OF NOTHING ELSE.** See
      * {@see self::UNAVAILABLE_CACHE_SECONDS} for the other one.
      */
-    private const int CACHE_SECONDS = 3600;
+    public const int CACHE_SECONDS = 3600;
 
     /**
      * How long a **non**-judgement is remembered (9480–9499).
@@ -127,7 +128,17 @@ final class RobotsPolicy
      * class that does not exist where this code runs. It was never dereferenced,
      * so nothing broke; a docblock is not worth the import either way.
      */
-    private const int UNAVAILABLE_CACHE_SECONDS = 60;
+    public const int UNAVAILABLE_CACHE_SECONDS = 60;
+
+    private function cacheSeconds(): int
+    {
+        return app(DefaultsRegistry::class)->int('fetch.robots.cache_seconds');
+    }
+
+    private function unavailableCacheSeconds(): int
+    {
+        return app(DefaultsRegistry::class)->int('fetch.robots.unavailable_cache_seconds');
+    }
 
     /**
      * A robots.txt larger than this is not parsed, and therefore disallows.
@@ -229,7 +240,7 @@ final class RobotsPolicy
         Cache::put(
             $key,
             $reading,
-            $reading['judged'] ? self::CACHE_SECONDS : self::UNAVAILABLE_CACHE_SECONDS,
+            $reading['judged'] ? $this->cacheSeconds() : $this->unavailableCacheSeconds(),
         );
 
         return $reading;

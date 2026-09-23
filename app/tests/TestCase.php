@@ -176,7 +176,7 @@ abstract class TestCase extends BaseTestCase
 
     public static function provisionTenant(array $attributes = []): Business
     {
-        // the pool never shares the 555 exchange with hand-written fixtures (693c on main).
+        // the pool never shares the 555 exchange with hand-written fixtures (693c).
         static $numberSeed = 1000;
         app(TenantNumbers::class)->addToPool('+1512556'.$numberSeed++);
 

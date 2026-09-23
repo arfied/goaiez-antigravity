@@ -6,9 +6,11 @@ namespace App\Modules\X109\Ui;
 
 use App\Modules\X109\Models\CaptchaQuota;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Contact Form Submission Log'])]
 class SubmissionLog extends Component
 {
     #[Locked]

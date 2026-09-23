@@ -8,9 +8,11 @@ use App\Modules\X154\Actions\LexiconApplyAction;
 use App\Modules\X154\Actions\LexiconReadbackAction;
 use App\Modules\X154\Models\TenantLexicon;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Readback Screen'])]
 class ReadbackScreen extends Component
 {
     #[Locked]

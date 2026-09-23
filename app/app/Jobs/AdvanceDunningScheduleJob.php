@@ -6,6 +6,7 @@ namespace App\Jobs;
 
 use App\Models\Business;
 use App\Services\Billing\Dunning;
+use App\Support\QueueBackoff;
 use App\Support\Tenancy;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -92,10 +93,10 @@ final class AdvanceDunningScheduleJob implements ShouldQueue
      */
     public int $tries = 3;
 
-    /**
-     * @var list<int>
-     */
-    public array $backoff = [60, 300];
+    public function backoff(): array
+    {
+        return QueueBackoff::ladder(QueueBackoff::fromSetting('queue.backoff.standard_seconds'));
+    }
 
     public function __construct(
         public readonly int $businessId,

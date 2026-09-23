@@ -1,6 +1,5 @@
 <div>
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-semibold">Research dossiers</h2>
+    <div class="flex justify-end mb-4">
         <x-ui.button wire:click="toggleSample" size="default" variant="secondary">
             {{ $isSample ? 'Hide sample' : 'Show sample' }}
         </x-ui.button>
@@ -38,7 +37,7 @@
 
     @if($selected)
         <div class="mb-6 p-4 border rounded-md">
-            <h3 class="text-lg font-medium mb-3">Prospect {{ $selected->prospect_id }} — dossier</h3>
+            <h2 class="text-lg font-medium mb-3">Prospect {{ $selected->prospect_id }} — dossier</h2>
 
             @if(empty($selected->dossier))
                 <p class="text-sm text-ink-2">No findings recorded.</p>
@@ -48,7 +47,7 @@
                 @endforeach
             @endif
 
-            <h4 class="font-medium mt-4 mb-2">Signals</h4>
+            <h3 class="font-medium mt-4 mb-2">Signals</h3>
             @if($selected->signals->isEmpty())
                 <p class="text-sm text-ink-2">No signals recorded.</p>
             @else
@@ -61,7 +60,7 @@
                 </x-ui.row-list>
             @endif
 
-            <h4 class="font-medium mt-4 mb-2">Icebreakers</h4>
+            <h3 class="font-medium mt-4 mb-2">Icebreakers</h3>
             @if($selected->icebreakers->isEmpty())
                 <p class="text-sm text-ink-2">No icebreaker yet — ground one below.</p>
             @else
@@ -77,20 +76,20 @@
                 </x-ui.row-list>
             @endif
 
-            <h4 class="font-medium mt-4 mb-2">Ground an icebreaker</h4>
+            <h3 class="font-medium mt-4 mb-2">Ground an icebreaker</h3>
             <form wire:submit="ground" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Opener — something TRUE about them</label>
-                    <textarea wire:model="opener" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm"></textarea>
+                    <label class="block text-sm font-medium text-ink-2">Opener — something TRUE about them</label>
+                    <textarea wire:model="opener" rows="2" class="mt-1 block w-full rounded-md border-rule shadow-sm sm:text-sm"></textarea>
                     @error('opener') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Source URL</label>
-                    <input type="text" wire:model="sourceUrl" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                    <label class="block text-sm font-medium text-ink-2">Source URL</label>
+                    <input type="text" wire:model="sourceUrl" class="mt-1 block w-full rounded-md border-rule shadow-sm sm:text-sm">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Seen on (YYYY-MM-DD, today if blank)</label>
-                    <input type="text" wire:model="observedDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                    <label class="block text-sm font-medium text-ink-2">Seen on (YYYY-MM-DD, today if blank)</label>
+                    <input type="text" wire:model="observedDate" class="mt-1 block w-full rounded-md border-rule shadow-sm sm:text-sm">
                     @error('observedDate') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
                 <x-ui.submit target="ground" busy="Grounding...">

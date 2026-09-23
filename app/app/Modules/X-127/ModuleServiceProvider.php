@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\X127;
 
 use App\Modules\X127\Ui\MetricProofPanel;
-use App\Modules\X127\Ui\TenantZeroConsole;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -23,7 +22,6 @@ final class ModuleServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/Ui/views', 'x-127');
 
         if (class_exists(Livewire::class)) {
-            Livewire::component('x-127.tenant-zero-console', TenantZeroConsole::class);
             Livewire::component('x-127.metric-proof-panel', MetricProofPanel::class);
         }
     }

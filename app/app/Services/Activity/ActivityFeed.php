@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Activity;
 
 use App\Models\ActivityFeedItem;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
@@ -45,6 +46,13 @@ final class ActivityFeed
     /** How many entries one page of the feed shows. */
     public const int PER_PAGE = 25;
 
+    public function __construct(private readonly DefaultsRegistry $defaults) {}
+
+    public function perPage(): int
+    {
+        return $this->defaults->int('activity.feed.per_page');
+    }
+
     /**
      * The tenant's history, newest first.
      *
@@ -62,7 +70,7 @@ final class ActivityFeed
         return ActivityFeedItem::query()
             ->with('location')
             ->orderByDesc('id')
-            ->paginate(self::PER_PAGE);
+            ->paginate($this->perPage());
     }
 
     /**

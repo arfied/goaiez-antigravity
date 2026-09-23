@@ -8,11 +8,21 @@ use App\Modules\X153\Events\AlertClaimed;
 use App\Modules\X153\Models\Alert;
 use App\Modules\X153\Models\AlertClaim;
 use App\Modules\X153\Models\ReplyCode;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
 final class AlertClaimAction
 {
+    public function __construct(
+        private readonly DefaultsRegistry $registry
+    ) {}
+
+    private function claimExpiryMinutes(): int
+    {
+        return $this->registry->int('alerts.claim.expiry_minutes');
+    }
+
     /**
      * Claim an alert via reply code. Atomic race arbiter ensures exactly one claim (TEST ANCHOR).
      */
@@ -58,7 +68,7 @@ final class AlertClaimAction
                 'claimed_by_user_id' => $userId,
                 'claimed_at' => now(),
                 'status' => 'active',
-                'expires_at' => now()->addMinutes(30),
+                'expires_at' => now()->addMinutes($this->claimExpiryMinutes()),
             ]);
 
             Event::dispatch(new AlertClaimed(

@@ -106,6 +106,11 @@ final class Inbox extends Component
      * confirm that a row exists in a tenancy the reader has no business knowing
      * about.
      */
+    public function bodyLimit(): int
+    {
+        return app(InboxReplies::class)->bodyLimit();
+    }
+
     public function open(int $threadId, ConversationThreads $store): void
     {
         abort_if(Tenancy::id() === null, 403);
@@ -141,7 +146,7 @@ final class Inbox extends Component
         }
 
         $this->validate([
-            'reply' => ['required', 'string', 'min:1', 'max:'.InboxReplies::BODY_LIMIT],
+            'reply' => ['required', 'string', 'min:1', 'max:'.$this->bodyLimit()],
         ]);
 
         $result = $replies->send($thread, $this->reply, $this->user(), $this->draftKey);

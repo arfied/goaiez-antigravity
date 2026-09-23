@@ -6,6 +6,7 @@ namespace App\Services\Feedback;
 
 use App\Models\FeedbackPage;
 use App\Models\Location;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\SqlState;
 use App\Support\Tenancy;
 use Illuminate\Database\QueryException;
@@ -53,6 +54,11 @@ final class FeedbackPages
      * fits on a printed sign and in a text message without wrapping.
      */
     public const int MAX_NAME_LENGTH = 40;
+
+    public function maxNameLength(): int
+    {
+        return app(DefaultsRegistry::class)->int('feedback.pages.max_name_length');
+    }
 
     /**
      * Mint this location's page, or return the one it already has.
@@ -196,7 +202,7 @@ final class FeedbackPages
      */
     private function mintSlug(Location $location, bool $stemless = false): string
     {
-        $stem = $stemless ? '' : rtrim(Str::limit(Str::slug($location->name), self::MAX_NAME_LENGTH, ''), '-');
+        $stem = $stemless ? '' : rtrim(Str::limit(Str::slug($location->name), $this->maxNameLength(), ''), '-');
 
         for ($attempt = 0; $attempt < 5; $attempt++) {
             $suffix = Str::lower(Str::random(self::SUFFIX_LENGTH));

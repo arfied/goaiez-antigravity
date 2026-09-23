@@ -12,6 +12,7 @@ use App\Enums\WebVital;
 use App\Jobs\ArchivePixelBatchJob;
 use App\Models\Business;
 use App\Models\EtlRun;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Pixel\PixelCollector;
 use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
@@ -216,7 +217,7 @@ final readonly class Replayer
      * surprising. **That is why a clamp is right here and a wider column is not** —
      * widening would preserve a value the column has no definition for.
      */
-    private const int ATTRIBUTION_WINDOW_DAYS = 30;
+    public const int ATTRIBUTION_WINDOW_DAYS = 30;
 
     /**
      * The day a session belongs to, for every rollup that needs one.
@@ -279,6 +280,7 @@ final readonly class Replayer
     public function __construct(
         private L0Archive $archive,
         private L1Loader $loader,
+        private readonly DefaultsRegistry $registry,
     ) {}
 
     /**
@@ -366,7 +368,10 @@ final readonly class Replayer
                     ]);
                 });
             } finally {
-                $this->closeStaging();
+                try {
+                    $this->closeStaging();
+                } catch (\Throwable $e) {
+                }
             }
         });
 
@@ -1330,7 +1335,7 @@ final readonly class Replayer
             ->delete();
 
         $conversions = self::conversionTypePlaceholders();
-        $window = self::ATTRIBUTION_WINDOW_DAYS;
+        $window = $this->registry->int('warehouse.attribution_window_days');
 
         // ⚠️ `touch_count` TREATS A NULL `anonymous_id` AS EXACTLY ONE TOUCH
         // — the conversion's own session — RATHER THAN ZERO. §10's GPC

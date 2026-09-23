@@ -6,6 +6,7 @@ namespace App\Services\Sms;
 
 use App\Enums\InboundMediaOutcome;
 use App\Jobs\Sms\CaptureInboundMediaJob;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Places\ShortLinkResolver;
 use App\Support\VendorLog;
 use Illuminate\Http\Client\ConnectionException;
@@ -83,7 +84,12 @@ final class InboundMediaFetcher
      * untrusted path is the protection-asserted-before-it-is-true shape
      * (314–316), and the backstop above is real and already configured.
      */
-    private const int TIMEOUT_SECONDS = 15;
+    public const int TIMEOUT_SECONDS = 15;
+
+    public function timeoutSeconds(): int
+    {
+        return app(DefaultsRegistry::class)->int('sms.inbound_media.timeout_seconds');
+    }
 
     /** How much is read from the stream at a time. */
     private const int CHUNK_BYTES = 65_536;
@@ -128,7 +134,7 @@ final class InboundMediaFetcher
                 'infobip_inbound_media',
                 'GET',
                 $url,
-                fn () => Http::timeout(self::TIMEOUT_SECONDS)
+                fn () => Http::timeout($this->timeoutSeconds())
                     // See the class docblock: a redirect out of an allowlisted
                     // host is the allowlist being walked around, so the client
                     // is told not to follow one and a 3xx falls through to the

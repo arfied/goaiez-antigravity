@@ -12,6 +12,7 @@ use App\Models\Location;
 use App\Models\Review;
 use App\Services\Ai\AiRequest;
 use App\Services\Ai\AiRouter;
+use App\Services\Config\DefaultsRegistry;
 
 /**
  * Draft a reply to one Google review (`17` GBP-03), and — since T176 P15 — the
@@ -100,7 +101,7 @@ final class ReplyGenerator
      * compounds run to the mid-thirties); short enough that a display name used
      * as a billboard is refused rather than truncated.
      */
-    private const int MAX_LABEL_LENGTH = 40;
+    public const int MAX_LABEL_LENGTH = 40;
 
     /**
      * How many words a display name may hold and still be a person's name.
@@ -112,7 +113,7 @@ final class ReplyGenerator
      * refuses it, and its first token would publish as *"Thank you, I"*. Four
      * covers `Ana María López García`; six is a sentence.
      */
-    private const int MAX_LABEL_WORDS = 4;
+    public const int MAX_LABEL_WORDS = 4;
 
     /**
      * The code points `\p{L}` calls letters and a reader sees as blank (1930).
@@ -153,13 +154,24 @@ final class ReplyGenerator
      * filler is not a name at all. Refusing costs a Korean reviewer nothing —
      * `김민준` carries no filler and is pinned by a test.
      */
-    private const string BLANK_LETTERS = '/[\x{115F}\x{1160}\x{3164}\x{FFA0}]/u';
+    public const string BLANK_LETTERS = '/[\x{115F}\x{1160}\x{3164}\x{FFA0}]/u';
 
     public function __construct(
         private readonly AiRouter $router,
         private readonly ReplyGuardrails $guardrails,
         private readonly ResponseTemplates $templates,
+        private readonly DefaultsRegistry $registry,
     ) {}
+
+    public function maxRecoveryLength(): int
+    {
+        return $this->registry->int('reviews.reply.max_recovery_length');
+    }
+
+    public function maxLabelLength(): int
+    {
+        return $this->registry->int('reviews.reply.max_label_length');
+    }
 
     public function draft(Review $review, Location $location, Business $business): ReplyDraft
     {
@@ -223,6 +235,7 @@ final class ReplyGenerator
             task: AiTask::ReplyGeneration,
             prompt: $this->prompt($review, $business, $location, $reviewerLabel, $fence, $exampleBlock),
             system: $this->system($voice, $fence),
+            promptKey: 'reply.generate',
         ));
 
         if ($response->failureReason !== null) {
@@ -359,6 +372,7 @@ final class ReplyGenerator
             task: AiTask::ReplyGeneration,
             prompt: $this->recoveryPrompt($review, $business, $location, $reviewerLabel, $fence),
             system: $this->recoverySystem($voice, $fence),
+            promptKey: 'reply.generate.retry',
         ));
 
         if ($response->failureReason !== null) {
@@ -521,7 +535,7 @@ final class ReplyGenerator
         // rule below, which is reachable and is driven red by a test.
         $label = (string) ($words[0] ?? '');
 
-        if (mb_strlen($label) > self::MAX_LABEL_LENGTH || preg_match('/\p{L}/u', $label) !== 1) {
+        if (mb_strlen($label) > $this->maxLabelLength() || preg_match('/\p{L}/u', $label) !== 1) {
             return self::NEUTRAL_REVIEWER_LABEL;
         }
 
@@ -667,7 +681,7 @@ final class ReplyGenerator
     private function recoverySystem(BrandVoice $voice, PromptFence $fence): string
     {
         $delimiter = $fence->marker;
-        $limit = self::MAX_RECOVERY_LENGTH;
+        $limit = $this->maxRecoveryLength();
         $voiceLabel = match ($voice) {
             BrandVoice::FriendlyWarm => 'friendly and warm',
             BrandVoice::Professional => 'professional and concise',

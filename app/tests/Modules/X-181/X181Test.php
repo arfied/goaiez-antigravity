@@ -13,6 +13,7 @@ use App\Modules\X181\Actions\QaTicketCreateAction;
 use App\Modules\X181\Actions\QaTicketResolveAction;
 use App\Modules\X181\Events\TicketCreated;
 use App\Modules\X181\Events\TicketResolved;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -28,7 +29,7 @@ class X181Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->createAction = new QaTicketCreateAction;
+        $this->createAction = new QaTicketCreateAction(app(DefaultsRegistry::class));
         $this->resolveAction = new QaTicketResolveAction;
         $this->suppressionCheck = new QaMarketingSuppressionCheckAction;
     }

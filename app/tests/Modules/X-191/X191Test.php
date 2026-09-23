@@ -8,6 +8,7 @@ use App\Modules\X191\Actions\LinkMonitorAction;
 use App\Modules\X191\Actions\LinkPitchAction;
 use App\Modules\X191\Actions\LinkProspectAction;
 use App\Modules\X191\Events\CompetitorAnalysed;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use InvalidArgumentException;
@@ -25,7 +26,7 @@ class X191Test extends TestCase
     {
         parent::setUp();
         $this->prospectAction = new LinkProspectAction;
-        $this->pitchAction = new LinkPitchAction;
+        $this->pitchAction = new LinkPitchAction(app(DefaultsRegistry::class));
         $this->monitorAction = new LinkMonitorAction;
     }
 

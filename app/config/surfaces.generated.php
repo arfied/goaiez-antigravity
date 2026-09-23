@@ -65,7 +65,6 @@ return [
             ['label' => 'Pernumber Complaint Board', 'route' => 'x-188.pernumber-complaint-board', 'module' => 'X-188'],
             ['label' => 'Calls', 'route' => 'x-66.calls', 'module' => 'X-66'],
             ['label' => 'Livecoaching Whisper Panel', 'route' => 'x-66.livecoaching-whisper-panel', 'module' => 'X-66'],
-            ['label' => 'Customerfacing Call Itself', 'route' => 'x-66.customerfacing-call-itself', 'module' => 'X-66'],
             ['label' => 'Latency P50P95 Per', 'route' => 'x-66.latency-p50p95-per', 'module' => 'X-66'],
         ],
         'Customers' => [
@@ -96,8 +95,6 @@ return [
             ['label' => 'Approvals', 'route' => 'x-168.approvals', 'module' => 'X-168'],
             ['label' => 'Own Hours', 'route' => 'x-168.own-hours', 'module' => 'X-168'],
             ['label' => 'Stafffacing Assistant Panel', 'route' => 'x-175.stafffacing-assistant-panel', 'module' => 'X-175'],
-            ['label' => 'Customerfacing None', 'route' => 'x-175.customerfacing-none', 'module' => 'X-175'],
-            ['label' => 'By Design', 'route' => 'x-175.by-design', 'module' => 'X-175'],
         ],
         'Pricebook' => [
             ['label' => 'Pricebook', 'route' => 'x-163.pricebook', 'module' => 'X-163'],
@@ -242,10 +239,8 @@ return [
             ['label' => 'Teaching Box', 'route' => 'x-119.teaching-box', 'module' => 'X-119'],
             ['label' => 'Fact Freshness Per', 'route' => 'x-119.fact-freshness-per', 'module' => 'X-119'],
             ['label' => 'Entity History Viewer', 'route' => 'x-121.entity-history-viewer', 'module' => 'X-121'],
-            ['label' => 'When X111 Renders', 'route' => 'x-121.when-x111-renders', 'module' => 'X-121'],
             ['label' => 'Dlq Request Inspector', 'route' => 'x-123.dlq-request-inspector', 'module' => 'X-123'],
             ['label' => 'Refusal Analytics', 'route' => 'x-126.refusal-analytics', 'module' => 'X-126'],
-            ['label' => 'Tenantzeroconsole', 'route' => 'x-127.tenant-zero-console', 'module' => 'X-127'],
             ['label' => 'Metricproofpanel', 'route' => 'x-127.metric-proof-panel', 'module' => 'X-127'],
             ['label' => 'Matrix View', 'route' => 'x-128.matrix-view', 'module' => 'X-128'],
             ['label' => 'Retrieval Latency Emptyrate', 'route' => 'x-148.retrieval-latency-emptyrate', 'module' => 'X-148'],
@@ -304,7 +299,6 @@ return [
             ['label' => 'Pernumber Complaint Board', 'route' => 'x-188.pernumber-complaint-board.admin', 'module' => 'X-188'],
             ['label' => 'Calls', 'route' => 'x-66.calls.admin', 'module' => 'X-66'],
             ['label' => 'Livecoaching Whisper Panel', 'route' => 'x-66.livecoaching-whisper-panel.admin', 'module' => 'X-66'],
-            ['label' => 'Customerfacing Call Itself', 'route' => 'x-66.customerfacing-call-itself.admin', 'module' => 'X-66'],
             ['label' => 'Latency P50P95 Per', 'route' => 'x-66.latency-p50p95-per.admin', 'module' => 'X-66'],
         ],
         'Customers' => [
@@ -402,7 +396,6 @@ return [
             ['label' => 'Teaching Box', 'route' => 'x-119.teaching-box.admin', 'module' => 'X-119'],
             ['label' => 'Fact Freshness Per', 'route' => 'x-119.fact-freshness-per.admin', 'module' => 'X-119'],
             ['label' => 'Entity History Viewer', 'route' => 'x-121.entity-history-viewer.admin', 'module' => 'X-121'],
-            ['label' => 'When X111 Renders', 'route' => 'x-121.when-x111-renders.admin', 'module' => 'X-121'],
             ['label' => 'Dlq Request Inspector', 'route' => 'x-123.dlq-request-inspector.admin', 'module' => 'X-123'],
             ['label' => 'Refusal Analytics', 'route' => 'x-126.refusal-analytics.admin', 'module' => 'X-126'],
             ['label' => 'Matrix View', 'route' => 'x-128.matrix-view.admin', 'module' => 'X-128'],

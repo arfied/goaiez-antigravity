@@ -7,6 +7,7 @@ namespace App\Services\Pixel;
 use App\Enums\OperatorAlertKind;
 use App\Enums\PixelRefusal;
 use App\Models\IngestReject;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Ops\OperatorAlerts;
 use App\Support\PixelRateLimits;
 use App\Support\Tenancy;
@@ -182,7 +183,7 @@ final class IngestRejects
      * figure the bell carries, and one literal in each method is the shape that
      * drifts — the reader's window would move and the pruner's floor would not.
      */
-    private const int RECENT_WINDOW_HOURS = 24;
+    public const int RECENT_WINDOW_HOURS = 24;
 
     /**
      * The window {@see self::refusedOrigins()} reports to the tenant whose
@@ -271,7 +272,28 @@ final class IngestRejects
 
     public function __construct(
         private readonly OperatorAlerts $alerts,
+        private readonly DefaultsRegistry $registry = new DefaultsRegistry,
     ) {}
+
+    public function retentionDays(): int
+    {
+        return $this->registry->int('pixel.rejects.retention_days');
+    }
+
+    public function recentWindowHours(): int
+    {
+        return $this->registry->int('pixel.rejects.recent_window_hours');
+    }
+
+    public function tenantWindowHours(): int
+    {
+        return $this->registry->int('pixel.rejects.tenant_window_hours');
+    }
+
+    public function originsPerHour(): int
+    {
+        return $this->registry->int('pixel.rejects.origins_per_hour');
+    }
 
     /**
      * Record one origin-mismatch reject into its hourly bucket, and ring the
@@ -345,7 +367,7 @@ final class IngestRejects
     public function refusedOrigins(?CarbonImmutable $now = null): array
     {
         $now ??= CarbonImmutable::now();
-        $since = $now->utc()->startOfHour()->subHours(self::TENANT_WINDOW_HOURS);
+        $since = $now->utc()->startOfHour()->subHours($this->tenantWindowHours());
 
         $rows = IngestReject::query()
             ->where('reason', PixelRefusal::OriginNotAllowed->value)
@@ -442,7 +464,7 @@ final class IngestRejects
             // The oldest bucket `recentRejects()` still sums. Derived from the
             // reader's own window and its own truncation, so the two cannot
             // disagree about where the boundary is.
-            $reader = $now->utc()->startOfHour()->subHours(self::RECENT_WINDOW_HOURS);
+            $reader = $now->utc()->startOfHour()->subHours($this->recentWindowHours());
 
             $cut = $horizon->lessThan($reader) ? $horizon : $reader;
 
@@ -554,7 +576,7 @@ final class IngestRejects
             ->where('hour', $hour)
             ->count();
 
-        if ($occupied < self::ORIGINS_PER_HOUR) {
+        if ($occupied < $this->originsPerHour()) {
             return $origin;
         }
 
@@ -588,7 +610,7 @@ final class IngestRejects
     private function recentRejects(CarbonImmutable $hour): int
     {
         return (int) IngestReject::query()
-            ->where('hour', '>=', $hour->subHours(self::RECENT_WINDOW_HOURS))
+            ->where('hour', '>=', $hour->subHours($this->recentWindowHours()))
             ->sum('rejects');
     }
 }

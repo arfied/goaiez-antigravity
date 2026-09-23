@@ -12,6 +12,7 @@ use App\Modules\X136\Events\SignalDetected;
 use App\Modules\X136\Models\DecayModel;
 use App\Modules\X136\Models\Signal;
 use App\Modules\X136\Models\SignalScore;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
@@ -26,7 +27,7 @@ class X136Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->scoreAction = new SignalScoreAction;
+        $this->scoreAction = new SignalScoreAction(app(DefaultsRegistry::class));
         $this->listAction = new SignalListAction;
     }
 
@@ -154,7 +155,7 @@ class X136Test extends TestCase
 
         $this->assertEquals(1, Signal::where('business_id', $biz->id)->count());
         $this->assertEquals(1, SignalScore::where('business_id', $biz->id)->count());
-        $this->assertEquals(0, DecayModel::where('business_id', $biz->id)->count());
+        $this->assertEquals(1, DecayModel::where('business_id', $biz->id)->count());
 
         $signal = Signal::where('business_id', $biz->id)->first();
         $this->assertEquals(480000, $signal->payload['price_cents']);
