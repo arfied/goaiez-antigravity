@@ -70,7 +70,7 @@ final class ConfirmSnsSubscription extends Command
             $this->line('  That means one of three things:');
             $this->line('   - SNS has not sent one. In the AWS console, open the subscription and');
             $this->line('     choose "Request confirmation".');
-            $this->line('   - One arrived and was held for longer than '.(SnsSubscriptions::PENDING_TTL_SECONDS / 60)
+            $this->line('   - One arrived and was held for longer than '.(SnsSubscriptions::pendingTtlSeconds() / 60)
                 .' minutes. Request another.');
             $this->line('   - SES_SNS_TOPIC_ARNS is empty or names a different topic, in which case');
             $this->line('     every delivery to /webhooks/ses is being refused with a 401.');

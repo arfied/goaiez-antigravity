@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Support;
 
+use App\Services\Config\DefaultsRegistry;
+
 /**
  * One retry ladder, spread out so that a synchronised failure does not produce a
  * synchronised retry.
@@ -24,6 +26,26 @@ namespace App\Support;
  */
 final class QueueBackoff
 {
+    public const array STANDARD = [60, 300];
+
+    public const array MEDIA = [60, 600];
+
+    public const array ACTUATION = [300, 1800];
+
+    public const array VOICE = [60, 300, 900];
+
+    public const array PIXEL_ARCHIVE = [30, 120];
+
+    /**
+     * Reads a list of backoff delays from the registry.
+     *
+     * @return list<int>
+     */
+    public static function fromSetting(string $key): array
+    {
+        return app(DefaultsRegistry::class)->intList($key);
+    }
+
     /**
      * A delay within ±25% of the one asked for.
      *

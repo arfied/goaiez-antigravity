@@ -82,7 +82,12 @@ final readonly class PriceSheet
      * counted as unread rather than truncated: a truncated label is a job
      * description the business did not write, quoted in their name.
      */
-    private const int MAX_LABEL_LENGTH = 120;
+    public const int MAX_LABEL_LENGTH = 120;
+
+    public function maxLabelLength(): int
+    {
+        return $this->defaults->int('assistant.pricesheet.max_label_length');
+    }
 
     public function __construct(
         private DocumentText $text,
@@ -171,7 +176,7 @@ final readonly class PriceSheet
 
         $label = trim($matches['label']);
 
-        if ($label === '' || mb_strlen($label) > self::MAX_LABEL_LENGTH) {
+        if ($label === '' || mb_strlen($label) > $this->maxLabelLength()) {
             return null;
         }
 

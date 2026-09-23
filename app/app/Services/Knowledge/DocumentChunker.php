@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Knowledge;
 
+use App\Services\Config\DefaultsRegistry;
+
 /**
  * Splits a document into overlapping slices small enough to embed.
  *
@@ -63,7 +65,17 @@ final class DocumentChunker
      * it into a neighbour would change that neighbour's text and break the
      * determinism the checksum depends on.
      */
-    private const int MINIMUM_CHARACTERS = 40;
+    public const int MINIMUM_CHARACTERS = 40;
+
+    private function overlapCharacters(): int
+    {
+        return app(DefaultsRegistry::class)->int('knowledge.chunker.overlap_characters');
+    }
+
+    private function minimumCharacters(): int
+    {
+        return app(DefaultsRegistry::class)->int('knowledge.chunker.minimum_characters');
+    }
 
     /**
      * Characters per token, for the stored estimate only.
@@ -95,7 +107,7 @@ final class DocumentChunker
 
         return array_values(array_filter(
             $chunks,
-            static fn (string $chunk): bool => mb_strlen($chunk) >= self::MINIMUM_CHARACTERS,
+            fn (string $chunk): bool => mb_strlen($chunk) >= $this->minimumCharacters(),
         ));
     }
 
@@ -167,7 +179,7 @@ final class DocumentChunker
             if ($offset + self::MAX_CHARACTERS < $length) {
                 $lastSpace = mb_strrpos($window, ' ');
 
-                if ($lastSpace !== false && $lastSpace > self::OVERLAP_CHARACTERS) {
+                if ($lastSpace !== false && $lastSpace > $this->overlapCharacters()) {
                     $window = mb_substr($window, 0, $lastSpace);
                 }
             }
@@ -199,7 +211,7 @@ final class DocumentChunker
             // cut-back could reintroduce a zero step, and the cost of an
             // unreachable `max()` is nothing against a queue worker spinning on
             // a tenant's own upload.
-            $offset += max(1, mb_strlen($window) - self::OVERLAP_CHARACTERS);
+            $offset += max(1, mb_strlen($window) - $this->overlapCharacters());
         }
 
         return $chunks;

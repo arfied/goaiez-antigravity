@@ -6,6 +6,7 @@ namespace App\Services\Mail;
 
 use App\Contracts\VerifiesWebhookSenders;
 use App\Enums\WebhookVerification;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\VendorLog;
 use App\Support\WebhookMaterial;
 use Illuminate\Http\Client\ConnectionException;
@@ -127,7 +128,12 @@ final class GooglePushTokenVerifier implements VerifiesWebhookSenders
      * the hot path of a busy mailbox — `SnsMessageVerifier` picked the same
      * number for the same reason.
      */
-    private const int CERTIFICATE_TTL_SECONDS = 3600;
+    public const int CERTIFICATE_TTL_SECONDS = 3600;
+
+    public function certificateTtlSeconds(): int
+    {
+        return app(DefaultsRegistry::class)->int('mail.google_push.certificate_ttl_seconds');
+    }
 
     private const string CERTIFICATE_CACHE_KEY = 'platform-mail:gmail:push-keys';
 
@@ -383,7 +389,7 @@ final class GooglePushTokenVerifier implements VerifiesWebhookSenders
             return [];
         }
 
-        Cache::put(self::CERTIFICATE_CACHE_KEY, $converted, self::CERTIFICATE_TTL_SECONDS);
+        Cache::put(self::CERTIFICATE_CACHE_KEY, $converted, $this->certificateTtlSeconds());
 
         return $converted;
     }

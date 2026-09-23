@@ -7,6 +7,7 @@ namespace App\Jobs;
 use App\Enums\AuditStatus;
 use App\Models\PublicAudit;
 use App\Services\Audit\AuditEngine;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -61,7 +62,7 @@ final class PublicAuditJob implements ShouldBeUnique, ShouldQueue
      * Long enough that a duplicate cannot slip in behind a job still running,
      * short enough that a crashed worker does not lock a token out for an hour.
      */
-    public int $uniqueFor = 120;
+    public const int UNIQUE_FOR_SECONDS = 120;
 
     public function __construct(
         public readonly string $token,
@@ -72,6 +73,11 @@ final class PublicAuditJob implements ShouldBeUnique, ShouldQueue
     public function uniqueId(): string
     {
         return $this->token;
+    }
+
+    public function uniqueFor(): int
+    {
+        return app(DefaultsRegistry::class)->int('audit.public.unique_for_seconds');
     }
 
     public function handle(AuditEngine $engine): void

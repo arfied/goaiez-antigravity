@@ -10,6 +10,7 @@ use App\Enums\PlacesSkuFamily;
 use App\Exceptions\PlacesBudgetExhausted;
 use App\Exceptions\PlacesFieldNotPriced;
 use App\Exceptions\PlacesRequestFailed;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\PlacesFieldTiers;
 use App\Support\PlatformCredentials;
 use App\Support\Tenancy;
@@ -64,7 +65,7 @@ final class GooglePlacesClient implements PlacesClient
     /**
      * `29` §6.2: "cache by place_id 24h (repeat lookups free)".
      */
-    private const int CACHE_TTL_SECONDS = 86400;
+    public const int CACHE_TTL_SECONDS = 86400;
 
     /**
      * Enough to compute a reply rate without paying for a second page.
@@ -158,8 +159,14 @@ final class GooglePlacesClient implements PlacesClient
      */
     public function __construct(
         private readonly PlacesSpend $spend,
+        private readonly DefaultsRegistry $defaults,
         private readonly string $purpose = PlacesSpend::AUDIT_PURPOSE,
     ) {}
+
+    private function cacheTtlSeconds(): int
+    {
+        return $this->defaults->int('places.cache_ttl_seconds');
+    }
 
     /**
      * Which budget this call answers to, decided per call rather than per
@@ -237,7 +244,7 @@ final class GooglePlacesClient implements PlacesClient
 
         $suggestions = $this->suggestions($response);
 
-        Cache::put($cacheKey, $suggestions, self::CACHE_TTL_SECONDS);
+        Cache::put($cacheKey, $suggestions, $this->cacheTtlSeconds());
 
         $this->spend->record($priced->sku, $purpose);
 
@@ -344,7 +351,7 @@ final class GooglePlacesClient implements PlacesClient
             return null;
         }
 
-        Cache::put($cacheKey, $place, self::CACHE_TTL_SECONDS);
+        Cache::put($cacheKey, $place, $this->cacheTtlSeconds());
 
         $this->spend->record($priced->sku, $this->purpose(), placeId: $placeId, businessId: Tenancy::id());
 

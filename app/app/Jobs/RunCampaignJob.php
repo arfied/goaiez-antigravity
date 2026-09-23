@@ -1092,7 +1092,7 @@ final class RunCampaignJob extends AutopilotJob
             return false;
         }
 
-        return $first->lte(now()->subDays(self::MAX_DEFERRAL_DAYS));
+        return $first->lte(now()->subDays(app(DefaultsRegistry::class)->int('campaigns.run.max_deferral_days')));
     }
 
     private function markRefused(CampaignRecipient $recipient, SendRefusalReason $reason, ?string $key = null): void
@@ -1286,7 +1286,7 @@ final class RunCampaignJob extends AutopilotJob
         }
 
         self::dispatch($this->businessId, $this->locationId, $this->campaignId)
-            ->delay(now()->addMinutes($barren ? self::BARREN_PASS_MINUTES : 1));
+            ->delay(now()->addMinutes($barren ? app(DefaultsRegistry::class)->int('campaigns.run.barren_pass_minutes') : 1));
     }
 
     /**

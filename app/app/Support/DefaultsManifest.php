@@ -27,6 +27,9 @@ use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X202\Domain\ApprovalDeskEngine;
 use App\Modules\X205\Domain\AffiliateEngine;
 use App\Modules\X219\Actions\ProviderHealthAction;
+use App\Jobs\AutopilotJob;
+use App\Jobs\PublicAuditJob;
+use App\Jobs\RunCampaignJob;
 use App\Services\Activity\ActivityFeed;
 use App\Services\Actuation\SiteChanges;
 use App\Services\Actuation\SiteMeasurements;
@@ -40,7 +43,9 @@ use App\Services\Actuation\WordPress\WordPressRestClient;
 use App\Services\Agent\AgentComposer;
 use App\Services\Agent\AgentNudges;
 use App\Services\Agent\ThreadCloseSummaries;
+use App\Services\Assistant\PriceBook;
 use App\Services\Assistant\PriceSheet;
+use App\Services\Assistant\UrgentTerms;
 use App\Services\Audit\AuditEngine;
 use App\Services\Audit\Checks\ReviewStatsCheck;
 use App\Services\Audit\PublicAuditStarter;
@@ -63,8 +68,12 @@ use App\Services\Crm\CustomerMerges;
 use App\Services\Crm\MergeDuplicateDetector;
 use App\Services\Export\ExportBuilder;
 use App\Services\Feedback\FeedbackPages;
+use App\Services\Fetch\RobotsPolicy;
 use App\Services\Gbp\ZernioSpend;
+use App\Services\Knowledge\DocumentChunker;
+use App\Services\Legal\SmsTermsAlignment;
 use App\Services\MagicLinkService;
+use App\Services\Mail\GooglePushTokenVerifier;
 use App\Services\Mail\MailDrivers;
 use App\Services\Mail\MailQuota;
 use App\Services\Mail\MailSendRate;
@@ -73,6 +82,8 @@ use App\Services\Messaging\MessageLog;
 use App\Services\Messaging\PlatformComplaintRate;
 use App\Services\Messaging\RecoveryCheckInSender;
 use App\Services\Messaging\SendingHealth;
+use App\Services\Mail\SnsMessageVerifier;
+use App\Services\Mail\SnsSubscriptions;
 use App\Services\Ops\OperatorAlerts;
 use App\Services\Ops\PlatformHealthChecks;
 use App\Services\Ops\ScheduledRunMeter;
@@ -81,13 +92,21 @@ use App\Services\Reviews\ReplyGenerator;
 use App\Services\Reviews\ResponseTemplates;
 use App\Services\Reviews\ReviewHubPages;
 use App\Services\Reviews\ReviewReplies;
+use App\Services\Places\GooglePlacesClient;
+use App\Services\Sms\InboundMediaFetcher;
+use App\Services\Sms\InfobipClient;
+use App\Services\Sms\InfobipWebhookVerifier;
+use App\Services\Sms\OwnerNotifications;
+use App\Services\Storage\StorageRetention;
 use App\Services\Support\DataRequests;
 use App\Services\Support\SupportDesk;
 use App\Services\Visibility\ReviewLossDetection;
+use App\Services\Voice\InfobipVoiceProvider;
 use App\Services\Warehouse\L1Derivation;
 use App\Services\Warehouse\PixelSightings;
 use App\Services\Warehouse\Replayer;
 use App\Services\Warehouse\WarehouseRetention;
+use App\Services\Widgets\WidgetInstalls;
 
 /**
  * THE SEED MANIFEST — doc `38` Part 2's "one reviewed file", CFG1.
@@ -3670,6 +3689,183 @@ final class DefaultsManifest
                 'group' => 'Messaging',
                 'description' => 'Maximum length of a name in the composer.',
             ],
+        ];
+
+        $settings['campaigns.run.barren_pass_minutes'] = [
+            'seed' => RunCampaignJob::BARREN_PASS_MINUTES,
+            'group' => 'Messaging',
+            'description' => 'How many minutes a campaign pass that found nothing to do waits before it tries again.',
+        ];
+        $settings['campaigns.run.max_deferral_days'] = [
+            'seed' => RunCampaignJob::MAX_DEFERRAL_DAYS,
+            'group' => 'Messaging',
+            'description' => 'How many days a contact can have deferred a message before the campaign drops them.',
+        ];
+        $settings['autopilot.abandoned_repeat_hours'] = [
+            'seed' => AutopilotJob::ABANDONED_REPEAT_HOURS,
+            'group' => 'Content',
+            'description' => 'How many hours between sending automated follow-ups.',
+        ];
+        $settings['audit.public.unique_for_seconds'] = [
+            'seed' => PublicAuditJob::UNIQUE_FOR_SECONDS,
+            'group' => 'Reviews',
+            'description' => 'How long an audit is kept unique in the queue.',
+        ];
+        $settings['queue.backoff.standard_seconds'] = [
+            'seed' => implode(',', QueueBackoff::STANDARD),
+            'group' => 'Operations',
+            'description' => 'Standard backoff ladder for background jobs.',
+        ];
+        $settings['queue.backoff.media_seconds'] = [
+            'seed' => implode(',', QueueBackoff::MEDIA),
+            'group' => 'Operations',
+            'description' => 'Backoff ladder for media-related background jobs.',
+        ];
+        $settings['queue.backoff.actuation_seconds'] = [
+            'seed' => implode(',', QueueBackoff::ACTUATION),
+            'group' => 'Operations',
+            'description' => 'Backoff ladder for actuation background jobs.',
+        ];
+        $settings['queue.backoff.voice_seconds'] = [
+            'seed' => implode(',', QueueBackoff::VOICE),
+            'group' => 'Operations',
+            'description' => 'Backoff ladder for voice-related background jobs.',
+        ];
+        $settings['queue.backoff.pixel_archive_seconds'] = [
+            'seed' => implode(',', QueueBackoff::PIXEL_ARCHIVE),
+            'group' => 'Operations',
+            'description' => 'Backoff ladder for pixel archiving background jobs.',
+        ];
+        $settings['assistant.pricebook.max_slug_length'] = [
+            'seed' => PriceBook::MAX_SLUG_LENGTH,
+            'group' => 'Assistant',
+            'description' => 'Maximum length of a slug in the price book (A4 slice 8).',
+        ];
+        $settings['assistant.pricebook.max_label_length'] = [
+            'seed' => PriceBook::MAX_LABEL_LENGTH,
+            'group' => 'Assistant',
+            'description' => 'Maximum length of a label in the price book (A4 slice 8).',
+        ];
+        $settings['assistant.pricesheet.max_label_length'] = [
+            'seed' => PriceSheet::MAX_LABEL_LENGTH,
+            'group' => 'Assistant',
+            'description' => 'Maximum length of a label in the price sheet (A4 slice 8).',
+        ];
+        $settings['assistant.urgent.max_terms'] = [
+            'seed' => UrgentTerms::MAX_TERMS,
+            'group' => 'Assistant',
+            'description' => 'Maximum number of urgent terms (A4 slice 8).',
+        ];
+        $settings['assistant.urgent.max_length'] = [
+            'seed' => UrgentTerms::MAX_LENGTH,
+            'group' => 'Assistant',
+            'description' => 'Maximum length of a single urgent term (A4 slice 8).',
+        ];
+        $settings['fetch.robots.cache_seconds'] = [
+            'seed' => RobotsPolicy::CACHE_SECONDS,
+            'group' => 'Content',
+            'description' => 'How long to cache a successfully fetched robots.txt (A4 slice 8).',
+        ];
+        $settings['fetch.robots.unavailable_cache_seconds'] = [
+            'seed' => RobotsPolicy::UNAVAILABLE_CACHE_SECONDS,
+            'group' => 'Content',
+            'description' => 'How long to cache a failed robots.txt fetch (A4 slice 8).',
+        ];
+        $settings['knowledge.chunker.overlap_characters'] = [
+            'seed' => DocumentChunker::OVERLAP_CHARACTERS,
+            'group' => 'Assistant',
+            'description' => 'Number of characters to overlap between chunks (A4 slice 8).',
+        ];
+        $settings['knowledge.chunker.minimum_characters'] = [
+            'seed' => DocumentChunker::MINIMUM_CHARACTERS,
+            'group' => 'Assistant',
+            'description' => 'Minimum number of characters for a valid chunk (A4 slice 8).',
+        ];
+        $settings['places.cache_ttl_seconds'] = [
+            'seed' => GooglePlacesClient::CACHE_TTL_SECONDS,
+            'group' => 'Places',
+            'description' => 'How long to cache Places API responses (A4 slice 8).',
+        ];
+        $settings['widgets.install.stale_after_hours'] = [
+            'seed' => WidgetInstalls::STALE_AFTER_HOURS,
+            'group' => 'Operations',
+            'description' => 'A PLATFORM setting is exactly an Ops edit, not a tenant\'s, superseding 3092\'s scope (owner ruling 2026-09-22).',
+        ];
+        $settings['widgets.install.throttle_seconds'] = [
+            'seed' => WidgetInstalls::THROTTLE_SECONDS,
+            'group' => 'Operations',
+            'description' => 'Seconds to throttle widget install events (A4 slice 8).',
+        ];
+        $settings['storage.retention.chunk'] = [
+            'seed' => StorageRetention::CHUNK,
+            'group' => 'Operations',
+            'description' => 'Number of files to process per chunk during retention sweeps (A4 slice 8).',
+        ];
+
+        $settings['mail.sns.pending_ttl_seconds'] = [
+            'seed' => SnsSubscriptions::PENDING_TTL_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'Time to hold an SNS subscription pending confirmation.',
+        ];
+        $settings['mail.sns.confirm_timeout_seconds'] = [
+            'seed' => SnsSubscriptions::CONFIRM_TIMEOUT_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'Timeout for SNS subscription confirmation request.',
+        ];
+        $settings['mail.quota.alert_quiet_seconds'] = [
+            'seed' => MailQuota::ALERT_QUIET_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'How long the mail quota alert stays quiet after firing.',
+        ];
+        $settings['mail.google_push.certificate_ttl_seconds'] = [
+            'seed' => GooglePushTokenVerifier::CERTIFICATE_TTL_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'Google push token certificate TTL.',
+        ];
+        $settings['mail.sns.certificate_ttl_seconds'] = [
+            'seed' => SnsMessageVerifier::CERTIFICATE_TTL_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'SNS message certificate TTL.',
+        ];
+        $settings['sms.webhook.max_signature_age_seconds'] = [
+            'seed' => InfobipWebhookVerifier::MAX_SIGNATURE_AGE_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'Maximum allowed signature age for Infobip webhooks.',
+        ];
+        $settings['sms.inbound_media.timeout_seconds'] = [
+            'seed' => InboundMediaFetcher::TIMEOUT_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'Timeout for fetching inbound SMS media.',
+        ];
+        $settings['sms.owner_notifications.correlation_window_hours'] = [
+            'seed' => OwnerNotifications::CORRELATION_WINDOW_HOURS,
+            'group' => 'Notifications',
+            'description' => 'Correlation window hours for owner notifications.',
+        ];
+        $settings['sms.owner_notifications.ledger_limit'] = [
+            'seed' => OwnerNotifications::LEDGER_LIMIT,
+            'group' => 'Notifications',
+            'description' => 'Ledger limit for owner notifications.',
+        ];
+        $settings['sms.infobip.log_lookup_chunk'] = [
+            'seed' => InfobipClient::LOG_LOOKUP_CHUNK,
+            'group' => 'Messaging',
+            'description' => 'Chunk size for Infobip log lookups.',
+        ];
+        $settings['sms.infobip.log_lookup_limit'] = [
+            'seed' => InfobipClient::LOG_LOOKUP_LIMIT,
+            'group' => 'Messaging',
+            'description' => 'Limit for Infobip log lookups.',
+        ];
+        $settings['voice.media.download_timeout_seconds'] = [
+            'seed' => InfobipVoiceProvider::DOWNLOAD_TIMEOUT_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'Timeout for downloading voice media.',
+        ];
+        $settings['legal.sms_terms.max_name_length'] = [
+            'seed' => SmsTermsAlignment::MAX_NAME_LENGTH,
+            'group' => 'Legal',
+            'description' => 'Maximum length for SMS terms alignment name.',
         ];
 
         return array_merge($settings, self::mailSendingCeilings());

@@ -8,6 +8,7 @@ use App\Console\Commands\ConfirmSnsSubscription;
 use App\Enums\SnsConfirmationOutcome;
 use App\Enums\WebhookVerification;
 use App\Http\Controllers\Mail\SesFeedbackController;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\VendorLog;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Client\ConnectionException;
@@ -95,13 +96,23 @@ final class SnsSubscriptions
      */
     public const int PENDING_TTL_SECONDS = 3600;
 
+    public static function pendingTtlSeconds(): int
+    {
+        return app(DefaultsRegistry::class)->int('mail.sns.pending_ttl_seconds');
+    }
+
     /**
      * ⚠️ **LONGER THAN THE CERTIFICATE FETCH's FIVE SECONDS, BECAUSE THE TWO
      * FETCHES SIT IN DIFFERENT PLACES.** That one is on the hot path of an
      * inbound webhook during a bounce storm and must give up quickly; this one
      * is an operator at a terminal, once, watching the output.
      */
-    private const int CONFIRM_TIMEOUT_SECONDS = 10;
+    public const int CONFIRM_TIMEOUT_SECONDS = 10;
+
+    public function confirmTimeoutSeconds(): int
+    {
+        return app(DefaultsRegistry::class)->int('mail.sns.confirm_timeout_seconds');
+    }
 
     /**
      * Hold what arrived, so that a person can act on it later.
@@ -132,7 +143,7 @@ final class SnsSubscriptions
         Cache::put(
             self::key($topicArn),
             ['url' => $subscribeUrl, 'arrived_at' => CarbonImmutable::now()->toIso8601String()],
-            self::PENDING_TTL_SECONDS,
+            self::pendingTtlSeconds(),
         );
 
         return true;
@@ -231,7 +242,7 @@ final class SnsSubscriptions
         $endpoint = 'https://'.(string) parse_url($held['url'], PHP_URL_HOST).'/';
 
         try {
-            $response = Http::timeout(self::CONFIRM_TIMEOUT_SECONDS)
+            $response = Http::timeout($this->confirmTimeoutSeconds())
                 ->withoutRedirecting()
                 ->get($held['url']);
         } catch (ConnectionException) {
