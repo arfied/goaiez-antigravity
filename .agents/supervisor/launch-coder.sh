@@ -17,6 +17,7 @@ set -euo pipefail
 cd "$(dirname "$(readlink -f "$0")")/../.." || exit 1
 
 CODER=agy
+ACCT=2  # Claude Code account for --coder claude (owner 2026-09-23 04:2x: "use account 2 and 3 for the fallback coder"; main+site default 2, sixty+reviews default 3; --account N overrides). CLAUDE_CONFIG_DIR=/home/goaiez/.claude-acct$ACCT, the same mechanism supervisor-tick.sh uses.
 ALLOW_MERGE=0
 ALLOW_HARNESS=0
 ALLOW_RESTORE=0
@@ -25,8 +26,9 @@ while [ $# -gt 0 ]; do
     --coder) CODER="${2:-}"; shift 2;;  # 2026-09-23 03:0x — the OWNER RE-ENABLED `--coder claude` as the fallback coder ("is claude enabled as backup coder? if not, please enable it"), after all four agy runs died on the 429 quota at 02:56. Use it only when agy reports quota reached; record `coder=claude` from the LAUNCHED line in REVIEWS. History: disabled 2026-09-10, enabled 10:2x and disabled 14:0x 2026-09-11.
     --allow-merge) ALLOW_MERGE=1; shift;;   # opens the shared coder guard's merge gate (GOAIEZ_MERGE_OK=1) for THIS run only; the guard added it 2026-09-05 13:27
     --allow-harness) ALLOW_HARNESS=1; shift;;  # opens GOAIEZ_HARNESS_OK=1 for THIS run only (guard, 2026-09-06 17:2x). It opens the ABILITY TO COMMIT app/tests/Journeys/JourneyHarness.php, not permission to weaken it: quote the diff in REVIEWS, and a change that makes a journey easier to pass is a BLOCK.
+    --account) ACCT="${2:-}"; case "$ACCT" in 2|3) ;; *) echo "REFUSED: --account must be 2 or 3 (owner 2026-09-23)"; exit 1;; esac; shift 2;;
     --allow-restore) ALLOW_RESTORE=1; shift;;  # opens GOAIEZ_RESTORE_OK=1 for THIS run only (owner ruling 2026-09-07, reserved-questions item 3B; guard clause added the same day). It permits `git checkout|restore -- <existing file paths>` and NOTHING else: no directory, no option, and supervisor-owned paths (.agents/supervisor, .agents/rules, .claude, CLAUDE.md, bin/supervise.sh, bin/state.py, any .env) stay refused inside it, because restoring one of those discards the supervisor's uncommitted notes — that is run 27. Restoring a SEALED file is the safe direction: it can only discard a local modification, never weaken a committed check.
-    *) echo "REFUSED: unknown argument $1 (takes only --coder agy|claude, --allow-merge, --allow-harness, --allow-restore)"; exit 1;;
+    *) echo "REFUSED: unknown argument $1 (takes only --coder agy|claude, --account 2|3, --allow-merge, --allow-harness, --allow-restore)"; exit 1;;
   esac
 done
 case "$CODER" in agy|claude) ;; *) echo "REFUSED: --coder must be agy or claude"; exit 1;; esac
@@ -106,7 +108,7 @@ if [ "$CODER" = claude ]; then
   # which denies app/**) out of the coder's permissions; the guard and the seal
   # are what bind it, not that file. Bounded by `timeout 8h` like agy's
   # --print-timeout.
-  nohup bash -c 'export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export GOAIEZ_HARNESS_OK='"$ALLOW_HARNESS"'; export GOAIEZ_RESTORE_OK='"$ALLOW_RESTORE"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; timeout -k 60 3h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  nohup bash -c 'export CLAUDE_CONFIG_DIR=/home/goaiez/.claude-acct'"$ACCT"'; export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export GOAIEZ_HARNESS_OK='"$ALLOW_HARNESS"'; export GOAIEZ_RESTORE_OK='"$ALLOW_RESTORE"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; timeout -k 60 3h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 else
   # BOUND (2026-09-07, backlog item 1 of tick ~01:4x, taken deliberately rather than
   # inherited from the sixty lane's copy by a merge). `--print-timeout 8h` is agy's OWN
@@ -125,7 +127,7 @@ if kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
   # Both gates are printed. Until 2026-09-06 18:4x only merge-gate was, while a REVIEWS
   # block claimed "harness-gate in the LAUNCHED line" — the drift shape from CLAUDE.md:
   # two sources of truth in one file, only one of them read back.
-  echo "LAUNCHED run $n (pid $(cat "$PIDFILE")) coder=$CODER bound=3h merge-gate=$([ "$ALLOW_MERGE" = 1 ] && echo OPEN || echo closed) harness-gate=$([ "$ALLOW_HARNESS" = 1 ] && echo OPEN || echo closed) log=$LOG"
+  echo "LAUNCHED run $n (pid $(cat "$PIDFILE")) coder=$CODER$([ "$CODER" = claude ] && echo " account=$ACCT") bound=3h merge-gate=$([ "$ALLOW_MERGE" = 1 ] && echo OPEN || echo closed) harness-gate=$([ "$ALLOW_HARNESS" = 1 ] && echo OPEN || echo closed) log=$LOG"
 else
   echo "LAUNCH FAILED — check $LOG"; exit 1
 fi
