@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Advanced;
 
 use App\Enums\UserRole;
-use App\Models\Business;
+use App\Models\SiteChange;
 use App\Models\User;
 use App\Support\Tenancy;
 use Tests\Concerns\RefreshesTenantDatabase;
@@ -18,7 +18,7 @@ class ChangesScreenTest extends TestCase
     protected function createTenant(bool $advanced = false): array
     {
         $user = User::factory()->create(['role' => UserRole::Owner]);
-        $business = Business::provision([
+        $business = TestCase::provisionTenant([
             'owner_user_id' => $user->id,
             'name' => 'Acme Dental '.rand(100, 999),
         ]);
@@ -43,11 +43,24 @@ class ChangesScreenTest extends TestCase
 
     public function test_empty_state_renders_correctly(): void
     {
-        $this->markTestIncomplete('FINDING: Screen renders hardcoded wireframe instead of empty state.');
+        [$user, $business] = $this->createTenant(advanced: true);
+        $response = $this->actingAs($user)->get(route('advanced.changes'));
+        $response->assertSee('No automated changes yet. Changes appear here after the first site change runs.');
     }
 
     public function test_one_site_change_row_renders_its_distinctive_value(): void
     {
-        $this->markTestIncomplete('FINDING: Screen renders hardcoded wireframe. Failing assertion: $response->assertSee(\'Distinctive Value 7719\')');
+        [$user, $business] = $this->createTenant(advanced: true);
+        $location = $business->locations()->first();
+        $location->forceFill(['website_url' => 'https://example.test', 'website_confirmed_at' => now()])->save();
+
+        SiteChange::factory()->applied()->create([
+            'location_id' => $location->id,
+            'url' => 'https://example.test/distinctive-value-7719',
+        ]);
+
+        $response = $this->actingAs($user)->get(route('advanced.changes'));
+        $response->assertSee('example.test/distinctive-value-7719');
+        $response->assertDontSee('No automated changes yet. Changes appear here after the first site change runs.');
     }
 }
