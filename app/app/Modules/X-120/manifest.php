@@ -10,10 +10,8 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-120
- *
  * @intent OBSERVE under §227.2
- *
- * @ingress limit.exceeded <system>
+         * @ingress limit.exceeded <system>
  */
 return [
     'module' => 'X-120',

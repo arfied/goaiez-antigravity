@@ -10,20 +10,14 @@ use App\Models\Conversation;
 use App\Models\Message;
 use App\Modules\CAgent\Actions\AgentAnswerAction;
 use App\Modules\CAgent\Actions\AgentClassifyAction;
-use App\Modules\CAgent\Actions\AgentComposeAction;
 use App\Modules\CAgent\Actions\AgentDraftAction;
 use App\Modules\CAgent\Actions\AgentExtractTasksAction;
 use App\Modules\CAgent\Actions\AgentTeachAction;
-use App\Modules\CAgent\Domain\AgentProfileFixture;
-use App\Modules\CAgent\Domain\AgentResearchContract;
 use App\Modules\CAgent\Events\AgentRefused;
 use App\Modules\CAgent\Events\AgentTurnAnswer;
-use App\Modules\CAgent\Listeners\CallAnsweredListener;
-use App\Modules\CAgent\Listeners\ChatStartedListener;
 use App\Modules\CAgent\Models\AgentInstruction;
 use App\Modules\CAgent\Models\AgentRefusal;
 use App\Modules\CAgent\Models\AgentTurn;
-use App\Modules\CAgent\Ui\AgentPerformanceGraphView;
 use App\Modules\X01\Events\TakeoverReleased;
 use App\Modules\X01\Events\TakeoverStarted;
 use App\Modules\X163\Models\CalloutFee;
@@ -35,7 +29,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class CAgentTest extends TestCase
@@ -181,14 +174,14 @@ class CAgentTest extends TestCase
      */
     public function test_g5_31_web_chat_door(): void
     {
-        Log::shouldReceive('info')
+        \Illuminate\Support\Facades\Log::shouldReceive('info')
             ->once()
             ->with('Chat started handled by C-Agent', ['chat_id' => 123]);
 
-        $event = (object) ['chatId' => 123];
-        $listener = new ChatStartedListener;
+        $event = (object)['chatId' => 123];
+        $listener = new \App\Modules\CAgent\Listeners\ChatStartedListener();
         $listener->handle($event);
-
+        
     }
 
     /**
@@ -196,14 +189,14 @@ class CAgentTest extends TestCase
      */
     public function test_g5_32_voice_door(): void
     {
-        Log::shouldReceive('info')
+        \Illuminate\Support\Facades\Log::shouldReceive('info')
             ->once()
             ->with('Call answered handled by C-Agent', ['session_id' => 'abc']);
 
-        $event = (object) ['sessionId' => 'abc'];
-        $listener = new CallAnsweredListener;
+        $event = (object)['sessionId' => 'abc'];
+        $listener = new \App\Modules\CAgent\Listeners\CallAnsweredListener();
         $listener->handle($event);
-
+        
     }
 
     /**
@@ -255,9 +248,9 @@ class CAgentTest extends TestCase
      */
     public function test_g5_39_compose_time_both_directions(): void
     {
-        $action = new AgentComposeAction;
+        $action = new \App\Modules\CAgent\Actions\AgentComposeAction();
         $result = $action->handle('Customer asked about hours');
-
+        
         $this->assertEquals('composed_for_review', $result['status']);
         $this->assertStringContainsString('Drafted response', $result['draft']);
     }
@@ -288,12 +281,12 @@ class CAgentTest extends TestCase
      */
     public function test_g5_42_research_contract(): void
     {
-        $mock = \Mockery::mock(AgentResearchContract::class);
+        $mock = \Mockery::mock(\App\Modules\CAgent\Domain\AgentResearchContract::class);
         $mock->shouldReceive('executeResearch')
             ->once()
             ->with('sink repair')
             ->andReturn(['findings' => 'It takes 2 hours']);
-
+            
         $this->assertEquals(['findings' => 'It takes 2 hours'], $mock->executeResearch('sink repair'));
     }
 
@@ -302,9 +295,9 @@ class CAgentTest extends TestCase
      */
     public function test_g5_43_profile_fixtures(): void
     {
-        $fixture = new AgentProfileFixture;
+        $fixture = new \App\Modules\CAgent\Domain\AgentProfileFixture();
         $profiles = $fixture->getProfiles();
-
+        
         $this->assertCount(100, $profiles);
         $this->assertEquals('Agent Profile', $profiles[0]['name']);
     }
@@ -336,9 +329,9 @@ class CAgentTest extends TestCase
      */
     public function test_g5_51_minute_graph_view(): void
     {
-        $view = new AgentPerformanceGraphView;
+        $view = new \App\Modules\CAgent\Ui\AgentPerformanceGraphView();
         $data = $view->renderData();
-
+        
         $this->assertIsArray($data);
         $this->assertEquals('10:01', $data[0]['minute']);
         $this->assertEquals(5, $data[0]['calls']);

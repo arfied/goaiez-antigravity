@@ -9,7 +9,6 @@ use App\Models\User;
 use App\Modules\X210\Models\Promotion;
 use App\Modules\X210\Models\PromotionRedemption;
 use App\Modules\X210\Ui\EarnedVsGivenPanel;
-use App\Modules\X210\Ui\PromotionBuilder;
 use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -50,7 +49,7 @@ class EarnedVsGivenPanelScreenTest extends TestCase
         Tenancy::set((int) $biz->id);
 
         // Drive PromotionBuilder to create an offer
-        Livewire::actingAs($owner)->test(PromotionBuilder::class)
+        Livewire::actingAs($owner)->test(\App\Modules\X210\Ui\PromotionBuilder::class)
             ->set('code', 'TESTDISCOUNT')
             ->set('discountType', 'percentage')
             ->set('amount', 25)

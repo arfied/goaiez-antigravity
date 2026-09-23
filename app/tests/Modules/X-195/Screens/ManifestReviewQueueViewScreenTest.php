@@ -6,7 +6,6 @@ namespace Tests\Modules\X195\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X195\Models\MarketItem;
 use App\Modules\X195\Ui\ManifestReviewQueueView;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -41,7 +40,7 @@ class ManifestReviewQueueViewScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        MarketItem::create([
+        \App\Modules\X195\Models\MarketItem::create([
             'business_id' => $biz->id,
             'item_slug' => 'queue-item',
             'item_name' => 'Queue Item',

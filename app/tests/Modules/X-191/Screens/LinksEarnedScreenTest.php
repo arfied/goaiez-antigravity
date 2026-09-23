@@ -102,7 +102,7 @@ class LinksEarnedScreenTest extends TestCase
             ->set('anchorText', 'example')
             ->call('recordPlacement')
             ->assertSet('error', 'Placed URL is required.');
-
+        
         $this->assertDatabaseMissing($table, [
             'anchor_text' => 'example',
         ]);

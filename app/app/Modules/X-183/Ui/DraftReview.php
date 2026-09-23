@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\X183\Ui;
 
-use App\Modules\X183\Actions\ContentWriteAction;
 use App\Modules\X183\Models\ContentDraft;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -18,13 +17,9 @@ class DraftReview extends Component
     public int $businessId = 0;
 
     public string $title = '';
-
     public string $bodyText = '';
-
     public bool $isCaseStudy = false;
-
     public ?string $success = null;
-
     public ?string $error = null;
 
     public function mount(int $businessId = 0)
@@ -32,19 +27,17 @@ class DraftReview extends Component
         $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
     }
 
-    public function submit(ContentWriteAction $action): void
+    public function submit(\App\Modules\X183\Actions\ContentWriteAction $action): void
     {
         $this->reset(['success', 'error']);
 
         if (empty($this->title)) {
             $this->error = 'Title is required.';
-
             return;
         }
 
         if (empty($this->bodyText)) {
             $this->error = 'Body text is required.';
-
             return;
         }
 

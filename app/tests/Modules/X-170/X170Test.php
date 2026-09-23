@@ -104,9 +104,9 @@ class X170Test extends TestCase
      */
     public function test_g1_16_money_in(): void
     {
-        $engine = new CommissionEngine;
-        $biz = TestCase::provisionTenant(['name' => 'Commissions', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        $engine = new \App\Modules\X170\Domain\CommissionEngine();
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Commissions', 'currency' => 'USD']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
 
         $commissions = $engine->compute($biz->id, 1001, 50000, [['staff_id' => 99, 'percentage' => 10]]);
         $comm = $commissions[0];
@@ -115,7 +115,7 @@ class X170Test extends TestCase
         // Attempt to release without payment captured ID
         $res = $engine->release($biz->id, $comm->id, null);
         $this->assertEquals('refused', $res['status']);
-
+        
         // Release with payment
         $res2 = $engine->release($biz->id, $comm->id, 'pay_123');
         $this->assertEquals('released', $res2['status']);
@@ -126,13 +126,13 @@ class X170Test extends TestCase
      */
     public function test_commission_tiers_and_bonus(): void
     {
-        $engine = new CommissionEngine;
-        $biz = TestCase::provisionTenant(['name' => 'Commissions Tiers', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        $engine = new \App\Modules\X170\Domain\CommissionEngine();
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Commissions Tiers', 'currency' => 'USD']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
 
-        DB::table('commission_rules')->insert([
+        \Illuminate\Support\Facades\DB::table('commission_rules')->insert([
             ['business_id' => $biz->id, 'name' => 'Tier 1', 'rule_type' => 'revenue_tier', 'percentage' => 5.0, 'threshold_cents' => 100000, 'created_at' => now(), 'updated_at' => now()],
-            ['business_id' => $biz->id, 'name' => 'Bonus', 'rule_type' => 'bonus', 'percentage' => 2.0, 'threshold_cents' => 50000, 'created_at' => now(), 'updated_at' => now()],
+            ['business_id' => $biz->id, 'name' => 'Bonus', 'rule_type' => 'bonus', 'percentage' => 2.0, 'threshold_cents' => 50000, 'created_at' => now(), 'updated_at' => now()]
         ]);
 
         // Compute commission with tier and bonus

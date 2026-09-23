@@ -10,10 +10,8 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-145
- *
  * @intent INFORM under §227.2
- *
- * @ingress outcome.recorded <system>
+         * @ingress outcome.recorded <system>
  */
 return [
     'module' => 'X-145',

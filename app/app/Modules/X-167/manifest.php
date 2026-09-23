@@ -10,11 +10,9 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-167
- *
  * @intent INFORM under §227.2
- *
- * @ingress order.paid <vendor>
- * @ingress order.cancelled <vendor>
+         * @ingress order.paid <vendor>
+         * @ingress order.cancelled <vendor>
  */
 return [
     'module' => 'X-167',

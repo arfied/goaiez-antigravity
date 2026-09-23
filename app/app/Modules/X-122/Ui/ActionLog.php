@@ -8,8 +8,8 @@ use App\Modules\X122\Actions\ActionReverseAction;
 use App\Modules\X122\Actions\GetActionInvocationsAction;
 use App\Modules\X122\Models\ActionInvocation;
 use App\Support\Tenancy;
-use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
 

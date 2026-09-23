@@ -10,7 +10,6 @@ use App\Console\Commands\ContextCommand;
 use App\Console\Commands\DbBootstrapCommand;
 use App\Console\Commands\DeployCheckCommand;
 use App\Console\Commands\DoctorCommand;
-use App\Console\Commands\DoctorSelfTestCommand;
 use App\Console\Commands\FindCommand;
 use App\Console\Commands\ImpactCommand;
 use App\Console\Commands\MakeModuleCommand;
@@ -47,7 +46,7 @@ final class GoaiezRuntimeServiceProvider extends ServiceProvider
     /** @var list<class-string> */
     private const COMMANDS = [
         DoctorCommand::class,
-        DoctorSelfTestCommand::class,
+            \App\Console\Commands\DoctorSelfTestCommand::class,
         ModuleDoneCommand::class,
         ModuleScaffoldCommand::class,
         CapabilitiesScaffoldCommand::class,

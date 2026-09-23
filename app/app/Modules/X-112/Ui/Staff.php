@@ -14,13 +14,9 @@ use Livewire\Component;
 class Staff extends Component
 {
     public int $agencyId = 0;
-
     public int $userId = 0;
-
     public string $role = 'account_manager';
-
     public ?string $success = null;
-
     public ?string $error = null;
 
     public function inviteStaff(StaffInviteAction $action): void

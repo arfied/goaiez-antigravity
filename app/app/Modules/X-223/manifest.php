@@ -10,11 +10,9 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-223
- *
  * @intent GROW
- *
- * @ingress mail.delivered <vendor>
- * @ingress mail.bounced <vendor>
+         * @ingress mail.delivered <vendor>
+         * @ingress mail.bounced <vendor>
  */
 return [
     'module' => 'X-223',

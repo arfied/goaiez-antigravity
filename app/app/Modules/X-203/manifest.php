@@ -10,10 +10,8 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-203
- *
  * @intent RECOVER under §227.2
- *
- * @scheduled dr.restore_test <weekly> @owner X-203
+         * @scheduled dr.restore_test <weekly> @owner X-203
  */
 return [
     'module' => 'X-203',

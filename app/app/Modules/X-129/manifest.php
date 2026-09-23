@@ -10,10 +10,8 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-129
- *
  * @intent INFORM under §227.2
- *
- * @ingress fetch.completed <system>
+         * @ingress fetch.completed <system>
  */
 return [
     'module' => 'X-129',

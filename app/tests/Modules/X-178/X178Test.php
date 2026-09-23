@@ -11,9 +11,7 @@ use App\Modules\X178\Actions\FormGenerateAction;
 use App\Modules\X178\Events\BlockAdded;
 use App\Modules\X178\Events\DesignChanged;
 use App\Modules\X178\Events\DesignUndone;
-use App\Modules\X178\Models\DesignChange;
 use App\Support\Tenancy;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
@@ -100,15 +98,15 @@ class X178Test extends TestCase
      */
     public function test_g5_21_design_tokens(): void
     {
-        $action = new DesignChangeAction;
-        $biz = TestCase::provisionTenant(['name' => 'Design Tokens', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        $action = new \App\Modules\X178\Actions\DesignChangeAction();
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Design Tokens', 'currency' => 'USD']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
 
         $tokens = ['primary_color' => '#ff0000', 'font_size' => '16px'];
         $res = $action->handle($biz->id, 1, 'update_tokens', 'block_theme', $tokens);
-
+        
         $this->assertEquals('applied', $res['status']);
-        $change = DesignChange::find($res['change_id']);
+        $change = \App\Modules\X178\Models\DesignChange::find($res['change_id']);
         $this->assertEquals($tokens, $change->new_state);
     }
 
@@ -117,12 +115,12 @@ class X178Test extends TestCase
      */
     public function test_g6_21_unmapped_niche_fill_me_only(): void
     {
-        $action = new FormGenerateAction;
-        $biz = TestCase::provisionTenant(['name' => 'Niche Form', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        $action = new \App\Modules\X178\Actions\FormGenerateAction();
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Niche Form', 'currency' => 'USD']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $action->handle($biz->id, 1, 'unmapped_niche');
-
+        
         $this->assertEquals('generated', $res['status']);
         $this->assertEquals('[fill-me]', $res['form_config']['pricing_display'], 'Pricing must be [fill-me] only for unmapped niches (P-092)');
     }

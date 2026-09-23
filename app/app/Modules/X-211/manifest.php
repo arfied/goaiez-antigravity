@@ -10,10 +10,8 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-211
- *
  * @intent RECOVER under §227.2
- *
- * @ingress invoice.overdue <clock>
+         * @ingress invoice.overdue <clock>
  */
 return [
     'module' => 'X-211',

@@ -92,11 +92,11 @@ enum AiModel: string
     public function apiModelId(): string
     {
         return match ($this) {
-            self::ClaudeOpus5 => 'clau'.'de-opus-5',
-            self::ClaudeSonnet5 => 'clau'.'de-sonnet-5',
-            self::ClaudeHaiku45 => 'clau'.'de-haiku-4-5',
-            self::Gpt4oMini => 'gp'.'t-4o-mini',
-            self::TextEmbedding3Small => 'text'.'-embedding-3-small',
+            self::ClaudeOpus5 => 'clau' . 'de-opus-5',
+            self::ClaudeSonnet5 => 'clau' . 'de-sonnet-5',
+            self::ClaudeHaiku45 => 'clau' . 'de-haiku-4-5',
+            self::Gpt4oMini => 'gp' . 't-4o-mini',
+            self::TextEmbedding3Small => 'text' . '-embedding-3-small',
         };
     }
 

@@ -26,10 +26,10 @@ return new class extends Migration
             });
         }
 
-        DB::statement('ALTER TABLE staff_documents ENABLE ROW LEVEL SECURITY');
-        DB::statement('ALTER TABLE staff_documents FORCE ROW LEVEL SECURITY');
-        DB::statement('DROP POLICY IF EXISTS tenant_isolation ON staff_documents');
-        DB::statement(<<<'SQL'
+        DB::statement("ALTER TABLE staff_documents ENABLE ROW LEVEL SECURITY");
+        DB::statement("ALTER TABLE staff_documents FORCE ROW LEVEL SECURITY");
+        DB::statement("DROP POLICY IF EXISTS tenant_isolation ON staff_documents");
+        DB::statement(<<<SQL
             CREATE POLICY tenant_isolation ON staff_documents
                 USING (business_id = nullif(current_setting('app.business_id', true), '')::bigint)
                 WITH CHECK (business_id = nullif(current_setting('app.business_id', true), '')::bigint)

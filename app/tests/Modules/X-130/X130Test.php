@@ -6,7 +6,6 @@ namespace Tests\Modules\X130;
 
 use App\Modules\X130\Actions\DemandPublishAction;
 use App\Modules\X130\Actions\DemandQueryAction;
-use App\Modules\X130\Domain\DemandEngine;
 use App\Modules\X130\Events\DemandShifted;
 use App\Modules\X130\Events\SeasonTurned;
 use App\Modules\X130\Models\DemandRegion;
@@ -129,7 +128,7 @@ class X130Test extends TestCase
      */
     public function test_demand_capabilities(): void
     {
-        $engine = new DemandEngine;
+        $engine = new \App\Modules\X130\Domain\DemandEngine();
 
         // [N-081, N-082, N-083] aggregate only — refuses below N tenants (N=5)
         $refused = $engine->query(4);

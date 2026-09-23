@@ -86,7 +86,7 @@ class StaffScreenTest extends TestCase
             'whitelabel_domain' => 'demo.example',
             'agency_mode' => 'full_service',
         ]);
-
+        
         $newUser = User::factory()->create();
 
         // 2. control creating one

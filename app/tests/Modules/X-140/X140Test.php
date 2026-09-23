@@ -94,6 +94,7 @@ class X140Test extends TestCase
     /**
      * [G8-07], [G8-24], [G8-40], [G11-21], [G12-16], [G12-21]
      */
+
     public function test_screen_requires_auth_and_redirects_guest(): void
     {
         $this->get('/account/content-topics')

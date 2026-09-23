@@ -120,31 +120,31 @@ class X198Test extends TestCase
      */
     public function test_g17_04_refid_deduplication(): void
     {
-        Event::fake([PaymentCaptured::class]);
+        \Illuminate\Support\Facades\Event::fake([\App\Modules\X198\Events\PaymentCaptured::class]);
+        
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Gateway Deduplication', 'currency' => 'USD']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $biz = TestCase::provisionTenant(['name' => 'Gateway Deduplication', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
-
-        $connection = MerchantConnection::create([
+        $connection = \App\Modules\X198\Models\MerchantConnection::create([
             'business_id' => $biz->id,
             'gateway_name' => 'mock_gateway',
             'merchant_account_id' => 'mock_123',
         ]);
 
-        $action = new PaymentCaptureAction(new GatewayEngine);
-
+        $action = new \App\Modules\X198\Actions\PaymentCaptureAction(new \App\Modules\X198\Domain\GatewayEngine());
+        
         // Mock StripeGatewayClient since gateway_name=mock_gateway skips the real client in GatewayEngine (wait, it only calls Stripe if gateway_name === 'stripe')
         // Actually, if it's not stripe, it just sets status 'awaiting_processor' and gatewayStatus null!
-
+        
         $idempotencyKey = 'idem_999888';
-
+        
         // First capture
         $payment1 = $action->handle($biz->id, 5000, 'tok_abc', $idempotencyKey);
         $this->assertEquals('awaiting_processor', $payment1->status);
 
         // Second capture with same key
         $payment2 = $action->handle($biz->id, 5000, 'tok_abc', $idempotencyKey);
-
+        
         // Assert it's the exact same row (deduplicated)
         $this->assertEquals($payment1->id, $payment2->id, 'A duplicated idempotency key charges once');
     }

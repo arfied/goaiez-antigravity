@@ -10,10 +10,8 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-175
- *
  * @intent INFORM under §227.2
- *
- * @ingress note.voice <human>
+         * @ingress note.voice <human>
  */
 return [
     'module' => 'X-175',

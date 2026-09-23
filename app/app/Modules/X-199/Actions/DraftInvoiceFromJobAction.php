@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X199\Actions;
 
 use App\Modules\X199\Models\Invoice;
-
-// Assuming CAi is the AI module
+use App\Modules\CAi\Domain\AiEngine; // Assuming CAi is the AI module
 
 final class DraftInvoiceFromJobAction
 {
@@ -18,7 +17,7 @@ final class DraftInvoiceFromJobAction
     public function handle(int $businessId, int $customerId, int $totalCents, string $jobDescription): Invoice
     {
         $lines = [];
-
+        
         try {
             // [G1-05] AI structures lines from the job (R245 decision: attempt AI first)
             if ($this->aiEngine) {
@@ -30,10 +29,10 @@ final class DraftInvoiceFromJobAction
             // [G1-05] fails one line at the total
             $lines = [
                 [
-                    'description' => 'Work order completion - '.substr($jobDescription, 0, 50),
+                    'description' => 'Work order completion - ' . substr($jobDescription, 0, 50),
                     'quantity' => 1,
-                    'unit_price_cents' => $totalCents,
-                ],
+                    'unit_price_cents' => $totalCents
+                ]
             ];
         }
 

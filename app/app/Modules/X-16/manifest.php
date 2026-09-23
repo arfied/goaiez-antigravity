@@ -10,10 +10,8 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-16
- *
  * @intent INFORM under §227.2
- *
- * @ingress refresh.due <clock>
+         * @ingress refresh.due <clock>
  */
 return [
     'module' => 'X-16',

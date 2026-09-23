@@ -10,7 +10,6 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module C-Telephony
- *
  * @intent RECOVER under §227.2
  */
 return [

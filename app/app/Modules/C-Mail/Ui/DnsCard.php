@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\CMail\Ui;
 
-use App\Modules\CMail\Actions\EmailDnsCheckAction;
 use App\Modules\CMail\Models\MailDomain;
 use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
@@ -15,18 +14,15 @@ use Livewire\Component;
 class DnsCard extends Component
 {
     public string $domainName = '';
-
     public ?string $success = null;
-
     public ?string $error = null;
 
-    public function submit(EmailDnsCheckAction $action): void
+    public function submit(\App\Modules\CMail\Actions\EmailDnsCheckAction $action): void
     {
         $this->reset(['success', 'error']);
 
         if (empty($this->domainName)) {
             $this->error = 'Domain name is required.';
-
             return;
         }
 

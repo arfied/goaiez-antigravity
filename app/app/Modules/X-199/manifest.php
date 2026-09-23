@@ -10,10 +10,8 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-199
- *
  * @intent INFORM under §227.2
- *
- * @scheduled invoice.due <daily> @owner X-199
+         * @scheduled invoice.due <daily> @owner X-199
  */
 return [
     'module' => 'X-199',

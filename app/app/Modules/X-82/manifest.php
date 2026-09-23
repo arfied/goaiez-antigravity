@@ -10,10 +10,8 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-82
- *
  * @intent INFORM under §227.2
- *
- * @ingress country.detected <api>
+         * @ingress country.detected <api>
  */
 return [
     'module' => 'X-82',

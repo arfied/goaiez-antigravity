@@ -2,13 +2,6 @@
 
 namespace Tests\Modules\X120;
 
-use App\Modules\X120\Actions\CardExpiringScanAction;
-use App\Modules\X120\Actions\CardPresentAction;
-use App\Modules\X120\Events\CardExpiring;
-use App\Modules\X120\Models\CardToken;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class CardVaultTest extends TestCase
@@ -35,9 +28,9 @@ class CardVaultTest extends TestCase
      */
     public function test_n_046_and_n_047_no_persisted_pci_data(): void
     {
-        $action = new CardPresentAction;
+        $action = new \App\Modules\X120\Actions\CardPresentAction();
         $result = $action->handle('4242424242424242', 12, 2030, 'John Doe');
-
+        
         $this->assertArrayNotHasKey('number', $result);
         $this->assertArrayNotHasKey('cvv', $result);
         $this->assertArrayNotHasKey('cvc', $result);
@@ -50,15 +43,15 @@ class CardVaultTest extends TestCase
      */
     public function test_n_120_02_card_expiring_soon(): void
     {
-        Event::fake([CardExpiring::class]);
+        \Illuminate\Support\Facades\Event::fake([\App\Modules\X120\Events\CardExpiring::class]);
+        
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Card Expiry Tenant', 'currency' => 'USD']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $biz = TestCase::provisionTenant(['name' => 'Card Expiry Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
-
-        $now = Carbon::now()->endOfMonth()->subDays(20);
+        $now = \Carbon\Carbon::now()->endOfMonth()->subDays(20);
         $expDate = $now->copy();
-
-        $card = CardToken::create([
+        
+        $card = \App\Modules\X120\Models\CardToken::create([
             'business_id' => $biz->id,
             'gateway_customer_id' => 'cus_123',
             'gateway_payment_method_id' => 'tok_123',
@@ -66,16 +59,16 @@ class CardVaultTest extends TestCase
             'last_four' => '4242',
             'exp_month' => $expDate->month,
             'exp_year' => $expDate->year,
-            'alert_sent' => false,
+            'alert_sent' => false
         ]);
 
-        $action = new CardExpiringScanAction;
+        $action = new \App\Modules\X120\Actions\CardExpiringScanAction();
         // First scan sends the alert
         $res1 = $action->scan($biz->id, $now);
         $this->assertEquals(1, $res1['alerted_count']);
-
-        Event::assertDispatched(CardExpiring::class);
-
+        
+        \Illuminate\Support\Facades\Event::assertDispatched(\App\Modules\X120\Events\CardExpiring::class);
+        
         // Second scan sends NO alert (exactly one alert rule)
         $res2 = $action->scan($biz->id, $now);
         $this->assertEquals(0, $res2['alerted_count']);

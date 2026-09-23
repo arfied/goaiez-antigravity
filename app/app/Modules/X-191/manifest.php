@@ -10,7 +10,6 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-191
- *
  * @intent GROW under §227.2
  */
 return [

@@ -7,7 +7,6 @@ namespace Tests\Modules\X204\Screens;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X204\Models\SendPermit;
-use App\Modules\X204\Models\Suppression;
 use App\Modules\X204\Ui\RefusalsByReason;
 use App\Support\Tenancy;
 use Livewire\Livewire;
@@ -67,7 +66,7 @@ class RefusalsByReasonScreenTest extends TestCase
             ->assertSet('error', '')
             ->assertSet('success', 'Number +15559990001 has been suppressed. This feeds the margin lists; nothing downstream is wired to it yet.');
 
-        $this->assertDatabaseHas((new Suppression)->getTable(), [
+        $this->assertDatabaseHas((new \App\Modules\X204\Models\Suppression)->getTable(), [
             'recipient_phone' => '+15559990001',
             'channel' => 'sms',
             'reason' => 'opt_out',
@@ -85,7 +84,7 @@ class RefusalsByReasonScreenTest extends TestCase
             ->assertOk()
             ->assertSee('+15559990001')->assertDontSee('No consent refusals recorded.');
 
-        $this->assertDatabaseHas((new SendPermit)->getTable(), [
+        $this->assertDatabaseHas((new \App\Modules\X204\Models\SendPermit)->getTable(), [
             'recipient_phone' => '+15559990001',
             'permit_status' => 'refused',
         ]);

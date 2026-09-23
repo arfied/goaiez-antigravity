@@ -10,10 +10,8 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-151
- *
  * @intent SERVE under §227.2
- *
- * @ingress discovery.requested <human>
+         * @ingress discovery.requested <human>
  */
 return [
     'module' => 'X-151',

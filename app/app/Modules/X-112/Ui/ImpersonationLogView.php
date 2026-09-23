@@ -18,15 +18,10 @@ class ImpersonationLogView extends Component
     public int $businessId = 0;
 
     public int $agencyId = 0;
-
     public int $userId = 0;
-
     public int $targetClientBusinessId = 0;
-
     public string $reason = '';
-
     public ?string $success = null;
-
     public ?string $error = null;
 
     public function startImpersonation(AgencyImpersonateAction $action): void

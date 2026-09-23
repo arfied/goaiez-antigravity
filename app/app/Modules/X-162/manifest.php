@@ -10,10 +10,8 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-162
- *
  * @intent SERVE under §227.2
- *
- * @ingress weather.changed <api>
+         * @ingress weather.changed <api>
  */
 return [
     'module' => 'X-162',

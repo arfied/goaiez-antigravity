@@ -301,20 +301,20 @@ final class ModuleScaffoldCommand extends Command
                 : "[\n        '".implode("',\n        '", $parts)."',\n    ]";
         };
 
-        $extra_doc = '';
+                $extra_doc = '';
         if (isset($h['body'])) {
             preg_match_all('/@ingress\s+[a-z][a-z0-9_.]+\s+<[^>]+>/i', $h['body'], $mi);
             preg_match_all('/@scheduled\s+[a-z][a-z0-9_.]+\s+<[^>]+>\s+@owner\s+(?:X|C)-[A-Za-z0-9]+/i', $h['body'], $ms);
-
+            
             $extras = [];
             foreach ($mi[0] as $match) {
-                $extras[] = '         * '.$match;
+                $extras[] = '         * ' . $match;
             }
             foreach ($ms[0] as $match) {
-                $extras[] = '         * '.$match;
+                $extras[] = '         * ' . $match;
             }
-            if (! empty($extras)) {
-                $extra_doc = "\n".implode("\n", $extras);
+            if (!empty($extras)) {
+                $extra_doc = "\n" . implode("\n", $extras);
             }
         }
 

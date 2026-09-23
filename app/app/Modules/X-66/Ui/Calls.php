@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\X66\Ui;
 
 use App\Modules\X188\Domain\NumberPoolManager;
-use App\Modules\X66\Domain\VoiceSessionEngine;
 use App\Modules\X66\Models\CallSession;
 use App\Modules\X66\Models\CallTurn;
 use App\Modules\X66\Models\Voicemail;
@@ -21,13 +20,9 @@ class Calls extends Component
     public ?string $errorMessage = null;
 
     public string $callSid = '';
-
     public string $fromPhone = '';
-
     public string $toPhone = '';
-
     public ?string $success = null;
-
     public ?string $error = null;
 
     public function recordCall(): void
@@ -37,18 +32,17 @@ class Calls extends Component
 
         if (empty($this->callSid)) {
             $this->error = 'Call SID is required.';
-
             return;
         }
 
-        $result = app(VoiceSessionEngine::class)->handleRing(
+        $result = app(\App\Modules\X66\Domain\VoiceSessionEngine::class)->handleRing(
             Tenancy::idOrFail(),
             $this->callSid,
             $this->fromPhone,
             $this->toPhone
         );
 
-        $this->success = 'Recorded call '.$result->call_sid.'. This feeds the latency lists; nothing downstream is wired to it yet.';
+        $this->success = 'Recorded call ' . $result->call_sid . '. This feeds the latency lists; nothing downstream is wired to it yet.';
         $this->callSid = '';
         $this->fromPhone = '';
         $this->toPhone = '';

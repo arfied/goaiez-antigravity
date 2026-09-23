@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\X142\Ui;
 
 use App\Enums\UserRole;
-use App\Modules\X142\Actions\WebhookSubscribeAction;
 use App\Modules\X142\Models\WebhookSubscription;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -19,11 +18,8 @@ class WebhooksView extends Component
     public int $businessId = 0;
 
     public string $url = '';
-
     public string $events = '';
-
     public ?string $success = null;
-
     public ?string $error = null;
 
     public function mount(): void
@@ -32,13 +28,12 @@ class WebhooksView extends Component
         $this->businessId = Tenancy::id() ?? 0;
     }
 
-    public function submit(WebhookSubscribeAction $action): void
+    public function submit(\App\Modules\X142\Actions\WebhookSubscribeAction $action): void
     {
         $this->reset(['success', 'error']);
 
         if (empty($this->url)) {
             $this->error = 'URL is required.';
-
             return;
         }
 

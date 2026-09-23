@@ -12,7 +12,7 @@ final class ReconciliationEngine
     public function reconcile(int $ledgerTotalCents, int $gatewayTotalCents): void
     {
         if ($ledgerTotalCents !== $gatewayTotalCents) {
-            throw new \RuntimeException('Unreconciled difference detected: '.($gatewayTotalCents - $ledgerTotalCents).' cents');
+            throw new \RuntimeException('Unreconciled difference detected: ' . ($gatewayTotalCents - $ledgerTotalCents) . ' cents');
         }
     }
 }

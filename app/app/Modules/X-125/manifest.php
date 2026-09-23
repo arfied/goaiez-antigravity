@@ -10,10 +10,8 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-125
- *
  * @intent RECOVER under §227.2
- *
- * @scheduled rule.fired <minutely> @owner X-125
+         * @scheduled rule.fired <minutely> @owner X-125
  */
 return [
     'module' => 'X-125',

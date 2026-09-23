@@ -13,7 +13,7 @@ final class InvoicePaymentLinkAction
      */
     public function handle(Invoice $invoice, string $gateway = 'default'): string
     {
-        // R245: The link URL does not hardcode gateway names in the routing layer.
+        // R245: The link URL does not hardcode gateway names in the routing layer. 
         return "/pay/{$invoice->id}?gateway={$gateway}";
     }
 }
