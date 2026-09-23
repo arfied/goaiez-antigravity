@@ -268,6 +268,36 @@ final class DefaultsManifest
                 'group' => 'Operations',
                 'description' => 'Maximum number of change history entries shown per credential.',
             ],
+            'ai.model.site_copy' => [
+                'seed' => AiTask::SiteCopy->defaultModel()->value,
+                'group' => 'Content',
+                'description' => 'The model router\'s per-task override for site_copy (seed = the same model the Conversation task seeds).',
+            ],
+            'sites.copy.system_prompt' => [
+                'seed' => 'Rewrite this text for a small local service business. Keep every fact and number, use plain words, and output at most {max_chars} characters.',
+                'group' => 'Content',
+                'description' => 'The system prompt used to polish drafted site copy.',
+            ],
+            'sites.copy.max_chars' => [
+                'seed' => 600,
+                'group' => 'Content',
+                'description' => 'Maximum characters for polished site copy.',
+            ],
+            'sites.seo.system_prompt' => [
+                'seed' => 'Write one page title of at most {title_max_chars} characters and one description of at most {description_max_chars} characters. Keep it plain, factual, name the business and the service, and make no claims not in the text.',
+                'group' => 'Content',
+                'description' => 'The system prompt used to draft SEO titles and descriptions.',
+            ],
+            'sites.seo.title_max_chars' => [
+                'seed' => 60,
+                'group' => 'Content',
+                'description' => 'Maximum characters for drafted SEO titles.',
+            ],
+            'sites.seo.description_max_chars' => [
+                'seed' => 155,
+                'group' => 'Content',
+                'description' => 'Maximum characters for drafted SEO descriptions.',
+            ],
 
             /*
              * Billing shape. Not prices — those are per-plan and live in
@@ -3144,6 +3174,18 @@ final class DefaultsManifest
                 'description' => 'Maximum length of the drafted about text block, extracted from the inventory.',
             ],
 
+            'sites.draft.gallery_max' => [
+                'seed' => 8,
+                'group' => 'Content',
+                'description' => 'Maximum number of images included in the drafted gallery block.',
+            ],
+
+            'sites.draft.team_min' => [
+                'seed' => 1,
+                'group' => 'Sites',
+                'description' => 'Minimum number of staff users required to draft the team block.',
+            ],
+
             'sites.draft.reviews_max' => [
                 'seed' => 6,
                 'group' => 'Sites',
@@ -3489,6 +3531,24 @@ final class DefaultsManifest
                 'seed' => '9,11,14,16',
                 'group' => 'Operations',
                 'description' => 'Standard potential slots in hours.',
+            ],
+
+            'sites.faq.max_sources' => [
+                'seed' => 8,
+                'group' => 'Content',
+                'description' => 'Maximum number of service lines from PriceBook to send to the AI router.',
+            ],
+
+            'sites.faq.max_items' => [
+                'seed' => 6,
+                'group' => 'Content',
+                'description' => 'Maximum number of FAQ items drafted.',
+            ],
+
+            'sites.faq.system_prompt' => [
+                'seed' => 'Write at most 6 plain-language question and answer pairs a customer of a local service business would ask. Use ONLY the facts given, include no prices not present, and make no promises.',
+                'group' => 'Content',
+                'description' => 'System prompt for generating the FAQ block.',
             ],
         ];
 

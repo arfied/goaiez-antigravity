@@ -13,8 +13,8 @@ final class SeoRenderAction
         $page = app(PageReadAction::class)->findForBusiness($businessId, $pageId);
 
         $slug = $page && $page->slug ? $page->slug : "pages/{$pageId}";
-        $title = $page && $page->title ? $page->title : $businessName;
-        $description = $businessName;
+        $title = $page && $page->seo_title ? $page->seo_title : ($page && $page->title ? $page->title : $businessName);
+        $description = $page && $page->seo_description ? $page->seo_description : $businessName;
 
         return [
             'title' => $title,

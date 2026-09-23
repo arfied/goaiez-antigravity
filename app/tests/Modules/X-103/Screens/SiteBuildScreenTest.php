@@ -50,10 +50,15 @@ class SiteBuildScreenTest extends TestCase
 
         Tenancy::set($business->id);
         $user->refresh();
-        Livewire::actingAs($user)
+        $test = Livewire::actingAs($user)
             ->test(SiteBuild::class)
-            ->call('runBuild')
-            ->assertSet('buildStatus', 'completed')
+            ->call('runBuild');
+
+        if ($test->get('error')) {
+            dd($test->get('error'));
+        }
+
+        $test->assertSet('buildStatus', 'completed')
             ->assertSee('Status: completed')
             ->call('publishAll');
 

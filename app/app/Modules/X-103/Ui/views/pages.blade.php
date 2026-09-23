@@ -34,6 +34,8 @@
                                 @else
                                     <span class="bg-paper border border-rule px-2 py-1 text-ink-2">Draft</span>
                                     <button wire:click="publish({{ $page->id }})" class="ml-2 bg-paper border border-rule px-2 py-1 text-ink">Publish</button>
+                                    <button wire:click="polish({{ $page->id }})" class="ml-2 bg-paper border border-rule px-2 py-1 text-ink">Polish copy</button>
+                                    <button wire:click="restoreOriginal({{ $page->id }})" class="ml-2 bg-paper border border-rule px-2 py-1 text-ink">Restore original</button>
                                     @if(empty($hasVersions[$page->id]))
                                         <button wire:click="deletePage({{ $page->id }})" class="ml-2 bg-paper border border-rule px-2 py-1 text-ink">Delete</button>
                                     @endif
@@ -48,6 +50,17 @@
                                             <input type="text" wire:model="renameSlug.{{ $page->id }}" placeholder="Slug" class="w-full bg-paper border border-rule text-ink p-1 mb-1">
                                             <input type="text" wire:model="renameTitle.{{ $page->id }}" placeholder="Title" class="w-full bg-paper border border-rule text-ink p-1 mb-1">
                                             <button type="submit" class="bg-paper border border-rule px-2 py-1">Rename</button>
+                                        </form>
+                                    </div>
+                                </details>
+                                <details class="mb-2">
+                                    <summary class="cursor-pointer">Edit SEO</summary>
+                                    <div class="p-2 mt-2 bg-paper border border-rule">
+                                        <button wire:click="draftSeo({{ $page->id }})" class="bg-paper border border-rule px-2 py-1 mb-2 text-ink capitalize">draft title & description</button>
+                                        <form wire:submit="saveSeo({{ $page->id }})">
+                                            <input type="text" wire:model="seoTitle.{{ $page->id }}" placeholder="SEO Title" class="w-full bg-paper border border-rule text-ink p-1 mb-1">
+                                            <input type="text" wire:model="seoDescription.{{ $page->id }}" placeholder="SEO Description" class="w-full bg-paper border border-rule text-ink p-1 mb-1">
+                                            <button type="submit" class="bg-paper border border-rule px-2 py-1 text-ink">Save</button>
                                         </form>
                                     </div>
                                 </details>

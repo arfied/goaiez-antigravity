@@ -10,6 +10,7 @@ use App\Models\Review;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\SiteInventoryImage;
 use App\Modules\X103\Models\SiteInventoryPage;
+use App\Modules\X113\Actions\StaffRosterAction;
 use App\Services\Assistant\PriceBook;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Links\TenantLinks;
@@ -56,6 +57,8 @@ final class SiteDraftAction
         $aboutMaxChars = $this->registry->int('sites.draft.about_max_chars');
         $reviewsMax = $this->registry->int('sites.draft.reviews_max');
         $reviewsMinRating = $this->registry->int('sites.draft.reviews_min_rating');
+        $galleryMax = $this->registry->int('sites.draft.gallery_max');
+        $teamMin = $this->registry->int('sites.draft.team_min');
 
         // Existing FAQs
         $allPages = Page::where('business_id', $businessId)->get();
@@ -175,7 +178,7 @@ final class SiteDraftAction
                 'source' => 'inventory',
             ];
             if ($firstImage) {
-                $hero['image_path'] = $firstImage->stored_path;
+                $hero['image_path'] = $firstImage->path;
             }
             $homeBlocks[] = $hero;
             $blocksGenerated++;
@@ -185,6 +188,34 @@ final class SiteDraftAction
                 $homeBlocks[] = [
                     'type' => 'about',
                     'text' => Str::limit($longestInventoryPage->text, $aboutMaxChars, ''),
+                    'source' => 'inventory',
+                ];
+                $blocksGenerated++;
+                $sourcesUsed[] = 'inventory';
+            }
+
+            $storedImages = SiteInventoryImage::where('business_id', $businessId)
+                ->where('status', 'stored')
+                ->orderBy('id')
+                ->skip(1)
+                ->take($galleryMax)
+                ->get();
+
+            if ($storedImages->isNotEmpty()) {
+                $galleryItems = [];
+                foreach ($storedImages as $img) {
+                    $alt = $img->alt;
+                    if (empty($alt)) {
+                        $alt = pathinfo($img->original_filename ?? '', PATHINFO_FILENAME);
+                    }
+                    $galleryItems[] = [
+                        'image_path' => $img->path,
+                        'alt' => $alt,
+                    ];
+                }
+                $homeBlocks[] = [
+                    'type' => 'gallery',
+                    'items' => $galleryItems,
                     'source' => 'inventory',
                 ];
                 $blocksGenerated++;
@@ -248,6 +279,33 @@ final class SiteDraftAction
                 'draft_blocks' => $homeBlocks,
             ]);
             $pagesCreated++;
+        }
+
+        // ABOUT
+        if (Page::where('business_id', $businessId)->where('slug', 'about')->exists()) {
+            $skipped[] = 'about';
+        } else {
+            $staffRoster = (new StaffRosterAction)->handle($businessId);
+            if (count($staffRoster) >= $teamMin) {
+                $aboutBlocks = [];
+                $aboutBlocks[] = [
+                    'type' => 'team',
+                    'items' => $staffRoster,
+                    'source' => 'staff',
+                ];
+                $blocksGenerated++;
+                $sourcesUsed[] = 'staff';
+
+                Page::create([
+                    'business_id' => $businessId,
+                    'slug' => 'about',
+                    'title' => 'About',
+                    'is_tenant_edited' => false,
+                    'is_published' => false,
+                    'draft_blocks' => $aboutBlocks,
+                ]);
+                $pagesCreated++;
+            }
         }
 
         // 2. SERVICES

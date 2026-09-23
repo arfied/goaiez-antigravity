@@ -12,6 +12,7 @@ use App\Modules\X113\Actions\SecureFieldRevealAction;
 use App\Modules\X113\Actions\StaffAuthenticateCheckAction;
 use App\Modules\X113\Actions\StaffDeactivateAction;
 use App\Modules\X113\Actions\StaffInviteAction;
+use App\Modules\X113\Actions\StaffRosterAction;
 use App\Modules\X113\Domain\StaffEngine;
 use App\Modules\X113\Events\RoleAssigned;
 use App\Modules\X113\Events\StaffDeactivated;
@@ -19,6 +20,7 @@ use App\Modules\X113\Models\Role;
 use App\Modules\X113\Models\RolePermission;
 use App\Modules\X113\Models\StaffUser;
 use App\Modules\X113\Ui\DocumentVault;
+use App\Support\Tenancy;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -410,6 +412,40 @@ class X113Test extends TestCase
      * [G21-08]
      * /pto — the time-off workflow, not a platform decision
      */
+    public function test_roster_lists_active_staff_only(): void
+    {
+        $ownerA = User::factory()->create();
+        $bizA = TestCase::provisionTenant(['name' => 'Biz A', 'currency' => 'USD', 'owner_user_id' => $ownerA->id]);
+        $ownerB = User::factory()->create();
+        $bizB = TestCase::provisionTenant(['name' => 'Biz B', 'currency' => 'USD', 'owner_user_id' => $ownerB->id]);
+
+        Tenancy::setUser($ownerA->id);
+        Tenancy::set((int) $bizA->id);
+        $roleA = Role::create(['business_id' => $bizA->id, 'name' => 'Role A']);
+        $activeA = $this->inviteAction->handle($bizA->id, 'a@ex.com', 'Staff A', $roleA->id);
+        $deactiveA = $this->inviteAction->handle($bizA->id, 'da@ex.com', 'Deactive A', $roleA->id);
+        $this->deactivateAction->handle($bizA->id, $deactiveA->id);
+
+        Tenancy::setUser($ownerB->id);
+        Tenancy::set((int) $bizB->id);
+        $roleB = Role::create(['business_id' => $bizB->id, 'name' => 'Role B']);
+        $activeB = $this->inviteAction->handle($bizB->id, 'b@ex.com', 'Staff B', $roleB->id);
+
+        $action = new StaffRosterAction;
+
+        Tenancy::setUser($ownerA->id);
+        Tenancy::set((int) $bizA->id);
+        $rosterA = $action->handle($bizA->id);
+        $this->assertCount(1, $rosterA);
+        $this->assertEquals('Staff A', $rosterA[0]['name']);
+
+        Tenancy::setUser($ownerB->id);
+        Tenancy::set((int) $bizB->id);
+        $rosterB = $action->handle($bizB->id);
+        $this->assertCount(1, $rosterB);
+        $this->assertEquals('Staff B', $rosterB[0]['name']);
+    }
+
     public function test_g21_08_pto_is_workflow_not_platform_decision(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);

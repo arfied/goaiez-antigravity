@@ -27,6 +27,7 @@ body { background: var(--color-canvas); color: var(--color-ink); font-family: sa
             if (! in_array($type, [
                 'hero', 'about', 'services', 'reviews_strip',
                 'booking_button', 'contact', 'faq', 'video_embed',
+                'gallery', 'team',
             ], true)) {
                 continue;
             }
@@ -79,10 +80,20 @@ body { background: var(--color-canvas); color: var(--color-ink); font-family: sa
             return true;
         }
         if ($type === 'faq') {
+            if (isset($block['items']) && is_array($block['items']) && count($block['items']) > 0) {
+                return true;
+            }
+
             return $this->hasScalar($block, 'question') && $this->hasScalar($block, 'answer');
         }
         if ($type === 'video_embed') {
             return $this->hasScalar($block, 'name') && $this->hasScalar($block, 'contentUrl') && $this->hasScalar($block, 'uploadDate');
+        }
+        if ($type === 'gallery') {
+            return isset($block['items']) && is_array($block['items']);
+        }
+        if ($type === 'team') {
+            return isset($block['items']) && is_array($block['items']);
         }
 
         return false;

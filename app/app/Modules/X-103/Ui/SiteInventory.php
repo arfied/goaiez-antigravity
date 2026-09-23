@@ -36,7 +36,7 @@ final class SiteInventory extends Component
 
             $this->dispatch('toast', message: "Crawled {$result['pages']} pages, {$result['refused']} refused");
         } catch (\Throwable $e) {
-            dump($e->getMessage(), $e->getTraceAsString());
+            report($e);
             throw $e;
         }
     }
@@ -51,7 +51,7 @@ final class SiteInventory extends Component
 
             $this->dispatch('toast', message: "Stored {$result['stored']}, skipped {$result['skipped']}, refused {$result['refused']}");
         } catch (\Throwable $e) {
-            dump($e->getMessage(), $e->getTraceAsString());
+            report($e);
             throw $e;
         }
     }
@@ -67,7 +67,7 @@ final class SiteInventory extends Component
             $skippedText = empty($result['skipped']) ? '' : ' (Skipped: '.implode(', ', $result['skipped']).')';
             $this->dispatch('toast', message: "Drafted {$result['pages']} pages with {$result['blocks']} blocks{$skippedText}");
         } catch (\Throwable $e) {
-            dump($e->getMessage(), $e->getTraceAsString());
+            report($e);
             throw $e;
         }
     }
