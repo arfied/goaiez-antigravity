@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X157;
 
+use App\Models\User;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
@@ -11,11 +12,15 @@ use App\Modules\X121\Models\Asset;
 use App\Modules\X121\Models\Person;
 use App\Modules\X155\Models\FormDefinition;
 use App\Modules\X155\Models\FormSubmission;
+use App\Modules\X157\Actions\CustomDomainVerifyAction;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
 use App\Modules\X157\Actions\EdgeRollbackAction;
+use App\Modules\X157\Actions\SitemapRenderAction;
+use App\Modules\X157\Domain\DnsResolver;
 use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
+use App\Modules\X157\Models\CustomDomainRequest;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
 use App\Modules\X157\Ui\EdgeStatusPer;
@@ -42,6 +47,23 @@ class X157Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        app()->instance(DnsResolver::class, new class implements DnsResolver
+        {
+            public function cname(string $domain): ?string
+            {
+                if ($domain === 'acme-roofing.test') {
+                    return parse_url(config('app.url'), PHP_URL_HOST);
+                }
+                if ($domain === 'missing.test') {
+                    return null;
+                }
+                if ($domain === 'other.test') {
+                    return 'other.com';
+                }
+
+                return null;
+            }
+        });
         $this->provisionAction = new EdgeProvisionAction;
         $this->deployAction = app(EdgeDeployAction::class);
         $this->rollbackAction = new EdgeRollbackAction;
@@ -2439,5 +2461,247 @@ class X157Test extends TestCase
         );
         $this->assertStringContainsString('<title id="seo-meta-x176">Fox &amp; Sons Drains</title>', $html);
         $this->assertSame(1, substr_count($html, 'name="description"'));
+    }
+
+    public function test_sitemap_lists_only_deployed_pages_newest_first(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $zone = EdgeZone::create(['business_id' => $biz->id, 'domain_name' => 'acme.com', 'zone_id' => 'z', 'has_valid_ssl' => true]);
+
+        $d1 = Deployment::create(['business_id' => $biz->id, 'edge_zone_id' => $zone->id, 'deploy_hash' => 'h1', 'status' => 'deployed', 'page_id' => 10, 'deployed_at' => now()->subDay()]);
+        $d2 = Deployment::create(['business_id' => $biz->id, 'edge_zone_id' => $zone->id, 'deploy_hash' => 'h2', 'status' => 'rolled_back', 'page_id' => 10, 'deployed_at' => now()->subHours(12)]);
+        $d3 = Deployment::create(['business_id' => $biz->id, 'edge_zone_id' => $zone->id, 'deploy_hash' => 'fox-&-hound', 'status' => 'deployed', 'page_id' => 11, 'deployed_at' => now()]);
+
+        $xml = app(SitemapRenderAction::class)->handle($biz->id);
+
+        $this->assertSame(2, substr_count($xml, '<loc>'));
+        $this->assertStringContainsString('fox-&amp;-hound', $xml);
+        $this->assertStringContainsString($d3->deployed_at->toW3cString(), $xml);
+
+        $pos3 = strpos($xml, 'fox-&amp;-hound');
+        $pos1 = strpos($xml, 'h1');
+        $this->assertTrue($pos3 < $pos1);
+    }
+
+    public function test_sitemap_and_robots_404_for_an_unknown_hash(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        $this->get("/sites/{$biz->id}/unknown_hash/sitemap.xml")->assertStatus(404);
+        $this->get("/sites/{$biz->id}/unknown_hash/robots.txt")->assertStatus(404);
+    }
+
+    public function test_robots_disallows_dni_and_forms_and_names_the_sitemap(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        $zone = EdgeZone::create(['business_id' => $biz->id, 'domain_name' => 'acme.com', 'zone_id' => 'z', 'has_valid_ssl' => true]);
+        Deployment::create(['business_id' => $biz->id, 'edge_zone_id' => $zone->id, 'deploy_hash' => 'h1', 'status' => 'deployed']);
+
+        $txt = $this->get("/sites/{$biz->id}/h1/robots.txt")->getContent();
+        $this->assertStringContainsString("Disallow: /sites/{$biz->id}/h1/dni", $txt);
+        $this->assertStringContainsString("Disallow: /sites/{$biz->id}/h1/forms/", $txt);
+        $this->assertStringContainsString('Sitemap: '.route('x-157.site', ['business' => $biz->id, 'deploy_hash' => 'h1']).'/sitemap.xml', $txt);
+    }
+
+    public function test_another_tenants_pages_never_appear(): void
+    {
+        $ownerA = User::factory()->create();
+        $bizA = TestCase::provisionTenant(['name' => 'Biz A', 'currency' => 'USD', 'owner_user_id' => $ownerA->id]);
+        $zoneA = EdgeZone::create(['business_id' => $bizA->id, 'domain_name' => 'a.com', 'zone_id' => 'z_a', 'has_valid_ssl' => true]);
+        Deployment::create(['business_id' => $bizA->id, 'edge_zone_id' => $zoneA->id, 'deploy_hash' => 'hash-a', 'status' => 'deployed', 'page_id' => 1, 'deployed_at' => now()]);
+
+        $ownerB = User::factory()->create();
+        $bizB = TestCase::provisionTenant(['name' => 'Biz B', 'currency' => 'USD', 'owner_user_id' => $ownerB->id]);
+        Tenancy::setUser($ownerB->id);
+        Tenancy::set((int) $bizB->id);
+
+        $zoneB = EdgeZone::create(['business_id' => $bizB->id, 'domain_name' => 'b.com', 'zone_id' => 'z_b', 'has_valid_ssl' => true]);
+        Deployment::create(['business_id' => $bizB->id, 'edge_zone_id' => $zoneB->id, 'deploy_hash' => 'hash-b', 'status' => 'deployed', 'page_id' => 2, 'deployed_at' => now()]);
+
+        $xml = app(SitemapRenderAction::class)->handle($bizB->id);
+        $this->assertStringContainsString('hash-b', $xml);
+        $this->assertStringNotContainsString('hash-a', $xml);
+    }
+
+    public function test_a_drafted_form_submission_reaches_form_capture(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant Form', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Lead Form',
+            'slug' => 'lead',
+            'steps' => [['required' => ['name', 'phone']]],
+            'schema' => [],
+            'honeypot_field' => 'website_url',
+        ]);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                [
+                    'type' => 'form',
+                    'definition_id' => $form->id,
+                    'fields' => [
+                        ['name' => 'name', 'label' => 'Name', 'type' => 'text'],
+                        ['name' => 'phone', 'label' => 'Phone', 'type' => 'tel'],
+                        ['name' => 'email', 'label' => 'Email', 'type' => 'email'],
+                        ['name' => 'message', 'label' => 'Message', 'type' => 'textarea'],
+                    ],
+                    'required' => ['name', 'phone'],
+                    'honeypot' => 'website_url',
+                ],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $actionUrl = "/sites/{$biz->id}/{$deploy['deploy_hash']}/forms/{$form->id}";
+
+        $res1 = $this->post($actionUrl, [
+            'name' => 'Alice',
+            'phone' => '1234567890',
+            'email' => 'alice@example.com',
+            'message' => 'Hello',
+        ]);
+        $res1->assertStatus(201);
+
+        $submission1 = FormSubmission::where('form_definition_id', $form->id)->first();
+        $this->assertFalse($submission1->is_spam);
+
+        $res2 = $this->post($actionUrl, [
+            'name' => 'Bob',
+            'phone' => '0987654321',
+            'email' => 'bob@example.com',
+            'message' => 'Spam',
+            'website_url' => 'http://spam.com',
+        ]);
+        $res2->assertStatus(422);
+
+        $submission2 = FormSubmission::where('form_definition_id', $form->id)->orderBy('id', 'desc')->first();
+        $this->assertTrue($submission2->is_spam);
+        $this->assertEquals('honeypot_triggered', $submission2->spam_reason);
+    }
+
+    public function test_a_domain_whose_cname_points_at_the_platform_address_is_verified(): void
+    {
+        $biz = TestCase::provisionTenant();
+        CustomDomainRequest::create([
+            'business_id' => $biz->id,
+            'domain' => 'acme-roofing.test',
+            'status' => 'requested',
+        ]);
+
+        $action = app(CustomDomainVerifyAction::class);
+        $action->handle($biz->id);
+
+        $row = CustomDomainRequest::where('business_id', $biz->id)->first();
+        $this->assertSame('verified', $row->status);
+        $this->assertNotNull($row->verified_at);
+        $this->assertNotNull($row->last_checked_at);
+        $this->assertNull($row->failure_reason);
+    }
+
+    public function test_a_domain_with_no_cname_is_unverified_with_the_reason(): void
+    {
+        $biz = TestCase::provisionTenant();
+        CustomDomainRequest::create([
+            'business_id' => $biz->id,
+            'domain' => 'missing.test',
+            'status' => 'requested',
+        ]);
+
+        $action = app(CustomDomainVerifyAction::class);
+        $action->handle($biz->id);
+
+        $row = CustomDomainRequest::where('business_id', $biz->id)->first();
+        $this->assertSame('unverified', $row->status);
+        $this->assertSame('no_cname', $row->failure_reason);
+    }
+
+    public function test_a_domain_pointing_elsewhere_names_where_it_points(): void
+    {
+        $biz = TestCase::provisionTenant();
+        CustomDomainRequest::create([
+            'business_id' => $biz->id,
+            'domain' => 'other.test',
+            'status' => 'requested',
+        ]);
+
+        $action = app(CustomDomainVerifyAction::class);
+        $action->handle($biz->id);
+
+        $row = CustomDomainRequest::where('business_id', $biz->id)->first();
+        $this->assertSame('unverified', $row->status);
+        $this->assertSame('points_elsewhere:other.com', $row->failure_reason);
+    }
+
+    public function test_the_served_site_answers_on_a_verified_custom_host(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-roofing.test', true);
+
+        DB::table('custom_domain_requests')->where('domain', 'acme-roofing.test')->delete();
+        // Use pgsql_migrate so the middleware can see it without transaction isolation issues
+        DB::table('custom_domain_requests')->insert([
+            'business_id' => $biz->id,
+            'domain' => 'acme-roofing.test',
+            'status' => 'verified',
+            'verified_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'My Verified Site',
+            'slug' => 'home',
+            'is_published' => true,
+        ]);
+
+        $commit = app(SitePublishAction::class)->handle($biz->id, $page->id, []);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commit['commit_id'],
+            businessName: $biz->name
+        );
+
+        $res2 = $this->get('http://acme-roofing.test/');
+        $res2->assertSee('<title id="seo-meta-x176">My Verified Site</title>', false);
+        DB::table('custom_domain_requests')->where('domain', 'acme-roofing.test')->delete();
+    }
+
+    public function test_the_app_host_is_never_treated_as_a_custom_domain(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+
+        $res = $this->get("http://{$appHost}/login");
+        $res->assertStatus(200); // the normal app routing
     }
 }

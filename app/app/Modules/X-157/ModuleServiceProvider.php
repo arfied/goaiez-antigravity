@@ -10,6 +10,10 @@ use App\Modules\X103\Events\SitePublished;
 use App\Modules\X137\Actions\CallAttributeAction;
 use App\Modules\X155\Actions\FormCaptureAction;
 use App\Modules\X157\Actions\EdgeDeployAction;
+use App\Modules\X157\Actions\ServeDeploymentAction;
+use App\Modules\X157\Domain\DnsResolver;
+use App\Modules\X157\Domain\SystemDnsResolver;
+use App\Modules\X157\Http\Middleware\ServeVerifiedCustomDomain;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
 use App\Modules\X157\Ui\EdgeStatusPer;
@@ -25,11 +29,12 @@ final class ModuleServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->bind(DnsResolver::class, SystemDnsResolver::class);
     }
 
     public function boot(): void
     {
+        $this->app['router']->pushMiddlewareToGroup('web', ServeVerifiedCustomDomain::class);
         $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
 
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
@@ -40,20 +45,8 @@ final class ModuleServiceProvider extends ServiceProvider
         }
 
         Route::get('/sites/{business}/{deploy_hash}', function (string $business, string $deployHash) {
-            $business = (int) $business;
-            Tenancy::set($business);
-
-            $deployment = Deployment::where('business_id', $business)->where('deploy_hash', $deployHash)->firstOrFail();
-            abort_if($deployment->status !== 'deployed', 404);
-
-            $zone = $deployment->edgeZone;
-            abort_if($zone === null || ! $zone->has_valid_ssl, 404);
-
-            $html = Storage::disk('local')->get("sites/{$deployHash}.html");
-            abort_if($html === null, 404);
-
-            return response($html, 200)->header('Content-Type', 'text/html');
-        })->whereNumber('business');
+            return app(ServeDeploymentAction::class)->page((int) $business, $deployHash);
+        })->name('x-157.site')->whereNumber('business');
 
         Route::get('/sites/{business}/{deploy_hash}/media/{file?}', function (string $business, string $deployHash, string $file = '') {
             if ($file === '') {
@@ -121,6 +114,14 @@ final class ModuleServiceProvider extends ServiceProvider
 
             return response()->json($result, $result['status'] === 'captured' ? 201 : 422);
         })->whereNumber('business')->whereNumber('form');
+
+        Route::get('/sites/{business}/{deploy_hash}/sitemap.xml', function (string $business, string $deployHash) {
+            return app(ServeDeploymentAction::class)->sitemap((int) $business, $deployHash);
+        })->whereNumber('business');
+
+        Route::get('/sites/{business}/{deploy_hash}/robots.txt', function (string $business, string $deployHash) {
+            return app(ServeDeploymentAction::class)->robots((int) $business, $deployHash);
+        })->whereNumber('business');
 
         Event::listen(PageUnpublished::class, function (PageUnpublished $e): void {
             Deployment::where('business_id', $e->businessId)

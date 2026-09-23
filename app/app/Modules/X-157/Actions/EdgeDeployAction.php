@@ -325,6 +325,7 @@ final class EdgeDeployAction
                         'businessName' => $businessName,
                         'deployHash' => $deployHash,
                         'tenant_storage_url_prefix' => route('x-157.site.media', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false).'/',
+                        'form_action_base' => route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: true),
                     ];
                     $html .= app(SiteBlockRenderer::class)->render($contentBlocks, $context);
                 }

@@ -27,7 +27,7 @@ body { background: var(--color-canvas); color: var(--color-ink); font-family: sa
             if (! in_array($type, [
                 'hero', 'about', 'services', 'reviews_strip',
                 'booking_button', 'contact', 'faq', 'video_embed',
-                'gallery', 'team',
+                'gallery', 'team', 'form',
             ], true)) {
                 continue;
             }
@@ -94,6 +94,9 @@ body { background: var(--color-canvas); color: var(--color-ink); font-family: sa
         }
         if ($type === 'team') {
             return isset($block['items']) && is_array($block['items']);
+        }
+        if ($type === 'form') {
+            return isset($block['fields']) && is_array($block['fields']);
         }
 
         return false;
