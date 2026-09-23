@@ -2519,6 +2519,16 @@ final class DefaultsManifest
                 'group' => 'Sites',
                 'description' => 'Maximum number of pages followed on the same host breadth-first when fetching a tenant site.',
             ],
+            'sites.images.max_per_site' => [
+                'seed' => 60,
+                'group' => 'Sites',
+                'description' => 'Maximum number of unique images to store from a single site\'s inventory (D2).',
+            ],
+            'sites.images.max_bytes' => [
+                'seed' => 2000000,
+                'group' => 'Sites',
+                'description' => 'Maximum size of an individual image fetched for inventory storage, in bytes. Must not exceed the FetchGateway\'s own 2 MB ceiling.',
+            ],
             'features.boost_score' => [
                 'seed' => false,
                 'group' => 'Marketing',

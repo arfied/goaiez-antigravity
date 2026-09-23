@@ -6,6 +6,8 @@ namespace App\Modules\X103\Ui;
 
 use App\Models\Location;
 use App\Modules\X103\Actions\SiteCrawlAction;
+use App\Modules\X103\Actions\SiteImagesCopyAction;
+use App\Modules\X103\Models\SiteInventoryImage;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Support\Tenancy;
 use Illuminate\Contracts\View\View;
@@ -37,10 +39,34 @@ final class SiteInventory extends Component
         }
     }
 
+    public function copyImages(SiteImagesCopyAction $action): void
+    {
+        try {
+            $tenantId = Tenancy::idOrFail();
+            $location = Location::where('business_id', $tenantId)->first();
+
+            $result = $action->handle($tenantId, $location ? $location->id : $tenantId);
+
+            $this->dispatch('toast', message: "Stored {$result['stored']}, skipped {$result['skipped']}, refused {$result['refused']}");
+        } catch (\Throwable $e) {
+            dump($e->getMessage(), $e->getTraceAsString());
+            throw $e;
+        }
+    }
+
     public function render(): View
     {
+        $tenantId = Tenancy::id();
+
+        $pages = SiteInventoryPage::latest('fetched_at')->withCount(['images' => function ($query) {
+            $query->where('status', 'stored');
+        }])->get();
+
+        $images = SiteInventoryImage::where('business_id', $tenantId)->get();
+
         return view('x-103::site-inventory', [
-            'pages' => SiteInventoryPage::latest('fetched_at')->get(),
+            'pages' => $pages,
+            'images' => $images,
         ]);
     }
 }

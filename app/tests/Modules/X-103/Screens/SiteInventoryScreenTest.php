@@ -7,11 +7,13 @@ use App\Exceptions\TenantNotResolved;
 use App\Models\Location;
 use App\Models\User;
 use App\Modules\X103\Actions\SiteCrawlAction;
+use App\Modules\X103\Models\SiteInventoryImage;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Modules\X103\Ui\SiteInventory;
 use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -147,4 +149,109 @@ it('honours the max_pages registry cap', function () {
     $page2 = $pages->firstWhere('url', 'https://example.com/page2');
     expect($page2->status)->toBe('fetched')
         ->and($page2->url)->toBe('https://example.com/page2');
+});
+
+it('copies images into tenant storage', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+    $loc = Location::where('business_id', $biz->id)->first();
+    $loc->update([
+        'website_url' => 'https://example.com',
+        'website_confirmed_at' => now(),
+    ]);
+
+    Tenancy::set($biz->id);
+
+    $page = SiteInventoryPage::create([
+        'business_id' => $biz->id,
+        'location_id' => $loc->id,
+        'url' => 'https://example.com',
+        'image_urls' => [
+            'https://example.com/valid.png',
+            'https://example.com/not-image.html',
+            'https://example.com/too-big.png',
+        ],
+    ]);
+
+    $pngBytes = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==');
+
+    Storage::fake('local');
+    Http::fake([
+        '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
+        'https://example.com/valid.png' => Http::response($pngBytes, 200, ['Content-Type' => 'image/png']),
+        'https://example.com/not-image.html' => Http::response('<html></html>', 200, ['Content-Type' => 'text/html']),
+        'https://example.com/too-big.png' => Http::response(str_repeat('a', 2000001), 200, ['Content-Type' => 'image/png']),
+    ]);
+
+    Livewire::actingAs($owner)
+        ->test(SiteInventory::class)
+        ->call('copyImages');
+
+    $images = SiteInventoryImage::where('business_id', $biz->id)->get();
+    expect($images)->toHaveCount(3);
+
+    $valid = $images->firstWhere('source_url', 'https://example.com/valid.png');
+    expect($valid->status)->toBe('stored')
+        ->and($valid->mime)->toBe('image/png')
+        ->and($valid->bytes)->toBe(strlen($pngBytes))
+        ->and($valid->attribution)->toBe('example.com')
+        ->and(Storage::disk('local')->exists($valid->path))->toBeTrue();
+
+    $notImage = $images->firstWhere('source_url', 'https://example.com/not-image.html');
+    expect($notImage->status)->toBe('refused')
+        ->and($notImage->refusal_reason)->toBe('non_image');
+
+    $tooBig = $images->firstWhere('source_url', 'https://example.com/too-big.png');
+    expect($tooBig->status)->toBe('refused')
+        ->and($tooBig->refusal_reason)->toBe('oversize');
+
+    // re-run idempotent
+    Livewire::actingAs($owner)
+        ->test(SiteInventory::class)
+        ->call('copyImages');
+
+    $images = SiteInventoryImage::where('business_id', $biz->id)->get();
+    expect($images)->toHaveCount(3);
+});
+
+it('caps copied images at max_per_site', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+    $loc = Location::where('business_id', $biz->id)->first();
+    $loc->update([
+        'website_url' => 'https://example.com',
+        'website_confirmed_at' => now(),
+    ]);
+
+    Tenancy::set($biz->id);
+    app(DefaultsRegistry::class)->set('sites.images.max_per_site', 1, 'test');
+
+    $page = SiteInventoryPage::create([
+        'business_id' => $biz->id,
+        'location_id' => $loc->id,
+        'url' => 'https://example.com',
+        'image_urls' => [
+            'https://example.com/img1.png',
+            'https://example.com/img2.png',
+        ],
+    ]);
+
+    $pngBytes = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==');
+
+    Storage::fake('local');
+    Http::fake([
+        '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
+        'https://example.com/img1.png' => Http::response($pngBytes, 200, ['Content-Type' => 'image/png']),
+        'https://example.com/img2.png' => Http::response($pngBytes, 200, ['Content-Type' => 'image/png']),
+    ]);
+
+    Livewire::actingAs($owner)
+        ->test(SiteInventory::class)
+        ->call('copyImages');
+
+    $images = SiteInventoryImage::where('business_id', $biz->id)->get();
+    expect($images)->toHaveCount(1);
+    expect($images->first()->source_url)->toBe('https://example.com/img1.png');
 });

@@ -24,4 +24,9 @@ class SiteInventoryPage extends Model implements TenantScoped
         'links_out' => 'array',
         'fetched_at' => 'datetime',
     ];
+
+    public function images()
+    {
+        return $this->hasMany(SiteInventoryImage::class, 'page_id');
+    }
 }
