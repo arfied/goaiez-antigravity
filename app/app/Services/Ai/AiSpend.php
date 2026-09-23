@@ -8,6 +8,7 @@ use App\Enums\AiModel;
 use App\Enums\AiTask;
 use App\Enums\CreditVerdict;
 use App\Models\AiCall;
+use App\Modules\X219\Actions\ModelResolveAction;
 use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Support\Carbon;
@@ -193,8 +194,28 @@ final class AiSpend
      * something: no settings row can point this application at a model it was
      * never priced for.
      */
+    /**
+     * The model that will answer this task.
+     *
+     * Resolution order:
+     * 1. Tenant assignment (ModelResolveAction) if a tenant is set
+     * 2. Platform registry key (ai.model.<task>)
+     * 3. Task default (AiTask::defaultModel())
+     */
     public function modelFor(AiTask $task): AiModel
     {
+        if ($this->hasTenant()) {
+            $action = app(ModelResolveAction::class);
+            $assignment = $action->handle(Tenancy::idOrFail(), $task->value);
+
+            if ($assignment !== null) {
+                $model = AiModel::tryFrom($assignment);
+                if ($model !== null && $model->isEmbedding() === $task->producesEmbedding()) {
+                    return $model;
+                }
+            }
+        }
+
         $configured = $this->registry->stringOrNull($task->settingKey());
 
         if ($configured === null) {
