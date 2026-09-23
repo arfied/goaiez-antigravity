@@ -277,7 +277,7 @@ final class DeliverPlatformMail implements ShouldQueue
             if ($alerts->rangSince(
                 OperatorAlertKind::PlatformMailUndeliverable,
                 $mailer,
-                CarbonImmutable::now()->subHours(OperatorAlerts::MAIL_PATH_REPEAT_HOURS),
+                CarbonImmutable::now()->subHours($alerts->mailPathRepeatHours()),
             )) {
                 return;
             }
@@ -307,7 +307,7 @@ final class DeliverPlatformMail implements ShouldQueue
                     'reason' => $exception instanceof MailNotDeliverable
                         ? $exception->getMessage()
                         : null,
-                    'repeat_quiet_hours' => OperatorAlerts::MAIL_PATH_REPEAT_HOURS,
+                    'repeat_quiet_hours' => $alerts->mailPathRepeatHours(),
                 ],
                 // ⛔ **STATED RATHER THAN DETECTED, ON
                 // {@see \App\Services\Ops\PlatformHealthChecks}' REASONING.**

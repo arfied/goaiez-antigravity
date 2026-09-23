@@ -411,7 +411,7 @@ final class AiSpend
      * The tenant comes from BelongsToTenant, so this cannot be written against a
      * business other than the ambient one.
      */
-    public function record(AiTask $task, AiResponse $response): AiCall
+    public function record(AiTask $task, AiResponse $response, int $promptId, int $promptVersion): AiCall
     {
         $cost = $response->costInHundredthsOfCents();
         $retail = $this->credits->retailFor($cost);
@@ -426,6 +426,8 @@ final class AiSpend
             'retail_hundredths_cents' => $retail,
             'refused' => $response->refused,
             'failure_reason' => $response->failureReason,
+            'prompt_id' => $promptId,
+            'prompt_version' => $promptVersion,
         ]);
 
         // ⛔ THE DEBIT, AND IT COMES AFTER THE ROW ON PURPOSE (3424). The provider
@@ -464,7 +466,7 @@ final class AiSpend
      * The tenant comes from BelongsToTenant, so this cannot be written against a
      * business other than the ambient one.
      */
-    public function recordEmbedding(AiTask $task, EmbeddingResponse $response): AiCall
+    public function recordEmbedding(AiTask $task, EmbeddingResponse $response, int $promptId, int $promptVersion): AiCall
     {
         $cost = $response->costInHundredthsOfCents();
         $retail = $this->credits->retailFor($cost);
@@ -479,6 +481,8 @@ final class AiSpend
             'retail_hundredths_cents' => $retail,
             'refused' => false,
             'failure_reason' => $response->failureReason,
+            'prompt_id' => $promptId,
+            'prompt_version' => $promptVersion,
         ]);
 
         // ⛔ EMBEDDINGS DEBIT TOO, AND LEAVING THEM OUT WOULD HAVE BEEN THE

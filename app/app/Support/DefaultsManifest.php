@@ -7,10 +7,30 @@ namespace App\Support;
 use App\Enums\AiTask;
 use App\Enums\Plan;
 use App\Enums\StoredObjectKind;
+use App\Services\Actuation\SiteChanges;
+use App\Services\Actuation\SiteMeasurements;
+use App\Services\Actuation\SpeedDecider;
+use App\Services\Actuation\SpeedFixes;
+use App\Services\Actuation\T3AltText as AltText;
+use App\Services\Actuation\T3FaqBlock as FaqBlock;
+use App\Services\Actuation\T3InternalLink as InternalLink;
+use App\Services\Actuation\T3MetaUpsert as MetaUpsert;
+use App\Services\Actuation\WordPress\WordPressRestClient;
+use App\Services\Billing\PurchaseReconciliation;
+use App\Services\Gbp\ZernioSpend;
 use App\Services\Mail\MailDrivers;
 use App\Services\Mail\MailQuota;
 use App\Services\Mail\MailSendRate;
+use App\Services\Ops\OperatorAlerts;
+use App\Services\Ops\PlatformHealthChecks;
+use App\Services\Ops\ScheduledRunMeter;
+use App\Services\Pixel\IngestRejects;
+use App\Services\Support\DataRequests;
 use App\Services\Visibility\ReviewLossDetection;
+use App\Services\Warehouse\L1Derivation;
+use App\Services\Warehouse\PixelSightings;
+use App\Services\Warehouse\Replayer;
+use App\Services\Warehouse\WarehouseRetention;
 
 /**
  * THE SEED MANIFEST — doc `38` Part 2's "one reviewed file", CFG1.
@@ -273,6 +293,18 @@ final class DefaultsManifest
                 'seed' => 500_000,
                 'group' => 'AI',
                 'description' => 'Per-tenant AI spend ceiling for a calendar month, in hundredths of a cent of OUR cost — not of the tenant\'s charge, which is eight times it and lives in ai_calls.retail_hundredths_cents (3304, 3358). 500,000 is $50. ⛔ DECISION 3293 DELETED THE PER-TENANT DOLLAR COST CAP AND 3295 SAYS THIS KEY GOES WITH IT: "an AI-only dollar cap is still a dollar cap, so it goes the same way, and the AI credit balance replaces it." IT IS STILL HERE, DELIBERATELY, AND 3820 IS THE ARGUMENT. The AI credit balance now exists and does refuse (3419, 3424, 3608) — but only for a tenant who HAS a balance. 3609 permits an account that has never been funded, because gating a bare zero would have stopped all AI for every tenant at once, and the unfunded set is not a corner of the plan ladder: Subscriptions provisions every new business as Plan::Base/pending_checkout, and ResetMonthlyCredits grants nothing at all to any account TrialEligibility refuses — which is every account with no confirmed Google listing. Deleting this key therefore handed every unverified account unlimited AI, permanently, in a state under the tenant\'s own control. It is OUTER CONTAINMENT behind the balance gate: AiSpend::allows() asks the balance first and this second. ⚠️ IT IS NOT RULE 43\'S CAP, which the owner deleted: rule 43 capped a tenant\'s TOTAL service cost, and messaging, Places and everything else sit outside this key entirely (3107). The four plan.*.cost_cap.* entitlements that did claim to be rule 43\'s cap are gone (3364) — they had no reader in app/ at all. This one fires. ⚠️ At AiTask\'s defaults a busy tenant costs about 61c a month, so it should never fire; if it does, read it as a signal rather than raise it. It comes out when the monthly reset has demonstrably granted in production and the owner has ruled on the unfunded account.',
+            ],
+
+            'ai.eval.max_cases_per_run' => [
+                'seed' => 20,
+                'group' => 'AI',
+                'description' => 'Maximum number of test cases to evaluate in a single evaluation run (C2c).',
+            ],
+
+            'ai.eval.similarity_pass_pct' => [
+                'seed' => 70,
+                'group' => 'AI',
+                'description' => 'Percentage score from similar_text above which a golden case evaluation passes (C2c).',
             ],
 
             /*
@@ -2722,6 +2754,71 @@ final class DefaultsManifest
                 'group' => 'Content',
                 'description' => 'Whether this platform may write to a tenant\'s own website — pages published and fixes applied on their site, on its own, without anybody here pressing anything again. ⛔ This alone answers nothing: a website adapter must also be connected on this deployment, and every write is refused unless that adapter reports the site reachable. ⚠️ Which adapter a deployment has connected is a setting on the machine, not in this database, so nothing written here can tell you — the confirmation shown when you turn this on states what this deployment actually has. ⚠️ It does not switch off the advisory hand-off, which transmits nothing to any website and needs no revert. Turning it off takes one press.',
             ],
+            'actuation.faq.max_items' => [
+                'seed' => FaqBlock::MAX_ITEMS,
+                'group' => 'Content',
+                'description' => 'The maximum number of items allowed in a FAQ block.',
+            ],
+            'actuation.faq.max_answer_chars' => [
+                'seed' => FaqBlock::MAX_ANSWER,
+                'group' => 'Content',
+                'description' => 'The maximum number of characters allowed in a FAQ answer.',
+            ],
+            'actuation.alt_text.max_chars' => [
+                'seed' => AltText::MAX_TEXT,
+                'group' => 'Content',
+                'description' => 'The maximum number of characters allowed in alt text.',
+            ],
+            'actuation.internal_link.max_text_chars' => [
+                'seed' => InternalLink::MAX_TEXT,
+                'group' => 'Content',
+                'description' => 'The maximum number of characters allowed in an internal link text.',
+            ],
+            'actuation.meta.max_content_chars' => [
+                'seed' => MetaUpsert::MAX_CONTENT,
+                'group' => 'Content',
+                'description' => 'The maximum number of characters allowed in a meta tag content attribute.',
+            ],
+            'speed.min_hours_between_fixes' => [
+                'seed' => SpeedFixes::MINIMUM_HOURS_BETWEEN_FIXES,
+                'group' => 'Content',
+                'description' => 'The minimum number of hours that must elapse before a subsequent speed fix can be applied.',
+            ],
+            'speed.baseline_days' => [
+                'seed' => SpeedDecider::BASELINE_DAYS,
+                'group' => 'Content',
+                'description' => 'The number of days to measure performance before applying a speed fix.',
+            ],
+            'sites.measure.window_starts_days' => [
+                'seed' => SiteMeasurements::MEASURED_WINDOW_STARTS_DAYS,
+                'group' => 'Content',
+                'description' => 'The number of days after a site change when the measurement window begins.',
+            ],
+            'sites.measure.window_ends_days' => [
+                'seed' => SiteMeasurements::MEASURED_WINDOW_ENDS_DAYS,
+                'group' => 'Content',
+                'description' => 'The number of days after a site change when the measurement window ends.',
+            ],
+            'sites.measure.baseline_days' => [
+                'seed' => SiteMeasurements::BASELINE_DAYS,
+                'group' => 'Content',
+                'description' => 'The number of days to measure performance prior to a site change for comparison.',
+            ],
+            'sites.revert.attempt_ceiling' => [
+                'seed' => SiteMeasurements::REVERT_ATTEMPT_CEILING,
+                'group' => 'Content',
+                'description' => 'The maximum number of times to attempt reverting a site change before giving up.',
+            ],
+            'sites.undo.in_progress_minutes' => [
+                'seed' => SiteChanges::UNDO_IN_PROGRESS_MINUTES,
+                'group' => 'Content',
+                'description' => 'The maximum time in minutes allowed for an undo operation before it is considered stuck or failed.',
+            ],
+            'wordpress.timeout_seconds' => [
+                'seed' => WordPressRestClient::TIMEOUT_SECONDS,
+                'group' => 'Content',
+                'description' => 'The timeout in seconds for requests made to a WordPress site via the REST API.',
+            ],
 
             /*
              * Doc `16` §15.3's volume caps — *"deliberately conservative"* —
@@ -2855,7 +2952,6 @@ final class DefaultsManifest
                 'group' => 'Agency',
                 'description' => 'The agency discount off voice, in basis points (P-008 2026-09-05).',
             ],
-
             'sites.draft.about_max_chars' => [
                 'seed' => 1200,
                 'group' => 'Sites',
@@ -2872,6 +2968,130 @@ final class DefaultsManifest
                 'seed' => 4,
                 'group' => 'Sites',
                 'description' => 'Minimum rating required for a review to be included in the drafted reviews strip block.',
+            ],
+            'signals.decay.half_life_days' => [
+                'seed' => 14,
+                'group' => 'Signals',
+                'description' => 'The default half-life in days for signal decay models (C1).',
+            ],
+            'signals.decay.rate_pct' => [
+                'seed' => 5.0,
+                'group' => 'Signals',
+                'description' => 'The default decay rate percentage for signal decay models (C1).',
+            ],
+            'ai.eval.pass_threshold_pct' => [
+                'seed' => 90,
+                'group' => 'Ai',
+                'description' => 'Threshold percentage for an AI evaluation to pass (C2b).',
+            ],
+            'ai.eval.max_cases_per_set' => [
+                'seed' => 50,
+                'group' => 'Ai',
+                'description' => 'Maximum number of cases kept in a golden set before the oldest is dropped (C2b).',
+            ],
+            'ops.alerts.push_budget_per_kind' => [
+                'seed' => OperatorAlerts::PUSH_BUDGET_PER_KIND,
+                'group' => 'Operations',
+                'description' => 'Operator alerts push budget per kind.',
+            ],
+            'ops.alerts.push_budget_hours' => [
+                'seed' => OperatorAlerts::PUSH_BUDGET_HOURS,
+                'group' => 'Operations',
+                'description' => 'Operator alerts push budget hours.',
+            ],
+            'ops.alerts.mail_path_repeat_hours' => [
+                'seed' => OperatorAlerts::MAIL_PATH_REPEAT_HOURS,
+                'group' => 'Operations',
+                'description' => 'Operator alerts mail path repeat hours.',
+            ],
+            'ops.alerts.summary_limit' => [
+                'seed' => OperatorAlerts::SUMMARY_LIMIT,
+                'group' => 'Operations',
+                'description' => 'Operator alerts summary limit.',
+            ],
+            'ops.alerts.min_opening' => [
+                'seed' => OperatorAlerts::MIN_OPENING,
+                'group' => 'Operations',
+                'description' => 'Operator alerts minimum opening.',
+            ],
+            'ops.alerts.retention_days' => [
+                'seed' => OperatorAlerts::RETENTION_DAYS,
+                'group' => 'Operations',
+                'description' => 'Operator alerts retention days.',
+            ],
+            'warehouse.bot_threshold' => [
+                'seed' => L1Derivation::BOT_THRESHOLD,
+                'group' => 'Pixel',
+                'description' => 'Warehouse bot threshold.',
+            ],
+            'warehouse.attribution_window_days' => [
+                'seed' => Replayer::ATTRIBUTION_WINDOW_DAYS,
+                'group' => 'Pixel',
+                'description' => 'Warehouse attribution window days.',
+            ],
+            'warehouse.sightings_fresh_days' => [
+                'seed' => PixelSightings::FRESH_DAYS,
+                'group' => 'Pixel',
+                'description' => 'Warehouse sightings fresh days.',
+            ],
+            'warehouse.l2_retention_days' => [
+                'seed' => WarehouseRetention::L2_RETENTION_DAYS,
+                'group' => 'Pixel',
+                'description' => 'Warehouse L2 retention days.',
+            ],
+            'billing.reconciliation.minimum_age_minutes' => [
+                'seed' => PurchaseReconciliation::MINIMUM_AGE_MINUTES,
+                'group' => 'Billing',
+                'description' => 'Minimum age in minutes for purchase reconciliation.',
+            ],
+            'billing.reconciliation.lookback_days' => [
+                'seed' => PurchaseReconciliation::LOOKBACK_DAYS,
+                'group' => 'Billing',
+                'description' => 'Lookback days for purchase reconciliation.',
+            ],
+            'billing.reconciliation.default_batch' => [
+                'seed' => PurchaseReconciliation::DEFAULT_BATCH,
+                'group' => 'Billing',
+                'description' => 'Default batch size for purchase reconciliation.',
+            ],
+            'pixel.rejects.retention_days' => [
+                'seed' => IngestRejects::RETENTION_DAYS,
+                'group' => 'Pixel',
+                'description' => 'Retention days for ingest rejects.',
+            ],
+            'pixel.rejects.recent_window_hours' => [
+                'seed' => IngestRejects::RECENT_WINDOW_HOURS,
+                'group' => 'Pixel',
+                'description' => 'Recent window in hours for ingest rejects.',
+            ],
+            'pixel.rejects.tenant_window_hours' => [
+                'seed' => IngestRejects::TENANT_WINDOW_HOURS,
+                'group' => 'Pixel',
+                'description' => 'Tenant window in hours for ingest rejects.',
+            ],
+            'pixel.rejects.origins_per_hour' => [
+                'seed' => IngestRejects::ORIGINS_PER_HOUR,
+                'group' => 'Pixel',
+                'description' => 'Origins per hour for ingest rejects.',
+            ],
+            'ops.health.credential_repeat_days' => [
+                'seed' => PlatformHealthChecks::CREDENTIAL_REPEAT_DAYS,
+                'group' => 'Operations',
+                'description' => 'Credential repeat days for platform health checks.',
+            ],
+            'ops.runs.failed_run_repeat_hours' => [
+                'seed' => ScheduledRunMeter::FAILED_RUN_REPEAT_HOURS,
+                'group' => 'Operations',
+                'description' => 'Failed run repeat hours for scheduled run meter.',
+            ],
+            'support.data_requests.statutory_due_days' => [
+                'seed' => DataRequests::STATUTORY_DUE_DAYS,
+                'group' => 'Operations',
+                'description' => 'The statutory period. Lowering it is fine, raising it is a legal question.',
+            ],
+            'gbp.zernio.free_tier_credit_cents' => [
+                'seed' => ZernioSpend::FREE_TIER_CREDIT_CENTS,
+                'description' => 'Free tier credit in cents for Zernio spend.',
             ],
         ];
 

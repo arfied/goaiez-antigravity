@@ -208,6 +208,8 @@ class X136ScreensTest extends TestCase
         $action = new SignalScoreAction;
         $action->recordAndScore($this->businessId, 'p1', 'hiring', [], 80.0);
 
+        DecayModel::where('business_id', $this->businessId)->delete();
+
         Livewire::test(SignalVolumePrecisionView::class, ['businessId' => $this->businessId])
             ->assertSee('hiring')
             ->assertSee('No decay model yet. A model needs 30 days of events.');

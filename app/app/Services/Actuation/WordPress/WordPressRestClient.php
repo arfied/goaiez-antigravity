@@ -7,6 +7,7 @@ namespace App\Services\Actuation\WordPress;
 use App\Enums\OutboundSiteRefusal;
 use App\Exceptions\WordPressRequestFailed;
 use App\Services\Actuation\SiteSnapshot;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\OutboundSiteBudget;
 use App\Support\PublicAddress;
 use App\Support\VendorLog;
@@ -191,6 +192,8 @@ use Illuminate\Support\Facades\Http;
  */
 final class WordPressRestClient
 {
+    public function __construct(private readonly DefaultsRegistry $registry) {}
+
     /**
      * The fields a change set may name, and the core REST arguments they are.
      *
@@ -221,7 +224,7 @@ final class WordPressRestClient
 
     private const int CONNECT_TIMEOUT_SECONDS = 5;
 
-    private const int TIMEOUT_SECONDS = 15;
+    public const int TIMEOUT_SECONDS = 15;
 
     /**
      * Find the REST root of a site, or fail.
@@ -1225,7 +1228,7 @@ final class WordPressRestClient
     private function anonymous(): PendingRequest
     {
         return Http::connectTimeout(self::CONNECT_TIMEOUT_SECONDS)
-            ->timeout(self::TIMEOUT_SECONDS)
+            ->timeout($this->registry->int('wordpress.timeout_seconds'))
             ->acceptJson()
             // ⚠️ **BUILT FROM CONFIGURATION RATHER THAN WRITTEN OUT.** A site
             // owner reading their access log deserves to know who is editing

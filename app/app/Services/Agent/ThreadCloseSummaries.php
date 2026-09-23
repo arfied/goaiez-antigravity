@@ -137,6 +137,7 @@ final class ThreadCloseSummaries
             task: AiTask::Conversation,
             prompt: $prompt,
             system: $this->system(),
+            promptKey: 'thread.close_summary',
         ));
 
         if (! $response->isUsable() || $response->text === null) {

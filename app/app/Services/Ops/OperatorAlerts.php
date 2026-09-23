@@ -52,7 +52,7 @@ use Throwable;
  * is what keeps the second incident audible after the first one.
  *
  * ⛔ **AND FOR ONE POPULATION OF RAISERS THE DEDUPE IS NOT A RATE LIMIT AT ALL,
- * WHICH IS THE FINDING BEHIND {@see self::PUSH_BUDGET_PER_KIND}** (7820–7839).
+ * WHICH IS THE FINDING BEHIND {@see $this->pushBudgetPerKind()}** (7820–7839).
  * *"Per `(kind, subject)`"* bounds nothing when the **subject is a tenant id and
  * a stranger can pick the tenant**: two raisers run on the unauthenticated pixel
  * collector, their subjects are business ids, and a tenant's pixel key is public
@@ -105,7 +105,7 @@ use Throwable;
  *
  * ⛔ **THAT SENTENCE ENDED "INTO A TABLE NOTHING PRUNES" AND IT STOPPED BEING
  * TRUE ON 2026-08-22 — BOTH READINGS KEPT AND DATED** (7520–7539).
- * {@see self::prune()} exists and {@see self::RETENTION_DAYS} is a year.
+ * {@see self::prune()} exists and {@see $this->retentionDays()} is a year.
  * ⚠️ **THE PROBE'S ARGUMENT IS UNTOUCHED AND IT IS WORTH SAYING WHY**: a
  * fabricated incident that expires in twelve months is not meaningfully less
  * expensive than one that never expires, because every cost this paragraph
@@ -166,7 +166,7 @@ final class OperatorAlerts
      * Keeping a closing sentence at the cost of that leaves a text saying what
      * to do about something it has not named.
      */
-    private const int MIN_OPENING = 80;
+    public const int MIN_OPENING = 80;
 
     /**
      * The narrowest and the widest quiet window an operator may set (7580-7599).
@@ -251,7 +251,7 @@ final class OperatorAlerts
      * week is one somebody rediscovers, where a mute measured in months is one
      * nobody remembers setting.
      *
-     * ⛔ **A CONSTANT AND NOT A REGISTRY KEY**, on {@see self::RETENTION_DAYS}'
+     * ⛔ **A CONSTANT AND NOT A REGISTRY KEY**, on {@see $this->retentionDays()}'
      * argument: a ceiling on a mute, editable from the same screen as the mute,
      * is not a ceiling. Raising this is a deploy and a review, which is the
      * right amount of friction for *"may this platform's pager be off for
@@ -397,7 +397,7 @@ final class OperatorAlerts
      * have spoken on day one of five and on none of the other four.
      *
      * ⚠️ **IN CODE RATHER THAN IN THE REGISTRY**, on
-     * {@see self::PUSH_BUDGET_HOURS}' argument: there is nothing about this
+     * {@see $this->pushBudgetHours()}' argument: there is nothing about this
      * platform's traffic to tune it against, and an operator handed the box is
      * handed the ability to set it to a year — which on this bell is the same
      * edit as switching it off.
@@ -620,18 +620,18 @@ final class OperatorAlerts
      * whose worst case *is* computable has a lint of its own over the live
      * schedule — see `ScheduledRunMeterTest`.
      *
-     * @return string never longer than {@see self::SUMMARY_LIMIT}
+     * @return string never longer than {@see app(self::class)->summaryLimit()}
      */
     public static function clamp(string $summary): string
     {
-        if (mb_strlen($summary) <= self::SUMMARY_LIMIT) {
+        if (mb_strlen($summary) <= app(self::class)->summaryLimit()) {
             return $summary;
         }
 
         $closing = self::closingSentence($summary);
 
         if ($closing !== null) {
-            $room = self::SUMMARY_LIMIT - mb_strlen(self::ELISION) - mb_strlen($closing);
+            $room = app(self::class)->summaryLimit() - mb_strlen(self::ELISION) - mb_strlen($closing);
 
             // ⛔ **A FLOOR, BECAUSE KEEPING THE ACTION AT THE COST OF THE
             // SUBJECT IS NOT AN IMPROVEMENT.** Every summary here opens with
@@ -640,12 +640,12 @@ final class OperatorAlerts
             // this has consumed the only words that say what the alert is
             // about. Below the floor the message is better read as truncated
             // than as re-ordered.
-            if ($room >= self::MIN_OPENING) {
+            if ($room >= app(self::class)->minOpening()) {
                 return rtrim(mb_substr($summary, 0, $room)).self::ELISION.$closing;
             }
         }
 
-        return rtrim(rtrim(mb_substr($summary, 0, self::SUMMARY_LIMIT - mb_strlen(self::ELISION))).self::ELISION);
+        return rtrim(rtrim(mb_substr($summary, 0, app(self::class)->summaryLimit() - mb_strlen(self::ELISION))).self::ELISION);
     }
 
     /**
@@ -682,10 +682,40 @@ final class OperatorAlerts
     }
 
     public function __construct(
-        private readonly DefaultsRegistry $defaults,
+        private readonly DefaultsRegistry $registry,
         private readonly PlatformMailer $mailer,
         private readonly PlatformTexter $texter,
     ) {}
+
+    public function pushBudgetPerKind(): int
+    {
+        return $this->registry->int('ops.alerts.push_budget_per_kind');
+    }
+
+    public function pushBudgetHours(): int
+    {
+        return $this->registry->int('ops.alerts.push_budget_hours');
+    }
+
+    public function mailPathRepeatHours(): int
+    {
+        return $this->registry->int('ops.alerts.mail_path_repeat_hours');
+    }
+
+    public function summaryLimit(): int
+    {
+        return $this->registry->int('ops.alerts.summary_limit');
+    }
+
+    public function minOpening(): int
+    {
+        return $this->registry->int('ops.alerts.min_opening');
+    }
+
+    public function retentionDays(): int
+    {
+        return $this->registry->int('ops.alerts.retention_days');
+    }
 
     /**
      * Ring the bell, unless it has already rung recently for this subject.
@@ -706,7 +736,7 @@ final class OperatorAlerts
      *                           **Never a customer, a phone number, an address
      *                           or a vendor's raw error string.**
      *                           ⚠️ **PUT THE ACTION IN THE LAST SENTENCE.**
-     *                           Over {@see self::SUMMARY_LIMIT} characters and
+     *                           Over {@see app(self::class)->summaryLimit()} characters and
      *                           {@see self::clamp()} elides the **middle**,
      *                           keeping the opening and the closing sentence —
      *                           so the words at risk are the ones in between,
@@ -789,7 +819,7 @@ final class OperatorAlerts
      * ⛔ **"THE ONE CALLER TODAY IS `PlatformHealthChecks` ON THE CREDENTIAL
      * BELL" WAS TRUE FOR ONE WAVE AND THERE HAVE BEEN TWO SINCE — AND THE COUNT
      * IS DELIBERATELY NOT RESTATED (9587).** 9370's platform-mail bell is the
-     * second, bounded by {@see self::MAIL_PATH_REPEAT_HOURS} rather than by
+     * second, bounded by {@see $this->mailPathRepeatHours()} rather than by
      * `PlatformHealthChecks::CREDENTIAL_REPEAT_DAYS`, and it was raised from a
      * queued job's `failed()` hook on the same day this paragraph was written.
      * **A tally of callers in a docblock is 2505's shape at its cheapest** —
@@ -872,7 +902,7 @@ final class OperatorAlerts
     {
         return min(
             self::MAX_QUIET_MINUTES,
-            max(self::MIN_QUIET_MINUTES, $this->defaults->int(self::QUIET_KEY)),
+            max(self::MIN_QUIET_MINUTES, $this->registry->int(self::QUIET_KEY)),
         );
     }
 
@@ -930,7 +960,7 @@ final class OperatorAlerts
      * clamp is the inner one**, which is 398 exactly: an outer guard refusing
      * first is what makes an inner guard unfalsifiable, and deleting the inner
      * one leaves a green suite and a delete that re-arms the pager the moment
-     * either constant moves — {@see self::RETENTION_DAYS} shortened, or the
+     * either constant moves — {@see $this->retentionDays()} shortened, or the
      * ceiling raised, both of which are one-line edits somebody will make.
      * ⚠️ **`$keepDays` is a caller's parameter rather than a constant read
      * here**, so the crossing is reachable today with entirely ordinary settings
@@ -1011,7 +1041,7 @@ final class OperatorAlerts
      * throw stays inside the `try` and outside the delete, which is what stops a
      * partial sweep re-arming the pager.
      *
-     * @param  int  $keepDays  {@see self::RETENTION_DAYS}, passed by the caller
+     * @param  int  $keepDays  {@see $this->retentionDays()}, passed by the caller
      *                         rather than read here, on `PlatformHealth::prune()`'s
      *                         shape.
      * @return int rows removed — `0` where the delete could not run at all,
@@ -1124,7 +1154,7 @@ final class OperatorAlerts
      * **first and unconditionally**, before either channel is attempted.
      * ⛔ **THIS READ "ON A TABLE WITH NO DELETE PATH ANYWHERE IN THIS
      * APPLICATION" UNTIL 2026-08-22** — {@see self::prune()} is that path now,
-     * at {@see self::RETENTION_DAYS}. So proving the
+     * at {@see $this->retentionDays()}. So proving the
      * pager worked left a record of an incident that never happened, for a year:
      * in the board's *still ringing* section for a day, at the top of its
      * severity band ahead of whatever real thing an operator should have opened
@@ -1292,14 +1322,14 @@ final class OperatorAlerts
      */
     private function alertAddress(): ?string
     {
-        $address = trim((string) $this->defaults->stringOrNull(self::EMAIL_KEY));
+        $address = trim((string) $this->registry->stringOrNull(self::EMAIL_KEY));
 
         return $address === '' ? null : $address;
     }
 
     private function alertNumber(): ?string
     {
-        $number = trim((string) $this->defaults->stringOrNull(self::SMS_KEY));
+        $number = trim((string) $this->registry->stringOrNull(self::SMS_KEY));
 
         return $number === '' ? null : $number;
     }
@@ -1368,7 +1398,7 @@ final class OperatorAlerts
             Log::warning('operator alert summary did not fit the column', [
                 'kind' => $kind->value,
                 'subject' => $subject,
-                'limit' => self::SUMMARY_LIMIT,
+                'limit' => app(self::class)->summaryLimit(),
                 'length' => mb_strlen($summary),
             ]);
 
@@ -1430,8 +1460,8 @@ final class OperatorAlerts
                 'kind' => $kind->value,
                 'subject' => $subject,
                 'origin' => $origin->value,
-                'pushes_per_kind' => self::PUSH_BUDGET_PER_KIND,
-                'budget_hours' => self::PUSH_BUDGET_HOURS,
+                'pushes_per_kind' => $this->pushBudgetPerKind(),
+                'budget_hours' => $this->pushBudgetHours(),
             ]);
 
             // ⛔ **RECORDED ON THE ROW, BECAUSE TWO NULLS ALREADY MEANT SOMETHING
@@ -1526,7 +1556,7 @@ final class OperatorAlerts
                 return;
             }
 
-            $since = $now->subHours(self::PUSH_BUDGET_HOURS);
+            $since = $now->subHours($this->pushBudgetHours());
 
             /** @var object{recorded: int|string, subjects: int|string}|null $totals */
             $totals = OperatorAlert::query()
@@ -1564,8 +1594,8 @@ final class OperatorAlerts
                     .'being sent. %s of that kind have been recorded in that time, about %s different '
                     .'things. Open the alert board.',
                     $flooded->headline(),
-                    self::PUSH_BUDGET_PER_KIND,
-                    self::PUSH_BUDGET_HOURS,
+                    $this->pushBudgetPerKind(),
+                    $this->pushBudgetHours(),
                     number_format($recorded),
                     number_format($subjects),
                 ),
@@ -1573,8 +1603,8 @@ final class OperatorAlerts
                     // ⚠️ The kind's own value, never its headline: this is the
                     // key an incident review filters the board by.
                     'flooded_kind' => $flooded->value,
-                    'pushes_per_kind' => self::PUSH_BUDGET_PER_KIND,
-                    'budget_hours' => self::PUSH_BUDGET_HOURS,
+                    'pushes_per_kind' => $this->pushBudgetPerKind(),
+                    'budget_hours' => $this->pushBudgetHours(),
                     'recorded' => $recorded,
                     // ⛔ **THE FIGURE THAT IS THE DIAGNOSIS** (7962). One kind
                     // across nine hundred accounts and nine hundred separate
@@ -1629,13 +1659,13 @@ final class OperatorAlerts
     {
         $pushed = OperatorAlert::query()
             ->where('kind', $kind->value)
-            ->where('fired_at', '>=', $now->subHours(self::PUSH_BUDGET_HOURS))
+            ->where('fired_at', '>=', $now->subHours($this->pushBudgetHours()))
             ->where(static function (Builder $query): void {
                 $query->whereNotNull('emailed_at')->orWhereNotNull('texted_at');
             })
             ->count();
 
-        return $pushed >= self::PUSH_BUDGET_PER_KIND;
+        return $pushed >= $this->pushBudgetPerKind();
     }
 
     /**
@@ -1664,7 +1694,7 @@ final class OperatorAlerts
         }
 
         // ⛔ **THE WORDS THAT WERE WRITTEN, NOT THE WORDS THAT FITTED** (9274).
-        // `summary` is bounded at {@see self::SUMMARY_LIMIT} because it has to
+        // `summary` is bounded at {@see app(self::class)->summaryLimit()} because it has to
         // survive a text message; an email has no such column and no such
         // reader. Where {@see self::clamp()} had to elide, the whole sentence is
         // on the row already — `context.summary_full` — so this costs a read
