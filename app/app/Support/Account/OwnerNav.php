@@ -669,6 +669,7 @@ final class OwnerNav
             OwnerNavItem::make('Demand by trade', 'x-130.coverage-by-trade', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('WhatsApp templates', 'c-whatsapp.template-status-card', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Template approval queue', 'c-whatsapp.template-approval-queue', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('WhatsApp conversations', 'c-whatsapp.thread', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Data coming in', 'x-156.ingest-volume-by', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Rows we could not take', 'x-156.rejectedrows-list', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Onboarding checks', 'x-118.groundcheck', OwnerNavItem::GROUP_CATALOG),
