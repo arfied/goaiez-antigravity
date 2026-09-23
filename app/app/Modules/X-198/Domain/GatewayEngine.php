@@ -63,6 +63,16 @@ final class GatewayEngine
         );
     }
 
+    public function hasConnectedMerchant(int $businessId): bool
+    {
+        return MerchantConnection::where('business_id', $businessId)->where('is_connected', true)->exists();
+    }
+
+    public function paymentCount(int $businessId): int
+    {
+        return Payment::where('business_id', $businessId)->count();
+    }
+
     /**
      * Idempotent payment capture (TEST ANCHOR, G1-23, G1-34, G17-04).
      * Only accepts payment tokens; never touches raw credentials.

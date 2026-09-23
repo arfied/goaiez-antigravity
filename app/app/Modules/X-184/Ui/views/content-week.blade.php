@@ -2,6 +2,32 @@
     <div class="p-4 space-y-4">
         <h2 class="text-lg font-bold text-ink">Posts planned for your week</h2>
 
+        <form wire:submit="proposePlan" class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
+            <div class="font-bold text-ink">Propose Plan</div>
+            @if($success)
+                <div class="text-ink mb-2">{{ $success }}</div>
+            @endif
+            @if($error)
+                <div class="text-ink font-bold mb-2">{{ $error }}</div>
+            @endif
+
+            <label class="text-sm text-ink-2">Week Label</label>
+            <input type="text" wire:model="weekLabel" class="border rounded p-2 text-ink flex-1 bg-surface">
+
+            <label class="text-sm text-ink-2">Source Event</label>
+            <input type="text" wire:model="itemSourceEvent" class="border rounded p-2 text-ink flex-1 bg-surface">
+
+            <label class="text-sm text-ink-2">Topic Theme</label>
+            <input type="text" wire:model="itemTopicTheme" class="border rounded p-2 text-ink flex-1 bg-surface">
+
+            <label class="text-sm text-ink-2">Channel</label>
+            <input type="text" wire:model="itemChannel" class="border rounded p-2 text-ink flex-1 bg-surface">
+
+            <div>
+                <button type="submit" class="bg-surface text-ink border rounded p-2">Propose</button>
+            </div>
+        </form>
+
         <div wire:loading.delay wire:target="approveCadence, scheduleItem">
             <x-ui.skeleton label="Loading content plans…" :lines="3" />
         </div>

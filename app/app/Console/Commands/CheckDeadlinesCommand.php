@@ -2,8 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Business;
+use App\Models\User;
+use App\Support\Tenancy;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class CheckDeadlinesCommand extends Command
@@ -14,6 +18,35 @@ class CheckDeadlinesCommand extends Command
 
     public function handle()
     {
+        User::query()
+            ->select('id')
+            ->orderBy('id')
+            ->chunkById(200, function (Collection $users): void {
+                foreach ($users as $user) {
+                    $this->sweepOwner((int) $user->getKey());
+                }
+            });
+
+        Tenancy::forgetAll();
+    }
+
+    private function sweepOwner(int $userId): void
+    {
+        Tenancy::setUser($userId);
+
+        $businessIds = Business::withoutGlobalScopes()
+            ->where('owner_user_id', $userId)
+            ->pluck('id');
+
+        foreach ($businessIds as $businessId) {
+            $this->sweepBusiness((int) $businessId);
+        }
+    }
+
+    private function sweepBusiness(int $businessId): void
+    {
+        Tenancy::set($businessId);
+
         $now = Carbon::now();
         $threshold = $now->copy()->addHours(48);
 

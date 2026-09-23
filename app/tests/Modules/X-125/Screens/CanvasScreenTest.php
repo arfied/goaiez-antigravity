@@ -54,4 +54,52 @@ class CanvasScreenTest extends TestCase
 
         Livewire::test(Canvas::class)->assertOk();
     }
+
+    public function test_can_create_flow(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::set((int) $biz->id);
+        Livewire::test(Canvas::class)
+            ->set('flowName', 'My New Flow')
+            ->set('triggerEvent', 'page.viewed')
+            ->set('stepLabel', 'Do something')
+            ->call('createFlow')
+            ->assertSet('success', 'Created automation My New Flow. Nothing runs a flow when its trigger event fires.');
+
+        $this->assertDatabaseHas('flows', [
+            'business_id' => $biz->id,
+            'name' => 'My New Flow',
+            'trigger_event' => 'page.viewed',
+        ]);
+
+        Tenancy::forget();
+
+        $this->get(route('x-125.canvas'))
+            ->assertOk()
+            ->assertSee('My New Flow')
+            ->assertDontSee('No automations yet');
+    }
+
+    public function test_refuses_empty_flow_input(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::set((int) $biz->id);
+        Livewire::test(Canvas::class)
+            ->set('flowName', ' ')
+            ->set('triggerEvent', 'page.viewed')
+            ->call('createFlow')
+            ->assertSet('error', 'Flow name and trigger event are required.');
+
+        $this->assertDatabaseMissing('flows', [
+            'trigger_event' => 'page.viewed',
+        ]);
+
+        Tenancy::forget();
+    }
 }

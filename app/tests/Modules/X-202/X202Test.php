@@ -123,10 +123,6 @@ class X202Test extends TestCase
     /**
      * [G7-09] the 48-hour nudge on an unopened asset
      */
-    public function test_g7_09_nudge_asset(): void
-    {
-        $this->assertTrue(true);
-    }
 
     /**
      * [G9-08] who approved what, exportable

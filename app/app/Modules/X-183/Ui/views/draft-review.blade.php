@@ -1,6 +1,21 @@
 <div>
     <div class="p-4">
         <h2 class="text-xl font-bold text-ink">Drafts written for you</h2>
+
+        <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
+            <form wire:submit="submit" class="flex flex-col gap-2">
+                @if($success) <div class="text-ink font-bold">{{ $success }}</div> @endif
+                @if($error) <div class="text-ink font-bold">{{ $error }}</div> @endif
+                <input type="text" wire:model="title" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Draft title">
+                <textarea wire:model="bodyText" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Draft body text" rows="4"></textarea>
+                <label class="flex items-center gap-2 text-ink">
+                    <input type="checkbox" wire:model="isCaseStudy" class="border rounded">
+                    Is Case Study
+                </label>
+                <button type="submit" class="bg-surface text-ink border rounded p-2">Submit</button>
+            </form>
+        </div>
+
         @if($drafts->isEmpty())
             <x-ui.empty-state icon="○" heading="No drafts yet">
                 When a draft is written for you, it appears here with whether it was published.

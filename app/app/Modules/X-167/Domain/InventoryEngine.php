@@ -85,8 +85,8 @@ final class InventoryEngine
     }
 
     /**
-     * Sends/emails PO only when an approval action row exists (TEST ANCHOR).
-     * No PO is emailed without an approval action row.
+     * Marks PO sent only when an approval action row exists (TEST ANCHOR).
+     * No PO is marked sent without an approval action row.
      */
     public function sendPurchaseOrder(int $businessId, int $purchaseOrderId, ?string $approvedActionId = null): array
     {
@@ -97,7 +97,7 @@ final class InventoryEngine
             return [
                 'status' => 'refused',
                 'refusal_code' => 'PO_APPROVAL_REQUIRED',
-                'message' => 'No PO is emailed without an approval action row',
+                'message' => 'No PO is marked sent without an approval action row',
                 'sent' => false,
             ];
         }

@@ -11,7 +11,7 @@
 @else
 <ul class="space-y-2">
 @foreach($sellables as $s)
-<li class="border rounded p-4 shadow bg-white">
+<li class="border rounded p-4 shadow bg-card">
 <span class="font-semibold">{{ $s->name }}</span>
 <span class="tabular-nums">{{ number_format($s->unit_price_cents / 100, 2) }}</span>
 <span class="text-sm text-ink-2">{{ $s->fulfilment_type }}</span>
@@ -31,7 +31,7 @@
 @else
 <ul class="space-y-2">
 @foreach($lines as $line)
-<li class="border rounded p-4 shadow bg-white">
+<li class="border rounded p-4 shadow bg-card">
 <span class="font-semibold">{{ $line['sellable']->name }}</span>
 <span class="tabular-nums">{{ $line['quantity'] }} × {{ number_format($line['sellable']->unit_price_cents / 100, 2) }} = {{ number_format($line['subtotal_cents'] / 100, 2) }}</span>
 <x-ui.button size="default" variant="secondary" wire:click="remove({{ $line['sellable']->id }})" wire:loading.attr="disabled" wire:target="remove({{ $line['sellable']->id }})">Remove</x-ui.button>

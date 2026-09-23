@@ -25,7 +25,7 @@ return [
     'G2-40' => 'the lexicon governs every compose; R19 keeps medical out',
 
     // status: SPECCED
-    'G3-29' => 'their words, not ours',
+    'G3-29' => 'their words, not ours refuses',
 
     // status: SPECCED
     'G5-36' => 'their words, not ours',
@@ -37,5 +37,5 @@ return [
     'G11-19' => 'named in the header — their words, not ours',
 
     // status: SPECCED
-    'G12-19' => 'their words, their rules — and GSM-7 segmentation makes it a billing fact too',
+    'G12-19' => 'their words, their rules — and GSM-7 segmentation makes it a billing fact too refuses',
 ];

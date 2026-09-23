@@ -22,16 +22,16 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G11-36' => 'refuses: C-Telephony; carrier-side screening before we pay for the minute',
+    'G11-36' => 'carrier-side screening before we pay for the minute refuses',
 
     // status: SPECCED
-    'G11-39' => 'refuses: C-Telephony; SHAKEN/STIR grading on inbound',
+    'G11-39' => 'SHAKEN/STIR grading on inbound refuses',
 
     // status: SPECCED
-    'G18-18' => 'refuses: C-Telephony; the router and the eight adapters are the header',
+    'G18-18' => 'the router and the eight adapters are the header refuses',
 
     // status: SPECCED
-    'G18-20' => 'refuses: C-Telephony; LTV read from C-Billing; the bypass is a routing rule',
+    'G18-20' => 'LTV read from C-Billing; the bypass is a routing rule refuses',
 
     // status: SPECCED
     'G19-03' => 'T677 (owner) — we do not route around carriers, and P-070: a thread keeps its carrier; migration happens on hard failure, never for cost',

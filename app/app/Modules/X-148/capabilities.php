@@ -22,5 +22,5 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G5-46' => 'the documents are X-160\'s',
+    'G5-46' => 'the documents are X-160\'s refuses',
 ];

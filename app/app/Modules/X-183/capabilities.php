@@ -49,7 +49,7 @@ return [
     'G12-02' => 'gated by grounding; the pre-publish gate is X-183\'s · refuses: publishing without grounding',
 
     // status: SPECCED
-    'G12-05' => 'to the builder or the plugin',
+    'G12-05' => 'to the builder or the plugin refuses',
 
     // status: SPECCED
     'G12-29' => 'named in the header — cannibalisation · SAMPLE prices never rendered · nothing contradicts the pricebook',

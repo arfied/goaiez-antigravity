@@ -88,7 +88,9 @@ class X178Test extends TestCase
      */
     public function test_header_capabilities(): void
     {
-        $this->assertTrue(true);
+        $path = base_path('app/Modules/X-178');
+        $output = shell_exec(sprintf('grep -rnE %s %s', escapeshellarg('G5-08|G6-05|G6-31'), escapeshellarg($path)));
+        $this->assertNotEmpty($output, 'Header capabilities must be named in the module.');
     }
 
     /**
@@ -96,7 +98,16 @@ class X178Test extends TestCase
      */
     public function test_g5_21_design_tokens(): void
     {
-        $this->assertTrue(true);
+        $action = new \App\Modules\X178\Actions\DesignChangeAction();
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Design Tokens', 'currency' => 'USD']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $tokens = ['primary_color' => '#ff0000', 'font_size' => '16px'];
+        $res = $action->handle($biz->id, 1, 'update_tokens', 'block_theme', $tokens);
+        
+        $this->assertEquals('applied', $res['status']);
+        $change = \App\Modules\X178\Models\DesignChange::find($res['change_id']);
+        $this->assertEquals($tokens, $change->new_state);
     }
 
     /**
@@ -104,11 +115,14 @@ class X178Test extends TestCase
      */
     public function test_g6_21_unmapped_niche_fill_me_only(): void
     {
-        $biz = TestCase::provisionTenant(['name' => 'Niche Biz', 'currency' => 'USD']);
-        Tenancy::set((int) $biz->id);
+        $action = new \App\Modules\X178\Actions\FormGenerateAction();
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Niche Form', 'currency' => 'USD']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $res = $this->formAction->handle($biz->id, 1, 'solar_panel_cleaning');
-        $this->assertEquals('[fill-me]', $res['form_config']['pricing_display']);
+        $res = $action->handle($biz->id, 1, 'unmapped_niche');
+        
+        $this->assertEquals('generated', $res['status']);
+        $this->assertEquals('[fill-me]', $res['form_config']['pricing_display'], 'Pricing must be [fill-me] only for unmapped niches (P-092)');
     }
 
     public function test_screen_renders_only_for_authenticated_users(): void

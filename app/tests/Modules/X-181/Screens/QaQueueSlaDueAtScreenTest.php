@@ -76,4 +76,99 @@ class QaQueueSlaDueAtScreenTest extends TestCase
         $this->assertNull($ticket->resolved_at);
         $this->assertNotEquals('resolved', $ticket->status);
     }
+
+    public function test_can_create_ticket(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::set($biz->id);
+        Livewire::test(QaQueueSlaDueAt::class, ['businessId' => $biz->id])
+            ->set('ticketSubject', 'New test subject 789')
+            ->set('ticketDescription', 'New description')
+            ->call('createTicket')
+            ->assertSet('success', function ($val) {
+                return str_contains($val, 'Created ticket "New test subject 789"');
+            });
+
+        $this->assertDatabaseHas('qa_tickets', [
+            'business_id' => $biz->id,
+            'subject' => 'New test subject 789',
+            'status' => 'open',
+        ]);
+
+        Tenancy::forget();
+
+        $this->get(route('x-181.qa-queue-sladueat'))
+            ->assertOk()
+            ->assertSee('New test subject 789')
+            ->assertDontSee('The QA queue is clear');
+    }
+
+    public function test_resolution_does_not_show_new_ticket(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::set($biz->id);
+        Livewire::test(QaQueueSlaDueAt::class, ['businessId' => $biz->id])
+            ->set('ticketSubject', 'Another new test subject')
+            ->call('createTicket');
+
+        Tenancy::forget();
+
+        $this->get(route('x-181.resolution'))
+            ->assertOk()
+            ->assertDontSee('Another new test subject')
+            ->assertSee('Nothing resolved yet');
+    }
+
+    public function test_qa_ticket_journey(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::set($biz->id);
+        Livewire::test(QaQueueSlaDueAt::class, ['businessId' => $biz->id])
+            ->set('ticketSubject', 'Journey test subject')
+            ->call('createTicket');
+
+        $ticket = QaTicket::where('subject', 'Journey test subject')->first();
+
+        Livewire::test(QaQueueSlaDueAt::class, ['businessId' => $biz->id])
+            ->call('resolve', $ticket->id, 'Resolved successfully');
+
+        Tenancy::forget();
+
+        $this->get(route('x-181.qa-queue-sladueat'))
+            ->assertOk()
+            ->assertDontSee('Journey test subject')
+            ->assertSee('The QA queue is clear');
+
+        $this->get(route('x-181.resolution'))
+            ->assertOk()
+            ->assertSee('Journey test subject')
+            ->assertDontSee('Nothing resolved yet');
+    }
+
+    public function test_refuses_empty_subject(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::set($biz->id);
+        Livewire::test(QaQueueSlaDueAt::class, ['businessId' => $biz->id])
+            ->set('ticketSubject', '   ')
+            ->call('createTicket')
+            ->assertSet('error', 'Subject cannot be empty.');
+
+        $this->assertDatabaseMissing('qa_tickets', [
+            'business_id' => $biz->id,
+            'subject' => '   ',
+        ]);
+    }
 }

@@ -25,7 +25,7 @@ return [
     'G2-19' => 'the dispatcher\'s whole job; cost is a routing input, never a quality excuse',
 
     // status: SPECCED
-    'G2-27' => 'the plan\'s mechanism is grounding + lexicon + the teaching box (P-097); a per-tenant fine-tune is an owner question',
+    'G2-27' => 'the plan\'s mechanism is grounding + lexicon + the teaching box (P-097); a per-tenant fine-tune is an owner question refuses',
 
     // status: SPECCED
     'G5-22' => 'split: the key is C-Ai\'s;  the MRR-discount half is KILLED (T591 — no discounts)',

@@ -57,4 +57,91 @@ class CutoverQueueScreenTest extends TestCase
 
         Livewire::test(CutoverQueue::class)->assertOk();
     }
+
+    public function test_can_build_a_redirect(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(CutoverQueue::class)
+            ->set('sourceUrl', 'https://old.example.com/pricing')
+            ->set('newDomainHost', 'https://new.example.com')
+            ->call('buildRedirect')
+            ->assertSet('error', null)
+            ->assertSet('success', 'Redirect mapped: https://old.example.com/pricing → https://new.example.com/pricing. It is listed below and counted on the migration card; nothing serves these redirects yet.');
+
+        $this->assertDatabaseHas('redirect_maps', [
+            'source_url' => 'https://old.example.com/pricing',
+            'destination_url' => 'https://new.example.com/pricing',
+            'is_verified' => true,
+        ]);
+    }
+
+    public function test_building_the_same_url_twice_keeps_one_row(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(CutoverQueue::class)
+            ->set('sourceUrl', 'https://old.example.com/pricing')
+            ->set('newDomainHost', 'https://new.example.com')
+            ->call('buildRedirect')
+            ->set('sourceUrl', 'https://old.example.com/pricing')
+            ->set('newDomainHost', 'https://new.example.com')
+            ->call('buildRedirect');
+
+        $this->assertSame(1, RedirectMap::where('business_id', $biz->id)->count());
+    }
+
+    public function test_refuses_an_empty_source_url(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(CutoverQueue::class)
+            ->set('sourceUrl', '')
+            ->set('newDomainHost', 'https://new.example.com')
+            ->call('buildRedirect')
+            ->assertSet('error', 'Enter the old URL you want redirected.');
+
+        $this->assertDatabaseMissing('redirect_maps', [
+            'business_id' => $biz->id,
+        ]);
+
+        Livewire::test(CutoverQueue::class)
+            ->set('sourceUrl', 'https://old.example.com/pricing')
+            ->set('newDomainHost', '   ')
+            ->call('buildRedirect')
+            ->assertSet('error', 'Enter the new domain host.');
+
+        $this->assertDatabaseMissing('redirect_maps', [
+            'business_id' => $biz->id,
+        ]);
+    }
+
+    public function test_cutover_queue_lists_the_new_redirect(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(CutoverQueue::class)
+            ->set('sourceUrl', 'https://old.example.com/pricing')
+            ->set('newDomainHost', 'https://new.example.com')
+            ->call('buildRedirect');
+
+        Tenancy::forget();
+
+        $this->get(route('x-129.cutover-queue'))
+            ->assertOk()
+            ->assertSee('https://old.example.com/pricing')
+            ->assertDontSee('No redirects mapped.');
+    }
 }

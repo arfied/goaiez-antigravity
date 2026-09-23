@@ -33,4 +33,45 @@ class MarketplaceViewScreenTest extends TestCase
 
         Livewire::test(MarketplaceView::class)->assertOk();
     }
+
+    public function test_can_publish_item(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Livewire::test(MarketplaceView::class)
+            ->set('itemName', 'Test Item')
+            ->set('itemSlug', 'test-item')
+            ->set('version', '1.0.0')
+            ->set('summary', 'Test summary')
+            ->call('publish')
+            ->assertSet('success', 'Item Test Item (1.0.0) is listed. A repeat for the same slug edits the listing.');
+
+        $this->assertDatabaseHas((new \App\Modules\X195\Models\MarketItem)->getTable(), [
+            'business_id' => $biz->id,
+            'item_slug' => 'test-item',
+            'item_name' => 'Test Item',
+            'version' => '1.0.0',
+            'is_verified' => false,
+        ]);
+
+        $this->get(route('x-195.marketplace'))->assertSee('Test Item')->assertSee('test-item')->assertSee('1.0.0');
+        $this->get(route('x-195.manifest-review-queue'))->assertSee('Test Item')->assertSee('Unverified');
+    }
+
+    public function test_refuses_empty_input(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Livewire::test(MarketplaceView::class)
+            ->call('publish')
+            ->assertSet('error', 'Item name, slug, version, and summary are required.');
+
+        $this->assertDatabaseMissing((new \App\Modules\X195\Models\MarketItem)->getTable(), [
+            'business_id' => $biz->id,
+        ]);
+    }
 }

@@ -10,6 +10,16 @@
         This view shows signals only. No messages are sent automatically.
     </x-ui.attention-card>
 
+    @if($error) <div class="text-ink font-bold mt-4">{{ $error }}</div> @endif
+    @if($success) <div class="text-ink font-bold mt-4">{{ $success }}</div> @endif
+
+    <form wire:submit="recordSignal" class="mt-4 flex flex-col gap-2 bg-surface p-4 rounded border">
+        <input type="text" wire:model="prospectIdentifier" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Prospect (e.g. acme-roofing)">
+        <input type="text" wire:model="signalType" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Signal type (e.g. pricing_visit)">
+        <input type="text" wire:model="signalScore" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Score (75 or more is high intent)">
+        <button type="submit" class="bg-surface text-ink border rounded p-2">Record signal</button>
+    </form>
+
     @if($actionFailed)
         <x-ui.error-panel heading="Action failed" class="mt-4">
             {{ $actionFailed }}

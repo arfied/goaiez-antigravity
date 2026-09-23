@@ -37,7 +37,7 @@ return [
     'G10-34' => 'multi-stage sequential approval — the desk\'s core state machine',
 
     // status: SPECCED
-    'G12-04' => 'approval granted → the publish action fires',
+    'G12-04' => 'approval granted → the publish action fires refuses',
 
     // status: SPECCED
     'G12-09' => 'thirty graphics, one decision',

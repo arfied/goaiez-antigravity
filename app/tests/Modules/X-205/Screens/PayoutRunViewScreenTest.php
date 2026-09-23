@@ -8,6 +8,8 @@ use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X205\Models\Affiliate;
 use App\Modules\X205\Models\AffiliatePayout;
+use App\Modules\X205\Ui\AffiliatePortal;
+use App\Modules\X205\Ui\EarningsView;
 use App\Modules\X205\Ui\PayoutRunView;
 use App\Support\Tenancy;
 use Livewire\Livewire;
@@ -53,6 +55,81 @@ class PayoutRunViewScreenTest extends TestCase
             ->assertSee('no money moved')
             ->assertDontSee('No payouts yet.');
 
-        Livewire::test(PayoutRunView::class)->assertOk();
+        Livewire::test(PayoutRunView::class)
+            ->set('affiliateId', $affiliate->id)
+            ->set('amountCents', 5000)
+            ->call('requestPayout')
+            ->assertSet('success', "Requested payout of 5000 cents for affiliate #{$affiliate->id}. Status is 'requested'. No money moves.");
+
+        $this->assertDatabaseHas((new AffiliatePayout)->getTable(), [
+            'affiliate_id' => $affiliate->id,
+            'amount_cents' => 5000,
+            'status' => 'requested',
+            'money_moved' => false,
+        ]);
+
+        $this->get(route('x-205.payout-run'))
+            ->assertOk()
+            ->assertSee('50.00')
+            ->assertSee('requested');
+
+        Livewire::test(PayoutRunView::class)
+            ->set('affiliateId', 999999)
+            ->set('amountCents', 1000)
+            ->call('requestPayout')
+            ->assertSet('error', 'Affiliate not found for the given ID.');
+
+        Livewire::test(PayoutRunView::class)
+            ->set('affiliateId', $affiliate->id)
+            ->set('amountCents', 9999999)
+            ->call('requestPayout')
+            ->assertSet('error', 'Payout rejected: amount exceeds available current balance. Attribute a sale first if balance is zero.');
+    }
+
+    public function test_chain_create_attribute_payout(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setUser($owner->id);
+
+        // 1. Create affiliate on AffiliatePortal
+        Livewire::test(AffiliatePortal::class)
+            ->set('affiliateCode', 'chain_aff_1')
+            ->set('partnerName', 'Chain Partner 1')
+            ->set('commissionRateBps', 2000)
+            ->call('createAffiliate');
+
+        $affiliate = Affiliate::where('business_id', $biz->id)->where('affiliate_code', 'chain_aff_1')->firstOrFail();
+
+        // 2. Attribute sale on EarningsView
+        Livewire::test(EarningsView::class)
+            ->set('affiliateCode', 'chain_aff_1')
+            ->set('orderId', 'chain_order_1')
+            ->set('saleAmountCents', 10000)
+            ->call('attributeSale');
+
+        // 3. Request payout on PayoutRunView
+        Livewire::test(PayoutRunView::class)
+            ->set('affiliateId', $affiliate->id)
+            ->set('amountCents', 1500)
+            ->call('requestPayout');
+
+        Tenancy::forget();
+
+        // 4. GET on each of the three routes
+        $this->get(route('x-205.portal'))
+            ->assertOk()
+            ->assertSee('Chain Partner 1');
+
+        $this->get(route('x-205.earnings'))
+            ->assertOk()
+            ->assertSee('chain_order_1')
+            ->assertSee('2000 cents on 10000');
+
+        $this->get(route('x-205.payout-run'))
+            ->assertOk()
+            ->assertSee('15.00')
+            ->assertSee('requested');
     }
 }

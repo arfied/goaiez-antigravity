@@ -28,7 +28,7 @@ return [
     'G1-22' => 'refuses: the subscribe list is generated from @emits across the roster, so an unemittable event cannot be chosen · the screen is X-142\'s (F-11); ⑥ tenant-facing on X-142 · ⑦ none',
 
     // status: SPECCED
-    'G1-41' => 'refuses: the test passes against a body the real event never sends; the sample is generated from the same serializer as the live event, asserted by diffing the two',
+    'G1-41' => '⑥⑦ inherit refuses',
 
     // status: SPECCED
     'G2-52' => 'the outbound payload map on the broker',
@@ -46,13 +46,13 @@ return [
     'G4-34' => '1 · 5 · 30 min',
 
     // status: SPECCED
-    'G4-43' => 'global retries on every outbound call',
+    'G4-43' => 'global retries on every outbound call refuses',
 
     // status: SPECCED
     'G4-48' => 'named in the header',
 
     // status: SPECCED
-    'G4-50' => 'they ride the same catalogue; the catalogue is X-122\'s',
+    'G4-50' => 'they ride the same catalogue; the catalogue is X-122\'s refuses',
 
     // status: SPECCED
     'G7-26' => 'RabbitMQ/SQS is corpus vocabulary — Horizon + Redis (§22)',

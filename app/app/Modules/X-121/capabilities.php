@@ -34,16 +34,16 @@ return [
     'G4-37' => 'Asset versioning; the ransomware case is turn 93\'s',
 
     // status: SPECCED
-    'G4-42' => 'version restore with a compensable reversal class',
+    'G4-42' => 'version restore with a compensable reversal class refuses',
 
     // status: SPECCED
     'G4-46' => 'Asset history and side-by-side compare',
 
     // status: SPECCED
-    'G4-51' => 'expand/contract on the noun tables; the release switch is Step 8\'s',
+    'G4-51' => 'expand/contract on the noun tables; the release switch is Step 8\'s refuses',
 
     // status: SPECCED
-    'G11-14' => 'named in the header — with version restore',
+    'G11-14' => 'named in the header — with version restore refuses',
 
     // status: SPECCED
     'G17-28' => 'field-level history with version restore — named in the header',

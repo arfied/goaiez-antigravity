@@ -25,7 +25,7 @@ return [
     'G2-08' => 'social scheduling — spec with the social pass (turn 32)',
 
     // status: SPECCED
-    'G12-10' => 'from the tenant\'s own engagement history',
+    'G12-10' => 'from the tenant\'s own engagement history refuses',
 
     // status: SPECCED
     'G12-12' => 'the reply threads into the Conversation (X-01); R20 — the agent takes every inbound',

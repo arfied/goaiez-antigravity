@@ -10,14 +10,12 @@ use App\Console\Commands\ContextCommand;
 use App\Console\Commands\DbBootstrapCommand;
 use App\Console\Commands\DeployCheckCommand;
 use App\Console\Commands\DoctorCommand;
-use App\Console\Commands\DoctorSelfTestCommand;
 use App\Console\Commands\FindCommand;
 use App\Console\Commands\ImpactCommand;
 use App\Console\Commands\MakeModuleCommand;
 use App\Console\Commands\MapCommand;
 use App\Console\Commands\ModuleDoneCommand;
 use App\Console\Commands\ModuleScaffoldCommand;
-use App\Console\Commands\SurfacesGenerateCommand;
 use App\Console\Commands\WhyCommand;
 use App\Doctor\ManifestReader;
 use Illuminate\Support\ServiceProvider;
@@ -48,7 +46,7 @@ final class GoaiezRuntimeServiceProvider extends ServiceProvider
     /** @var list<class-string> */
     private const COMMANDS = [
         DoctorCommand::class,
-        DoctorSelfTestCommand::class,
+            \App\Console\Commands\DoctorSelfTestCommand::class,
         ModuleDoneCommand::class,
         ModuleScaffoldCommand::class,
         CapabilitiesScaffoldCommand::class,
@@ -59,7 +57,6 @@ final class GoaiezRuntimeServiceProvider extends ServiceProvider
         ContextCommand::class,
         FindCommand::class,
         WhyCommand::class,
-        SurfacesGenerateCommand::class,
         DbBootstrapCommand::class,
         DeployCheckCommand::class,
     ];

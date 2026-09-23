@@ -63,7 +63,7 @@ final class SendRequestedListenerTest extends TestCase
             'business_id' => $business->id,
             'location_id' => $location->id,
             'region_code' => 'TX',
-            'phone' => '+15551234567',
+            'id' => 9991, 'phone' => '+15551234567',
             'name' => 'John',
         ]);
 
@@ -114,7 +114,7 @@ final class SendRequestedListenerTest extends TestCase
 
         $customer = Customer::forceCreate([
             'business_id' => $business->id,
-            'phone' => '+15550009999',
+            'id' => 9992, 'phone' => '+15550009999',
             'name' => 'Jane',
         ]);
 
@@ -166,7 +166,7 @@ final class SendRequestedListenerTest extends TestCase
 
         $customer = Customer::forceCreate([
             'business_id' => $business->id,
-            'phone' => '+15551112222',
+            'id' => 9993, 'phone' => '+15551112222',
             'name' => 'Determinism Test',
         ]);
 

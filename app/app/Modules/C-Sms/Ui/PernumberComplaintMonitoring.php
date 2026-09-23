@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\CSms\Ui;
 
 use App\Modules\CSms\Models\SmsComposition;
-use App\Modules\X204\Models\Suppression;
+use App\Modules\X204\Domain\ConsentService;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -22,7 +22,7 @@ class PernumberComplaintMonitoring extends Component
         $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
     }
 
-    public function render()
+    public function render(ConsentService $consentService)
     {
         if ($this->businessId > 0) {
             $rows = SmsComposition::where('business_id', $this->businessId)
@@ -32,7 +32,7 @@ class PernumberComplaintMonitoring extends Component
                     'sent' => $g->where('status', 'sent')->count(),
                     'halted' => $g->where('status', 'halted')->count(),
                 ]);
-            $stopped = Suppression::where('business_id', $this->businessId)
+            $stopped = $consentService->getSuppressions($this->businessId)
                 ->pluck('recipient_phone')
                 ->all();
         } else {

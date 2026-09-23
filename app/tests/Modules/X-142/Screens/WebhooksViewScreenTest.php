@@ -47,6 +47,38 @@ class WebhooksViewScreenTest extends TestCase
         Livewire::test(WebhooksView::class)->assertOk();
     }
 
+    public function test_control_adds_webhook(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Livewire::test(WebhooksView::class, ['businessId' => $biz->id])
+            ->set('url', 'https://example.com/webhook')
+            ->set('events', 'event1,event2')
+            ->call('submit')
+            ->assertSet('success', 'Webhook subscribed. This feeds the webhook list; nothing downstream is wired to it yet.')
+            ->assertSet('url', '')
+            ->assertSet('events', '');
+
+        $this->assertDatabaseHas((new WebhookSubscription)->getTable(), [
+            'business_id' => $biz->id,
+            'target_url' => 'https://example.com/webhook',
+            'event_filter' => 'event1,event2',
+            'is_active' => true,
+        ]);
+
+        $this->get(route('x-142.webhooks'))
+            ->assertSee('https://example.com/webhook')
+            ->assertSee('event1,event2')
+            ->assertDontSee('No webhooks yet.');
+
+        Livewire::test(WebhooksView::class, ['businessId' => $biz->id])
+            ->set('url', '')
+            ->call('submit')
+            ->assertSet('error', 'URL is required.');
+    }
+
     public function test_screen_renders_for_admin(): void
     {
         $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);

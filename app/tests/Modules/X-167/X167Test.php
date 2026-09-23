@@ -124,7 +124,7 @@ class X167Test extends TestCase
         $this->assertNull($po->approved_action_id);
 
         // A: Attempting to send PO without approval action row is REFUSED (TEST ANCHOR)
-        $unapprovedSend = $this->poAction->send(
+        $unapprovedSend = $this->poAction->handle(
             businessId: $biz->id,
             purchaseOrderId: $po->id,
             approvedActionId: null // no approval
@@ -141,7 +141,7 @@ class X167Test extends TestCase
         Event::assertNotDispatched(PoSent::class);
 
         // B: Sending PO with valid approval action row succeeds (TEST ANCHOR)
-        $approvedSend = $this->poAction->send(
+        $approvedSend = $this->poAction->handle(
             businessId: $biz->id,
             purchaseOrderId: $po->id,
             approvedActionId: 'act_approv_9981'

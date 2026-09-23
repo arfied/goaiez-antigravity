@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X212\Actions;
 
-use App\Modules\X121\Models\Person;
+use App\Modules\X121\Actions\PersonUpsertAction;
 use App\Modules\X212\Events\MigrationCommitted;
 use App\Modules\X212\Models\MigrationRun;
 use Illuminate\Support\Facades\DB;
@@ -20,8 +20,9 @@ final class MigrationCommitAction
             $committedCount = 0;
             foreach ($records as $record) {
                 if (! empty($record['phone'])) {
-                    Person::updateOrCreate(
-                        ['business_id' => $businessId, 'phone' => $record['phone']],
+                    app(PersonUpsertAction::class)->upsertByPhone(
+                        $businessId,
+                        $record['phone'],
                         [
                             'first_name' => $record['first_name'] ?? 'Imported Customer',
                             'email' => $record['email'] ?? null,

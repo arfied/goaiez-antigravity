@@ -78,10 +78,6 @@ class X189Test extends TestCase
      * [G16-17], [G16-19], [G17-29], [G19-12]
      * Personalised overlay, branded card, sourcing & single debit
      */
-    public function test_branded_card_and_capabilities(): void
-    {
-        $this->assertTrue(true);
-    }
 
     /** [G16-18] */
     public function test_g16_18_branding_never_injects_location_coordinates(): void

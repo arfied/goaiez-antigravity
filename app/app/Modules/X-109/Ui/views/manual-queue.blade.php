@@ -20,7 +20,7 @@
         @endif
         
         @if ($queue->isEmpty())
-            <x-ui.empty-state icon="check-circle" title="Queue is empty" description="No parked submissions requiring manual review." />
+            <x-ui.empty-state heading="Queue is empty">No parked submissions requiring manual review.</x-ui.empty-state>
         @else
             <table class="w-full text-left border-collapse border">
                 <thead>

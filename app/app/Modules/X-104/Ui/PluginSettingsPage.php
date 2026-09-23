@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\X104\Ui;
 
+use App\Modules\X104\Actions\PluginActivateAction;
+use App\Modules\X104\Actions\PluginDeactivateAction;
 use App\Modules\X104\Models\PluginInstall;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -16,9 +18,61 @@ class PluginSettingsPage extends Component
     #[Locked]
     public int $businessId = 0;
 
+    public string $siteUrl = '';
+
+    public string $apiKey = '';
+
+    public ?string $error = null;
+
+    public ?string $success = null;
+
+    public ?string $deactivateSuccess = null;
+
     public function mount(int $businessId = 0)
     {
         $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
+    }
+
+    public function activate(PluginActivateAction $action)
+    {
+        $this->error = null;
+        $this->success = null;
+
+        if ($this->siteUrl === '') {
+            $this->error = 'Site URL is required.';
+
+            return;
+        }
+
+        if ($this->apiKey === '') {
+            $this->error = 'API Key is required.';
+
+            return;
+        }
+
+        try {
+            $action->activate(
+                businessId: Tenancy::idOrFail(),
+                siteUrl: $this->siteUrl,
+                apiKey: $this->apiKey
+            );
+
+            $this->success = "Activated plugin for site {$this->siteUrl}.";
+            $this->siteUrl = '';
+            $this->apiKey = '';
+        } catch (\Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
+    public function deactivate(string $siteUrl, PluginDeactivateAction $action): void
+    {
+        $this->deactivateSuccess = null;
+
+        $install = $action->deactivate(Tenancy::idOrFail(), $siteUrl);
+
+        $this->deactivateSuccess = 'Plugin deactivated for '.$install->site_url
+            .'. Its injected assets have been removed; switching it back on needs the site URL and the API key again.';
     }
 
     public function render()

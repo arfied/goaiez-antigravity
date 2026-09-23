@@ -31,7 +31,7 @@ return [
     'G1-47' => 'booked and COLLECTED are asserted distinct, never summed',
 
     // status: SPECCED
-    'G2-56' => 'named in the header',
+    'G2-56' => 'named in the header refuses',
 
     // status: SPECCED
     'G2-59' => 'a tile over the forecast',

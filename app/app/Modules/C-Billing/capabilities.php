@@ -22,31 +22,31 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G1-01' => 'refuses: a mock charge reaches the live gateway; X-198\'s MOCK gateway is asserted unreachable from a live tenant (G1-34)',
+    'G1-01' => 'X-198\'s MOCK gateway is asserted unreachable from a live tenant (G1-34) refuses',
 
     // status: SPECCED
-    'G1-10' => 'refuses: a mismatch is silently absorbed; an unreconciled cent RAISES, asserted by injecting a one-cent difference',
+    'G1-10' => 'an unreconciled cent RAISES, asserted by injecting a one-cent difference refuses',
 
     // status: SPECCED
-    'G1-13' => 'refuses: a top-up loop drains a card overnight; a daily top-up ceiling, asserted by forcing repeated depletion',
+    'G1-13' => 'a daily top-up ceiling, asserted by forcing repeated depletion refuses',
 
     // status: SPECCED
-    'G1-14' => 'refuses: a top-up loop drains a card overnight; a daily top-up ceiling, asserted by forcing repeated depletion',
+    'G1-14' => 'a daily top-up ceiling, asserted by forcing repeated depletion refuses',
 
     // status: SPECCED
-    'G1-18' => 'refuses: float arithmetic drifts and the ledger stops balancing; INTEGER hundredths of a cent throughout (§18), asserted by summing a million operations and diffing to zero · the ledger is the source; the gateway receives period totals',
+    'G1-18' => 'INTEGER hundredths of a cent throughout (§18), asserted by summing a million operations and diffing to zero · the ledger is the source; the gateway receives period totals refuses',
 
     // status: SPECCED
     'G1-19' => 'P-095: the phone KEEPS ANSWERING. A lockout restricts the CONSOLE, never the front desk — asserted with a zero balance and an inbound call',
 
     // status: SPECCED
-    'G1-20' => 'refuses: float arithmetic drifts and the ledger stops balancing; INTEGER hundredths of a cent throughout (§18), asserted by summing a million operations and diffing to zero · the ledger is the source; the gateway receives period totals',
+    'G1-20' => 'INTEGER hundredths of a cent throughout (§18), asserted by summing a million operations and diffing to zero · the ledger is the source; the gateway receives period totals refuses',
 
     // status: SPECCED
     'G1-28' => 'P-095: the phone KEEPS ANSWERING. A lockout restricts the CONSOLE, never the front desk — asserted with a zero balance and an inbound call',
 
     // status: SPECCED
-    'G1-32' => 'refuses: float arithmetic drifts and the ledger stops balancing; INTEGER hundredths of a cent throughout (§18), asserted by summing a million operations and diffing to zero · the ledger is the source; the gateway receives period totals',
+    'G1-32' => 'INTEGER hundredths of a cent throughout (§18), asserted by summing a million operations and diffing to zero · the ledger is the source; the gateway receives period totals refuses',
 
     // status: SPECCED
     'G1-33' => 'refuses: retries hammer a dead card and rack up decline fees; exponential backoff with a hard attempt ceiling, asserted ·  a retry is the SAME refId; a new attempt is a new one (§201.3)',
@@ -61,7 +61,7 @@ return [
     'G1-52' => '**the ledger is the source**; the gateway receives period totals, never per-event usage · transcribed from the G1 audit 2026-08-27',
 
     // status: SPECCED
-    'G1-56' => 'refuses: a mock charge reaches the live gateway; X-198\'s MOCK gateway is asserted unreachable from a live tenant (G1-34)',
+    'G1-56' => 'X-198\'s MOCK gateway is asserted unreachable from a live tenant (G1-34) refuses',
 
     // status: SPECCED
     'G1-57' => 'DERIVED from cent-precision ai_calls, never typed — asserted by changing a vendor rate and observing the debit move ·  typed does not survive a vendor price change; derived does',
@@ -91,10 +91,10 @@ return [
     'G18-22' => 'the numbers are DEAD. The metering model of record: 7¢/min · 100 minutes included · top-ups $100→$100 and $300→$400 — and they live in X-82, never in a document',
 
     // status: SPECCED
-    'G19-17' => 'refuses: C-Billing; the $50/5,000 figures are dead — auto top-up is universal and the amounts live in X-82 (T469–T474)',
+    'G19-17' => 'the $50/5,000 figures are dead — auto top-up is universal and the amounts live in X-82 (T469–T474) refuses',
 
     // status: CLASSIFIED
-    'G1-78' => '§226.3 — already built, Flow B\'s credit block; recorded as covered, not re-specced · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads',
+    'G1-78' => '§226.3 — already built, Flow B\'s credit block; recorded as covered, not re-specced · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads refuses',
 
     // status: CLASSIFIED
     'G1-80' => 'refuses: C-Billing; Stripe/Authorize.Net metered billing sync',

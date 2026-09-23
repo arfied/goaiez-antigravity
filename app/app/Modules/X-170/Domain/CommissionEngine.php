@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Event;
 final class CommissionEngine
 {
     /**
-     * Computes commission for payees on gross profit (G7-32, G7-39).
+     * Computes commission for payees on gross profit, including tiers and bonuses (G7-32, G7-38, G7-39, G7-42).
      */
     public function compute(
         int $businessId,
@@ -24,10 +24,24 @@ final class CommissionEngine
     ): array {
         $created = [];
 
+        // Fetch active commission rules
+        $rules = \App\Modules\X170\Models\CommissionRule::where('business_id', $businessId)
+            ->where('is_active', true)
+            ->get();
+
         foreach ($payeeSplits as $split) {
             $staffId = $split['staff_id'];
-            $pct = $split['percentage'] ?? 10.0; // 10%
+            $pct = $split['percentage'] ?? 10.0; // 10% base
             $amountCents = (int) round(($grossProfitCents * $pct) / 100);
+
+            // Apply tiers and bonuses
+            foreach ($rules as $rule) {
+                if ($rule->rule_type === 'revenue_tier' && $grossProfitCents >= $rule->threshold_cents) {
+                    $amountCents += (int) round(($grossProfitCents * $rule->percentage) / 100);
+                } elseif ($rule->rule_type === 'bonus' && $grossProfitCents >= $rule->threshold_cents) {
+                    $amountCents += (int) round(($grossProfitCents * $rule->percentage) / 100);
+                }
+            }
 
             $comm = Commission::create([
                 'business_id' => $businessId,
@@ -42,6 +56,27 @@ final class CommissionEngine
         }
 
         return $created;
+    }
+
+    /**
+     * Projects commission based on a projected revenue (G7-03).
+     */
+    public function project(int $businessId, int $projectedRevenueCents): int
+    {
+        $rules = \App\Modules\X170\Models\CommissionRule::where('business_id', $businessId)
+            ->where('is_active', true)
+            ->get();
+
+        $projectedCommission = 0;
+        foreach ($rules as $rule) {
+            if ($rule->rule_type === 'revenue_tier' && $projectedRevenueCents >= $rule->threshold_cents) {
+                $projectedCommission += (int) round(($projectedRevenueCents * $rule->percentage) / 100);
+            } elseif ($rule->rule_type === 'gross_profit_pct') {
+                $projectedCommission += (int) round(($projectedRevenueCents * $rule->percentage) / 100);
+            }
+        }
+
+        return $projectedCommission;
     }
 
     /**

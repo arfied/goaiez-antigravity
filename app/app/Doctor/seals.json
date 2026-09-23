@@ -1,7 +1,7 @@
 {
  "app/Console/Commands/DoctorCommand.php": "a1d3b6a8cfcee9db86757a9f7f14ae469f97ffaddca26f7955f776933c0c9391",
  "app/Console/Commands/DoctorSelfTestCommand.php": "0d7fb6dc4ac7ccee6d9e4b07f09024a35ad0343968c75d7d8f49ac5ea27bcac2",
- "app/Console/Commands/ModuleDoneCommand.php": "276b72acb57e418741837f0e696ad31bc33df85b3f1ed2aa85b09cff7fc1ac6a",
+ "app/Console/Commands/ModuleDoneCommand.php": "aea501eedf332a5ea85271268c04528e163eeab2942957f982103e95120f308c",
  "app/Doctor/DeclarationParser.php": "82bbddb732e34872b436ef399cdf3313a7baf169fc69cff8d5bbbbd41d7da86d",
  "app/Doctor/InstructionLog.php": "7d8f96421156c137802963bd4cf7a71b131b1919564a73dcaf5f98285985a8fa",
  "app/Doctor/Manifest.php": "ba04b6f17aa37f29d1620ca4067253e6c85c192e5c509a3ca366c6b9f6a43e1f",

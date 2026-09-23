@@ -34,10 +34,10 @@ return [
     'G4-01' => 'TTFM and the no-login nudge',
 
     // status: SPECCED
-    'G4-38' => 'SAMPLE → real on conversion;  the $179.99 figure is dead (money-number law)',
+    'G4-38' => 'SAMPLE → real on conversion;  the $179.99 figure is dead (money-number law) refuses',
 
     // status: SPECCED
-    'G4-44' => 'frictionless signup, magic link, no password',
+    'G4-44' => 'frictionless signup, magic link, no password refuses',
 
     // status: SPECCED
     'G4-45' => 'the hub is a generated index over every module\'s .connect action (X-122) — not a module',

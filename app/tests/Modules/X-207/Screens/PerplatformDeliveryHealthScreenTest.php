@@ -42,6 +42,36 @@ class PerplatformDeliveryHealthScreenTest extends TestCase
         Livewire::test(PerplatformDeliveryHealth::class)->assertOk();
     }
 
+    public function test_control_registers_device(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Livewire::test(PerplatformDeliveryHealth::class, ['businessId' => $biz->id])
+            ->set('deviceToken', 'test-device-token')
+            ->set('platform', 'ios')
+            ->call('submit')
+            ->assertSet('success', 'Registered device token. This feeds the push list; nothing downstream is wired to it yet.')
+            ->assertSet('deviceToken', '');
+
+        $this->assertDatabaseHas((new DeviceToken)->getTable(), [
+            'business_id' => $biz->id,
+            'device_token' => 'test-device-token',
+            'platform' => 'ios',
+            'status' => 'active',
+        ]);
+
+        $this->get(route('x-207.perplatform-delivery-health'))
+            ->assertSee('ios: 1 devices')
+            ->assertDontSee('No devices registered.');
+
+        Livewire::test(PerplatformDeliveryHealth::class, ['businessId' => $biz->id])
+            ->set('deviceToken', '')
+            ->call('submit')
+            ->assertSet('error', 'Device token is required.');
+    }
+
     public function test_screen_renders_for_admin(): void
     {
         $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);

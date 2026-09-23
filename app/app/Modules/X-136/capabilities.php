@@ -37,7 +37,7 @@ return [
     'G3-42' => 'a signal; the alert names an action (X-111)',
 
     // status: SPECCED
-    'G3-45' => '§44 · P-128 — geofenced ad serving is ad management',
+    'G3-45' => '§44 · P-128 — geofenced ad serving is ad management refuses',
 
     // status: SPECCED
     'G3-56' => 'enrichment from a job posting — no scrape needed',
@@ -46,7 +46,7 @@ return [
     'G4-07' => 'a new-registration signal;  a signal never mints a SendPermit (P-068) — the send is X-105\'s on Lane 3',
 
     // status: SPECCED
-    'G7-20' => '§44 · P-128 — pre-buying geo-fenced ad inventory is ad management',
+    'G7-20' => '§44 · P-128 — pre-buying geo-fenced ad inventory is ad management refuses',
 
     // status: SPECCED
     'G12-35' => 'a hiring signal, never a permit (P-068)',

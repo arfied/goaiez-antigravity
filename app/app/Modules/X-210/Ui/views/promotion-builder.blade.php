@@ -62,6 +62,18 @@
                 <p class="mt-1 text-base text-alert" role="alert">{{ $errors->first('maxUses') }}</p>
             @endif
 
+                        <label for="offer-window" class="mt-4 block text-base text-ink">Measurement Window (Days)</label>
+            <input
+                id="offer-window"
+                type="text"
+                inputmode="numeric"
+                wire:model="measurementWindowDays"
+                class="mt-1 w-full rounded-[--radius-control] border border-rule bg-card px-3 py-2 text-base text-ink"
+            />
+            @if ($errors->has('measurementWindowDays'))
+                <p class="mt-1 text-base text-alert" role="alert">{{ $errors->first('measurementWindowDays') }}</p>
+            @endif
+
             <div class="mt-4">
                 <x-ui.submit target="save" busy="Saving…">Save offer</x-ui.submit>
             </div>
