@@ -65,7 +65,12 @@ final class MailQuota
      * is still happening* and long enough that a busy hour does not produce a
      * line per send.
      */
-    private const int ALERT_QUIET_SECONDS = 3600;
+    public const int ALERT_QUIET_SECONDS = 3600;
+
+    public function alertQuietSeconds(): int
+    {
+        return $this->defaults->int('mail.quota.alert_quiet_seconds');
+    }
 
     /**
      * The registry key family the ceiling is stored under, one row per mailer.
@@ -318,7 +323,7 @@ final class MailQuota
         // log line, which is the correct failure for a rate limiter on an alert
         // — the alternative, a table, would make the alert path able to fail on
         // a write and swallow the warning it exists to raise.
-        if (! Cache::add($key, true, self::ALERT_QUIET_SECONDS)) {
+        if (! Cache::add($key, true, $this->alertQuietSeconds())) {
             return;
         }
 

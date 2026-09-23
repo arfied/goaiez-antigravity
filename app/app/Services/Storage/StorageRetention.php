@@ -126,7 +126,12 @@ final class StorageRetention
      * of the size, because each row here costs a network round trip to the
      * object store rather than a share of one `DELETE`.
      */
-    private const int CHUNK = 50;
+    public const int CHUNK = 50;
+
+    private function chunk(): int
+    {
+        return $this->defaults->int('storage.retention.chunk');
+    }
 
     public function __construct(private readonly DefaultsRegistry $defaults) {}
 
@@ -448,7 +453,7 @@ final class StorageRetention
             }
         };
 
-        $query->orderBy('id')->chunkById(self::CHUNK, $sweepBatch);
+        $query->orderBy('id')->chunkById($this->chunk(), $sweepBatch);
 
         return new StorageSweep(kind: $kind, pruned: $pruned, refused: $refused, skipped: false);
     }

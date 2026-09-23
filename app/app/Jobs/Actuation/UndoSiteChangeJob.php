@@ -128,7 +128,7 @@ final class UndoSiteChangeJob implements ShouldQueue
      */
     public function backoff(): array
     {
-        return QueueBackoff::ladder([300, 1800]);
+        return QueueBackoff::ladder(QueueBackoff::fromSetting('queue.backoff.actuation_seconds'));
     }
 
     /**

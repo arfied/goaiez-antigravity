@@ -6,6 +6,7 @@ namespace App\Services\Mail;
 
 use App\Contracts\VerifiesWebhookSenders;
 use App\Enums\WebhookVerification;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\VendorLog;
 use App\Support\WebhookMaterial;
 use Illuminate\Http\Client\ConnectionException;
@@ -214,7 +215,12 @@ final class SnsMessageVerifier implements VerifiesWebhookSenders
      * AWS rotates these, so it cannot be pinned; an hour keeps the fetch off
      * the hot path of a bounce storm without outliving a rotation for long.
      */
-    private const int CERTIFICATE_TTL_SECONDS = 3600;
+    public const int CERTIFICATE_TTL_SECONDS = 3600;
+
+    public function certificateTtlSeconds(): int
+    {
+        return app(DefaultsRegistry::class)->int('mail.sns.certificate_ttl_seconds');
+    }
 
     /**
      * Whether this message is genuinely from Amazon — or whether we could not
@@ -462,7 +468,7 @@ final class SnsMessageVerifier implements VerifiesWebhookSenders
             return null;
         }
 
-        Cache::put('platform-mail:sns:cert:'.sha1($url), $body, self::CERTIFICATE_TTL_SECONDS);
+        Cache::put('platform-mail:sns:cert:'.sha1($url), $body, $this->certificateTtlSeconds());
 
         return $body;
     }

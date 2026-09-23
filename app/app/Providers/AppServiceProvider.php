@@ -862,6 +862,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(PlacesClient::class, fn ($app): GooglePlacesClient => new GooglePlacesClient(
             $app->make(PlacesSpend::class),
+            $app->make(DefaultsRegistry::class),
         ));
     }
 

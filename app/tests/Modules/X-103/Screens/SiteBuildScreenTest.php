@@ -6,10 +6,13 @@ namespace Tests\Modules\X103\Screens;
 
 use App\Enums\UserRole;
 use App\Models\Location;
+use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Ui\SiteBuild;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
+use App\Modules\X157\Domain\DnsResolver;
+use App\Modules\X157\Models\CustomDomainRequest;
 use App\Support\Tenancy;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Http;
@@ -21,6 +24,21 @@ use Tests\TestCase;
 class SiteBuildScreenTest extends TestCase
 {
     use RefreshesTenantDatabase;
+
+    public function test_screen_renders_for_tenant(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $this->get(route('x-103.site-build'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console');
+
+        Livewire::test(SiteBuild::class)->assertOk();
+    }
 
     public function test_full_build_pipeline_and_publish(): void
     {
@@ -53,10 +71,6 @@ class SiteBuildScreenTest extends TestCase
         $test = Livewire::actingAs($user)
             ->test(SiteBuild::class)
             ->call('runBuild');
-
-        if ($test->get('error')) {
-            dd($test->get('error'));
-        }
 
         $test->assertSet('buildStatus', 'completed')
             ->assertSee('Status: completed')
@@ -149,5 +163,27 @@ class SiteBuildScreenTest extends TestCase
         $business2 = $this->provisionTenant(['owner_user_id' => $user2->id]);
 
         $this->actingAs($user1)->get(route('x-103.site-build'))->assertSuccessful();
+    }
+
+    public function test_owner_checks_the_domain_and_sees_why_it_is_not_verified(): void
+    {
+        $user = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $user->id, 'name' => 'Tenant', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        CustomDomainRequest::create(['business_id' => $biz->id, 'domain' => 'acme.com', 'status' => 'requested']);
+
+        $this->app->instance(DnsResolver::class, new class implements DnsResolver
+        {
+            public function cname(string $host): ?string
+            {
+                return null;
+            }
+        });
+
+        Livewire::actingAs($user)
+            ->test(SiteBuild::class)
+            ->call('verifyDomain')
+            ->assertSee('no CNAME found');
     }
 }

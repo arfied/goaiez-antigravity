@@ -8,6 +8,7 @@ use App\Enums\OwnerNotificationKind;
 use App\Livewire\Admin\NumberLookup;
 use App\Models\OwnerNotification;
 use App\Models\OwnerReply;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
@@ -91,6 +92,16 @@ final class OwnerNotifications
      */
     public const int LEDGER_LIMIT = 50;
 
+    public function correlationWindowHours(): int
+    {
+        return app(DefaultsRegistry::class)->int('sms.owner_notifications.correlation_window_hours');
+    }
+
+    public function ledgerLimit(): int
+    {
+        return app(DefaultsRegistry::class)->int('sms.owner_notifications.ledger_limit');
+    }
+
     /**
      * Record that a carrier accepted an owner-directed message.
      *
@@ -167,7 +178,7 @@ final class OwnerNotifications
 
         return Tenancy::actingAs($businessId, fn (): ?OwnerNotification => OwnerNotification::query()
             ->where('sent_at', '<=', $now)
-            ->where('sent_at', '>=', $now->subHours(self::CORRELATION_WINDOW_HOURS))
+            ->where('sent_at', '>=', $now->subHours($this->correlationWindowHours()))
             // ⚠️ **`id` RATHER THAN `sent_at`, AND IT IS NOT A CONCESSION TO A
             // LINT.** `ConventionsTest`'s *"no descending order relies on
             // Postgres putting NULLs first"* is right about the shape, and the
@@ -243,8 +254,9 @@ final class OwnerNotifications
      *     replies: list<array{id: int, answering: ?int, body: string, at: ?CarbonImmutable}>,
      * }
      */
-    public function ledgerFor(int $businessId, int $limit = self::LEDGER_LIMIT): array
+    public function ledgerFor(int $businessId, ?int $limit = null): array
     {
+        $limit ??= $this->ledgerLimit();
         return Tenancy::actingAs($businessId, function () use ($limit): array {
             $sends = array_values(OwnerNotification::query()
                 ->orderByDesc('id')

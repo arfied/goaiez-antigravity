@@ -11,6 +11,7 @@ use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\SiteInventoryImage;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Modules\X113\Actions\StaffRosterAction;
+use App\Modules\X155\Actions\FormReadAction;
 use App\Services\Assistant\PriceBook;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Links\TenantLinks;
@@ -34,6 +35,7 @@ final class SiteDraftAction
         $blocksGenerated = 0;
         $skipped = [];
         $sourcesUsed = [];
+        $sourcesWithoutData = [];
 
         // Fetch Inventory
         $inventoryPages = SiteInventoryPage::where('business_id', $businessId)->get();
@@ -124,6 +126,26 @@ final class SiteDraftAction
             $sourcesUsed[] = $contactSource;
 
             return $block;
+        };
+
+        $buildFormBlock = function () use ($businessId, &$blocksGenerated, &$sourcesUsed, &$sourcesWithoutData) {
+            $definition = (new FormReadAction)->firstDefinitionForBusiness($businessId);
+            if ($definition) {
+                $blocksGenerated++;
+                $sourcesUsed[] = 'forms';
+
+                return [
+                    'type' => 'form',
+                    'source' => 'forms',
+                    'definition_id' => $definition['id'],
+                    'fields' => $definition['fields'],
+                    'required' => $definition['required'],
+                    'honeypot' => $definition['honeypot'],
+                ];
+            }
+            $sourcesWithoutData[] = 'forms';
+
+            return null;
         };
 
         $buildServicesBlock = function () use (&$blocksGenerated, &$sourcesUsed) {
@@ -269,6 +291,10 @@ final class SiteDraftAction
             }
 
             $homeBlocks[] = $buildContactBlock();
+            $formBlock = $buildFormBlock();
+            if ($formBlock) {
+                $homeBlocks[] = $formBlock;
+            }
 
             Page::create([
                 'business_id' => $businessId,
@@ -332,13 +358,18 @@ final class SiteDraftAction
         if (Page::where('business_id', $businessId)->where('slug', 'contact')->exists()) {
             $skipped[] = 'contact';
         } else {
+            $contactBlocks = [$buildContactBlock()];
+            $formBlock = $buildFormBlock();
+            if ($formBlock) {
+                $contactBlocks[] = $formBlock;
+            }
             Page::create([
                 'business_id' => $businessId,
                 'slug' => 'contact',
                 'title' => 'Contact',
                 'is_tenant_edited' => false,
                 'is_published' => false,
-                'draft_blocks' => [$buildContactBlock()],
+                'draft_blocks' => $contactBlocks,
             ]);
             $pagesCreated++;
         }
@@ -348,6 +379,7 @@ final class SiteDraftAction
             'blocks' => $blocksGenerated,
             'skipped' => $skipped,
             'sources' => array_values(array_unique($sourcesUsed)),
+            'sources_without_data' => array_values(array_unique($sourcesWithoutData)),
         ];
     }
 }
