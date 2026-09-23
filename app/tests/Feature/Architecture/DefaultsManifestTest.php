@@ -54,6 +54,11 @@ it('the registry reads every declared key without throwing', function () {
                 } else {
                     $registry->value($key);
                 }
+            } elseif (is_array($seed)) {
+                // main has no list reader yet (SIXTY-14's intList)
+                foreach ($seed as $element) {
+                    expect(is_scalar($element))->toBeTrue();
+                }
             } else {
                 $findings[] = "Key {$key} has unexpected seed type: ".gettype($seed);
             }
