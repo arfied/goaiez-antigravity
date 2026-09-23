@@ -1,4 +1,4 @@
-<?php
+
 
 declare(strict_types=1);
 
@@ -374,5 +374,155 @@ class X103Test extends TestCase
         $this->assertArrayHasKey('facts_invalidation_commit_id', $res);
         $this->assertEquals('published', $res['status']);
         $this->assertEquals($page->id, $res['page_id']);
+    }
+
+
+    public function test_draft_site_action()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Draft Site Tenant', 'currency' => 'USD']);
+        
+        $location = \App\Models\Location::where('business_id', $biz->id)->first();
+        if (!$location) {
+            $location = \App\Models\Location::factory()->create(['business_id' => $biz->id, 'website_url' => 'https://example.com']);
+        } else {
+            $location->update(['website_url' => 'https://example.com']);
+        }
+        
+        \App\Support\Tenancy::bindAs($biz->id);
+
+        \App\Modules\X103\Models\SiteInventoryPage::create([
+            'business_id' => $biz->id,
+            'url' => 'https://example.com',
+            'title' => 'Home Page',
+            'headings' => ['Welcome to Draft Site Tenant H1'],
+            'text' => 'This is the first paragraph. '.str_repeat('A', 150),
+            'status' => 'fetched',
+            'fetched_at' => now(),
+            'phones' => ['555-1234'],
+            'emails' => ['hello@example.com'],
+        ]);
+        
+        \App\Modules\X103\Models\SiteInventoryPage::create([
+            'business_id' => $biz->id,
+            'url' => 'https://example.com/about',
+            'title' => 'About Us',
+            'text' => 'This is the longest text block. '.str_repeat('B', 1200),
+            'status' => 'fetched',
+            'fetched_at' => now(),
+        ]);
+        
+        \App\Modules\X103\Models\SiteInventoryImage::create([
+            'business_id' => $biz->id,
+            'page_id' => 1,
+            'status' => 'stored',
+            'stored_path' => 'inventory/img1.jpg',
+            'attribution' => 'example.com',
+        ]);
+        
+        \App\Modules\X163\Models\PriceBookItem::create([
+            'business_id' => $biz->id,
+            'slug' => 'service-1',
+            'label' => 'Service 1',
+            'minor_units' => 10000,
+            'currency' => 'USD',
+            'source' => \App\Enums\PriceListItemSource::OwnerList,
+            'confirmed_at' => now(),
+        ]);
+        
+        \App\Modules\X163\Models\PriceBookItem::create([
+            'business_id' => $biz->id,
+            'slug' => 'service-2',
+            'label' => 'Service 2',
+            'minor_units' => 20000,
+            'currency' => 'USD',
+            'source' => \App\Enums\PriceListItemSource::OwnerList,
+            'confirmed_at' => now(),
+        ]);
+        
+        \App\Models\Review::factory()->create([
+            'location_id' => $location->id,
+            'display_on_website' => true,
+            'rating' => 5,
+            'comment' => 'Great!',
+            'reviewer_name' => 'Alice',
+        ]);
+        
+        \App\Models\Review::factory()->create([
+            'location_id' => $location->id,
+            'display_on_website' => true,
+            'rating' => 2,
+            'comment' => 'Bad!',
+            'reviewer_name' => 'Bob',
+        ]);
+        
+        \App\Models\TenantLinkRecord::create([
+            'business_id' => $biz->id,
+            'kind' => \App\Enums\TenantLinkKind::Booking,
+            'destination' => 'https://booking.com',
+        ]);
+        
+        $action = app(\App\Modules\X103\Actions\SiteDraftAction::class);
+        $res = $action->handle($biz->id, $location->id);
+        
+        $this->assertEquals(3, $res['pages']);
+        
+        $home = \App\Modules\X103\Models\Page::where('slug', 'home')->first();
+        $this->assertNotNull($home);
+        
+        $types = array_column($home->draft_blocks, 'type');
+        $this->assertContains('hero', $types);
+        $this->assertContains('about', $types);
+        $this->assertContains('services', $types);
+        $this->assertContains('reviews_strip', $types);
+        $this->assertContains('booking_button', $types);
+        $this->assertContains('contact', $types);
+        
+        foreach ($home->draft_blocks as $block) {
+            $this->assertArrayHasKey('source', $block);
+            if ($block['type'] === 'services') {
+                $this->assertCount(2, $block['items']);
+            }
+            if ($block['type'] === 'reviews_strip') {
+                $this->assertCount(1, $block['items']); // Only rating 5 is displayable (>= 4)
+                $this->assertEquals(5, $block['items'][0]['rating']);
+            }
+        }
+        
+        // no prices -> no services block
+        \App\Modules\X163\Models\PriceBookItem::where('business_id', $biz->id)->delete();
+        \App\Modules\X103\Models\Page::where('business_id', $biz->id)->delete();
+        $res2 = $action->handle($biz->id, $location->id);
+        
+        $home2 = \App\Modules\X103\Models\Page::where('slug', 'home')->first();
+        $types2 = array_column($home2->draft_blocks, 'type');
+        $this->assertNotContains('services', $types2);
+        
+        // no booking link -> no button
+        \App\Models\TenantLinkRecord::where('business_id', $biz->id)->delete();
+        \App\Modules\X103\Models\Page::where('business_id', $biz->id)->delete();
+        $res3 = $action->handle($biz->id, $location->id);
+        
+        $home3 = \App\Modules\X103\Models\Page::where('slug', 'home')->first();
+        $types3 = array_column($home3->draft_blocks, 'type');
+        $this->assertNotContains('booking_button', $types3);
+        
+        // slug taken -> skipped; run twice -> second run skips
+        $res4 = $action->handle($biz->id, $location->id);
+        $this->assertContains('home', $res4['skipped']);
+        $this->assertContains('services', $res4['skipped']);
+        $this->assertContains('contact', $res4['skipped']);
+        $this->assertEquals(0, $res4['pages']);
+        
+        // publish through SiteEngine
+        Http::fake();
+        $publishAction = app(\App\Modules\X103\Actions\SitePublishAction::class);
+        // Wait, the prompt says publish through SiteEngine::publish(), which is probably what SitePublishAction uses, or we use SiteEngine directly.
+        $engine = app(\App\Modules\X103\Domain\SiteEngine::class);
+        $version = $engine->publish($biz->id, clone $home3, $home3->draft_blocks);
+        
+        // HTML contains escaped headline
+        $html = $engine->serve($biz->id, 'home');
+        $this->assertStringContainsString(htmlspecialchars('Welcome to Draft Site Tenant H1', ENT_QUOTES, 'UTF-8'), $html);
+        Http::assertNothingSent();
     }
 }

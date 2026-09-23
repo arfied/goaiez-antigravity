@@ -2835,6 +2835,24 @@ final class DefaultsManifest
                 'group' => 'Agency',
                 'description' => 'The agency discount off voice, in basis points (P-008 2026-09-05).',
             ],
+
+            'sites.draft.about_max_chars' => [
+                'seed' => 1200,
+                'group' => 'Sites',
+                'description' => 'Maximum length of the drafted about text block, extracted from the inventory.',
+            ],
+
+            'sites.draft.reviews_max' => [
+                'seed' => 6,
+                'group' => 'Sites',
+                'description' => 'Maximum number of displayable reviews included in the drafted reviews strip block.',
+            ],
+
+            'sites.draft.reviews_min_rating' => [
+                'seed' => 4,
+                'group' => 'Sites',
+                'description' => 'Minimum rating required for a review to be included in the drafted reviews strip block.',
+            ],
         ];
 
         return array_merge($settings, self::mailSendingCeilings());

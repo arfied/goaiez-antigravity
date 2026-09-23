@@ -113,4 +113,47 @@
             </table>
         </div>
     @endif
+
+    <div class="mt-8 mb-4 flex items-center justify-between">
+        <p class="text-sm text-ink-2">Your draft pages.</p>
+        <button wire:click="draftSite" class="btn btn-primary">
+            Draft Site
+        </button>
+    </div>
+
+    @if($draftPages->isEmpty())
+        <div class="rounded-lg border border-rule bg-paper p-6 text-center">
+            <h2 class="text-sm font-medium text-ink">No draft pages</h2>
+            <p class="mt-1 text-sm text-ink-2">
+                Pressing "Draft Site" will build draft pages from your inventory.
+            </p>
+        </div>
+    @else
+        <div class="overflow-hidden shadow ring-1 ring-rule ring-opacity-5 sm:rounded-lg mb-8">
+            <table class="min-w-full divide-y divide-rule">
+                <thead class="bg-paper">
+                    <tr>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-ink">Title</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Slug</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Link</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-rule bg-paper">
+                    @foreach($draftPages as $page)
+                        <tr>
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-ink">
+                                {{ $page->title }}
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">
+                                {{ $page->slug }}
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">
+                                <a href="{{ route('x-103.pages') }}" class="text-indigo-600 hover:text-indigo-900">View Page</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
 </div>
