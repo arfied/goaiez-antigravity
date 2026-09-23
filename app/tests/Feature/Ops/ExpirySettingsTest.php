@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Enums\UserRole;
 use App\Models\PlatformSetting;
 use App\Models\User;
+use App\Modules\X121\Actions\PersonLookupAction;
 use App\Modules\X153\Actions\AlertSendAction;
 use App\Modules\X181\Actions\QaTicketCreateAction;
 use App\Modules\X202\Domain\ApprovalDeskEngine;
@@ -36,7 +37,7 @@ it('an alert claim written as 5 minutes expires at 5 minutes', function () {
     $result = $action->handle($this->biz->id, 'Title', 'Body');
 
     $expiry = Carbon::parse($result['claim_expires_at']);
-    expect(now()->diffInMinutes($expiry))->toBe(5);
+    expect($expiry->toDateTimeString())->toBe(now()->addMinutes(5)->toDateTimeString());
 });
 
 it('an approval written as 10 hours expires at 10 hours', function () {
@@ -46,15 +47,15 @@ it('an approval written as 10 hours expires at 10 hours', function () {
     $result = $engine->enqueue($this->biz->id, 'type', 'subj', ['foo' => 'bar']);
 
     $item = $result['item'];
-    expect(now()->diffInHours($item->expires_at))->toBe(10);
+    expect($item->expires_at->toDateTimeString())->toBe(now()->addHours(10)->toDateTimeString());
 });
 
 it('a QA SLA written as 5 hours is due at 5 hours', function () {
     PlatformSetting::write('qa.ticket.sla_hours', 5, 'test');
 
     $action = app(QaTicketCreateAction::class);
-    $personId = app(\App\Modules\X121\Actions\PersonLookupAction::class)->create($this->biz->id, ['first_name' => 'John']);
+    $personId = app(PersonLookupAction::class)->create($this->biz->id, ['first_name' => 'John']);
     $ticket = $action->handle($this->biz->id, $personId, 'subject');
 
-    expect(now()->diffInHours($ticket->sla_due_at))->toBe(5);
+    expect($ticket->sla_due_at->toDateTimeString())->toBe(now()->addHours(5)->toDateTimeString());
 });

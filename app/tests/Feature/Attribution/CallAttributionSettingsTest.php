@@ -32,5 +32,5 @@ it('a call attribution written as 15 minutes expires at 15 minutes', function ()
     $action = app(CallAttributeAction::class);
     $token = $action->allocateToken($this->biz->id, 'session_123', '+15551234567');
 
-    expect(now()->diffInMinutes($token->expires_at))->toBe(15);
+    expect($token->expires_at->toDateTimeString())->toBe(now()->addMinutes(15)->toDateTimeString());
 });

@@ -32,5 +32,5 @@ it('a portal link written as 12 hours expires at 12 hours', function () {
     $action = app(PortalLinkAction::class);
     $link = $action->handle($this->biz->id, 'resource', 1);
 
-    expect(now()->diffInHours($link->expires_at))->toBe(12);
+    expect($link->expires_at->toDateTimeString())->toBe(now()->addHours(12)->toDateTimeString());
 });
