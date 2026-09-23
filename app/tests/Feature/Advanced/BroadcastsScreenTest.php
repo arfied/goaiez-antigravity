@@ -6,6 +6,7 @@ namespace Tests\Feature\Advanced;
 
 use App\Enums\UserRole;
 use App\Models\Business;
+use App\Models\Campaign;
 use App\Models\User;
 use App\Support\Tenancy;
 use Tests\Concerns\RefreshesTenantDatabase;
@@ -44,11 +45,32 @@ class BroadcastsScreenTest extends TestCase
 
     public function test_empty_state_renders_correctly(): void
     {
-        $this->markTestIncomplete('FINDING: Screen renders hardcoded wireframe. Missing empty state.');
+        [$user, $business] = $this->createTenant(advanced: true);
+        $response = $this->actingAs($user)->get(route('advanced.broadcasts'));
+        $response->assertOk();
+        $response->assertSee('No broadcasts yet. Your first campaign appears here after it is drafted.');
     }
 
     public function test_one_broadcast_row_of_this_tenant_renders_its_distinctive_name(): void
     {
-        $this->markTestIncomplete('FINDING: Screen renders hardcoded wireframe. Failing assertion: $response->assertSee(\'Distinctive Broadcast 7719\')');
+        [$userA, $bizA] = $this->createTenant(advanced: true);
+        Campaign::factory()->create([
+            'business_id' => $bizA->id,
+            'name' => 'Distinctive Broadcast 7719',
+        ]);
+
+        [$userB, $bizB] = $this->createTenant(advanced: true);
+        Campaign::factory()->create([
+            'business_id' => $bizB->id,
+            'name' => 'Distinctive Broadcast 7720',
+        ]);
+
+        Tenancy::setUser((int) $userA->id);
+        Tenancy::set((int) $bizA->id);
+
+        $response = $this->actingAs($userA)->get(route('advanced.broadcasts'));
+        $response->assertOk();
+        $response->assertSee('Distinctive Broadcast 7719');
+        $response->assertDontSee('Distinctive Broadcast 7720');
     }
 }
