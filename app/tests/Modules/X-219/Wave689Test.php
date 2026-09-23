@@ -15,7 +15,6 @@ use App\Modules\X219\Models\AiProvider;
 use App\Modules\X219\Ui\AssignmentMatrix;
 use App\Modules\X219\Ui\RosterAdmin;
 use App\Services\Ai\AiSpend;
-use App\Support\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
@@ -49,6 +48,7 @@ class Wave689Test extends TestCase
         Tenancy::set($biz->id);
 
         app(RosterSeedAction::class)->handle($biz->id);
+        AiProvider::where('business_id', $biz->id)->update(['status' => 'healthy']);
         $models = AiModel::where('business_id', $biz->id)->get();
         $primary = $models->firstWhere('model_name', AiModelEnum::ClaudeOpus5->value);
         $backup = $models->firstWhere('model_name', AiModelEnum::ClaudeHaiku45->value);
@@ -130,8 +130,8 @@ class Wave689Test extends TestCase
 
         Livewire::actingAs($owner)
             ->test(AssignmentMatrix::class, ['businessId' => $biz->id])
-            ->set('primaryModelForTask.' . AiTask::ReviewAnalysis->value, $primary->id)
-            ->set('backupModelForTask.' . AiTask::ReviewAnalysis->value, $backup->id)
+            ->set('primaryModelForTask.'.AiTask::ReviewAnalysis->value, $primary->id)
+            ->set('backupModelForTask.'.AiTask::ReviewAnalysis->value, $backup->id)
             ->call('assign', AiTask::ReviewAnalysis->value)
             ->assertDispatched('toast');
 
@@ -156,9 +156,9 @@ class Wave689Test extends TestCase
 
         Livewire::actingAs($owner)
             ->test(AssignmentMatrix::class, ['businessId' => $biz->id])
-            ->set('primaryModelForTask.' . AiTask::ReviewAnalysis->value, $primary->id)
-            ->set('backupModelForTask.' . AiTask::ReviewAnalysis->value, $backup->id)
+            ->set('primaryModelForTask.'.AiTask::ReviewAnalysis->value, $primary->id)
+            ->set('backupModelForTask.'.AiTask::ReviewAnalysis->value, $backup->id)
             ->call('assign', AiTask::ReviewAnalysis->value)
-            ->assertHasErrors(['assign.' . AiTask::ReviewAnalysis->value]);
+            ->assertHasErrors(['assign.'.AiTask::ReviewAnalysis->value]);
     }
 }
