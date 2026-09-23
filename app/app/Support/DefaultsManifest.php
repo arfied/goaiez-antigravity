@@ -27,6 +27,7 @@ use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X202\Domain\ApprovalDeskEngine;
 use App\Modules\X205\Domain\AffiliateEngine;
 use App\Modules\X219\Actions\ProviderHealthAction;
+use App\Services\Activity\ActivityFeed;
 use App\Services\Actuation\SiteChanges;
 use App\Services\Actuation\SiteMeasurements;
 use App\Services\Actuation\SpeedDecider;
@@ -36,8 +37,25 @@ use App\Services\Actuation\T3FaqBlock as FaqBlock;
 use App\Services\Actuation\T3InternalLink as InternalLink;
 use App\Services\Actuation\T3MetaUpsert as MetaUpsert;
 use App\Services\Actuation\WordPress\WordPressRestClient;
+use App\Services\Agent\AgentComposer;
+use App\Services\Agent\AgentNudges;
+use App\Services\Agent\ThreadCloseSummaries;
+use App\Services\Assistant\PriceSheet;
+use App\Services\Audit\AuditEngine;
+use App\Services\Audit\Checks\ReviewStatsCheck;
+use App\Services\Audit\PublicAuditStarter;
+use App\Services\Auth\FailedSignIns;
 use App\Services\Billing\PurchaseReconciliation;
+use App\Services\Billing\RenewalReminders;
+use App\Services\Billing\Subscriptions;
+use App\Services\Billing\TrialEligibility;
+use App\Services\Campaigns\UnknownSendReconciler;
+use App\Services\Content\ContentSelfAudit;
+use App\Services\Content\Publishing;
+use App\Services\Crm\CustomerMerges;
+use App\Services\Export\ExportBuilder;
 use App\Services\Gbp\ZernioSpend;
+use App\Services\MagicLinkService;
 use App\Services\Mail\MailDrivers;
 use App\Services\Mail\MailQuota;
 use App\Services\Mail\MailSendRate;
@@ -3351,6 +3369,126 @@ final class DefaultsManifest
                 'seed' => ProviderHealthAction::DEGRADED_ERROR_RATE_PCT,
                 'group' => 'Operations',
                 'description' => 'Degraded error rate percentage for AI providers.',
+            ],
+            'auth.magic_link.lifetime_minutes' => [
+                'seed' => MagicLinkService::LIFETIME_MINUTES,
+                'group' => 'Operations',
+                'description' => 'Lifetime of a magic link in minutes.',
+            ],
+            'activity.feed.per_page' => [
+                'seed' => ActivityFeed::PER_PAGE,
+                'group' => 'Operations',
+                'description' => 'Items per page in the activity feed.',
+            ],
+            'agent.compose.snippet_chars' => [
+                'seed' => AgentComposer::SNIPPET_CHARACTERS,
+                'group' => 'Messaging',
+                'description' => 'Length of snippets in agent compose.',
+            ],
+            'agent.summary.messages_read' => [
+                'seed' => ThreadCloseSummaries::MESSAGES_READ,
+                'group' => 'Messaging',
+                'description' => 'Number of messages read for thread close summaries.',
+            ],
+            'audit.public.reuse_window_seconds' => [
+                'seed' => PublicAuditStarter::REUSE_WINDOW_SECONDS,
+                'group' => 'Reviews',
+                'description' => 'Window for public audit reuse in seconds.',
+            ],
+            'audit.reviews.thin_count' => [
+                'seed' => ReviewStatsCheck::THIN_REVIEW_COUNT,
+                'group' => 'Reviews',
+                'description' => 'Threshold for thin review count.',
+            ],
+            'pricebook.sheet.max_kilobytes' => [
+                'seed' => PriceSheet::MAX_KILOBYTES,
+                'group' => 'Content',
+                'description' => 'Max kilobytes for price sheet uploads.',
+            ],
+            'agent.nudges.window_hours' => [
+                'seed' => AgentNudges::WINDOW_HOURS,
+                'group' => 'Assistant',
+                'description' => 'Window in hours for agent nudges.',
+            ],
+            'auth.failed_sign_ins.window_minutes' => [
+                'seed' => FailedSignIns::WINDOW_MINUTES,
+                'group' => 'Operations',
+                'description' => 'Window in minutes for failed sign-ins.',
+            ],
+            'campaigns.unknown_send.vendor_log_window_hours' => [
+                'seed' => UnknownSendReconciler::VENDOR_LOG_WINDOW_HOURS,
+                'group' => 'Messaging',
+                'description' => 'Vendor log window hours for unknown sends.',
+            ],
+            'audit.engine.budget_seconds' => [
+                'seed' => AuditEngine::BUDGET_SECONDS,
+                'group' => 'Reviews',
+                'description' => 'Budget seconds for audit engine.',
+            ],
+            'content.self_audit.impression_window_days' => [
+                'seed' => ContentSelfAudit::IMPRESSION_WINDOW_DAYS,
+                'group' => 'Content',
+                'description' => 'Impression window days for self audits.',
+            ],
+            'billing.trial.signup_origin_window_days' => [
+                'seed' => TrialEligibility::SIGNUP_ORIGIN_WINDOW_DAYS,
+                'group' => 'Billing',
+                'description' => 'Signup origin window days for trials.',
+            ],
+            'billing.renewal.opens_days_before' => [
+                'seed' => RenewalReminders::OPENS_DAYS_BEFORE,
+                'group' => 'Billing',
+                'description' => 'Days before renewal opens.',
+            ],
+            'billing.renewal.closes_days_before' => [
+                'seed' => RenewalReminders::CLOSES_DAYS_BEFORE,
+                'group' => 'Billing',
+                'description' => 'Days before renewal closes.',
+            ],
+            'billing.renewal.claim_minutes' => [
+                'seed' => Subscriptions::RENEWAL_REMINDER_CLAIM_MINUTES,
+                'group' => 'Billing',
+                'description' => 'Renewal reminder claim minutes.',
+            ],
+            'content.publishing.hold_hours' => [
+                'seed' => Publishing::HOLD_HOURS,
+                'group' => 'Content',
+                'description' => 'Publishing hold hours.',
+            ],
+            'crm.merge.undo_window_days' => [
+                'seed' => CustomerMerges::UNDO_WINDOW_DAYS,
+                'group' => 'Marketing',
+                'description' => 'Undo window days for customer merges.',
+            ],
+            'export.request_cooldown_minutes' => [
+                'seed' => ExportBuilder::REQUEST_COOLDOWN_MINUTES,
+                'group' => 'Operations',
+                'description' => 'Export request cooldown minutes.',
+            ],
+            'export.in_flight_reuse_minutes' => [
+                'seed' => ExportBuilder::IN_FLIGHT_REUSE_MINUTES,
+                'group' => 'Operations',
+                'description' => 'Export in-flight reuse minutes.',
+            ],
+            'billing.dunning.schedule_hours' => [
+                'seed' => '24,72,120',
+                'group' => 'Billing',
+                'description' => 'Dunning ladder schedule in hours.',
+            ],
+            'fetch.cooldown_hours' => [
+                'seed' => '6,24,72',
+                'group' => 'Content',
+                'description' => 'Fetch cooldown schedule in hours.',
+            ],
+            'sites.revert.backoff_hours' => [
+                'seed' => '0,0,24,24,48,48,96,168',
+                'group' => 'Sites',
+                'description' => 'Revert backoff schedule in hours.',
+            ],
+            'scheduling.slot_hours' => [
+                'seed' => '9,11,14,16',
+                'group' => 'Operations',
+                'description' => 'Standard potential slots in hours.',
             ],
         ];
 

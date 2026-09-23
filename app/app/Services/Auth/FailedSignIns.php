@@ -7,6 +7,7 @@ namespace App\Services\Auth;
 use App\Enums\ProofHashDomain;
 use App\Listeners\RecordFailedSignIn;
 use App\Models\FailedSignIn;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\HashedIp;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Collection;
@@ -91,9 +92,13 @@ final class FailedSignIns
      * to move the column backwards past `first_seen_at`, which the table's own
      * CHECK refuses — turning a skew into a 500 on the login path.
      */
+    public function __construct(
+        private readonly DefaultsRegistry $defaults,
+    ) {}
+
     public function record(string $address, ?string $ipHash, bool $accountExisted, CarbonImmutable $at): void
     {
-        $window = $at->startOfHour();
+        $window = $at->floorMinutes($this->windowMinutes());
 
         DB::statement(<<<'SQL'
             INSERT INTO failed_sign_ins
@@ -152,7 +157,7 @@ final class FailedSignIns
     {
         /** @var object{attempts: int|string, addresses: int|string, sources: int|string, sourceless_attempts: int|string, attempts_on_accounts: int|string, addresses_with_accounts: int|string}|null $row */
         $row = FailedSignIn::query()
-            ->where('window_start', '>=', $since->startOfHour())
+            ->where('window_start', '>=', $since->floorMinutes($this->windowMinutes()))
             ->selectRaw('COALESCE(SUM(attempts), 0) AS attempts')
             ->selectRaw('COUNT(DISTINCT email_hash) AS addresses')
             ->selectRaw('COUNT(DISTINCT ip_hash) AS sources')
@@ -186,7 +191,7 @@ final class FailedSignIns
     public function widestSourcesSince(CarbonImmutable $since, int $limit): Collection
     {
         return FailedSignIn::query()
-            ->where('window_start', '>=', $since->startOfHour())
+            ->where('window_start', '>=', $since->floorMinutes($this->windowMinutes()))
             ->selectRaw('ip_hash')
             ->selectRaw('COUNT(DISTINCT email_hash) AS addresses')
             ->selectRaw('SUM(attempts) AS attempts')
@@ -221,7 +226,7 @@ final class FailedSignIns
     public function mostTargetedSince(CarbonImmutable $since, int $limit): Collection
     {
         return FailedSignIn::query()
-            ->where('window_start', '>=', $since->startOfHour())
+            ->where('window_start', '>=', $since->floorMinutes($this->windowMinutes()))
             ->selectRaw('email_hash')
             ->selectRaw('SUM(attempts) AS attempts')
             ->selectRaw('COUNT(DISTINCT ip_hash) AS sources')
@@ -243,7 +248,7 @@ final class FailedSignIns
     {
         return FailedSignIn::query()
             ->where('email_hash', self::fingerprint($address))
-            ->where('window_start', '>=', $since->startOfHour())
+            ->where('window_start', '>=', $since->floorMinutes($this->windowMinutes()))
             ->orderByRaw('window_start DESC NULLS LAST')
             ->orderBy('ip_hash')
             ->get();
@@ -279,5 +284,10 @@ final class FailedSignIns
         } while ($batch === $chunk);
 
         return $deleted;
+    }
+
+    public function windowMinutes(): int
+    {
+        return $this->defaults->int('auth.failed_sign_ins.window_minutes');
     }
 }

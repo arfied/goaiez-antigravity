@@ -325,7 +325,7 @@
                     <li class="flex flex-wrap items-center justify-between gap-3 border-t border-rule pt-3">
                         <span class="text-base text-ink-2">
                             Merged {{ $merge->merged_at->diffForHumans() }}. You can undo this
-                            until {{ $merge->merged_at->addDays(\App\Services\Crm\CustomerMerges::UNDO_WINDOW_DAYS)->toFormattedDateString() }}.
+                            until {{ $merge->merged_at->addDays(app(\App\Services\Crm\CustomerMerges::class)->undoWindowDays())->toFormattedDateString() }}.
                         </span>
                         <x-ui.button size="default" variant="secondary" wire:click="undoMerge({{ $merge->id }})">
                             Undo this merge

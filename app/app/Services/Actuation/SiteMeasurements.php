@@ -155,6 +155,11 @@ final class SiteMeasurements
         private readonly ActivityService $activity,
     ) {}
 
+    public function revertBackoffHours(): array
+    {
+        return $this->registry->intList('sites.revert.backoff_hours');
+    }
+
     /**
      * Every applied, unmeasured, still-live change whose window has closed.
      *
@@ -550,7 +555,7 @@ final class SiteMeasurements
             'revert_attempts' => $attempts,
             // ⚠️ **CLEARED ON EXHAUSTION RATHER THAN LEFT AT A PAST TIME**, so
             // that a row nobody is retrying does not read as one that is due.
-            'revert_attempt_after' => $exhausted ? null : CarbonImmutable::now()->addHours(self::backoffHours($attempts)),
+            'revert_attempt_after' => $exhausted ? null : CarbonImmutable::now()->addHours($this->backoffHours($attempts)),
             'revert_attempts_exhausted_at' => $exhausted ? CarbonImmutable::now() : null,
         ])->save();
 
@@ -566,9 +571,9 @@ final class SiteMeasurements
      * otherwise fall off its own end into an undefined index, which is a fatal
      * on the one path whose whole job is to keep trying.
      */
-    private static function backoffHours(int $attempts): int
+    private function backoffHours(int $attempts): int
     {
-        $schedule = self::REVERT_BACKOFF_HOURS;
+        $schedule = $this->revertBackoffHours();
 
         return $schedule[min($attempts, count($schedule)) - 1];
     }

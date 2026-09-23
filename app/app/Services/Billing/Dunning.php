@@ -10,6 +10,7 @@ use App\Jobs\AdvanceDunningScheduleJob;
 use App\Models\Business;
 use App\Models\DunningAttempt;
 use App\Models\Subscription;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -96,7 +97,7 @@ final class Dunning
      *
      * @var list<int>
      */
-    private const array SCHEDULE_HOURS = [24, 72, 120];
+    public const array SCHEDULE_HOURS = [24, 72, 120];
 
     /**
      * How long to wait after an attempt that could not be made at all.
@@ -115,6 +116,11 @@ final class Dunning
         private readonly DunningNotices $notices,
         private readonly AuthorizeNetApi $api = new AuthorizeNetApi,
     ) {}
+
+    private function scheduleHours(): array
+    {
+        return app(DefaultsRegistry::class)->intList('billing.dunning.schedule_hours');
+    }
 
     /**
      * Open a schedule after a declined payment, or do nothing if one is running.
@@ -294,7 +300,7 @@ final class Dunning
         // that happened; this counts only what the tenant is answerable for.
         $failures = $this->countedFailures($business, $head->sequence);
 
-        if ($failures >= count(self::SCHEDULE_HOURS)) {
+        if ($failures >= count($this->scheduleHours())) {
             $now = Carbon::now();
 
             $this->record(
@@ -388,7 +394,7 @@ final class Dunning
      */
     private function endsOnAfter(int $failuresRecorded, ?Carbon $nextAttemptAt): ?Carbon
     {
-        return $failuresRecorded === count(self::SCHEDULE_HOURS) ? $nextAttemptAt : null;
+        return $failuresRecorded === count($this->scheduleHours()) ? $nextAttemptAt : null;
     }
 
     /**
@@ -600,7 +606,7 @@ final class Dunning
      */
     private function nextAttemptAt(int $attemptJustRecorded): ?Carbon
     {
-        $hours = self::SCHEDULE_HOURS[$attemptJustRecorded - 1] ?? null;
+        $hours = $this->scheduleHours()[$attemptJustRecorded - 1] ?? null;
 
         if ($hours === null) {
             return null;

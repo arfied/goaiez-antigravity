@@ -9,6 +9,7 @@ use App\Models\Customer;
 use App\Models\CustomerMerge;
 use App\Models\User;
 use App\Services\AuditService;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Consent\ConsentService;
 use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
@@ -113,6 +114,7 @@ final class CustomerMerges
      * which is what `retag()` is. **Nothing was widened.**
      */
     public function __construct(
+        private readonly DefaultsRegistry $defaults,
         private readonly AuditService $audit,
         private readonly ConsentService $consent,
         private readonly CustomerEditor $editor,
@@ -348,7 +350,7 @@ final class CustomerMerges
 
         if (! $this->isWithinWindow($merge)) {
             throw new RuntimeException(
-                'This merge is more than '.self::UNDO_WINDOW_DAYS.' days old, so it can no '
+                'This merge is more than '.$this->undoWindowDays().' days old, so it can no '
                 .'longer be undone. The two customers stay as one.',
             );
         }
@@ -538,7 +540,7 @@ final class CustomerMerges
      */
     private function windowOpensAt(): CarbonImmutable
     {
-        return CarbonImmutable::now()->subDays(self::UNDO_WINDOW_DAYS);
+        return CarbonImmutable::now()->subDays($this->undoWindowDays());
     }
 
     /**
@@ -660,5 +662,10 @@ final class CustomerMerges
         throw new InvalidArgumentException(
             'That merge belongs to another tenant.',
         );
+    }
+
+    public function undoWindowDays(): int
+    {
+        return $this->defaults->int('crm.merge.undo_window_days');
     }
 }

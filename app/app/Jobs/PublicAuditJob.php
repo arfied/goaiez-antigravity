@@ -65,7 +65,9 @@ final class PublicAuditJob implements ShouldBeUnique, ShouldQueue
 
     public function __construct(
         public readonly string $token,
-    ) {}
+    ) {
+        $this->timeout = app(AuditEngine::class)->budgetSeconds();
+    }
 
     public function uniqueId(): string
     {
