@@ -87,12 +87,12 @@ final class UrgentTerms
 
     private function maxTerms(): int
     {
-        return app(DefaultsRegistry::class)->int('assistant.urgent_terms.max_terms');
+        return app(DefaultsRegistry::class)->int('assistant.urgent.max_terms');
     }
 
     private function maxLength(): int
     {
-        return app(DefaultsRegistry::class)->int('assistant.urgent_terms.max_length');
+        return app(DefaultsRegistry::class)->int('assistant.urgent.max_length');
     }
 
     /**

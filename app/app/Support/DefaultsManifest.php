@@ -3252,12 +3252,12 @@ final class DefaultsManifest
             'group' => 'Assistant',
             'description' => 'Maximum length of a label in the price sheet (A4 slice 8).',
         ];
-        $settings['assistant.urgent_terms.max_terms'] = [
+        $settings['assistant.urgent.max_terms'] = [
             'seed' => UrgentTerms::MAX_TERMS,
             'group' => 'Assistant',
             'description' => 'Maximum number of urgent terms (A4 slice 8).',
         ];
-        $settings['assistant.urgent_terms.max_length'] = [
+        $settings['assistant.urgent.max_length'] = [
             'seed' => UrgentTerms::MAX_LENGTH,
             'group' => 'Assistant',
             'description' => 'Maximum length of a single urgent term (A4 slice 8).',

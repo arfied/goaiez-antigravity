@@ -29,7 +29,7 @@ it('a written label length of 3 refuses a 4-char label in PriceBook', function (
 });
 
 it('a written max_terms of 1 refuses a second urgent term', function () {
-    PlatformSetting::write('assistant.urgent_terms.max_terms', 1, 'test');
+    PlatformSetting::write('assistant.urgent.max_terms', 1, 'test');
 
     $terms = app(UrgentTerms::class);
     $terms->add('first');
