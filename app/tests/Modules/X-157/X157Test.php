@@ -618,6 +618,7 @@ class X157Test extends TestCase
                 ['type' => 'chat'],
                 ['type' => 'form_capture'],
                 ['type' => 'dni'],
+                ['type' => 'hero', 'headline' => 'Hero', 'image_path' => '/some-image.jpg'],
             ]);
 
         $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
@@ -642,6 +643,7 @@ class X157Test extends TestCase
         $this->assertStringContainsString('dni-pool-x137', $html);
         $this->assertStringContainsString('seo-meta-x176', $html);
         $this->assertStringContainsString('application/ld+json', $html);
+        $this->assertStringContainsString('<img src="/sites/' . $biz->id . '/' . $deploy['deploy_hash'] . '/media/some-image.jpg"', $html);
 
         $zoneRow = Deployment::where('deploy_hash', $deploy['deploy_hash'])->first()->edgeZone;
         $zoneRow->update(['has_valid_ssl' => false]);
@@ -2334,5 +2336,35 @@ class X157Test extends TestCase
         $postA->assertStatus(201);
         $this->assertSame('captured', $postA->json('status'));
         $this->assertSame(1, FormSubmission::where('business_id', $biz->id)->where('form_definition_id', $form->id)->count());
+    }
+
+    public function test_tenant_media_route_serves_image_and_enforces_auth_and_existence(): void
+    {
+        Http::fake();
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme.com', true);
+
+        $deploy = Deployment::create([
+            'business_id' => $biz->id,
+            'edge_zone_id' => $zone->id,
+            'deploy_hash' => 'test_hash_media',
+            'status' => 'deployed',
+            'measured_ttfb_ms' => 100,
+            'speed_budget_ms' => 1500,
+        ]);
+
+        Storage::disk('local')->put("site-inventory/{$biz->id}/image.jpg", base64_decode('R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='));
+
+        $response = $this->get("/sites/{$biz->id}/test_hash_media/media/image.jpg");
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'image/gif');
+
+        $this->get("/sites/{$biz->id}/test_hash_media/media/missing.jpg")->assertStatus(404);
+
+        $biz2 = TestCase::provisionTenant(['name' => 'Foreign', 'currency' => 'USD']);
+        $this->get("/sites/{$biz2->id}/test_hash_media/media/image.jpg")->assertStatus(404);
     }
 }

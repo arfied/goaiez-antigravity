@@ -4,6 +4,6 @@
         <p>{{ $block['subline'] }}</p>
     @endif
     @if(isset($block['image_path']) && is_scalar($block['image_path']) && trim((string)$block['image_path']) !== '')
-        <img src="{{ rtrim($context['tenant_storage_url_prefix'] ?? '', '/') . '/' . ltrim((string)$block['image_path'], '/') }}" alt="">
+        <img src="{{ $context['tenant_storage_url_prefix'] }}{{ basename($block['image_path']) }}" alt="">
     @endif
 </div>

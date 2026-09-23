@@ -300,7 +300,7 @@ final class EdgeDeployAction
                     $context = [
                         'businessName' => $businessName,
                         'deployHash' => $deployHash,
-                        'tenant_storage_url_prefix' => Storage::disk('local')->url("tenant/{$businessId}"),
+                        'tenant_storage_url_prefix' => route('x-157.site.media', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false).'/',
                     ];
                     $html .= app(SiteBlockRenderer::class)->render($contentBlocks, $context);
                 }
