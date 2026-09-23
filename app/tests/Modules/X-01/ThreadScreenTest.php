@@ -107,7 +107,7 @@ class ThreadScreenTest extends TestCase
             Tenancy::setUser($owner->id);
             $customer = Customer::factory()->create([
                 'name' => 'Release Customer',
-                'phone' => '+1512555'.rand(1000, 9999),
+                'phone' => '+1512557'.rand(1000, 9999),
             ]);
 
             $conversation = Conversation::factory()->create([
