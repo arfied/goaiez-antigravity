@@ -20,6 +20,8 @@ class SubmissionLogScreenTest extends TestCase
 
         $this->get(route('x-109.submission-log'))
             ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
             ->assertSeeText('No contact forms have been submitted for this tenant.');
 
         Livewire::test(SubmissionLog::class)->assertOk();

@@ -550,6 +550,7 @@ final class OwnerNav
             OwnerNavItem::make('Chat thread', 'x-102.thread', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Reveal log', 'x-206.reveal-log', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Form submissions', 'x-155.submissions-thread', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Contact form log', 'x-109.submission-log', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Parked numbers', 'x-188.park-list', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Change history', 'x-121.entity-history-viewer', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Restore tests', 'x-203.dr-dashboard', OwnerNavItem::GROUP_CATALOG),

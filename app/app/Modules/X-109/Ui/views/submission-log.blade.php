@@ -1,7 +1,6 @@
 <div>
     <div class="submission-log-view p-4">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-bold">Contact Form Submission Log</h3>
+        <div class="flex justify-end items-center mb-4">
             <x-ui.button wire:click="toggleSample" size="default" variant="secondary">
                 {{ $isSample ? 'Hide sample' : 'Show sample' }}
             </x-ui.button>
