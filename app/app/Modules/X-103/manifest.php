@@ -29,6 +29,7 @@ return [
     'ceiling' => 'L2',
 
     'provides' => [
+        'site_build',
         'site.build',
         'site.publish',
         'page.create',

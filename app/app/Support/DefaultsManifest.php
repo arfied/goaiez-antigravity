@@ -2524,6 +2524,31 @@ final class DefaultsManifest
                 'group' => 'Marketing',
                 'description' => 'Whether the signed-out site says a site is built from a conversation. ⛔ A CLAIM SWITCH — see `features.commerce`.',
             ],
+            'sites.build.recrawl_after_hours' => [
+                'seed' => 24,
+                'group' => 'Sites',
+                'description' => 'Re-run crawls again only if this many hours have passed.',
+            ],
+            'sites.build.max_pages_publish' => [
+                'seed' => 12,
+                'group' => 'Sites',
+                'description' => 'Maximum number of pages to publish during build.',
+            ],
+            'sites.crawl.max_pages' => [
+                'seed' => 25,
+                'group' => 'Sites',
+                'description' => 'Maximum number of pages followed on the same host breadth-first when fetching a tenant site.',
+            ],
+            'sites.images.max_per_site' => [
+                'seed' => 60,
+                'group' => 'Sites',
+                'description' => 'Maximum number of unique images to store from a single site\'s inventory (D2).',
+            ],
+            'sites.images.max_bytes' => [
+                'seed' => 2000000,
+                'group' => 'Sites',
+                'description' => 'Maximum size of an individual image fetched for inventory storage, in bytes. Must not exceed the FetchGateway\'s own 2 MB ceiling.',
+            ],
             'features.boost_score' => [
                 'seed' => false,
                 'group' => 'Marketing',
@@ -2829,6 +2854,24 @@ final class DefaultsManifest
                 'seed' => 2500,
                 'group' => 'Agency',
                 'description' => 'The agency discount off voice, in basis points (P-008 2026-09-05).',
+            ],
+
+            'sites.draft.about_max_chars' => [
+                'seed' => 1200,
+                'group' => 'Sites',
+                'description' => 'Maximum length of the drafted about text block, extracted from the inventory.',
+            ],
+
+            'sites.draft.reviews_max' => [
+                'seed' => 6,
+                'group' => 'Sites',
+                'description' => 'Maximum number of displayable reviews included in the drafted reviews strip block.',
+            ],
+
+            'sites.draft.reviews_min_rating' => [
+                'seed' => 4,
+                'group' => 'Sites',
+                'description' => 'Minimum rating required for a review to be included in the drafted reviews strip block.',
             ],
         ];
 

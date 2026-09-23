@@ -55,6 +55,27 @@ final class ModuleServiceProvider extends ServiceProvider
             return response($html, 200)->header('Content-Type', 'text/html');
         })->whereNumber('business');
 
+        Route::get('/sites/{business}/{deploy_hash}/media/{file?}', function (string $business, string $deployHash, string $file = '') {
+            if ($file === '') {
+                abort(404);
+            }
+            $businessId = (int) $business;
+            Tenancy::set($businessId);
+
+            $deployment = Deployment::where('business_id', $businessId)->where('deploy_hash', $deployHash)->firstOrFail();
+            abort_if($deployment->status !== 'deployed', 404);
+
+            $zone = $deployment->edgeZone;
+            abort_if($zone === null || ! $zone->has_valid_ssl, 404);
+
+            $content = Storage::disk('local')->get("site-inventory/{$businessId}/{$file}");
+            abort_if($content === null, 404);
+
+            $mime = (new \finfo(FILEINFO_MIME_TYPE))->buffer($content);
+
+            return response($content, 200)->header('Content-Type', $mime ?: 'application/octet-stream');
+        })->name('x-157.site.media')->whereNumber('business')->where('file', '[A-Za-z0-9._-]+');
+
         Route::get('/sites/{business}/{deploy_hash}/dni', function (string $business, string $deployHash, Request $request) {
             $businessId = (int) $business;
             Tenancy::set($businessId);
