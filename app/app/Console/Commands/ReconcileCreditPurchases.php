@@ -89,7 +89,7 @@ final class ReconcileCreditPurchases extends Command
         $raw = $this->option('limit');
 
         if ($raw === null) {
-            return PurchaseReconciliation::DEFAULT_BATCH;
+            return app(PurchaseReconciliation::class)->defaultBatch();
         }
 
         if (preg_match('/^\d+$/', $raw) !== 1 || (int) $raw < 1) {
