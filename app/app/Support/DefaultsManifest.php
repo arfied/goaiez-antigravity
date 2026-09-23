@@ -86,6 +86,11 @@ use App\Services\Warehouse\WarehouseRetention;
 final class DefaultsManifest
 {
     /**
+     * The only group names an entry may use.
+     */
+    public const array GROUPS = ['AI', 'Affiliate', 'Agency', 'Assistant', 'Billing', 'Brand', 'Content', 'Credits', 'Free instant audit', 'Google Business Profile', 'Legal', 'Marketing', 'Messaging', 'Notifications', 'Operations', 'Pixel', 'Places', 'Reviews', 'Sites', 'Support', 'Trust'];
+
+    /**
      * Platform-wide seeds → `platform_settings`.
      *
      * `group` is the Ops editor's heading (`38` Part 2: "the Settings editor
@@ -100,12 +105,12 @@ final class DefaultsManifest
         $settings = [
             'routing.default_order' => [
                 'seed' => 'returning_caller,territory,workload,default_staff',
-                'group' => 'Routing',
+                'group' => 'Marketing',
                 'description' => 'Default order of lead routing rules applied to a new tenant.',
             ],
             'routing.workload_window_days' => [
                 'seed' => 30,
-                'group' => 'Routing',
+                'group' => 'Marketing',
                 'description' => 'Number of days to look back when evaluating a staff member\'s workload.',
             ],
             'crm.lead_score.tier_hot' => [
@@ -1713,7 +1718,7 @@ final class DefaultsManifest
              */
             'crm.tasks_enabled' => [
                 'seed' => true,
-                'group' => 'CRM',
+                'group' => 'Marketing',
                 'description' => 'Whether owners can create and see follow-ups (`44` §2). On by default — the feature has no vendor, no spend and no send path, so rule 3\'s conservative value is the working one.',
             ],
 
@@ -1801,7 +1806,7 @@ final class DefaultsManifest
              */
             'crm.task_open_max' => [
                 'seed' => 200,
-                'group' => 'CRM',
+                'group' => 'Marketing',
                 'description' => 'Open follow-ups per business before creating another is refused (`44` §1\'s hoarding guard). The refusal names this key so an operator can find it.',
             ],
 
@@ -3042,22 +3047,22 @@ final class DefaultsManifest
             ],
             'signals.decay.half_life_days' => [
                 'seed' => 14,
-                'group' => 'Signals',
+                'group' => 'Marketing',
                 'description' => 'The default half-life in days for signal decay models (C1).',
             ],
             'signals.decay.rate_pct' => [
                 'seed' => 5.0,
-                'group' => 'Signals',
+                'group' => 'Marketing',
                 'description' => 'The default decay rate percentage for signal decay models (C1).',
             ],
             'ai.eval.pass_threshold_pct' => [
                 'seed' => 90,
-                'group' => 'Ai',
+                'group' => 'AI',
                 'description' => 'Threshold percentage for an AI evaluation to pass (C2b).',
             ],
             'ai.eval.max_cases_per_set' => [
                 'seed' => 50,
-                'group' => 'Ai',
+                'group' => 'AI',
                 'description' => 'Maximum number of cases kept in a golden set before the oldest is dropped (C2b).',
             ],
             'ops.alerts.push_budget_per_kind' => [
