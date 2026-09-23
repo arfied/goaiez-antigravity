@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X136;
 
+use App\Enums\UserRole;
+use App\Models\User;
+use App\Modules\X01\Events\ContactCreated;
 use App\Modules\X136\Actions\SignalListAction;
 use App\Modules\X136\Actions\SignalScoreAction;
 use App\Modules\X136\Events\IntentHigh;
@@ -12,10 +15,12 @@ use App\Modules\X136\Events\SignalDetected;
 use App\Modules\X136\Models\DecayModel;
 use App\Modules\X136\Models\Signal;
 use App\Modules\X136\Models\SignalScore;
+use App\Modules\X136\Ui\CoolingView;
 use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X136Test extends TestCase
@@ -192,5 +197,68 @@ class X136Test extends TestCase
 
         $this->assertGreaterThanOrEqual(15, $visited);
         $this->assertGreaterThanOrEqual(3, $matchedControl);
+    }
+
+    public function test_a_new_contact_records_one_cooling_signal_and_a_decay_model(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new ContactCreated($biz->id, 7731, 'Distinctive Prospect 7731', '+15125567731', null));
+
+        $this->assertEquals(1, Signal::where('business_id', $biz->id)->where('prospect_identifier', 'person:7731')->where('signal_type', 'contact.created')->count());
+        $score = SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'person:7731')->first();
+        $this->assertEquals(50.0, $score->signal_value);
+        $this->assertFalse((bool) $score->is_high_intent);
+        $this->assertEquals('cooling', $score->cooling_status);
+        $this->assertTrue(DecayModel::where('business_id', $biz->id)->where('signal_type', 'contact.created')->exists());
+        $signal = Signal::where('business_id', $biz->id)->where('prospect_identifier', 'person:7731')->first();
+        $this->assertTrue($signal->payload['has_phone']);
+        $this->assertFalse($signal->payload['has_email']);
+    }
+
+    public function test_the_same_contact_created_twice_scores_once(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new ContactCreated($biz->id, 7731, 'Distinctive Prospect 7731', '+15125567731', null));
+        Event::dispatch(new ContactCreated($biz->id, 7731, 'Distinctive Prospect 7731', '+15125567731', null));
+
+        $this->assertEquals(1, Signal::where('business_id', $biz->id)->where('prospect_identifier', 'person:7731')->where('signal_type', 'contact.created')->count());
+        $this->assertEquals(1, SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'person:7731')->count());
+    }
+
+    public function test_the_cooling_screen_lists_the_new_prospect(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new ContactCreated($biz->id, 7731, 'Distinctive Prospect 7731', '+15125567731', null));
+
+        Livewire::actingAs($owner)->test(CoolingView::class)
+            ->assertSee('person:7731')
+            ->assertDontSee('Nobody is cooling');
+    }
+
+    public function test_another_tenants_contact_does_not_appear_here(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Biz A', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+        $this->artisan('defaults:sync');
+
+        $bizB = TestCase::provisionTenant(['name' => 'Biz B', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$bizB->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new ContactCreated($bizB->id, 7732, 'Distinctive Prospect 7732', '+15125567732', null));
+
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+        $this->assertEquals(0, Signal::where('business_id', $bizA->id)->where('prospect_identifier', 'person:7732')->count());
     }
 }
