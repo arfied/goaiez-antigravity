@@ -13,7 +13,7 @@ final class HoldsListAction
     public function handle(int $businessId, int $days): array
     {
         $since = Carbon::now()->subDays($days);
-        
+
         $holds = [];
 
         // 1. notification_holds rows
@@ -43,7 +43,7 @@ final class HoldsListAction
             $holds[] = [
                 'what' => $run->automation_key,
                 'why' => $output['reason'] ?? 'unknown',
-                'since' => $run->started_at ? $run->started_at->toDateTimeString() : null,
+                'since' => \Carbon\Carbon::parse($run->started_at)->toDateTimeString(),
                 'until' => $output['window'] ?? null,
                 'source' => 'autopilot',
             ];
