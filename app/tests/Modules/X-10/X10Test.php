@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X10;
 
+use App\Modules\X01\Events\ContactCreated;
 use App\Modules\X10\Actions\LeadAssignAction;
 use App\Modules\X10\Actions\LeadReassignAction;
 use App\Modules\X10\Actions\RoutingRulesEnsureAction;
@@ -13,8 +14,11 @@ use App\Modules\X10\Enums\RoutingRuleType;
 use App\Modules\X10\Events\LeadAssigned;
 use App\Modules\X10\Events\LeadReassigned;
 use App\Modules\X10\Events\TerritoryChanged;
+use App\Modules\X10\Models\Assignment;
+use App\Modules\X10\Models\RoutingRule;
 use App\Modules\X10\Models\Territory;
 use App\Modules\X10\Ui\RoutingRules;
+use App\Modules\X10\Ui\UnassignedCount;
 use App\Modules\X113\Models\StaffUser;
 use App\Modules\X121\Models\Person;
 use App\Services\Config\DefaultsRegistry;
@@ -234,5 +238,68 @@ class X10Test extends TestCase
             'rule_type' => 'returning_caller',
             'is_active' => false,
         ]);
+    }
+
+    public function test_listener_routes_contact_and_updates_unassigned_count(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->artisan('defaults:sync');
+        $ensureAction = new RoutingRulesEnsureAction(new DefaultsRegistry);
+        $ensureAction->handle($biz->id);
+
+        Livewire::test(UnassignedCount::class, ['businessId' => $biz->id])
+            ->assertSee('0 unassigned leads');
+
+        Event::dispatch(new ContactCreated($biz->id, 999, 'Test Contact'));
+
+        $assignment = Assignment::where('business_id', $biz->id)
+            ->where('lead_id', 999)
+            ->first();
+
+        $this->assertNotNull($assignment);
+        $this->assertEquals('default_staff', $assignment->assignment_reason);
+
+        // Idempotent test
+        Event::dispatch(new ContactCreated($biz->id, 999, 'Test Contact'));
+        $this->assertEquals(1, Assignment::where('lead_id', 999)->count());
+
+        $assignment->update(['status' => 'closed']);
+
+        // Returning caller affinity
+        Event::dispatch(new ContactCreated($biz->id, 999, 'Test Contact'));
+        $newAssignment = Assignment::where('business_id', $biz->id)
+            ->where('lead_id', 999)
+            ->where('status', 'active')
+            ->first();
+        $this->assertEquals('returning_caller', $newAssignment->assignment_reason);
+        $this->assertEquals($assignment->assigned_staff_id, $newAssignment->assigned_staff_id);
+
+        // Workload picks the lightest
+        Assignment::create(['business_id' => $biz->id, 'lead_id' => 1000, 'assigned_staff_id' => $biz->owner_user_id, 'status' => 'active', 'assignment_reason' => 'workload']);
+        Assignment::create(['business_id' => $biz->id, 'lead_id' => 1001, 'assigned_staff_id' => 101, 'status' => 'active', 'assignment_reason' => 'workload']);
+        Assignment::create(['business_id' => $biz->id, 'lead_id' => 1002, 'assigned_staff_id' => 101, 'status' => 'active', 'assignment_reason' => 'workload']);
+        Assignment::create(['business_id' => $biz->id, 'lead_id' => 1003, 'assigned_staff_id' => 102, 'status' => 'active', 'assignment_reason' => 'workload']);
+
+        RoutingRule::where('business_id', $biz->id)
+            ->whereIn('rule_type', ['returning_caller', 'territory'])
+            ->update(['is_active' => false]);
+
+        Event::dispatch(new ContactCreated($biz->id, 889, 'Workload Contact 2'));
+        $workloadAssignment = Assignment::where('business_id', $biz->id)
+            ->where('lead_id', 889)
+            ->first();
+
+        $this->assertEquals(102, $workloadAssignment->assigned_staff_id);
+        $this->assertEquals('workload', $workloadAssignment->assignment_reason);
+
+        Livewire::test(UnassignedCount::class, ['businessId' => $biz->id])
+            ->assertSee('0 unassigned leads');
+
+        Assignment::create(['business_id' => $biz->id, 'lead_id' => 9999, 'assigned_staff_id' => 102, 'status' => 'closed', 'assignment_reason' => 'workload']);
+
+        Livewire::test(UnassignedCount::class, ['businessId' => $biz->id])
+            ->assertSee('1 unassigned leads');
     }
 }
