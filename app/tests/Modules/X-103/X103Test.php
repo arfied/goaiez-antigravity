@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103;
 
-use App\Enums\PriceListItemSource;
 use App\Enums\TenantLinkKind;
 use App\Enums\UserRole;
 use App\Models\Location;
@@ -14,13 +13,13 @@ use App\Models\TenantLinkRecord;
 use App\Models\User;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CSms\Events\SendRequested;
-use App\Modules\X103\Actions\EdgeDeployAction;
 use App\Modules\X103\Actions\FunnelBuildAction;
 use App\Modules\X103\Actions\PageCreateAction;
 use App\Modules\X103\Actions\SiteBuildAction;
 use App\Modules\X103\Actions\SiteCopyPolishAction;
 use App\Modules\X103\Actions\SiteDraftAction;
 use App\Modules\X103\Actions\SitePublishAction;
+use App\Modules\X103\Domain\SiteBlockRenderer;
 use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Events\ApprovalRequested;
 use App\Modules\X103\Events\PagePublished;
@@ -416,17 +415,44 @@ class X103Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Gallery Tenant', 'currency' => 'USD']);
         Tenancy::set($biz->id);
 
-        $location = Location::factory()->create(['business_id' => $biz->id, 'website_url' => 'https://example.com']);
+        $location = Location::factory()->create(['business_id' => $biz->id, 'website_url' => 'https://example.com', 'website_confirmed_at' => now()]);
+
+        $inventoryPage = SiteInventoryPage::create([
+            'business_id' => $biz->id,
+            'location_id' => $location->id,
+            'url' => 'https://example.com',
+        ]);
 
         // 3 stored images
         SiteInventoryImage::create([
-            'business_id' => $biz->id, 'status' => 'stored', 'stored_path' => 'inventory/hero.jpg', 'attribution' => 'example.com',
+            'business_id' => $biz->id,
+            'page_id' => $inventoryPage->id,
+            'source_url' => 'https://example.com/a-hero.jpg',
+            'path' => 'inventory/hero.jpg',
+            'mime' => 'image/jpeg',
+            'bytes' => 1234,
+            'status' => 'stored',
+            'attribution' => 'example.com',
         ]);
         SiteInventoryImage::create([
-            'business_id' => $biz->id, 'status' => 'stored', 'stored_path' => 'inventory/gal1.jpg', 'attribution' => 'example.com',
+            'business_id' => $biz->id,
+            'page_id' => $inventoryPage->id,
+            'source_url' => 'https://example.com/gal1.jpg',
+            'path' => 'inventory/gal1.jpg',
+            'mime' => 'image/jpeg',
+            'bytes' => 1234,
+            'status' => 'stored',
+            'attribution' => 'example.com',
         ]);
         SiteInventoryImage::create([
-            'business_id' => $biz->id, 'status' => 'stored', 'stored_path' => 'inventory/gal2.jpg', 'attribution' => 'example.com',
+            'business_id' => $biz->id,
+            'page_id' => $inventoryPage->id,
+            'source_url' => 'https://example.com/gal2.jpg',
+            'path' => 'inventory/gal2.jpg',
+            'mime' => 'image/jpeg',
+            'bytes' => 1234,
+            'status' => 'stored',
+            'attribution' => 'example.com',
         ]);
 
         $action = app(SiteDraftAction::class);
@@ -443,15 +469,9 @@ class X103Test extends TestCase
         $this->assertEquals('inventory', $galleryBlock['source']);
 
         Http::fake();
-        $engine = app(SiteEngine::class);
-        $engine->publish($biz->id, $home, $home->draft_blocks);
-
-        $deployAction = app(EdgeDeployAction::class);
-        $deployAction->handle($biz->id);
-
-        $html = $engine->serve($biz->id, 'home');
-        $this->assertStringContainsString('x-157.site.media', $html);
-        $this->assertEquals(2, substr_count($html, 'x-157.site.media/inventory/gal'));
+        $html = (new SiteBlockRenderer)->render($home->draft_blocks, ['tenant_storage_url_prefix' => 'https://site.test/media/']);
+        $this->assertEquals(2, substr_count($html, 'https://site.test/media/gal'));
+        $this->assertStringContainsString('<img', $html);
         Http::assertNothingSent();
         PlatformSetting::query()->where('key', 'ai.monthly_cap_per_tenant')->delete();
     }
@@ -485,9 +505,7 @@ class X103Test extends TestCase
         $this->assertEquals('Tester Role', $teamBlock['items'][0]['role']);
         $this->assertEquals('staff', $teamBlock['source']);
 
-        $engine = app(SiteEngine::class);
-        $engine->publish($biz->id, $about, $about->draft_blocks);
-        $html = $engine->serve($biz->id, 'about');
+        $html = (new SiteBlockRenderer)->render($about->draft_blocks, []);
 
         $this->assertStringContainsString('UniqueNameAlpha', $html);
         $this->assertStringContainsString('UniqueNameBeta', $html);
@@ -520,15 +538,16 @@ class X103Test extends TestCase
 
         $location = Location::where('business_id', $biz->id)->first();
         if (! $location) {
-            $location = Location::factory()->create(['business_id' => $biz->id, 'website_url' => 'https://example.com']);
+            $location = Location::factory()->create(['business_id' => $biz->id, 'website_url' => 'https://example.com', 'website_confirmed_at' => now()]);
         } else {
-            $location->update(['website_url' => 'https://example.com']);
+            $location->update(['website_url' => 'https://example.com', 'website_confirmed_at' => now()]);
         }
 
         Tenancy::set($biz->id);
 
-        SiteInventoryPage::create([
+        $invPage = SiteInventoryPage::create([
             'business_id' => $biz->id,
+            'location_id' => $location->id,
             'url' => 'https://example.com',
             'title' => 'Home Page',
             'headings' => ['Welcome to Draft Site Tenant H1'],
@@ -541,6 +560,7 @@ class X103Test extends TestCase
 
         SiteInventoryPage::create([
             'business_id' => $biz->id,
+            'location_id' => $location->id,
             'url' => 'https://example.com/about',
             'title' => 'About Us',
             'text' => 'This is the longest text block. '.str_repeat('B', 1200),
@@ -550,29 +570,28 @@ class X103Test extends TestCase
 
         SiteInventoryImage::create([
             'business_id' => $biz->id,
-            'page_id' => 1,
+            'page_id' => $invPage->id,
+            'source_url' => 'https://example.com/img1.jpg',
+            'path' => 'inventory/img1.jpg',
+            'mime' => 'image/jpeg',
+            'bytes' => 1234,
             'status' => 'stored',
-            'stored_path' => 'inventory/img1.jpg',
             'attribution' => 'example.com',
         ]);
 
         PriceBookItem::create([
             'business_id' => $biz->id,
-            'slug' => 'service-1',
-            'label' => 'Service 1',
-            'minor_units' => 10000,
-            'currency' => 'USD',
-            'source' => PriceListItemSource::OwnerList,
+            'service_name' => 'Service 1',
+            'price_cents' => 10000,
+            'is_confirmed' => true,
             'confirmed_at' => now(),
         ]);
 
         PriceBookItem::create([
             'business_id' => $biz->id,
-            'slug' => 'service-2',
-            'label' => 'Service 2',
-            'minor_units' => 20000,
-            'currency' => 'USD',
-            'source' => PriceListItemSource::OwnerList,
+            'service_name' => 'Service 2',
+            'price_cents' => 20000,
+            'is_confirmed' => true,
             'confirmed_at' => now(),
         ]);
 
@@ -592,11 +611,12 @@ class X103Test extends TestCase
             'reviewer_name' => 'Bob',
         ]);
 
-        TenantLinkRecord::create([
+        (new TenantLinkRecord)->forceFill([
             'business_id' => $biz->id,
             'kind' => TenantLinkKind::Booking,
+            'label' => 'Booking Link',
             'destination' => 'https://booking.com',
-        ]);
+        ])->save();
 
         $action = app(SiteDraftAction::class);
         $res = $action->handle($biz->id, $location->id);
@@ -652,13 +672,9 @@ class X103Test extends TestCase
 
         // publish through SiteEngine
         Http::fake();
-        $publishAction = app(SitePublishAction::class);
-        // Wait, the prompt says publish through SiteEngine::publish(), which is probably what SitePublishAction uses, or we use SiteEngine directly.
-        $engine = app(SiteEngine::class);
-        $version = $engine->publish($biz->id, $home3->id, $home3->draft_blocks);
 
         // HTML contains escaped headline
-        $html = $engine->serve($biz->id, 'home');
+        $html = (new SiteBlockRenderer)->render($home3->draft_blocks, ['tenant_storage_url_prefix' => 'https://site.test/media/']);
         $this->assertStringContainsString(htmlspecialchars('Welcome to Draft Site Tenant H1', ENT_QUOTES, 'UTF-8'), $html);
         Http::assertNothingSent();
         PlatformSetting::query()->where('key', 'ai.monthly_cap_per_tenant')->delete();

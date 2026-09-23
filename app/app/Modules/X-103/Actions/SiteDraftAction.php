@@ -178,7 +178,7 @@ final class SiteDraftAction
                 'source' => 'inventory',
             ];
             if ($firstImage) {
-                $hero['image_path'] = $firstImage->stored_path;
+                $hero['image_path'] = $firstImage->path;
             }
             $homeBlocks[] = $hero;
             $blocksGenerated++;
@@ -209,7 +209,7 @@ final class SiteDraftAction
                         $alt = pathinfo($img->original_filename ?? '', PATHINFO_FILENAME);
                     }
                     $galleryItems[] = [
-                        'image_path' => $img->stored_path,
+                        'image_path' => $img->path,
                         'alt' => $alt,
                     ];
                 }

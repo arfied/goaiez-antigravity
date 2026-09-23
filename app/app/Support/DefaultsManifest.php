@@ -76,7 +76,7 @@ final class DefaultsManifest
     {
         $settings = [
             'ai.model.site_copy' => [
-                'seed' => 'gpt-4o-mini',
+                'seed' => AiTask::SiteCopy->defaultModel()->value,
                 'group' => 'Content',
                 'description' => 'The model router\'s per-task override for site_copy (seed = the same model the Conversation task seeds).',
             ],
