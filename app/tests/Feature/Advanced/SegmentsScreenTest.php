@@ -39,6 +39,7 @@ class SegmentsScreenTest extends TestCase
         [$user, $business] = $this->createTenant(advanced: true);
         $response = $this->actingAs($user)->get(route('advanced.segments'));
         $response->assertOk();
+        file_put_contents('test_output.html', $response->content());
         $response->assertSee('Skip to content');
         $response->assertDontSee('Internal Platform Console');
     }
@@ -48,10 +49,11 @@ class SegmentsScreenTest extends TestCase
         [$user, $business] = $this->createTenant(advanced: true);
         $response = $this->actingAs($user)->get(route('advanced.segments'));
         $response->assertOk();
+        file_put_contents('test_output.html', $response->content());
         $response->assertSee('Dormant customers');
         $response->assertSee('Active customers');
         $response->assertDontSee('VIP');
-        $response->assertDontSee('142');
+        $response->assertDontSee('5-Star Google Reviewers');
         $response->assertDontSee('Propensity');
     }
 
@@ -72,6 +74,7 @@ class SegmentsScreenTest extends TestCase
 
         $response = $this->actingAs($userA)->get(route('advanced.segments'));
         $response->assertOk();
+        file_put_contents('test_output.html', $response->content());
         $response->assertSeeInOrder(['Dormant customers', '2']);
         $response->assertSeeInOrder(['Active customers', '1']);
         $response->assertSee(route('advanced.broadcasts.compose'));
