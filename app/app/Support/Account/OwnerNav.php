@@ -89,7 +89,7 @@ final class OwnerNav
 
             // The profile has no entry of its own: it is one contact rather
             // than a destination, so the list it came from stays marked.
-            OwnerNavItem::make('Your customers', 'account.customers', alsoCurrentFor: ['account.customers.show']),
+            OwnerNavItem::make('Your customers', 'account.customers', alsoCurrentFor: ['account.customers.show', 'x-179.match-scores', 'prospects.match-scores', 'x-179.prospecttenantfacing-top3-preview', 'prospects.top3-preview']),
 
             // R21 calls the Inbox the tenant's daily surface, so it sits in the
             // primary row rather than under More — the distinction `44` §2 draws
@@ -520,6 +520,7 @@ final class OwnerNav
             OwnerNavItem::make('Reorders', 'x-167.reorders', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Resolution rate & confidence', 'x-132.resolution-rate-confidence', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Timesheets', 'x-168.timesheets', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Connect a source', 'x-156.connect-source', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Prompt copy', 'x-207.promptcopy-editor', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Timesheet approvals', 'x-168.approvals', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Social queue', 'x-182.social-queue', OwnerNavItem::GROUP_CATALOG),
@@ -549,6 +550,7 @@ final class OwnerNav
             OwnerNavItem::make('Chat thread', 'x-102.thread', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Reveal log', 'x-206.reveal-log', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Form submissions', 'x-155.submissions-thread', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Contact form log', 'x-109.submission-log', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Parked numbers', 'x-188.park-list', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Change history', 'x-121.entity-history-viewer', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Restore tests', 'x-203.dr-dashboard', OwnerNavItem::GROUP_CATALOG),
@@ -636,6 +638,7 @@ final class OwnerNav
             OwnerNavItem::make('Activity', 'x-01.history', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Your documents', 'x-160.upload-drop', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Documents to review', 'x-160.review-screen', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Extraction error rate', 'x-160.extraction-error-rate', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Document vault', 'x-113.document-vault', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Staff', 'x-113.staff', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Roles', 'x-113.roles', OwnerNavItem::GROUP_CATALOG),
@@ -659,14 +662,29 @@ final class OwnerNav
             OwnerNavItem::make('Compliance registers', 'x-204.register-slot-states', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Deal tracker', 'x-218.deal-tracker', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Discovery board', 'x-218.discovery-board', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Deliverable proof', 'x-218.deliverable-proof', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Offer composer', 'x-217.offer-composer', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Recruit pipeline', 'x-217.recruit-pipeline', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Cooling signals', 'x-136.cooling', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Signal volume & precision', 'x-136.signal-volume-precision', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Quality board', 'x-149.quality-board', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Manifest review queue', 'x-195.manifest-review-queue', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Marketplace', 'x-195.marketplace', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Readback screen', 'x-154.readback-screen', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Pipeline board', 'x-105.pipeline-board', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Gateway connections', 'x-198.connect-card', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Same account', 'x-198.same-account', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Research dossiers', 'x-135.research-dossier-per', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Metric proof panel', 'x-127.metric-proof-panel', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Provider cost per valid record', 'x-150.provider-cost-per', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Manual Form Review Queue', 'x-109.manual-queue', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Agency Console', 'x-112.agency-console', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Agency staff', 'x-112.staff', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Migration commit', 'x-212.commit', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Reconciliation report', 'x-212.reconciliation-report', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Standard Flow', 'x-118.same-flow', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Direct Test Call', 'x-118.test-call', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Fetch board', 'x-151.fetch-board', OwnerNavItem::GROUP_CATALOG),
         ];
     }
 

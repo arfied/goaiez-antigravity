@@ -8,9 +8,11 @@ use App\Modules\X136\Actions\SignalListAction;
 use App\Modules\X136\Actions\SignalScoreAction;
 use App\Modules\X136\Models\SignalScore;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Cooling Signals'])]
 class CoolingView extends Component
 {
     #[Locked]

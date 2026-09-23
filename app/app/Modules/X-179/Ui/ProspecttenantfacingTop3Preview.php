@@ -7,9 +7,11 @@ namespace App\Modules\X179\Ui;
 use App\Enums\UserRole;
 use App\Modules\X179\Models\TemplateMatch;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Top 3 Matched Template Previews'])]
 class ProspecttenantfacingTop3Preview extends Component
 {
     #[Locked]

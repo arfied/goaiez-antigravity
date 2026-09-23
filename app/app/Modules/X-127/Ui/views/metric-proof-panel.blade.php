@@ -1,6 +1,6 @@
 <div>
     <div class="metric-proof-view p-4">
-        <h3 class="text-lg font-bold">Published Metric Proof Panel</h3>
+        <h2 class="text-lg font-bold">Published Metric Proof Panel</h2>
 
         @if($error)
             <div class="bg-surface text-ink border rounded p-4 mb-4">{{ $error }}</div>
@@ -35,7 +35,7 @@
         </form>
 
         @if($metrics->isEmpty())
-            <p class="text-gray-500">No public metrics published.</p>
+            <p class="text-ink-2">No public metrics published.</p>
         @else
             <ul>
                 @foreach($metrics as $m)

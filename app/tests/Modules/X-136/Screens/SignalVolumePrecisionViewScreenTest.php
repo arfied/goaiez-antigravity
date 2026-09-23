@@ -20,7 +20,10 @@ class SignalVolumePrecisionViewScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-136.signal-volume-precision'))->assertOk();
+        $this->get(route('x-136.signal-volume-precision'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console');
 
         Livewire::test(SignalVolumePrecisionView::class)->assertOk();
     }

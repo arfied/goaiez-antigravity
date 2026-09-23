@@ -18,7 +18,10 @@ class ExtractionErrorRateScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-160.extraction-error-rate'))->assertOk();
+        $this->get(route('x-160.extraction-error-rate'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console');
 
         Livewire::test(ExtractionErrorRate::class)->assertOk();
     }
