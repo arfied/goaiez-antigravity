@@ -88,38 +88,47 @@ final class DefaultsManifest
             'reviews.request.cadence_window_days' => [
                 'seed' => ReviewRequestAction::CADENCE_WINDOW_DAYS,
                 'group' => 'Reviews',
+                'description' => 'Days between review requests; changing it applies to newly scheduled requests.',
             ],
             'reviews.request.low_csat_below' => [
                 'seed' => ReviewRequestAction::LOW_CSAT_BELOW,
                 'group' => 'Reviews',
+                'description' => 'CSAT score threshold for low rating alerts; changing it applies to newly rated jobs.',
             ],
             'reviews.request.low_csat_job_age_days' => [
                 'seed' => ReviewRequestAction::LOW_CSAT_JOB_AGE_DAYS,
                 'group' => 'Reviews',
+                'description' => 'Days before a low CSAT job is archived; changing it applies to newly rated jobs.',
             ],
             'billing.card.expiring_warning_days' => [
                 'seed' => CardExpiringScanAction::EXPIRING_WARNING_DAYS,
                 'group' => 'Billing',
+                'description' => 'Days before expiry to warn about a credit card; changing it applies to newly scanned cards.',
             ],
             'alerts.claim.expiry_minutes' => [
                 'seed' => AlertSendAction::CLAIM_EXPIRY_MINUTES,
                 'group' => 'Operations',
+                'description' => 'Minutes before an alert claim expires; changing it applies to newly claimed alerts.',
             ],
             'approvals.expiry_hours' => [
                 'seed' => ApprovalDeskEngine::EXPIRY_HOURS,
                 'group' => 'Operations',
+                'description' => 'Hours before an approval request expires; changing it applies to newly created requests.',
             ],
             'portal.link.ttl_hours' => [
                 'seed' => PortalLinkAction::TTL_HOURS,
                 'group' => 'Messaging',
+                'description' => 'Hours before a portal link expires; changing it applies to newly generated links.',
             ],
             'qa.ticket.sla_hours' => [
                 'seed' => QaTicketCreateAction::SLA_HOURS,
                 'group' => 'Operations',
+                'description' => 'Hours before a QA ticket breaches SLA; changing it applies to newly created tickets.',
             ],
             'attribution.call.ttl_minutes' => [
                 'seed' => CallAttributeAction::TTL_MINUTES,
                 'group' => 'Marketing',
+                'description' => 'Minutes before a call attribution expires; changing it applies to newly attributed calls.',
             ],
             'crm.lead_score.tier_hot' => [
                 'seed' => UnifiedInboxManager::TIER_HOT,
