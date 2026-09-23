@@ -60,7 +60,6 @@ return [
     'renders' => [
         'calls',
         'livecoaching_whisper_panel',
-        'customerfacing_call_itself',
         'latency_p50p95_per',
     ],
 

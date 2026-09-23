@@ -51,7 +51,6 @@ return [
     'reads_table' => [],
 
     'renders' => [
-        'TenantZeroConsole',
         'MetricProofPanel',
     ],
 

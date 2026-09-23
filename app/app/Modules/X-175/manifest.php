@@ -51,8 +51,6 @@ return [
 
     'renders' => [
         'stafffacing_assistant_panel',
-        'customerfacing_none',
-        'by_design',
     ],
 
     // P-209 — silence fails OPEN. `none` is a decision; absence is not.

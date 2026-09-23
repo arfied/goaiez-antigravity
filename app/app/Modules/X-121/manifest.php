@@ -64,7 +64,6 @@ return [
 
     'renders' => [
         'entity_history_viewer',
-        'when_x111_renders',
     ],
 
     // P-209 — silence fails OPEN. `none` is a decision; absence is not.

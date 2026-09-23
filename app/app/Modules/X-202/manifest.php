@@ -54,7 +54,6 @@ return [
         'item',
         'audit_export',
         'mobile',
-        'slack',
     ],
 
     // P-209 — silence fails OPEN. `none` is a decision; absence is not.

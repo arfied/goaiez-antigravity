@@ -55,7 +55,6 @@ return [
         'private_inbox',
         'onetap_approval_card',
         'ladders_own_state',
-        'never_setting',
     ],
 
     // P-209 — silence fails OPEN. `none` is a decision; absence is not.

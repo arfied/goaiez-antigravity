@@ -58,7 +58,6 @@ return [
         'campaign_board',
         'wallboard',
         'qa_scorecard',
-        'customerfacing_none',
         'abandonment_complaint_rates',
     ],
 
