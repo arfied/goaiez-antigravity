@@ -58,7 +58,7 @@ class DefenseScreenTest extends TestCase
         $response->assertSee('Invited to Google');
         $response->assertSee('Removal requests');
         $response->assertDontSee('Shield');
-        $response->assertDontSee('4.9');
+        $response->assertDontSee('Protected Public Average');
         $response->assertDontSee('Empathetic');
     }
 

@@ -115,6 +115,7 @@ function schedulingOverlapWindows(): array
         'owner-channel:prune' => 180,
         'x211:detect-overdue' => 180,
         'x199:mark-due' => 180,
+        'x136:decay-signals' => 180,
 
         // Nightly, a network round trip per object, per location or per tenant.
         'exports:prune' => 360,

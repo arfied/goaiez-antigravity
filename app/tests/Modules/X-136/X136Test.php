@@ -22,6 +22,7 @@ use App\Modules\X136\Ui\CoolingView;
 use App\Modules\X155\Events\FormCaptured;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Voice\InboundCall;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
@@ -395,5 +396,81 @@ class X136Test extends TestCase
     {
         // hasListeners alone would also be true because of the text-back listener
         $this->assertTrue(Event::hasListeners(CallMissed::class));
+    }
+
+    public function test_the_sweep_decays_a_cooling_signal_older_than_its_half_life(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new ContactCreated($biz->id, 7751, 'Old Prospect 7751', '+15125567751', null));
+        Event::dispatch(new ContactCreated($biz->id, 7752, 'New Prospect 7752', '+15125567752', null));
+
+        SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'person:7751')->update(['updated_at' => now()->subDays(30)]);
+
+        $this->artisan('x136:decay-signals')->assertExitCode(0);
+
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->assertEquals('decayed', SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'person:7751')->value('cooling_status'));
+        $this->assertEquals('cooling', SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'person:7752')->value('cooling_status'));
+    }
+
+    public function test_the_sweep_never_touches_a_fresh_high_intent_signal(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new FormCaptured(businessId: $biz->id, submissionId: 7753, formDefinitionId: 3, personId: 7753));
+        SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'person:7753')->update(['updated_at' => now()->subDays(30)]);
+
+        $this->artisan('x136:decay-signals')->assertExitCode(0);
+
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->assertEquals('fresh', SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'person:7753')->value('cooling_status'));
+    }
+
+    public function test_the_sweep_is_idempotent(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new ContactCreated($biz->id, 7751, 'Old Prospect 7751', '+15125567751', null));
+        SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'person:7751')->update(['updated_at' => now()->subDays(30)]);
+
+        $this->artisan('x136:decay-signals')->assertExitCode(0);
+        $this->artisan('x136:decay-signals')->expectsOutput('No signal has cooled past its half-life.')->assertExitCode(0);
+    }
+
+    public function test_the_sweep_is_scheduled_daily(): void
+    {
+        $events = collect(app(Schedule::class)->events())->filter(fn ($e) => str_contains($e->command ?? '', 'x136:decay-signals'));
+        $this->assertCount(1, $events);
+        $this->assertEquals('0 0 * * *', $events->first()->expression);
+    }
+
+    public function test_another_tenants_prospect_is_not_decayed_by_this_tenants_sweep(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $bizA = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+        $this->artisan('defaults:sync');
+        Event::dispatch(new ContactCreated($bizA->id, 7751, 'Old Prospect 7751', '+15125567751', null));
+        SignalScore::where('business_id', $bizA->id)->where('prospect_identifier', 'person:7751')->update(['updated_at' => now()->subDays(30)]);
+
+        $bizB = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        DB::statement("SET app.business_id = '{$bizB->id}'");
+        $this->artisan('defaults:sync');
+        Event::dispatch(new ContactCreated($bizB->id, 7752, 'New Prospect 7752', '+15125567752', null));
+
+        $this->artisan('x136:decay-signals')->assertExitCode(0);
+
+        DB::statement("SET app.business_id = '{$bizB->id}'");
+        $this->assertEquals('cooling', SignalScore::where('business_id', $bizB->id)->where('prospect_identifier', 'person:7752')->value('cooling_status'));
     }
 }
