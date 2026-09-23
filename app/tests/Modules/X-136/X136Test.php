@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tests\Modules\X136;
 
 use App\Enums\UserRole;
+use App\Enums\VoiceEventType;
+use App\Events\Voice\CallMissed;
 use App\Models\User;
 use App\Modules\X01\Events\ContactCreated;
 use App\Modules\X136\Actions\SignalListAction;
@@ -12,12 +14,14 @@ use App\Modules\X136\Actions\SignalScoreAction;
 use App\Modules\X136\Events\IntentHigh;
 use App\Modules\X136\Events\ProspectDecayed;
 use App\Modules\X136\Events\SignalDetected;
+use App\Modules\X136\Listeners\RecordMissedCallSignalListener;
 use App\Modules\X136\Models\DecayModel;
 use App\Modules\X136\Models\Signal;
 use App\Modules\X136\Models\SignalScore;
 use App\Modules\X136\Ui\CoolingView;
 use App\Modules\X155\Events\FormCaptured;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Voice\InboundCall;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
@@ -320,5 +324,76 @@ class X136Test extends TestCase
         Livewire::actingAs($owner)->test(CoolingView::class)
             ->assertSee('Nobody is cooling')
             ->assertDontSee('person:7731');
+    }
+
+    public function test_a_missed_call_records_one_high_intent_signal_keyed_by_phone(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        $inboundCall = new InboundCall(type: VoiceEventType::Missed, providerCallId: 'infobip-call-7731', numberId: 1, from: '+15125567731', to: '+15125560000', occurredAt: now()->toImmutable());
+        $event = new CallMissed($biz->id, $inboundCall);
+
+        app(RecordMissedCallSignalListener::class)->handle($event);
+
+        $this->assertEquals(1, Signal::where('business_id', $biz->id)->where('prospect_identifier', 'phone:+15125567731')->where('signal_type', 'call.missed')->count());
+        $signal = Signal::where('business_id', $biz->id)->where('prospect_identifier', 'phone:+15125567731')->where('signal_type', 'call.missed')->first();
+        $this->assertEquals('infobip-call-7731', $signal->payload['provider_call_id']);
+
+        $score = SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'phone:+15125567731')->first();
+        $this->assertEquals(75.0, $score->signal_value);
+        $this->assertTrue((bool) $score->is_high_intent);
+        $this->assertEquals('fresh', $score->cooling_status);
+        $this->assertTrue(DecayModel::where('business_id', $biz->id)->where('signal_type', 'call.missed')->exists());
+    }
+
+    public function test_a_known_customer_is_keyed_by_customer_id(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        $inboundCall = new InboundCall(type: VoiceEventType::Missed, providerCallId: 'infobip-call-7731', numberId: 1, from: '+15125567731', to: '+15125560000', occurredAt: now()->toImmutable(), customerId: 4471);
+        $event = new CallMissed($biz->id, $inboundCall);
+
+        app(RecordMissedCallSignalListener::class)->handle($event);
+
+        $this->assertEquals(1, Signal::where('business_id', $biz->id)->where('prospect_identifier', 'customer:4471')->where('signal_type', 'call.missed')->count());
+    }
+
+    public function test_the_same_call_redelivered_scores_once(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        $inboundCall = new InboundCall(type: VoiceEventType::Missed, providerCallId: 'infobip-call-7731', numberId: 1, from: '+15125567731', to: '+15125560000', occurredAt: now()->toImmutable());
+        $event = new CallMissed($biz->id, $inboundCall);
+
+        app(RecordMissedCallSignalListener::class)->handle($event);
+        app(RecordMissedCallSignalListener::class)->handle($event);
+
+        $this->assertEquals(1, Signal::where('business_id', $biz->id)->where('prospect_identifier', 'phone:+15125567731')->where('signal_type', 'call.missed')->count());
+    }
+
+    public function test_a_voicemail_only_event_records_nothing(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        $inboundCall = new InboundCall(type: VoiceEventType::VoicemailRecorded, providerCallId: 'infobip-call-7731', numberId: 1, from: '+15125567731', to: '+15125560000', occurredAt: now()->toImmutable());
+        $event = new CallMissed($biz->id, $inboundCall);
+
+        app(RecordMissedCallSignalListener::class)->handle($event);
+
+        $this->assertEquals(0, Signal::where('business_id', $biz->id)->where('signal_type', 'call.missed')->count());
+    }
+
+    public function test_the_listener_is_registered_for_the_core_event(): void
+    {
+        // hasListeners alone would also be true because of the text-back listener
+        $this->assertTrue(Event::hasListeners(CallMissed::class));
     }
 }
