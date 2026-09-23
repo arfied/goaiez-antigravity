@@ -18,6 +18,7 @@ use App\Modules\X176\Actions\InternalLinkRenderAction;
 use App\Modules\X176\Actions\LlmsTxtRenderAction;
 use App\Modules\X176\Actions\SchemaRenderAction;
 use App\Modules\X176\Actions\SeoRenderAction;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
@@ -26,15 +27,23 @@ use Illuminate\Support\Str;
 
 final class EdgeDeployAction
 {
+    public const SPEED_BUDGET_MS = 1500;
+
+    public const PRICEBOOK_ITEMS_MAX = 20;
+
+    public function __construct(private DefaultsRegistry $defaults) {}
+
     public function handle(
         int $businessId,
         int $edgeZoneId,
         int $measuredTtfbMs = 120,
-        int $speedBudgetMs = 1500,
+        ?int $speedBudgetMs = null,
         ?int $pageId = null,
         ?string $commitId = null,
         ?string $businessName = null
     ): array {
+        $speedBudgetMs ??= $this->defaults->int('sites.deploy.speed_budget_ms');
+
         return DB::transaction(function () use ($businessId, $edgeZoneId, $measuredTtfbMs, $speedBudgetMs, $commitId, $pageId, $businessName) {
             $zone = EdgeZone::where('business_id', $businessId)->findOrFail($edgeZoneId);
 
@@ -128,7 +137,7 @@ final class EdgeDeployAction
             $priceBookItems = app(QuotablePriceAction::class)->options($businessId);
             // The old code did ->limit(20), so we do array_slice
             usort($priceBookItems, fn ($a, $b) => $a['id'] <=> $b['id']);
-            $priceBookItems = array_slice($priceBookItems, 0, 20);
+            $priceBookItems = array_slice($priceBookItems, 0, $this->defaults->int('sites.deploy.pricebook_items_max'));
             foreach ($priceBookItems as $item) {
                 if (trim((string) $item['service_name']) === '') {
                     continue;

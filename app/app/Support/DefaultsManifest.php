@@ -7,6 +7,9 @@ namespace App\Support;
 use App\Enums\AiTask;
 use App\Enums\Plan;
 use App\Enums\StoredObjectKind;
+use App\Modules\X01\Domain\UnifiedInboxManager;
+use App\Modules\X157\Actions\EdgeDeployAction;
+use App\Modules\X205\Domain\AffiliateEngine;
 use App\Services\Mail\MailDrivers;
 use App\Services\Mail\MailQuota;
 use App\Services\Mail\MailSendRate;
@@ -75,6 +78,52 @@ final class DefaultsManifest
     public static function settings(): array
     {
         $settings = [
+            'crm.lead_score.tier_hot' => [
+                'seed' => UnifiedInboxManager::TIER_HOT,
+                'group' => 'Marketing',
+                'description' => 'Lead score hot tier.',
+            ],
+            'crm.lead_score.tier_warm' => [
+                'seed' => UnifiedInboxManager::TIER_WARM,
+                'group' => 'Marketing',
+                'description' => 'Lead score warm tier.',
+            ],
+            'crm.lead_score.tier_cool' => [
+                'seed' => UnifiedInboxManager::TIER_COOL,
+                'group' => 'Marketing',
+                'description' => 'Lead score cool tier.',
+            ],
+            'crm.lead_score.tier_cold' => [
+                'seed' => UnifiedInboxManager::TIER_COLD,
+                'group' => 'Marketing',
+                'description' => 'Lead score cold tier.',
+            ],
+            'affiliate.tier.gold_referrals' => [
+                'seed' => AffiliateEngine::GOLD_REFERRALS,
+                'group' => 'Affiliate',
+                'description' => 'Affiliate gold tier referrals count.',
+            ],
+            'affiliate.tier.silver_referrals' => [
+                'seed' => AffiliateEngine::SILVER_REFERRALS,
+                'group' => 'Affiliate',
+                'description' => 'Affiliate silver tier referrals count.',
+            ],
+            'affiliate.cookie_lifetime_days' => [
+                'seed' => AffiliateEngine::COOKIE_LIFETIME_DAYS,
+                'group' => 'Affiliate',
+                'description' => 'Affiliate cookie lifetime days.',
+            ],
+            'sites.deploy.speed_budget_ms' => [
+                'seed' => EdgeDeployAction::SPEED_BUDGET_MS,
+                'group' => 'Content',
+                'description' => 'Deploy speed budget ms.',
+            ],
+            'sites.deploy.pricebook_items_max' => [
+                'seed' => EdgeDeployAction::PRICEBOOK_ITEMS_MAX,
+                'group' => 'Content',
+                'description' => 'Deploy pricebook items max.',
+            ],
+
             /*
              * Billing shape. Not prices — those are per-plan and live in
              * entitlements() below — but the terms every plan shares.

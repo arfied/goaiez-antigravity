@@ -27,7 +27,7 @@ class EdgeDeployBlankNamesTest extends TestCase
     {
         parent::setUp();
         $this->provisionAction = new EdgeProvisionAction;
-        $this->deployAction = new EdgeDeployAction;
+        $this->deployAction = app(EdgeDeployAction::class);
         Storage::fake('local');
     }
 

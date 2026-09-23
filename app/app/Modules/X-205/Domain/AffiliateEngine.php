@@ -8,10 +8,17 @@ use App\Modules\X205\Models\Affiliate;
 use App\Modules\X205\Models\AffiliateAttribution;
 use App\Modules\X205\Models\AffiliateTier;
 use App\Modules\X205\Models\ReferralClick;
+use App\Services\Config\DefaultsRegistry;
 use Carbon\CarbonInterface;
 
 final class AffiliateEngine
 {
+    public const GOLD_REFERRALS = 100;
+
+    public const SILVER_REFERRALS = 10;
+
+    public function __construct(private DefaultsRegistry $defaults) {}
+
     public function validateUtm(array $payload): array
     {
         if (isset($payload['ref']) && isset($payload['utm'])) {
@@ -41,10 +48,10 @@ final class AffiliateEngine
 
     public function getTier(int $referralCount): string
     {
-        if ($referralCount >= 100) {
+        if ($referralCount >= $this->defaults->int('affiliate.tier.gold_referrals')) {
             return 'Gold';
         }
-        if ($referralCount >= 10) {
+        if ($referralCount >= $this->defaults->int('affiliate.tier.silver_referrals')) {
             return 'Silver';
         }
 
@@ -73,12 +80,12 @@ final class AffiliateEngine
 
     public function isWithinAttributionWindow(CarbonInterface $clickTime, CarbonInterface $saleTime): bool
     {
-        return $clickTime->diffInDays($saleTime) <= self::COOKIE_LIFETIME_DAYS;
+        return $clickTime->diffInDays($saleTime) <= $this->defaults->int('affiliate.cookie_lifetime_days');
     }
 
     public function isCookieValid(int $cookieAgeDays): bool
     {
-        return $cookieAgeDays <= 90;
+        return $cookieAgeDays <= $this->defaults->int('affiliate.cookie_lifetime_days');
     }
 
     public function calculateCommission(int $saleAmountCents, int $commissionRateBps): int

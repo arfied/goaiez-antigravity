@@ -25,7 +25,7 @@ class EdgeDeployBoundsTest extends TestCase
     {
         parent::setUp();
         $this->provisionAction = new EdgeProvisionAction;
-        $this->deployAction = new EdgeDeployAction;
+        $this->deployAction = app(EdgeDeployAction::class);
     }
 
     public function test_appointments_are_bounded_and_ordered_by_start_time_asc()
