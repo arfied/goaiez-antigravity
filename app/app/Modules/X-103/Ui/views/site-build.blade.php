@@ -107,9 +107,33 @@
                 
                 @if($domainStatus['requested_domain'])
                     <div class="mt-6 p-4 border border-line rounded-md">
-                        <p class="text-sm text-ink-2">
+                        <p class="text-sm text-ink-2 mb-2">
                             Requested {{ $domainStatus['requested_domain'] }} on {{ \Carbon\Carbon::parse($domainStatus['requested_at'])->format('Y-m-d') }}
                         </p>
+                        <p class="text-sm font-medium text-ink mb-2">
+                            Point a CNAME for {{ $domainStatus['requested_domain'] }} at {{ $domainStatus['platform_address'] }}, then check.
+                        </p>
+                        <div class="flex items-center space-x-4 mb-2">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-paper-2 text-ink-2">
+                                @if($domainStatus['status'] === 'requested')
+                                    requested
+                                @elseif($domainStatus['status'] === 'unverified')
+                                    unverified: {{ $domainStatus['failure_reason'] === 'no_cname' ? 'no CNAME found' : 'points at ' . str_replace('points_elsewhere:', '', $domainStatus['failure_reason']) }}
+                                @elseif($domainStatus['status'] === 'verified')
+                                    verified {{ \Carbon\Carbon::parse($domainStatus['verified_at'])->format('Y-m-d H:i') }}
+                                @else
+                                    {{ $domainStatus['status'] }}
+                                @endif
+                            </span>
+                            <button wire:click="verifyDomain" class="btn btn-secondary text-sm">
+                                Check
+                            </button>
+                        </div>
+                        @if($domainStatus['status'] === 'verified' && count($deployments) > 0)
+                            <p class="text-sm text-green-600 mt-2">
+                                Your site is live.
+                            </p>
+                        @endif
                     </div>
                 @endif
             </div>

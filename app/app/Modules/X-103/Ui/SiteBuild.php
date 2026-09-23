@@ -10,6 +10,7 @@ use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
 use App\Modules\X157\Actions\CustomDomainRequestAction;
 use App\Modules\X157\Actions\CustomDomainStatusAction;
+use App\Modules\X157\Actions\CustomDomainVerifyAction;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
 use App\Modules\X157\Actions\PlatformSiteAddressAction;
 use App\Services\Config\DefaultsRegistry;
@@ -70,6 +71,17 @@ class SiteBuild extends Component
             foreach ($pages as $page) {
                 $action->handle($this->businessId, $page->id, $page->draft_blocks ?? []);
             }
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
+    public function verifyDomain(CustomDomainVerifyAction $action)
+    {
+        $this->error = null;
+        try {
+            $result = $action->handle($this->businessId);
+            $this->dnsStatus = $result['status'] === 'no_request' ? null : 'verification_ran';
         } catch (Throwable $e) {
             $this->error = $e->getMessage();
         }

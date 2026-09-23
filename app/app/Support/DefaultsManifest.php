@@ -3868,6 +3868,12 @@ final class DefaultsManifest
             'description' => 'Maximum length for SMS terms alignment name.',
         ];
 
+        $settings['sites.sitemap.max_urls'] = [
+            'seed' => 500,
+            'group' => 'Sites',
+            'description' => 'Maximum URLs included in the sitemap. A site past this limit should use a sitemap index.',
+        ];
+
         return array_merge($settings, self::mailSendingCeilings());
     }
 

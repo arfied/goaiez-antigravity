@@ -35,6 +35,7 @@ use App\Modules\X103\Ui\Pages;
 use App\Modules\X113\Actions\StaffDeactivateAction;
 use App\Modules\X113\Actions\StaffInviteAction;
 use App\Modules\X113\Models\Role;
+use App\Modules\X155\Actions\FormCreateAction;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\InvoiceLine;
@@ -1005,5 +1006,75 @@ class X103Test extends TestCase
 
         Http::assertNothingSent();
         PlatformSetting::query()->where('key', 'ai.monthly_cap_per_tenant')->delete();
+    }
+
+    public function test_the_draft_carries_a_form_block_when_the_tenant_has_a_form(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Form Draft Tenant']);
+        Tenancy::set((int) $biz->id);
+        $location = Location::factory()->create(['business_id' => $biz->id]);
+
+        $formAction = app(FormCreateAction::class);
+        $form = $formAction->handle($biz->id, 'Lead form');
+
+        $draftAction = app(SiteDraftAction::class);
+        $res = $draftAction->handle($biz->id, $location->id);
+
+        $this->assertContains('forms', $res['sources']);
+
+        $homePage = Page::where('business_id', $biz->id)->where('slug', 'home')->first();
+        $this->assertNotNull($homePage);
+        $formBlock = collect($homePage->draft_blocks)->firstWhere('type', 'form');
+
+        $this->assertNotNull($formBlock);
+        $this->assertCount(4, $formBlock['fields']);
+        $this->assertEquals('website_url', $formBlock['honeypot']);
+    }
+
+    public function test_the_draft_carries_no_form_block_when_the_tenant_has_none(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'No Form Draft Tenant']);
+        $location = Location::factory()->create(['business_id' => $biz->id]);
+
+        $draftAction = app(SiteDraftAction::class);
+        $res = $draftAction->handle($biz->id, $location->id);
+
+        $this->assertContains('forms', $res['sources_without_data']);
+
+        $homePage = Page::where('business_id', $biz->id)->where('slug', 'home')->first();
+        $this->assertNotNull($homePage);
+        $formBlock = collect($homePage->draft_blocks)->firstWhere('type', 'form');
+        $this->assertNull($formBlock);
+    }
+
+    public function test_the_rendered_form_posts_to_the_live_capture_route(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Render Form Tenant']);
+
+        $block = [
+            'type' => 'form',
+            'definition_id' => 888,
+            'fields' => [
+                ['name' => 'phone', 'label' => 'Phone', 'type' => 'tel'],
+            ],
+            'required' => ['phone'],
+            'honeypot' => 'website_url',
+        ];
+
+        $deployHash = 'test123hash';
+        $baseRoute = route('x-157.site', ['business' => $biz->id, 'deploy_hash' => $deployHash], absolute: true);
+
+        $context = [
+            'form_action_base' => $baseRoute,
+        ];
+
+        $renderer = app(SiteBlockRenderer::class);
+        $html = $renderer->render([$block], $context);
+
+        $expectedAction = rtrim($baseRoute, '/').'/forms/888';
+        $this->assertStringContainsString('action="'.$expectedAction.'"', $html);
+        $this->assertStringContainsString('name="website_url"', $html);
+        $this->assertStringContainsString('name="phone"', $html);
+        $this->assertStringContainsString('required', $html);
     }
 }
