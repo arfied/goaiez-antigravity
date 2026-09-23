@@ -9,10 +9,10 @@ use App\Models\Location;
 use App\Modules\X103\Actions\SiteBuildRunAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
-use App\Modules\X157\Actions\EdgeProvisionAction;
+use App\Modules\X157\Actions\CustomDomainRequestAction;
+use App\Modules\X157\Actions\CustomDomainStatusAction;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
 use App\Modules\X157\Actions\PlatformSiteAddressAction;
-use App\Modules\X157\Models\EdgeZone;
 use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -39,9 +39,9 @@ class SiteBuild extends Component
     public function mount()
     {
         $user = Auth::user();
-        abort_unless($user, 403);
+        abort_unless($user !== null, 403);
         $business = Business::where('owner_user_id', $user->id)->first();
-        abort_unless($business, 403);
+        abort_unless($business !== null, 403);
         $this->businessId = $business->id;
         $location = Location::where('business_id', $this->businessId)->first();
         $this->locationId = $location ? $location->id : 0;
@@ -78,7 +78,7 @@ class SiteBuild extends Component
         }
     }
 
-    public function useDomain(EdgeProvisionAction $action)
+    public function useDomain(CustomDomainRequestAction $action)
     {
         $this->error = null;
         if (empty($this->domainName)) {
@@ -86,8 +86,8 @@ class SiteBuild extends Component
         }
 
         try {
-            $action->handle($this->businessId, $this->domainName, true);
-            $this->dnsStatus = 'pending';
+            $action->handle($this->businessId, $this->domainName);
+            $this->dnsStatus = 'requested';
         } catch (Throwable $e) {
             $this->error = $e->getMessage();
         }
@@ -96,7 +96,8 @@ class SiteBuild extends Component
     public function render()
     {
         $pages = Page::where('business_id', $this->businessId)->get();
-        $zone = EdgeZone::where('business_id', $this->businessId)->first();
+
+        $domainStatus = app(CustomDomainStatusAction::class)->handle($this->businessId);
 
         $deployments = [];
         foreach ($pages as $page) {
@@ -106,7 +107,7 @@ class SiteBuild extends Component
 
         return view('x-103::site-build', [
             'pages' => $pages,
-            'zone' => $zone,
+            'domainStatus' => $domainStatus,
             'deployments' => $deployments,
         ]);
     }

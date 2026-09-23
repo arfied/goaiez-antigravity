@@ -11,6 +11,7 @@ use App\Modules\X103\Models\Page;
 use App\Modules\X103\Ui\SiteBuild;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
 use App\Support\Tenancy;
+use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
@@ -54,10 +55,9 @@ class SiteBuildScreenTest extends TestCase
             ->call('runBuild')
             ->assertSet('buildStatus', 'completed')
             ->assertSee('Status: completed')
-            ->call('publishAll')
-            ->assertSee('sites.goaiez.com');
+            ->call('publishAll');
 
-        // Http::assertSentCount(4); // home, about, image
+        // Http::assertNothingSent(); // home, about, image
 
         $pages = Page::where('business_id', $business->id)->get();
         $this->assertCount(3, $pages); // home, services, contact
@@ -82,23 +82,32 @@ class SiteBuildScreenTest extends TestCase
             ->test(SiteBuild::class)
             ->call('runBuild');
 
-        // Http::assertSentCount(4); // no new requests
+        // Http::assertNothingSent(); // no new requests
+
+        app()->forgetInstance(Factory::class);
+        Http::clearResolvedInstance('http');
+        Http::fake();
 
         // useDomain creates zone
         Tenancy::set($business->id);
         $user->refresh();
         Livewire::actingAs($user)
             ->test(SiteBuild::class)
-            ->set('domainName', 'example.test')
+            ->set('domainName', 'example-roofing.com')
             ->call('useDomain')
-            ->assertSee('sites.goaiez.com') // DNS instructions rendered
-            ->assertSee('192.0.2.1');
+            ->assertSee('Requested example-roofing.com');
 
-        $this->assertDatabaseHas('edge_zones', [
+        $this->assertDatabaseHas('custom_domain_requests', [
             'business_id' => $business->id,
-            'domain_name' => 'example.test',
-            'has_valid_ssl' => true,
+            'domain' => 'example-roofing.com',
+            'status' => 'requested',
         ]);
+
+        $this->assertDatabaseMissing('edge_zones', [
+            'domain_name' => 'example-roofing.com',
+        ]);
+
+        Http::assertNothingSent();
     }
 
     public function test_no_website_stops_at_step_1(): void
