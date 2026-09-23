@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X157;
 
 use App\Models\Business;
+use App\Modules\X103\Events\PageUnpublished;
 use App\Modules\X103\Events\SitePublished;
 use App\Modules\X137\Actions\CallAttributeAction;
 use App\Modules\X155\Actions\FormCaptureAction;
@@ -99,6 +100,13 @@ final class ModuleServiceProvider extends ServiceProvider
 
             return response()->json($result, $result['status'] === 'captured' ? 201 : 422);
         })->whereNumber('business')->whereNumber('form');
+
+        Event::listen(PageUnpublished::class, function (PageUnpublished $e): void {
+            Deployment::where('business_id', $e->businessId)
+                ->where('page_id', $e->pageId)
+                ->where('status', 'deployed')
+                ->update(['status' => 'unpublished']);
+        });
 
         Event::listen(SitePublished::class, function (SitePublished $event): void {
             $zone = EdgeZone::where('business_id', $event->businessId)
