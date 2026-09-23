@@ -2841,6 +2841,21 @@ final class DefaultsManifest
                 'group' => 'Notifications',
                 'description' => 'How many days of holds the screen shows.',
             ],
+            'brand.default_accent' => [
+                'seed' => '#0284c7',
+                'group' => 'Brand',
+                'description' => 'The default accent colour for brand cards.',
+            ],
+            'brand.card.max_logo_kb' => [
+                'seed' => 512,
+                'group' => 'Brand',
+                'description' => 'Maximum allowed size for the tenant brand logo in KB.',
+            ],
+            'brand.card.badge_max_chars' => [
+                'seed' => 40,
+                'group' => 'Brand',
+                'description' => 'Maximum characters allowed in the badge text.',
+            ],
         ];
 
         return array_merge($settings, self::mailSendingCeilings());
