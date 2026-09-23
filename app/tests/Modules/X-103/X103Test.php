@@ -1004,5 +1004,6 @@ class X103Test extends TestCase
         $this->assertNull($page->refresh()->seo_title);
 
         Http::assertNothingSent();
+        PlatformSetting::query()->where('key', 'ai.monthly_cap_per_tenant')->delete();
     }
 }

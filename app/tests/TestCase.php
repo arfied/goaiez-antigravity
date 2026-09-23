@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests;
 
 use App\Models\Business;
+use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Services\Sms\TenantNumbers;
 use App\Services\TenantProvisioner;
@@ -59,6 +60,11 @@ abstract class TestCase extends BaseTestCase
     protected function tearDown(): void
     {
         try {
+            try {
+                PlatformSetting::query()->where('updated_by', 'test')->delete();
+            } catch (\Throwable) {
+                // a test that dropped the table has nothing to sweep
+            }
             $this->releaseNumbers();
         } finally {
             parent::tearDown();
