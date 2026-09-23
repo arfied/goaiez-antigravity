@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 
-beforeEach(function () {
+it('refreshes oauth tokens', function () {
     $this->owner = User::factory()->create(['role' => UserRole::Owner]);
     $this->biz = $this->provisionTenant(['owner_user_id' => $this->owner->id]);
     Tenancy::setUser($this->owner->id);
@@ -41,33 +41,24 @@ beforeEach(function () {
             unset($model->score);
         }
     });
-
     Mail::fake();
     Notification::fake();
     Http::fake();
-});
 
-afterEach(function () {
-    Tenancy::forget();
-    PublicAudit::flushEventListeners();
-});
+    $callProtectedExecute = function ($object, $method = 'execute') {
+        $execute = function () use ($method) {
+            return $this->$method();
+        };
 
-function callProtectedExecute($object, $method = 'execute')
-{
-    $execute = function () use ($method) {
-        return $this->$method();
+        return $execute->call($object);
     };
 
-    return $execute->call($object);
-}
-
-it('refreshes oauth tokens', function () {
     DB::table('oauth_connections')->delete();
 
     $job = new RefreshOauthTokensJob((int) $this->biz->id, null);
 
     // (a) no OauthConnection rows
-    $result = callProtectedExecute($job);
+    $result = $callProtectedExecute($job);
     expect($result)->toHaveKey('considered', 0)
         ->toHaveKey('refreshed', 0)
         ->toHaveKey('reconnect_needed', 0);
@@ -82,7 +73,7 @@ it('refreshes oauth tokens', function () {
         'token_expires_at' => now()->addDays(2),
     ]);
 
-    $resultNotDue = callProtectedExecute($job);
+    $resultNotDue = $callProtectedExecute($job);
     expect($resultNotDue)->toHaveKey('considered', 0)
         ->toHaveKey('refreshed', 0)
         ->toHaveKey('reconnect_needed', 0);
@@ -93,17 +84,39 @@ it('refreshes oauth tokens', function () {
         'refresh_token_enc' => null, // missing refresh token
     ]);
 
-    $resultMissing = callProtectedExecute($job);
+    $resultMissing = $callProtectedExecute($job);
     expect($resultMissing)->toHaveKey('considered', 1)
         ->toHaveKey('refreshed', 0)
         ->toHaveKey('reconnect_needed', 1);
 
     // (d) handoff()
-    $handoff = callProtectedExecute($job, 'handoff');
+    $handoff = $callProtectedExecute($job, 'handoff');
     expect($handoff)->toHaveKey('skipped', 'no provider access');
+
+    Tenancy::forget();
+    PublicAudit::flushEventListeners();
 });
 
 it('runs public audit', function () {
+    $this->owner = User::factory()->create(['role' => UserRole::Owner]);
+    $this->biz = $this->provisionTenant(['owner_user_id' => $this->owner->id]);
+    Tenancy::setUser($this->owner->id);
+    Tenancy::set((int) $this->biz->id);
+    PublicAudit::retrieved(function ($model) {
+        if (array_key_exists('audit_rating', $model->getAttributes())) {
+            $model->setAttribute('score', $model->getAttribute('audit_rating'));
+        }
+    });
+    PublicAudit::saving(function ($model) {
+        if (array_key_exists('score', $model->getAttributes())) {
+            $model->setAttribute('audit_rating', $model->getAttribute('score'));
+            unset($model->score);
+        }
+    });
+    Mail::fake();
+    Notification::fake();
+    Http::fake();
+
     $fakePlaces = new class implements PlacesClient
     {
         public function autocomplete(string $query, ?string $regionCode = null): array
@@ -155,13 +168,43 @@ it('runs public audit', function () {
     $jobLive = new PublicAuditJob('live-token');
     app()->call([$jobLive, 'handle']);
     expect($auditLive->fresh()->status)->toBe(AuditStatus::Failed);
+
+    Tenancy::forget();
+    PublicAudit::flushEventListeners();
 });
 
 it('syncs search console', function () {
+    $this->owner = User::factory()->create(['role' => UserRole::Owner]);
+    $this->biz = $this->provisionTenant(['owner_user_id' => $this->owner->id]);
+    Tenancy::setUser($this->owner->id);
+    Tenancy::set((int) $this->biz->id);
+    PublicAudit::retrieved(function ($model) {
+        if (array_key_exists('audit_rating', $model->getAttributes())) {
+            $model->setAttribute('score', $model->getAttribute('audit_rating'));
+        }
+    });
+    PublicAudit::saving(function ($model) {
+        if (array_key_exists('score', $model->getAttributes())) {
+            $model->setAttribute('audit_rating', $model->getAttribute('score'));
+            unset($model->score);
+        }
+    });
+    Mail::fake();
+    Notification::fake();
+    Http::fake();
+
+    $callProtectedExecute = function ($object, $method = 'execute') {
+        $execute = function () use ($method) {
+            return $this->$method();
+        };
+
+        return $execute->call($object);
+    };
+
     $job = new SyncSearchConsoleJob((int) $this->biz->id, 99999);
 
     // (a) location_missing
-    $resultMissingLoc = callProtectedExecute($job);
+    $resultMissingLoc = $callProtectedExecute($job);
     expect($resultMissingLoc)->toHaveKey('outcome', 'unavailable')
         ->toHaveKey('reason', 'location_missing');
 
@@ -169,7 +212,7 @@ it('syncs search console', function () {
 
     // (b) no_property_chosen
     $jobNoProp = new SyncSearchConsoleJob((int) $this->biz->id, (int) $loc->id);
-    $resultNoProp = callProtectedExecute($jobNoProp);
+    $resultNoProp = $callProtectedExecute($jobNoProp);
     expect($resultNoProp)->toHaveKey('outcome', 'unavailable')
         ->toHaveKey('reason', 'no_property_chosen');
 
@@ -190,7 +233,7 @@ it('syncs search console', function () {
     $this->instance(SearchConsoleClient::class, $fakeClientRevoked);
 
     $jobRevoked = new SyncSearchConsoleJob((int) $this->biz->id, (int) $loc->id);
-    $resultRevoked = callProtectedExecute($jobRevoked);
+    $resultRevoked = $callProtectedExecute($jobRevoked);
     expect($resultRevoked)->toHaveKey('outcome', 'unavailable')
         ->toHaveKey('reason', 'connection_revoked');
 
@@ -205,8 +248,11 @@ it('syncs search console', function () {
     $this->instance(SearchConsoleClient::class, $fakeClientSuccess);
 
     $jobSuccess = new SyncSearchConsoleJob((int) $this->biz->id, (int) $loc->id);
-    $resultSuccess = callProtectedExecute($jobSuccess);
+    $resultSuccess = $callProtectedExecute($jobSuccess);
     expect($resultSuccess)->toHaveKey('outcome', 'measured')
         ->toHaveKey('days_written', 0)
         ->toHaveKey('days_dropped', 0);
+
+    Tenancy::forget();
+    PublicAudit::flushEventListeners();
 });
