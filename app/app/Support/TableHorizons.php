@@ -242,7 +242,7 @@ final class TableHorizons
 
             'ingest_rejects' => [
                 'command' => 'pixel:prune-rejects',
-                'keeps' => IngestRejects::RETENTION_DAYS.' days',
+                'keeps' => app(IngestRejects::class)->retentionDays().' days',
                 'scope' => RetentionScope::Rows,
                 'key' => null,
             ],

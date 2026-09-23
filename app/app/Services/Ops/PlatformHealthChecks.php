@@ -268,6 +268,11 @@ final class PlatformHealthChecks
         private readonly IdentifierHashEpochs $epochs,
     ) {}
 
+    public function credentialRepeatDays(): int
+    {
+        return $this->defaults->int('ops.health.credential_repeat_days');
+    }
+
     /**
      * The counters somebody else wrote — jobs, webhooks, vendors — and one state
      * nothing counts at all.
@@ -901,7 +906,7 @@ final class PlatformHealthChecks
                 if ($this->alerts->rangSince(
                     OperatorAlertKind::PlatformCredentialUnusable,
                     $key,
-                    $now->subDays(self::CREDENTIAL_REPEAT_DAYS),
+                    $now->subDays($this->credentialRepeatDays()),
                 )) {
                     continue;
                 }

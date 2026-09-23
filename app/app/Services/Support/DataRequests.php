@@ -19,6 +19,7 @@ use App\Models\DataRequest;
 use App\Models\TenantExport;
 use App\Models\User;
 use App\Services\AuditService;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Consent\ConsentService;
 use App\Services\Consent\ConsentTrailEntry;
 use App\Services\Export\ExportBuilder;
@@ -79,7 +80,13 @@ final class DataRequests
         private readonly ConsentService $consent,
         private readonly ExportBuilder $exports,
         private readonly AuditService $audit,
+        private readonly DefaultsRegistry $registry = new DefaultsRegistry,
     ) {}
+
+    public function statutoryDueDays(): int
+    {
+        return $this->registry->int('support.data_requests.statutory_due_days');
+    }
 
     /**
      * Open items, soonest due first. Closed rows are a separate history read.
@@ -164,7 +171,7 @@ final class DataRequests
                     'kind' => DataRequestKind::Erasure,
                     'status' => DataRequestStatus::Open,
                     'deletion_request_id' => (int) $deletion->getKey(),
-                    'due_at' => CarbonImmutable::now()->addDays(self::STATUTORY_DUE_DAYS),
+                    'due_at' => CarbonImmutable::now()->addDays($this->statutoryDueDays()),
                     'requested_by' => $requester->id,
                     'requested_at' => now(),
                     'detail' => $this->normaliseNote($detail),
@@ -215,7 +222,7 @@ final class DataRequests
                     'kind' => DataRequestKind::Erasure,
                     'status' => DataRequestStatus::Open,
                     'deletion_request_id' => (int) $deletion->getKey(),
-                    'due_at' => CarbonImmutable::now()->addDays(self::STATUTORY_DUE_DAYS),
+                    'due_at' => CarbonImmutable::now()->addDays($this->statutoryDueDays()),
                     'requested_by' => $requester->id,
                     'requested_at' => now(),
                     'detail' => $this->normaliseNote($detail),
@@ -339,7 +346,7 @@ final class DataRequests
                 'kind' => DataRequestKind::ConsentAudit,
                 'status' => DataRequestStatus::Fulfilled,
                 'customer_ref' => (int) $customer->id,
-                'due_at' => CarbonImmutable::now()->addDays(self::STATUTORY_DUE_DAYS),
+                'due_at' => CarbonImmutable::now()->addDays($this->statutoryDueDays()),
                 'requested_by' => $requester->id,
                 'requested_at' => now(),
                 'fulfilled_at' => now(),
@@ -374,7 +381,7 @@ final class DataRequests
             'business_ref' => $business->id,
             'kind' => DataRequestKind::TenantExport,
             'status' => DataRequestStatus::Open,
-            'due_at' => CarbonImmutable::now()->addDays(self::STATUTORY_DUE_DAYS),
+            'due_at' => CarbonImmutable::now()->addDays($this->statutoryDueDays()),
             'requested_by' => $requester->id,
             'requested_at' => now(),
             'detail' => $this->normaliseNote($detail),

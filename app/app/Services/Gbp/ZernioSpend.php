@@ -149,11 +149,16 @@ final class ZernioSpend
      * ladder and floored at zero, so one connected account is free rather than
      * minus six dollars.
      */
-    private const int FREE_TIER_CREDIT_CENTS = 1200;
+    public const int FREE_TIER_CREDIT_CENTS = 1200;
 
     public function __construct(
         private readonly DefaultsRegistry $registry = new DefaultsRegistry,
     ) {}
+
+    public function freeTierCreditCents(): int
+    {
+        return $this->registry->int('gbp.zernio.free_tier_credit_cents');
+    }
 
     /**
      * The graduated monthly cost of holding `$units` connected accounts.
@@ -188,7 +193,7 @@ final class ZernioSpend
             }
         }
 
-        return max(0, (int) round($cents - self::FREE_TIER_CREDIT_CENTS));
+        return max(0, (int) round($cents - $this->freeTierCreditCents()));
     }
 
     /**

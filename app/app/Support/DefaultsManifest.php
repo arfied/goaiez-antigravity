@@ -16,10 +16,16 @@ use App\Services\Actuation\T3FaqBlock as FaqBlock;
 use App\Services\Actuation\T3InternalLink as InternalLink;
 use App\Services\Actuation\T3MetaUpsert as MetaUpsert;
 use App\Services\Actuation\WordPress\WordPressRestClient;
+use App\Services\Billing\PurchaseReconciliation;
+use App\Services\Gbp\ZernioSpend;
 use App\Services\Mail\MailDrivers;
 use App\Services\Mail\MailQuota;
 use App\Services\Mail\MailSendRate;
 use App\Services\Ops\OperatorAlerts;
+use App\Services\Ops\PlatformHealthChecks;
+use App\Services\Ops\ScheduledRunMeter;
+use App\Services\Pixel\IngestRejects;
+use App\Services\Support\DataRequests;
 use App\Services\Visibility\ReviewLossDetection;
 use App\Services\Warehouse\L1Derivation;
 use App\Services\Warehouse\PixelSightings;
@@ -2980,6 +2986,61 @@ final class DefaultsManifest
                 'seed' => WarehouseRetention::L2_RETENTION_DAYS,
                 'group' => 'Pixel',
                 'description' => 'Warehouse L2 retention days.',
+            ],
+            'billing.reconciliation.minimum_age_minutes' => [
+                'seed' => PurchaseReconciliation::MINIMUM_AGE_MINUTES,
+                'group' => 'Billing',
+                'description' => 'Minimum age in minutes for purchase reconciliation.',
+            ],
+            'billing.reconciliation.lookback_days' => [
+                'seed' => PurchaseReconciliation::LOOKBACK_DAYS,
+                'group' => 'Billing',
+                'description' => 'Lookback days for purchase reconciliation.',
+            ],
+            'billing.reconciliation.default_batch' => [
+                'seed' => PurchaseReconciliation::DEFAULT_BATCH,
+                'group' => 'Billing',
+                'description' => 'Default batch size for purchase reconciliation.',
+            ],
+            'pixel.rejects.retention_days' => [
+                'seed' => IngestRejects::RETENTION_DAYS,
+                'group' => 'Pixel',
+                'description' => 'Retention days for ingest rejects.',
+            ],
+            'pixel.rejects.recent_window_hours' => [
+                'seed' => IngestRejects::RECENT_WINDOW_HOURS,
+                'group' => 'Pixel',
+                'description' => 'Recent window in hours for ingest rejects.',
+            ],
+            'pixel.rejects.tenant_window_hours' => [
+                'seed' => IngestRejects::TENANT_WINDOW_HOURS,
+                'group' => 'Pixel',
+                'description' => 'Tenant window in hours for ingest rejects.',
+            ],
+            'pixel.rejects.origins_per_hour' => [
+                'seed' => IngestRejects::ORIGINS_PER_HOUR,
+                'group' => 'Pixel',
+                'description' => 'Origins per hour for ingest rejects.',
+            ],
+            'ops.health.credential_repeat_days' => [
+                'seed' => PlatformHealthChecks::CREDENTIAL_REPEAT_DAYS,
+                'group' => 'Operations',
+                'description' => 'Credential repeat days for platform health checks.',
+            ],
+            'ops.runs.failed_run_repeat_hours' => [
+                'seed' => ScheduledRunMeter::FAILED_RUN_REPEAT_HOURS,
+                'group' => 'Operations',
+                'description' => 'Failed run repeat hours for scheduled run meter.',
+            ],
+            'support.data_requests.statutory_due_days' => [
+                'seed' => DataRequests::STATUTORY_DUE_DAYS,
+                'group' => 'Operations',
+                'description' => 'The statutory period. Lowering it is fine, raising it is a legal question.',
+            ],
+            'gbp.zernio.free_tier_credit_cents' => [
+                'seed' => ZernioSpend::FREE_TIER_CREDIT_CENTS,
+                'group' => 'Google Business Profile',
+                'description' => 'Free tier credit in cents for Zernio spend.',
             ],
         ];
 

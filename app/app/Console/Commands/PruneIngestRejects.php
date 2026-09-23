@@ -138,7 +138,7 @@ final class PruneIngestRejects extends Command
         foreach ($businessIds as $businessId) {
             $deleted += Tenancy::actingAs(
                 (int) $businessId,
-                fn (): int => $rejects->prune(IngestRejects::RETENTION_DAYS),
+                fn (): int => $rejects->prune($rejects->retentionDays()),
             );
         }
 
