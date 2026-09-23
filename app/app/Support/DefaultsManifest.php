@@ -23,7 +23,9 @@ use App\Services\Actuation\WordPress\WordPressRestClient;
 use App\Services\Agent\AgentComposer;
 use App\Services\Agent\AgentNudges;
 use App\Services\Agent\ThreadCloseSummaries;
+use App\Services\Assistant\PriceBook;
 use App\Services\Assistant\PriceSheet;
+use App\Services\Assistant\UrgentTerms;
 use App\Services\Audit\AuditEngine;
 use App\Services\Audit\Checks\ReviewStatsCheck;
 use App\Services\Audit\PublicAuditStarter;
@@ -37,7 +39,9 @@ use App\Services\Content\ContentSelfAudit;
 use App\Services\Content\Publishing;
 use App\Services\Crm\CustomerMerges;
 use App\Services\Export\ExportBuilder;
+use App\Services\Fetch\RobotsPolicy;
 use App\Services\Gbp\ZernioSpend;
+use App\Services\Knowledge\DocumentChunker;
 use App\Services\MagicLinkService;
 use App\Services\Mail\MailDrivers;
 use App\Services\Mail\MailQuota;
@@ -46,12 +50,15 @@ use App\Services\Ops\OperatorAlerts;
 use App\Services\Ops\PlatformHealthChecks;
 use App\Services\Ops\ScheduledRunMeter;
 use App\Services\Pixel\IngestRejects;
+use App\Services\Places\GooglePlacesClient;
+use App\Services\Storage\StorageRetention;
 use App\Services\Support\DataRequests;
 use App\Services\Visibility\ReviewLossDetection;
 use App\Services\Warehouse\L1Derivation;
 use App\Services\Warehouse\PixelSightings;
 use App\Services\Warehouse\Replayer;
 use App\Services\Warehouse\WarehouseRetention;
+use App\Services\Widgets\WidgetInstalls;
 
 /**
  * THE SEED MANIFEST — doc `38` Part 2's "one reviewed file", CFG1.
@@ -3229,6 +3236,71 @@ final class DefaultsManifest
             'seed' => implode(',', QueueBackoff::PIXEL_ARCHIVE),
             'group' => 'Operations',
             'description' => 'Backoff ladder for pixel archiving background jobs.',
+        ];
+        $settings['assistant.pricebook.max_slug_length'] = [
+            'seed' => PriceBook::MAX_SLUG_LENGTH,
+            'group' => 'Assistant',
+            'description' => 'Maximum length of a slug in the price book (A4 slice 8).',
+        ];
+        $settings['assistant.pricebook.max_label_length'] = [
+            'seed' => PriceBook::MAX_LABEL_LENGTH,
+            'group' => 'Assistant',
+            'description' => 'Maximum length of a label in the price book (A4 slice 8).',
+        ];
+        $settings['assistant.pricesheet.max_label_length'] = [
+            'seed' => PriceSheet::MAX_LABEL_LENGTH,
+            'group' => 'Assistant',
+            'description' => 'Maximum length of a label in the price sheet (A4 slice 8).',
+        ];
+        $settings['assistant.urgent_terms.max_terms'] = [
+            'seed' => UrgentTerms::MAX_TERMS,
+            'group' => 'Assistant',
+            'description' => 'Maximum number of urgent terms (A4 slice 8).',
+        ];
+        $settings['assistant.urgent_terms.max_length'] = [
+            'seed' => UrgentTerms::MAX_LENGTH,
+            'group' => 'Assistant',
+            'description' => 'Maximum length of a single urgent term (A4 slice 8).',
+        ];
+        $settings['fetch.robots.cache_seconds'] = [
+            'seed' => RobotsPolicy::CACHE_SECONDS,
+            'group' => 'Content',
+            'description' => 'How long to cache a successfully fetched robots.txt (A4 slice 8).',
+        ];
+        $settings['fetch.robots.unavailable_cache_seconds'] = [
+            'seed' => RobotsPolicy::UNAVAILABLE_CACHE_SECONDS,
+            'group' => 'Content',
+            'description' => 'How long to cache a failed robots.txt fetch (A4 slice 8).',
+        ];
+        $settings['knowledge.chunker.overlap_characters'] = [
+            'seed' => DocumentChunker::OVERLAP_CHARACTERS,
+            'group' => 'Assistant',
+            'description' => 'Number of characters to overlap between chunks (A4 slice 8).',
+        ];
+        $settings['knowledge.chunker.minimum_characters'] = [
+            'seed' => DocumentChunker::MINIMUM_CHARACTERS,
+            'group' => 'Assistant',
+            'description' => 'Minimum number of characters for a valid chunk (A4 slice 8).',
+        ];
+        $settings['places.cache_ttl_seconds'] = [
+            'seed' => GooglePlacesClient::CACHE_TTL_SECONDS,
+            'group' => 'Places',
+            'description' => 'How long to cache Places API responses (A4 slice 8).',
+        ];
+        $settings['widgets.install.stale_after_hours'] = [
+            'seed' => WidgetInstalls::STALE_AFTER_HOURS,
+            'group' => 'Operations',
+            'description' => 'A PLATFORM setting is exactly an Ops edit, not a tenant\'s, superseding 3092\'s scope (owner ruling 2026-09-22).',
+        ];
+        $settings['widgets.install.throttle_seconds'] = [
+            'seed' => WidgetInstalls::THROTTLE_SECONDS,
+            'group' => 'Operations',
+            'description' => 'Seconds to throttle widget install events (A4 slice 8).',
+        ];
+        $settings['storage.retention.chunk'] = [
+            'seed' => StorageRetention::CHUNK,
+            'group' => 'Operations',
+            'description' => 'Number of files to process per chunk during retention sweeps (A4 slice 8).',
         ];
 
         return array_merge($settings, self::mailSendingCeilings());

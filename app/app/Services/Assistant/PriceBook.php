@@ -72,7 +72,7 @@ final class PriceBook
      * an untrusted string from becoming a scan, and the ceiling matches the
      * column.
      */
-    private const int MAX_SLUG_LENGTH = 160;
+    public const int MAX_SLUG_LENGTH = 160;
 
     /**
      * The longest label the store will take — `price_list_items.label`'s width.
@@ -87,7 +87,7 @@ final class PriceBook
      * inner one unfalsifiable, and this service is the chokepoint that has to
      * hold for **every** caller.
      */
-    private const int MAX_LABEL_LENGTH = 120;
+    public const int MAX_LABEL_LENGTH = 120;
 
     public function __construct(
         private readonly DefaultsRegistry $defaults,
@@ -188,7 +188,7 @@ final class PriceBook
             throw new InvalidArgumentException('A price needs the name of the job it is for.');
         }
 
-        if (mb_strlen($name) > self::MAX_LABEL_LENGTH) {
+        if (mb_strlen($name) > $this->maxLabelLength()) {
             throw new InvalidArgumentException('That name is too long to say in a text message. Shorten it.');
         }
 
@@ -419,7 +419,17 @@ final class PriceBook
      */
     private function slugFor(string $label): string
     {
-        return Str::limit(Str::slug($label), self::MAX_SLUG_LENGTH, '');
+        return Str::limit(Str::slug($label), $this->maxSlugLength(), '');
+    }
+
+    private function maxSlugLength(): int
+    {
+        return $this->defaults->int('assistant.pricebook.max_slug_length');
+    }
+
+    private function maxLabelLength(): int
+    {
+        return $this->defaults->int('assistant.pricebook.max_label_length');
     }
 
     /**

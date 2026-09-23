@@ -9,6 +9,7 @@ use App\Events\Voice\VoicemailTranscribed;
 use App\Models\AssistantBrief;
 use App\Models\UrgentTerm;
 use App\Services\Agent\AgentTurns;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Identifier;
 use App\Support\Tenancy;
 use InvalidArgumentException;
@@ -82,7 +83,17 @@ final class UrgentTerms
     /**
      * The longest term the store will take — the column's own width.
      */
-    private const int MAX_LENGTH = 60;
+    public const int MAX_LENGTH = 60;
+
+    private function maxTerms(): int
+    {
+        return app(DefaultsRegistry::class)->int('assistant.urgent_terms.max_terms');
+    }
+
+    private function maxLength(): int
+    {
+        return app(DefaultsRegistry::class)->int('assistant.urgent_terms.max_length');
+    }
 
     /**
      * @return list<string>
@@ -187,7 +198,7 @@ final class UrgentTerms
             }
         }
 
-        if (count($existing) >= self::MAX_TERMS) {
+        if (count($existing) >= $this->maxTerms()) {
             throw new InvalidArgumentException(
                 'That is as many urgent words as one business can have. Remove one you no longer '
                 .'need first — a list that matches everything wakes you for everything.'
@@ -261,7 +272,7 @@ final class UrgentTerms
             throw new InvalidArgumentException('An urgent word needs to be a word.');
         }
 
-        if (mb_strlen($trimmed) > self::MAX_LENGTH) {
+        if (mb_strlen($trimmed) > $this->maxLength()) {
             throw new InvalidArgumentException(
                 'That is a sentence rather than a word. Use the word a customer would actually type, '
                 .'like "lockout" or "no heat".'
