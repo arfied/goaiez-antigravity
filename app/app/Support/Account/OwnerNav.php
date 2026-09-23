@@ -637,6 +637,7 @@ final class OwnerNav
             OwnerNavItem::make('Inbox', 'x-01.thread', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('First wins', 'x-118.today', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Time to first minute', 'x-118.ttfm-distribution', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Import from another system', 'x-212.pick-source', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Dry-run preview', 'x-212.dryrun-preview', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Import rejections', 'x-212.postimport-audit', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Approvals', 'x-202.queue', OwnerNavItem::GROUP_CATALOG, alsoCurrentFor: ['x-202.item']),

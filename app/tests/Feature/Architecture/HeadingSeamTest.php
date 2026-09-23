@@ -198,8 +198,8 @@ test('owner layout heading seam contract', function () {
     expect(array_sum(array_column($expectedMap, 'total')))->toBe($total);
     expect(array_sum(array_column($expectedMap, 'seam')))->toBe($seam);
 
-    expect($total)->toBe(241, 'If it went UP, a new module component uses the owner layout. If it went DOWN, a component dropped the layout or was deleted.; 2026-09-23 X-119 TeachingBox became a real screen and uses the owner layout');
-    expect($seam)->toBe(240, 'If it went UP, a component added the heading key to its layout. If it went DOWN, a component removed it or was deleted.; 2026-09-23 X-119 TeachingBox added the heading key');
+    expect($total)->toBe(242, 'If it went UP, a new module component uses the owner layout. If it went DOWN, a component dropped the layout or was deleted.; 2026-09-23 X-119 TeachingBox became a real screen and uses the owner layout; 2026-09-23 X-212 PickSource became a real screen and its prose banner was removed');
+    expect($seam)->toBe(241, 'If it went UP, a component added the heading key to its layout. If it went DOWN, a component removed it or was deleted.; 2026-09-23 X-119 TeachingBox added the heading key; 2026-09-23 X-212 PickSource became a real screen and its prose banner was removed');
     expect($seam + $own)->toBe($total, 'Seam plus own must equal total.');
     expect($own)->toBe(1, 'If it went UP, a component kept the layout but brought its own heading, violating T140 §2. If it went DOWN, it deleted the override.');
     expect($unresolvedView)->toBe(0, 'If it went UP, a component uses a first view literal that cannot be resolved. Its known edge: a component with two view( literals lands on the first. If it went DOWN, an unresolved view literal was fixed.');
@@ -307,7 +307,7 @@ function headingSeamCountsByModule(): array
         'X-209' => ['total' => 3, 'seam' => 3],
         'X-210' => ['total' => 5, 'seam' => 5],
         'X-211' => ['total' => 4, 'seam' => 4],
-        'X-212' => ['total' => 5, 'seam' => 5],
+        'X-212' => ['total' => 6, 'seam' => 6],
         'X-218' => ['total' => 3, 'seam' => 3],
         'X-220' => ['total' => 1, 'seam' => 1],
         'X-66' => ['total' => 3, 'seam' => 3],
