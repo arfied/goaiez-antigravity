@@ -676,6 +676,7 @@ final class OwnerNav
             OwnerNavItem::make('Research dossiers', 'x-135.research-dossier-per', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Metric proof panel', 'x-127.metric-proof-panel', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Provider cost per valid record', 'x-150.provider-cost-per', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Manual Form Review Queue', 'x-109.manual-queue', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Agency Console', 'x-112.agency-console', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Agency staff', 'x-112.staff', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Migration commit', 'x-212.commit', OwnerNavItem::GROUP_CATALOG),

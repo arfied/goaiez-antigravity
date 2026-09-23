@@ -20,6 +20,8 @@ class ManualQueueScreenTest extends TestCase
 
         $this->get(route('x-109.manual-queue'))
             ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
             ->assertSeeText('No parked submissions requiring manual review.');
 
         Livewire::test(ManualQueue::class)->assertOk();
