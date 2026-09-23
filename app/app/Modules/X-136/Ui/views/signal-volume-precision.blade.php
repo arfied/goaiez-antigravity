@@ -16,13 +16,13 @@
                         <div class="flex justify-between items-center w-full">
                             <div>
                                 <div class="font-medium text-lg capitalize">{{ str_replace('_', ' ', $stat->signal_type) }}</div>
-                                <div class="text-sm text-gray-500 mt-1">
+                                <div class="text-sm text-ink-2 mt-1">
                                     Volume: {{ $stat->total_count }} total | {{ $stat->high_intent_count }} high-intent
                                 </div>
                             </div>
                             <div class="text-right">
                                 <div class="font-medium text-blue-600">{{ $stat->precision_pct }}% Precision</div>
-                                <div class="text-xs text-gray-400 mt-1">Decay: {{ $stat->decay_model }}</div>
+                                <div class="text-xs text-ink-3 mt-1">Decay: {{ $stat->decay_model }}</div>
                             </div>
                         </div>
                         
