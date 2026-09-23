@@ -42,6 +42,8 @@
                 No broadcasts yet. Your first campaign appears here after it is drafted.
             </div>
         @else
+            @if (session('status')) <p>{{ session('status') }}</p> @endif
+            @error('confirm') <p>{{ $message }}</p> @enderror
             <div class="overflow-x-auto" tabindex="0" aria-label="Recent broadcasts table">
                 <table class="min-w-full divide-y divide-rule">
                     <thead class="bg-paper">
@@ -51,6 +53,7 @@
                             <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Recipients</th>
                             <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Replies</th>
                             <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Date</th>
+                            <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Action</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-rule text-sm">
@@ -61,11 +64,17 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-ink-2">{{ $campaign->recipients_count }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-ink-2">{{ $campaign->replies_count }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-ink-2">{{ $campaign->started_at?->format('M j, Y') ?? $campaign->created_at->format('M j, Y') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if($campaign->status === \App\Enums\CampaignStatus::Draft)
+                                        <button type="button" wire:click="confirm({{ $campaign->id }})">Confirm and send</button>
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
+            <p>Confirming enrols the dormant audience; messages go out on the next scheduled run, every fifteen minutes.</p>
         @endif
     </div>
 </div>
