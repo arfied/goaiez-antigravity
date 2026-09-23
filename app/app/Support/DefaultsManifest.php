@@ -7,8 +7,15 @@ namespace App\Support;
 use App\Enums\AiTask;
 use App\Enums\Plan;
 use App\Enums\StoredObjectKind;
+use App\Modules\CReviews\Actions\ReviewRequestAction;
 use App\Modules\X01\Domain\UnifiedInboxManager;
+use App\Modules\X120\Actions\CardExpiringScanAction;
+use App\Modules\X137\Actions\CallAttributeAction;
+use App\Modules\X153\Actions\AlertSendAction;
 use App\Modules\X157\Actions\EdgeDeployAction;
+use App\Modules\X172\Actions\PortalLinkAction;
+use App\Modules\X181\Actions\QaTicketCreateAction;
+use App\Modules\X202\Domain\ApprovalDeskEngine;
 use App\Modules\X205\Domain\AffiliateEngine;
 use App\Services\Mail\MailDrivers;
 use App\Services\Mail\MailQuota;
@@ -78,6 +85,42 @@ final class DefaultsManifest
     public static function settings(): array
     {
         $settings = [
+            'reviews.request.cadence_window_days' => [
+                'seed' => ReviewRequestAction::CADENCE_WINDOW_DAYS,
+                'group' => 'Reviews',
+            ],
+            'reviews.request.low_csat_below' => [
+                'seed' => ReviewRequestAction::LOW_CSAT_BELOW,
+                'group' => 'Reviews',
+            ],
+            'reviews.request.low_csat_job_age_days' => [
+                'seed' => ReviewRequestAction::LOW_CSAT_JOB_AGE_DAYS,
+                'group' => 'Reviews',
+            ],
+            'billing.card.expiring_warning_days' => [
+                'seed' => CardExpiringScanAction::EXPIRING_WARNING_DAYS,
+                'group' => 'Billing',
+            ],
+            'alerts.claim.expiry_minutes' => [
+                'seed' => AlertSendAction::CLAIM_EXPIRY_MINUTES,
+                'group' => 'Operations',
+            ],
+            'approvals.expiry_hours' => [
+                'seed' => ApprovalDeskEngine::EXPIRY_HOURS,
+                'group' => 'Operations',
+            ],
+            'portal.link.ttl_hours' => [
+                'seed' => PortalLinkAction::TTL_HOURS,
+                'group' => 'Messaging',
+            ],
+            'qa.ticket.sla_hours' => [
+                'seed' => QaTicketCreateAction::SLA_HOURS,
+                'group' => 'Operations',
+            ],
+            'attribution.call.ttl_minutes' => [
+                'seed' => CallAttributeAction::TTL_MINUTES,
+                'group' => 'Marketing',
+            ],
             'crm.lead_score.tier_hot' => [
                 'seed' => UnifiedInboxManager::TIER_HOT,
                 'group' => 'Marketing',

@@ -11,6 +11,7 @@ use App\Modules\X153\Events\AlertClaimed;
 use App\Modules\X153\Events\AlertSent;
 use App\Modules\X153\Models\Alert;
 use App\Modules\X153\Models\AlertClaim;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -26,8 +27,8 @@ class X153Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->sender = new AlertSendAction;
-        $this->claim = new AlertClaimAction;
+        $this->sender = new AlertSendAction(app(DefaultsRegistry::class));
+        $this->claim = new AlertClaimAction(app(DefaultsRegistry::class));
         $this->override = new AlertOverrideAction;
     }
 

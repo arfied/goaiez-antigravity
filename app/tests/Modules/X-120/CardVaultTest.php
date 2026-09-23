@@ -62,7 +62,7 @@ class CardVaultTest extends TestCase
             'alert_sent' => false
         ]);
 
-        $action = new \App\Modules\X120\Actions\CardExpiringScanAction();
+        $action = new \App\Modules\X120\Actions\CardExpiringScanAction(app(\App\Services\Config\DefaultsRegistry::class));
         // First scan sends the alert
         $res1 = $action->scan($biz->id, $now);
         $this->assertEquals(1, $res1['alerted_count']);

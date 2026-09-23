@@ -6,6 +6,7 @@ namespace Tests\Modules\X137;
 
 use App\Modules\X137\Actions\CallAttributeAction;
 use App\Modules\X137\Models\CallToken;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -17,7 +18,7 @@ class PoolExhaustionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->attributeAction = new CallAttributeAction;
+        $this->attributeAction = new CallAttributeAction(app(DefaultsRegistry::class));
     }
 
     public function test_pool_exhaustion_renders_fallback_and_is_unattributed(): void
