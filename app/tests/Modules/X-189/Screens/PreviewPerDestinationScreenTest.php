@@ -9,6 +9,8 @@ use App\Models\User;
 use App\Modules\X189\Models\BrandedMedia;
 use App\Modules\X189\Ui\PreviewPerDestination;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -49,10 +51,24 @@ class PreviewPerDestinationScreenTest extends TestCase
 
     public function test_can_brand_asset(): void
     {
+        DB::table('fetch_sources')->insertOrIgnore([
+            'key' => 'tenant_site',
+            'method_ceiling' => 'light_fetch',
+        ]);
+
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set($biz->id);
+
+        $canvas = imagecreatetruecolor(10, 10);
+        ob_start();
+        imagejpeg($canvas);
+        $jpg = ob_get_clean();
+        imagedestroy($canvas);
+        Http::fake([
+            'example.com/*' => Http::response($jpg, 200, ['Content-Type' => 'image/jpeg']),
+        ]);
 
         $this->get(route('x-189.preview-per-destination'))
             ->assertOk()
