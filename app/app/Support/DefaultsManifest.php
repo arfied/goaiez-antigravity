@@ -50,38 +50,38 @@ use App\Services\Billing\RenewalReminders;
 use App\Services\Billing\Subscriptions;
 use App\Services\Billing\TrialEligibility;
 use App\Services\Campaigns\UnknownSendReconciler;
-use App\Services\Content\ContentSelfAudit;
-use App\Services\Content\Publishing;
-use App\Services\Crm\CustomerMerges;
-use App\Services\Export\ExportBuilder;
-use App\Services\Gbp\ZernioSpend;
-use App\Services\MagicLinkService;
-use App\Services\Mail\MailDrivers;
-use App\Services\Mail\MailQuota;
-use App\Services\Mail\MailSendRate;
-use App\Services\Ops\OperatorAlerts;
-use App\Services\Ops\PlatformHealthChecks;
-use App\Services\Ops\ScheduledRunMeter;
-use App\Services\Pixel\IngestRejects;
-use App\Services\Support\DataRequests;
 use App\Services\Config\CredentialStore;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Content\ContentSelfAudit;
+use App\Services\Content\Publishing;
 use App\Services\Conversations\ConversationThreads;
 use App\Services\Conversations\InboxReplies;
 use App\Services\Crm\CrmNotes;
 use App\Services\Crm\CustomerDirectory;
 use App\Services\Crm\CustomerEditor;
+use App\Services\Crm\CustomerMerges;
 use App\Services\Crm\MergeDuplicateDetector;
+use App\Services\Export\ExportBuilder;
 use App\Services\Feedback\FeedbackPages;
+use App\Services\Gbp\ZernioSpend;
+use App\Services\MagicLinkService;
+use App\Services\Mail\MailDrivers;
+use App\Services\Mail\MailQuota;
+use App\Services\Mail\MailSendRate;
 use App\Services\Messaging\Composer\NameNormaliser;
 use App\Services\Messaging\MessageLog;
 use App\Services\Messaging\PlatformComplaintRate;
 use App\Services\Messaging\RecoveryCheckInSender;
 use App\Services\Messaging\SendingHealth;
+use App\Services\Ops\OperatorAlerts;
+use App\Services\Ops\PlatformHealthChecks;
+use App\Services\Ops\ScheduledRunMeter;
+use App\Services\Pixel\IngestRejects;
 use App\Services\Reviews\ReplyGenerator;
 use App\Services\Reviews\ResponseTemplates;
 use App\Services\Reviews\ReviewHubPages;
 use App\Services\Reviews\ReviewReplies;
+use App\Services\Support\DataRequests;
 use App\Services\Support\SupportDesk;
 use App\Services\Visibility\ReviewLossDetection;
 use App\Services\Warehouse\L1Derivation;
@@ -142,7 +142,7 @@ final class DefaultsManifest
     /**
      * The only group names an entry may use.
      */
-    public const array GROUPS = ['AI', 'Affiliate', 'Agency', 'Assistant', 'Billing', 'Brand', 'Content', 'Credits', 'Free instant audit', 'Google Business Profile', 'Legal', 'Marketing', 'Messaging', 'Notifications', 'Operations', 'Pixel', 'Places', 'Reviews', 'Sites', 'Support', 'Trust', 'CRM'];
+    public const array GROUPS = ['AI', 'Affiliate', 'Agency', 'Assistant', 'Billing', 'Brand', 'Content', 'Credits', 'Free instant audit', 'Google Business Profile', 'Legal', 'Marketing', 'Messaging', 'Notifications', 'Operations', 'Pixel', 'Places', 'Reviews', 'Sites', 'Support', 'Trust'];
 
     /**
      * Platform-wide seeds → `platform_settings`.
@@ -3565,7 +3565,6 @@ final class DefaultsManifest
                 'description' => 'System prompt for generating the FAQ block.',
             ],
 
-
             'reviews.reply.max_recovery_length' => [
                 'seed' => ReplyGenerator::MAX_RECOVERY_LENGTH,
                 'group' => 'Reviews',
@@ -3603,27 +3602,27 @@ final class DefaultsManifest
             ],
             'crm.notes.max_length' => [
                 'seed' => CrmNotes::MAX_LENGTH,
-                'group' => 'CRM',
+                'group' => 'Marketing',
                 'description' => 'Maximum length of customer notes.',
             ],
             'crm.customer.max_name_length' => [
                 'seed' => CustomerEditor::MAX_NAME_LENGTH,
-                'group' => 'CRM',
+                'group' => 'Marketing',
                 'description' => 'Maximum length of a customer name.',
             ],
             'crm.customer.max_tags' => [
                 'seed' => CustomerEditor::MAX_TAGS,
-                'group' => 'CRM',
+                'group' => 'Marketing',
                 'description' => 'Maximum number of tags a customer can have.',
             ],
             'crm.customer.max_tag_length' => [
                 'seed' => CustomerEditor::MAX_TAG_LENGTH,
-                'group' => 'CRM',
+                'group' => 'Marketing',
                 'description' => 'Maximum length of a single customer tag.',
             ],
             'crm.merge.compared_digits' => [
                 'seed' => MergeDuplicateDetector::COMPARED_DIGITS,
-                'group' => 'CRM',
+                'group' => 'Marketing',
                 'description' => 'Number of digits compared when detecting duplicate phones.',
             ],
             'conversations.reply.body_limit' => [
@@ -3670,7 +3669,7 @@ final class DefaultsManifest
                 'seed' => NameNormaliser::MAX_LENGTH,
                 'group' => 'Messaging',
                 'description' => 'Maximum length of a name in the composer.',
-            ],        
+            ],
         ];
 
         return array_merge($settings, self::mailSendingCeilings());
