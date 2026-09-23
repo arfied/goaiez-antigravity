@@ -602,6 +602,7 @@ final class OwnerNav
             OwnerNavItem::make('Affiliate payouts', 'x-205.payout-run', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Email domain', 'c-mail.dns-card', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Domain warm-up', 'c-mail.warmup-calendars-per', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Warm-up sequence', 'c-mail.sequence-view', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Earned links', 'x-191.links-earned', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Outreach ratio', 'x-191.pitchacquire-ratio', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Dispatch board', 'x-162.dispatch-board', OwnerNavItem::GROUP_CATALOG),
