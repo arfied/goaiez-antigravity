@@ -661,6 +661,7 @@ final class OwnerNav
             OwnerNavItem::make('Call coaching', 'x-66.livecoaching-whisper-panel', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('What we learned', 'x-119.reviewwhatifound-screen', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Fact freshness', 'x-119.fact-freshness-per', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Teach a fact', 'x-119.teaching-box', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Demand in your area', 'x-130.public-index-pages', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Demand by trade', 'x-130.coverage-by-trade', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('WhatsApp templates', 'c-whatsapp.template-status-card', OwnerNavItem::GROUP_CATALOG),

@@ -39,9 +39,9 @@ test('every <x-surface.sample-state> names a real module', function () {
     }
 
     // 3. partition into legal / illegal / unparseable
-    expect($total)->toBe(12);
+    expect($total)->toBe(11, '2026-09-23 X-119 TeachingBox became a real screen and its prose banner was removed');
     expect($legal)->toBe(2, '21 call sites are in known module blade files; they have been converted to x-123.module-name by Track 1. The test prevents them turning back into prose.');
     expect($unparseable)->toBe(0, 'If it went up, a call to sampleState has an unrecognizable key format. Find it and use either the module syntax or the legacy text syntax.');
-    expect($illegal)->toBe(10, '219 call sites use a prose description instead of a real module ID. A red means the number moved.');
+    expect($illegal)->toBe(9, '219 call sites use a prose description instead of a real module ID. A red means the number moved.; 2026-09-23 X-119 TeachingBox became a real screen and its prose banner was removed');
     expect($legal + $illegal + $unparseable)->toBe($total);
 });
