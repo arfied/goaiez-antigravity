@@ -678,6 +678,7 @@ final class OwnerNav
             OwnerNavItem::make('Reconciliation report', 'x-212.reconciliation-report', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Standard Flow', 'x-118.same-flow', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Direct Test Call', 'x-118.test-call', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Fetch board', 'x-151.fetch-board', OwnerNavItem::GROUP_CATALOG),
         ];
     }
 
