@@ -53,6 +53,17 @@
                                         </form>
                                     </div>
                                 </details>
+                                <details class="mb-2">
+                                    <summary class="cursor-pointer">Edit SEO</summary>
+                                    <div class="p-2 mt-2 bg-paper border border-rule">
+                                        <button wire:click="draftSeo({{ $page->id }})" class="bg-paper border border-rule px-2 py-1 mb-2 text-ink capitalize">draft title & description</button>
+                                        <form wire:submit="saveSeo({{ $page->id }})">
+                                            <input type="text" wire:model="seoTitle.{{ $page->id }}" placeholder="SEO Title" class="w-full bg-paper border border-rule text-ink p-1 mb-1">
+                                            <input type="text" wire:model="seoDescription.{{ $page->id }}" placeholder="SEO Description" class="w-full bg-paper border border-rule text-ink p-1 mb-1">
+                                            <button type="submit" class="bg-paper border border-rule px-2 py-1 text-ink">Save</button>
+                                        </form>
+                                    </div>
+                                </details>
                                 <details>
                                     <summary class="cursor-pointer">Edit content</summary>
                                     <div class="p-2 mt-2 bg-paper border border-rule">

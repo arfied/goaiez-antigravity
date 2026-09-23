@@ -643,7 +643,7 @@ class X157Test extends TestCase
         $this->assertStringContainsString('dni-pool-x137', $html);
         $this->assertStringContainsString('seo-meta-x176', $html);
         $this->assertStringContainsString('application/ld+json', $html);
-        $this->assertStringContainsString('<img src="/sites/' . $biz->id . '/' . $deploy['deploy_hash'] . '/media/some-image.jpg"', $html);
+        $this->assertStringContainsString('<img src="/sites/'.$biz->id.'/'.$deploy['deploy_hash'].'/media/some-image.jpg"', $html);
 
         $zoneRow = Deployment::where('deploy_hash', $deploy['deploy_hash'])->first()->edgeZone;
         $zoneRow->update(['has_valid_ssl' => false]);
@@ -2366,5 +2366,47 @@ class X157Test extends TestCase
 
         $biz2 = TestCase::provisionTenant(['name' => 'Foreign', 'currency' => 'USD']);
         $this->get("/sites/{$biz2->id}/test_hash_media/media/image.jpg")->assertStatus(404);
+    }
+
+    public function test_deploy_emits_title_and_description_escaped(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Deploy Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = EdgeZone::create([
+            'business_id' => $biz->id,
+            'domain_name' => 'fox.test',
+            'zone_id' => 'z1',
+            'has_valid_ssl' => true,
+        ]);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Fox < Title',
+            'seo_title' => 'Fox & Sons Drains',
+            'seo_description' => 'Fast & reliable "drain" cleaning.',
+            'is_published' => false,
+        ]);
+
+        $action = app(EdgeDeployAction::class);
+        $res = $action->handle($biz->id, $zone->id, 120, 1500, $page->id, 'commit_123', 'Fox Business');
+
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
+        $this->assertStringContainsString('<title>Fox &amp; Sons Drains</title>', $html);
+        $this->assertStringContainsString('<meta name="description" content="Fast &amp; reliable &quot;drain&quot; cleaning.">', $html);
+
+        $page2 = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'about',
+            'title' => 'Fox & Page',
+            'is_published' => false,
+        ]);
+
+        $res2 = $action->handle($biz->id, $zone->id, 120, 1500, $page2->id, 'commit_456', 'Fox Business');
+        $html2 = Storage::disk('local')->get("sites/{$res2['deploy_hash']}.html");
+
+        $this->assertStringContainsString('<title>Fox &amp; Page</title>', $html2);
     }
 }

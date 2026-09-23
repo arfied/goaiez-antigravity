@@ -142,6 +142,17 @@ final class EdgeDeployAction
 
             $html = '<html><head>';
             $html .= "<meta name=\"ssl\" content=\"valid\">\n";
+
+            $headPage = null;
+            if ($pageId !== null) {
+                $headPage = app(PageReadAction::class)->findForBusiness($businessId, $pageId);
+            }
+            $seoTitle = $headPage ? ($headPage->seo_title ?: $headPage->title ?: $businessName) : $businessName;
+            $html .= '<title>'.e((string) $seoTitle)."</title>\n";
+            if ($headPage && ! empty($headPage->seo_description)) {
+                $html .= '<meta name="description" content="'.e($headPage->seo_description)."\">\n";
+            }
+
             $html .= "</head><body>\n";
 
             if ($commitId) {

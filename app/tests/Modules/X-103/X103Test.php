@@ -16,6 +16,7 @@ use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X103\Actions\FaqDraftAction;
 use App\Modules\X103\Actions\FunnelBuildAction;
 use App\Modules\X103\Actions\PageCreateAction;
+use App\Modules\X103\Actions\SeoDraftAction;
 use App\Modules\X103\Actions\SiteBuildAction;
 use App\Modules\X103\Actions\SiteCopyPolishAction;
 use App\Modules\X103\Actions\SiteDraftAction;
@@ -936,5 +937,72 @@ class X103Test extends TestCase
         $html = $renderer->render($blocks, []);
         $this->assertStringContainsString('Is it fast?', $html);
         $this->assertStringContainsString('Is it cheap?', $html);
+    }
+
+    public function test_seo_draft_writes_title_and_description_within_limits(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        PlatformSetting::write('sites.seo.title_max_chars', 60, 'test');
+        PlatformSetting::write('sites.seo.description_max_chars', 155, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'SEO Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'text' => 'Hero text'],
+            ],
+            'is_published' => false,
+        ]);
+
+        $longTitle = 'This is a very long title that exceeds the limit of sixty characters by a significant margin';
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_seo',
+                'choices' => [
+                    ['message' => ['content' => json_encode(['title' => $longTitle, 'description' => 'Short desc'])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10],
+            ]),
+        ]);
+
+        $action = app(SeoDraftAction::class);
+        $res = $action->handle($biz->id, $page->id);
+
+        $this->assertEquals('drafted', $res['status']);
+
+        $page->refresh();
+        $this->assertTrue(mb_strlen($page->seo_title) <= 60);
+        $this->assertEquals('Short desc', $page->seo_description);
+
+        Http::assertSentCount(1);
+    }
+
+    public function test_seo_draft_refuses_when_the_budget_is_out(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 0, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'SEO Tenant No Budget']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [],
+            'is_published' => false,
+        ]);
+
+        Http::fake();
+
+        $action = app(SeoDraftAction::class);
+        $res = $action->handle($biz->id, $page->id);
+
+        $this->assertEquals('refused', $res['status']);
+        $this->assertNull($page->refresh()->seo_title);
+
+        Http::assertNothingSent();
     }
 }

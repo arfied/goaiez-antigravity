@@ -10,6 +10,7 @@ use App\Modules\X103\Actions\PageDuplicateAction;
 use App\Modules\X103\Actions\PageRenameAction;
 use App\Modules\X103\Actions\PageRestoreVersionAction;
 use App\Modules\X103\Actions\PageUnpublishAction;
+use App\Modules\X103\Actions\SeoDraftAction;
 use App\Modules\X103\Actions\SiteCopyPolishAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
@@ -39,6 +40,10 @@ class Pages extends Component
     public array $renameSlug = [];
 
     public array $renameTitle = [];
+
+    public array $seoTitle = [];
+
+    public array $seoDescription = [];
 
     public function mount(): void
     {
@@ -396,9 +401,67 @@ class Pages extends Component
         }
     }
 
+    public function draftSeo(int $pageId, SeoDraftAction $action): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        try {
+            $res = $action->handle($this->businessId, $pageId);
+            if ($res['status'] === 'refused') {
+                $this->success = $res['reason'];
+            } else {
+                $this->success = "Drafted with {$res['model']}";
+                $this->seoTitle[$pageId] = $res['title'];
+                $this->seoDescription[$pageId] = $res['description'];
+            }
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
+    public function saveSeo(int $pageId): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $title = $this->seoTitle[$pageId] ?? '';
+        $description = $this->seoDescription[$pageId] ?? '';
+
+        if (mb_strlen($title) > 70) {
+            $this->error = 'Title must be 70 characters or less.';
+
+            return;
+        }
+
+        if (mb_strlen($description) > 160) {
+            $this->error = 'Description must be 160 characters or less.';
+
+            return;
+        }
+
+        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
+        $page->seo_title = $title ?: null;
+        $page->seo_description = $description ?: null;
+        $page->save();
+
+        $this->success = 'SEO saved.';
+    }
+
     public function render()
     {
         $pages = Page::where('business_id', $this->businessId)->orderByDesc('id')->get();
+
+        foreach ($pages as $page) {
+            if (! isset($this->seoTitle[$page->id])) {
+                $this->seoTitle[$page->id] = $page->seo_title ?? '';
+            }
+            if (! isset($this->seoDescription[$page->id])) {
+                $this->seoDescription[$page->id] = $page->seo_description ?? '';
+            }
+        }
 
         $deployments = [];
         foreach ($pages as $page) {

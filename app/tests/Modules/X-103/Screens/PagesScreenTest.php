@@ -17,6 +17,7 @@ use App\Modules\X103\Ui\Pages;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -911,5 +912,48 @@ class PagesScreenTest extends TestCase
             ->test(Pages::class)
             ->call('discardFaq', $page->id)
             ->assertSet('success', 'Pending FAQ discarded.');
+    }
+
+    public function test_seo_draft_and_save_controls(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        PlatformSetting::write('sites.seo.title_max_chars', 60, 'test');
+        PlatformSetting::write('sites.seo.description_max_chars', 155, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'SEO Screen', 'owner_user_id' => $owner->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_seo',
+                'choices' => [
+                    ['message' => ['content' => json_encode(['title' => 'Drafted Title', 'description' => 'Drafted Desc'])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10],
+            ]),
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->call('draftSeo', $page->id)
+            ->assertSet('success', 'Drafted with openai-4o-mini');
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->set('seoTitle.'.$page->id, 'Saved Title')
+            ->set('seoDescription.'.$page->id, 'Saved Desc')
+            ->call('saveSeo', $page->id)
+            ->assertSet('success', 'SEO saved.');
+
+        $page->refresh();
+        $this->assertEquals('Saved Title', $page->seo_title);
     }
 }

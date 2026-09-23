@@ -90,6 +90,21 @@ final class DefaultsManifest
                 'group' => 'Content',
                 'description' => 'Maximum characters for polished site copy.',
             ],
+            'sites.seo.system_prompt' => [
+                'seed' => 'Write one page title of at most {title_max_chars} characters and one description of at most {description_max_chars} characters. Keep it plain, factual, name the business and the service, and make no claims not in the text.',
+                'group' => 'Content',
+                'description' => 'The system prompt used to draft SEO titles and descriptions.',
+            ],
+            'sites.seo.title_max_chars' => [
+                'seed' => 60,
+                'group' => 'Content',
+                'description' => 'Maximum characters for drafted SEO titles.',
+            ],
+            'sites.seo.description_max_chars' => [
+                'seed' => 155,
+                'group' => 'Content',
+                'description' => 'Maximum characters for drafted SEO descriptions.',
+            ],
 
             /*
              * Billing shape. Not prices — those are per-plan and live in

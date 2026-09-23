@@ -17,5 +17,7 @@ class Page extends Model
         'is_published' => 'boolean',
         'draft_blocks' => 'array',
         'draft_meta' => 'array',
+        'seo_title' => 'string',
+        'seo_description' => 'string',
     ];
 }
