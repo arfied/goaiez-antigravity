@@ -10,9 +10,12 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module C-Billing
+ *
  * @intent INFORM under §227.2
-         * @ingress subscription.renewed <clock>
-         * @scheduled subscription.renewed <daily> @owner C-Billing
+ *
+ * @ingress subscription.renewed <clock>
+ *
+ * @scheduled subscription.renewed <daily> @owner C-Billing
  */
 return [
     'module' => 'C-Billing',

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\X204\Ui;
 
-use App\Modules\X204\Models\SendPermit;
 use App\Modules\X204\Domain\ConsentService;
+use App\Modules\X204\Models\SendPermit;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -18,13 +18,17 @@ class RefusalsByReason extends Component
     public int $businessId = 0;
 
     public string $suppressPhone = '';
+
     public string $suppressChannel = 'sms';
+
     public string $suppressReason = 'opt_out';
 
     public string $decidePhone = '';
+
     public string $decideChannel = 'sms';
 
     public string $success = '';
+
     public string $error = '';
 
     public function mount(int $businessId = 0): void
@@ -39,11 +43,12 @@ class RefusalsByReason extends Component
 
         if (trim($this->suppressPhone) === '') {
             $this->error = 'Phone number is required to suppress.';
+
             return;
         }
 
         $service->suppress(Tenancy::idOrFail(), $this->suppressPhone, $this->suppressChannel, $this->suppressReason);
-        
+
         $this->success = "Number {$this->suppressPhone} has been suppressed. This feeds the margin lists; nothing downstream is wired to it yet.";
         $this->reset(['suppressPhone']);
     }
@@ -54,11 +59,12 @@ class RefusalsByReason extends Component
 
         if (trim($this->decidePhone) === '') {
             $this->error = 'Phone number is required to decide.';
+
             return;
         }
 
         $result = $service->decide(Tenancy::idOrFail(), $this->decidePhone, $this->decideChannel);
-        
+
         if ($result['granted'] === true) {
             $this->success = "Check for {$this->decidePhone}: Granted. This feeds the margin lists; nothing downstream is wired to it yet.";
         } else {

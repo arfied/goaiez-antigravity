@@ -1,0 +1,24 @@
+--- /home/goaiez/agents/grs-antig-site/.agents/supervisor/.doctor-pre-site10.txt	2026-09-22 20:39:33.917723666 -0500
++++ /home/goaiez/agents/grs-antig-site/.agents/supervisor/.doctor-post-site10.txt	2026-09-22 20:39:24.678661067 -0500
+@@ -1,9 +1,9 @@
+  goaiez doctor · build 20260829-0647
+  ok integrity 0ms clean
+- ok boundary 133ms clean
+- ok contract 31ms clean
++ ok boundary 136ms clean
++ ok contract 30ms clean
+  ok citation 1164ms clean
+- FAIL schema 455ms 14 violation(s) — fails the MERGE
++ FAIL schema 444ms 14 violation(s) — fails the MERGE
+  · opt_outs: tenant-owned table has no RLS
+  fix: alter table opt_outs enable row level security
+  · suppression_lifts: tenant-owned table has no RLS
+@@ -33,7 +33,7 @@
+  · role goaiez_backup: has BYPASSRLS — every row-level security policy stops applying to it
+  fix: ALTER ROLE goaiez_backup NOBYPASSRLS; then re-run. If a CLI tool needs to read across tenants, give it its OWN read-only role — never the role the application connects with. Tenant isolation is the product.
+  ok capability 26ms clean
+- FAIL anchor 305ms 127 violation(s) — fails the WAVE
++ FAIL anchor 256ms 127 violation(s) — fails the WAVE
+  · C-Agent: no runtime proof
+  fix: run the module's TEST ANCHOR against real transports and write the artifact id to evidence/
+  · C-Ai: no runtime proof

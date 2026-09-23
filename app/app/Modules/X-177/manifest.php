@@ -10,8 +10,10 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-177
+ *
  * @intent INFORM under §227.2
-         * @ingress zernio.webhook <vendor>
+ *
+ * @ingress zernio.webhook <vendor>
  */
 return [
     'module' => 'X-177',

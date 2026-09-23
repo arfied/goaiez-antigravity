@@ -10,8 +10,10 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-195
+ *
  * @intent INFORM under §227.2
-         * @ingress rule.fired <clock>
+ *
+ * @ingress rule.fired <clock>
  */
 return [
     'module' => 'X-195',

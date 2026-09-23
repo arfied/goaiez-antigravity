@@ -6,6 +6,7 @@ namespace Tests\Modules\X112\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X112\Actions\AgencyOnboardClientAction;
 use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\ImpersonationLog;
 use App\Modules\X112\Ui\ImpersonationLogView;
@@ -75,9 +76,9 @@ class ImpersonationLogViewScreenTest extends TestCase
             'whitelabel_domain' => 'chain.example',
             'agency_mode' => 'full_service',
         ]);
-        
+
         // 2. Onboard client
-        $clientAction = app(\App\Modules\X112\Actions\AgencyOnboardClientAction::class);
+        $clientAction = app(AgencyOnboardClientAction::class);
         $client = $clientAction->handle($biz->id, $agency->id, 'Target Client');
 
         // 3. Impersonate
@@ -105,7 +106,7 @@ class ImpersonationLogViewScreenTest extends TestCase
             ->assertOk()
             ->assertSee('Investigating chain')
             ->assertDontSee('No impersonation records found.');
-            
+
         Tenancy::setUser($owner->id);
 
         // Refusals
@@ -128,7 +129,7 @@ class ImpersonationLogViewScreenTest extends TestCase
             ->set('reason', 'Missing user')
             ->call('startImpersonation')
             ->assertSet('error', 'User ID is required.');
-            
+
         Livewire::test(ImpersonationLogView::class, ['businessId' => $biz->id])
             ->set('agencyId', $agency->id)
             ->set('userId', $owner->id)
@@ -144,7 +145,7 @@ class ImpersonationLogViewScreenTest extends TestCase
             ->set('reason', '  ')
             ->call('startImpersonation')
             ->assertSet('error', 'Reason is required.');
-            
+
         Tenancy::forget();
     }
 }

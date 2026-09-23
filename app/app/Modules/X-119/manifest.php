@@ -10,8 +10,10 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-119
+ *
  * @intent INFORM under §227.2
-         * @ingress entity.updated <system>
+ *
+ * @ingress entity.updated <system>
  */
 return [
     'module' => 'X-119',

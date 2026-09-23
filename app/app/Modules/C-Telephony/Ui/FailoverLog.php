@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Modules\CTelephony\Ui;
 
 use App\Modules\CTelephony\Models\CarrierReceipt;
+use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use App\Support\Tenancy;
 
 class FailoverLog extends Component
 {

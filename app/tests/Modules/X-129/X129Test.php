@@ -6,6 +6,7 @@ namespace Tests\Modules\X129;
 
 use App\Modules\X129\Actions\RedirectsBuildAction;
 use App\Modules\X129\Actions\SiteMigrateAction;
+use App\Modules\X129\Domain\MigrationEngine;
 use App\Modules\X129\Events\DomainVerified;
 use App\Modules\X129\Events\SiteMigrated;
 use App\Modules\X129\Models\RedirectMap;
@@ -107,14 +108,14 @@ class X129Test extends TestCase
      */
     public function test_n_129_capabilities(): void
     {
-        $engine = new \App\Modules\X129\Domain\MigrationEngine();
-        
+        $engine = new MigrationEngine;
+
         // Reversible if DNS not propagated
         $this->assertTrue($engine->ensureReversible(false, true));
-        
+
         // Throws if DNS propagated and cutover complete
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage("Cutover cannot be reversed once DNS propagates");
+        $this->expectExceptionMessage('Cutover cannot be reversed once DNS propagates');
         $engine->ensureReversible(true, true);
     }
 

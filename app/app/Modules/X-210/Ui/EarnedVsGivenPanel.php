@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\X210\Ui;
 
-use App\Modules\X210\Models\PromotionRedemption;
 use App\Modules\X210\Actions\PromotionApplyAction;
+use App\Modules\X210\Models\PromotionRedemption;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -18,11 +18,15 @@ class EarnedVsGivenPanel extends Component
     public int $businessId = 0;
 
     public string $code = '';
+
     public string $customerId = '';
+
     public string $orderId = '';
+
     public string $orderAmountCents = '';
-    
+
     public string $success = '';
+
     public string $error = '';
 
     public function mount(int $businessId = 0): void
@@ -37,6 +41,7 @@ class EarnedVsGivenPanel extends Component
 
         if (trim($this->code) === '') {
             $this->error = 'Code is required.';
+
             return;
         }
 

@@ -135,6 +135,7 @@ final class OwnerNav
             // Architecture/OwnerNavTest fails the build on an owner screen
             // with neither a nav entry nor a written exclusion.
             OwnerNavItem::make('Pages', 'x-103.pages', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
+            OwnerNavItem::make('Site Inventory', 'x-103.site-inventory', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
 
             // The widget install (2950). Under More on the same distinction —
             // paste one line, name your website, never think about it again.

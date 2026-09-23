@@ -10,8 +10,10 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-111
+ *
  * @intent INFORM under §227.2
-         * @ingress help.human_requested <human>
+ *
+ * @ingress help.human_requested <human>
  */
 return [
     'module' => 'X-111',

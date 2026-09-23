@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\X199\Actions;
 
-use Illuminate\Support\Str;
-
 final class GenerateShortLinkAction
 {
     /**
@@ -15,6 +13,7 @@ final class GenerateShortLinkAction
     {
         // R245: We use a deterministic hash or DB to ensure zero 404s and no hallucinated links.
         $hash = substr(hash('sha256', $targetUrl), 0, 8);
-        return 'https://s.local/' . $hash;
+
+        return 'https://s.local/'.$hash;
     }
 }

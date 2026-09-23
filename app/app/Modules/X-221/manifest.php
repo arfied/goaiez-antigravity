@@ -10,8 +10,10 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-221
+ *
  * @intent GROW
-         * @ingress pixel.event <browser>
+ *
+ * @ingress pixel.event <browser>
  */
 return [
     'module' => 'X-221',

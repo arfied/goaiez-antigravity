@@ -15,7 +15,7 @@ final class GetBillingSummaryAction
         return [
             'card' => ['last4' => '4242', 'brand' => 'visa'],
             'invoices' => [
-                ['id' => 1, 'status' => 'paid', 'amount' => 5000]
+                ['id' => 1, 'status' => 'paid', 'amount' => 5000],
             ],
             'seats' => 5,
             'cancel_url' => "/cancel/{$businessId}", // R34 cancel action

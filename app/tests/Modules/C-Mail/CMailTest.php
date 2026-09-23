@@ -648,5 +648,4 @@ class CMailTest extends TestCase
         $this->assertSame('processed', $acceptedSend['status'], 'A4: send should be processed when not paused');
         $this->assertFalse(MailDomain::where('business_id', $biz->id)->findOrFail($domainNegative->id)->is_marketing_paused, 'A4: domain is not paused');
     }
-
 }

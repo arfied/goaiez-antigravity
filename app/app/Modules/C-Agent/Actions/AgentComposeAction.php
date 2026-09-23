@@ -14,7 +14,7 @@ final class AgentComposeAction
         // R245: AI composes a draft synchronously for human review (compose-time).
         // It does not send it directly, fulfilling the both-directions draft requirement.
         return [
-            'draft' => 'Drafted response to: ' . $input,
+            'draft' => 'Drafted response to: '.$input,
             'status' => 'composed_for_review',
         ];
     }

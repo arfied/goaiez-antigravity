@@ -111,7 +111,7 @@ class CallsScreenTest extends TestCase
             ->set('callSid', '')
             ->call('recordCall')
             ->assertSet('error', 'Call SID is required.');
-        
+
         $this->assertDatabaseMissing($table, [
             'from_phone' => '+123',
         ]);

@@ -16,10 +16,15 @@ class MarketplaceView extends Component
     public int $businessId = 0;
 
     public string $itemName = '';
+
     public string $itemSlug = '';
+
     public string $version = '';
+
     public string $summary = '';
+
     public string $success = '';
+
     public string $error = '';
 
     public function mount(int $businessId = 0): void
@@ -34,6 +39,7 @@ class MarketplaceView extends Component
 
         if (empty($this->itemName) || empty($this->itemSlug) || empty($this->version) || empty($this->summary)) {
             $this->error = 'Item name, slug, version, and summary are required.';
+
             return;
         }
 

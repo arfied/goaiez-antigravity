@@ -153,8 +153,8 @@ final class DbBootstrapCommand extends Command
         // ⛔⛔ R233 N-233-02 — the row that must not exist.
         if (! $dry && $this->hasTable('agency_client_grants')) {
             DB::statement(
-                "ALTER TABLE agency_client_grants
-                 DROP CONSTRAINT IF EXISTS grantee_never_goaiez"
+                'ALTER TABLE agency_client_grants
+                 DROP CONSTRAINT IF EXISTS grantee_never_goaiez'
             );
             DB::statement(
                 "ALTER TABLE agency_client_grants

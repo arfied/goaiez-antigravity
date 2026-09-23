@@ -10,8 +10,10 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-108
+ *
  * @intent SERVE under §227.2
-         * @ingress availability.requested <human>
+ *
+ * @ingress availability.requested <human>
  */
 return [
     'module' => 'X-108',

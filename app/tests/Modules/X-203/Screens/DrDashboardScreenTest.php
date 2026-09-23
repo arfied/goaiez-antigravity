@@ -94,7 +94,7 @@ class DrDashboardScreenTest extends TestCase
             ->set('expectedChecksum', 'abc')
             ->call('recordTest')
             ->assertSet('error', 'Backup ID is required.');
-        
+
         $this->assertDatabaseMissing($table, [
             'expected_checksum' => 'abc',
         ]);

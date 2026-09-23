@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X191\Ui;
 
+use App\Modules\X191\Actions\LinkMonitorAction;
 use App\Modules\X191\Models\LinkPlacement;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -17,8 +18,11 @@ class LinksEarned extends Component
     public int $businessId = 0;
 
     public string $placedUrl = '';
+
     public string $anchorText = '';
+
     public ?string $success = null;
+
     public ?string $error = null;
 
     public function mount(int $businessId = 0): void
@@ -33,16 +37,17 @@ class LinksEarned extends Component
 
         if (empty($this->placedUrl)) {
             $this->error = 'Placed URL is required.';
+
             return;
         }
 
-        $result = app(\App\Modules\X191\Actions\LinkMonitorAction::class)->recordPlacement(
+        $result = app(LinkMonitorAction::class)->recordPlacement(
             Tenancy::idOrFail(),
             $this->placedUrl,
             $this->anchorText
         );
 
-        $this->success = 'Recorded placement on ' . $result->placed_url . '. This feeds the pitch ratios; nothing downstream is wired to it yet.';
+        $this->success = 'Recorded placement on '.$result->placed_url.'. This feeds the pitch ratios; nothing downstream is wired to it yet.';
         $this->placedUrl = '';
         $this->anchorText = '';
     }

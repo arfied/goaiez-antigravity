@@ -8,6 +8,7 @@ use App\Modules\X170\Events\CommissionCalculated;
 use App\Modules\X170\Events\CommissionClawedBack;
 use App\Modules\X170\Events\CommissionReleased;
 use App\Modules\X170\Models\Commission;
+use App\Modules\X170\Models\CommissionRule;
 use App\Modules\X170\Models\Scorecard;
 use Illuminate\Support\Facades\Event;
 
@@ -25,7 +26,7 @@ final class CommissionEngine
         $created = [];
 
         // Fetch active commission rules
-        $rules = \App\Modules\X170\Models\CommissionRule::where('business_id', $businessId)
+        $rules = CommissionRule::where('business_id', $businessId)
             ->where('is_active', true)
             ->get();
 
@@ -63,7 +64,7 @@ final class CommissionEngine
      */
     public function project(int $businessId, int $projectedRevenueCents): int
     {
-        $rules = \App\Modules\X170\Models\CommissionRule::where('business_id', $businessId)
+        $rules = CommissionRule::where('business_id', $businessId)
             ->where('is_active', true)
             ->get();
 

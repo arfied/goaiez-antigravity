@@ -10,8 +10,10 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-156
+ *
  * @intent OBSERVE under §227.2
-         * @ingress any.event <system>
+ *
+ * @ingress any.event <system>
  */
 return [
     'module' => 'X-156',

@@ -101,8 +101,6 @@ class X120Test extends TestCase
     /**
      * [N-120-01], [N-120-02]
      */
-
-
     public function test_card_present_action_derives_brand(): void
     {
         $action = new CardPresentAction;

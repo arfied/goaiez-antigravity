@@ -10,8 +10,10 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-118
+ *
  * @intent GROW under §227.2
-         * @ingress signup.completed <the signup flow>
+ *
+ * @ingress signup.completed <the signup flow>
  */
 return [
     'module' => 'X-118',

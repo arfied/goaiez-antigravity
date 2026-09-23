@@ -88,7 +88,10 @@ return new class extends Migration
                 SQL);
             }
             DB::statement("GRANT SELECT, INSERT, UPDATE, DELETE ON {$table} TO goaiez_app");
-            try { DB::statement("GRANT USAGE, SELECT ON SEQUENCE {$table}_id_seq TO goaiez_app"); } catch(\Exception $e) {}
+            try {
+                DB::statement("GRANT USAGE, SELECT ON SEQUENCE {$table}_id_seq TO goaiez_app");
+            } catch (Exception $e) {
+            }
         }
     }
 

@@ -10,8 +10,10 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-198
+ *
  * @intent RECOVER under §227.2
-         * @ingress cart.checkout <browser>
+ *
+ * @ingress cart.checkout <browser>
  */
 return [
     'module' => 'X-198',

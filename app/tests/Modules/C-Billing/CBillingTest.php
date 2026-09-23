@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Modules\CBilling;
 
+use App\Modules\CBilling\Actions\CalculateSavedMrrAction;
 use App\Modules\CBilling\Actions\DunningAdvanceAction;
 use App\Modules\CBilling\Actions\LedgerDebitAction;
 use App\Modules\CBilling\Actions\LedgerExplainAction;
 use App\Modules\CBilling\Actions\LedgerGrantAction;
 use App\Modules\CBilling\Actions\TopupChargeAction;
+use App\Modules\CBilling\Domain\AutoTopupLimits;
 use App\Modules\CBilling\Domain\BillingLedgerEngine;
+use App\Modules\CBilling\Domain\GatewayGuard;
+use App\Modules\CBilling\Domain\ReconciliationEngine;
+use App\Modules\CBilling\Domain\RetryPolicy;
 use App\Modules\CBilling\Events\LedgerPeriodClosed;
 use App\Modules\CBilling\Models\CreditLedgerEntry;
 use App\Modules\CBilling\Models\TrialLimit;
@@ -100,8 +105,8 @@ class CBillingTest extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('MOCK gateway unreachable from a live tenant');
-        
-        \App\Modules\CBilling\Domain\GatewayGuard::ensureNotMockOnLive(true, true);
+
+        GatewayGuard::ensureNotMockOnLive(true, true);
     }
 
     /**
@@ -111,8 +116,8 @@ class CBillingTest extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Unreconciled difference detected: 1 cents');
-        
-        $engine = new \App\Modules\CBilling\Domain\ReconciliationEngine();
+
+        $engine = new ReconciliationEngine;
         $engine->reconcile(5000, 5001); // 1 cent difference
     }
 
@@ -173,13 +178,13 @@ class CBillingTest extends TestCase
      */
     public function test_g1_33_exponential_backoff(): void
     {
-        $policy = new \App\Modules\CBilling\Domain\RetryPolicy();
-        
+        $policy = new RetryPolicy;
+
         // Assert exponential backoff
         $this->assertEquals(2, $policy->getNextRetryDelaySeconds(1));
         $this->assertEquals(4, $policy->getNextRetryDelaySeconds(2));
         $this->assertEquals(8, $policy->getNextRetryDelaySeconds(3));
-        
+
         // Assert hard attempt ceiling
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Hard attempt ceiling reached');
@@ -249,13 +254,13 @@ class CBillingTest extends TestCase
      */
     public function test_g9_31_mrr_saved(): void
     {
-        $action = new \App\Modules\CBilling\Actions\CalculateSavedMrrAction();
-        
+        $action = new CalculateSavedMrrAction;
+
         $recovered = [
             ['id' => 1, 'monthly_price_cents' => 15000], // $150
             ['id' => 2, 'monthly_price_cents' => 5000],  // $50
         ];
-        
+
         $saved = $action->handle($recovered);
         $this->assertEquals(20000, $saved); // $200
     }
@@ -321,10 +326,10 @@ class CBillingTest extends TestCase
             'min_cents' => 5000, // $50
             'max_cents' => 500000, // $5000
         ]]);
-        
-        $domain = new \App\Modules\CBilling\Domain\AutoTopupLimits();
+
+        $domain = new AutoTopupLimits;
         $limits = $domain->getLimits(999);
-        
+
         $this->assertEquals(5000, $limits['min_cents']);
         $this->assertEquals(500000, $limits['max_cents']);
     }

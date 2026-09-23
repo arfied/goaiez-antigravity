@@ -227,8 +227,6 @@ class X123Test extends TestCase
         $this->assertInstanceOf(EventReplayAction::class, $replay);
     }
 
-
-
     /**
      * [G7-26] RabbitMQ/SQS is corpus vocabulary — Horizon + Redis (§22)
      */

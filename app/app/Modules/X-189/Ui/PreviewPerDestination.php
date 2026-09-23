@@ -18,9 +18,13 @@ class PreviewPerDestination extends Component
     public int $businessId = 0;
 
     public ?string $sourceAssetUrl = null;
+
     public ?string $licenseSource = null;
+
     public string $destination = 'social';
+
     public ?string $success = null;
+
     public ?string $error = null;
 
     public function mount(int $businessId = 0)
@@ -35,6 +39,7 @@ class PreviewPerDestination extends Component
 
         if (empty($this->sourceAssetUrl) || empty($this->destination)) {
             $this->error = 'Please fill out required fields.';
+
             return;
         }
 
@@ -47,6 +52,7 @@ class PreviewPerDestination extends Component
 
         if (($result['status'] ?? null) === 'refused') {
             $this->error = str_replace(' (§226)', '', $result['message'] ?? 'Refused');
+
             return;
         }
 

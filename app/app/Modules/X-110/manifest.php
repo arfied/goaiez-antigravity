@@ -10,8 +10,10 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-110
+ *
  * @intent OBSERVE under §227.2
-         * @ingress page.loaded <browser>
+ *
+ * @ingress page.loaded <browser>
  */
 return [
     'module' => 'X-110',

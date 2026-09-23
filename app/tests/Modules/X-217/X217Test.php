@@ -130,9 +130,9 @@ class X217Test extends TestCase
         // [N-217-01] offer row and program row asserted EQUAL
         $offer = $this->offerAction->makeOffer($biz->id, $prospect->id, 2000, 2500, '20% revshare');
         $affiliateCode = $this->pipelineAction->acceptOffer($biz->id, $offer->id);
-        
+
         $affiliate = Affiliate::where('business_id', $biz->id)->where('affiliate_code', $affiliateCode)->first();
-        
+
         $this->assertEquals(
             $offer->offered_rate_bps,
             $affiliate->commission_rate_bps,

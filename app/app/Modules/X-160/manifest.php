@@ -10,8 +10,10 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-160
+ *
  * @intent INFORM under §227.2
-         * @ingress upload.received <user>
+ *
+ * @ingress upload.received <user>
  */
 return [
     'module' => 'X-160',

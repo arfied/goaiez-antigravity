@@ -10,8 +10,10 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-186
+ *
  * @intent GROW under §227.2
-         * @scheduled campaign.scheduled <minutely> @owner X-186
+ *
+ * @scheduled campaign.scheduled <minutely> @owner X-186
  */
 return [
     'module' => 'X-186',

@@ -2514,6 +2514,11 @@ final class DefaultsManifest
                 'group' => 'Marketing',
                 'description' => 'Whether the signed-out site says a site is built from a conversation. ⛔ A CLAIM SWITCH — see `features.commerce`.',
             ],
+            'sites.crawl.max_pages' => [
+                'seed' => 25,
+                'group' => 'Sites',
+                'description' => 'Maximum number of pages followed on the same host breadth-first when fetching a tenant site.',
+            ],
             'features.boost_score' => [
                 'seed' => false,
                 'group' => 'Marketing',

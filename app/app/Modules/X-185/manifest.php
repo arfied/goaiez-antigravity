@@ -10,9 +10,11 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-185
+ *
  * @intent GROW under §227.2
-         * @ingress entity.state_changed <system>
-         * @ingress entity.state_changed <system>
+ *
+ * @ingress entity.state_changed <system>
+ * @ingress entity.state_changed <system>
  */
 return [
     'module' => 'X-185',

@@ -86,7 +86,6 @@ class X148Test extends TestCase
     /**
      * [G5-46] the documents are X-160's
      */
-
     public function test_component_renders_empty_state(): void
     {
         $biz = TestCase::provisionTenant();

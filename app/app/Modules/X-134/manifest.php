@@ -10,8 +10,10 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-134
+ *
  * @intent GROW under §227.2
-         * @scheduled refresh.due <hourly> @owner X-134
+ *
+ * @scheduled refresh.due <hourly> @owner X-134
  */
 return [
     'module' => 'X-134',

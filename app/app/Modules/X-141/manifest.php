@@ -10,6 +10,7 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-141
+ *
  * @intent OBSERVE under §227.2
  */
 return [

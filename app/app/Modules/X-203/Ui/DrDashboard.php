@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X203\Ui;
 
+use App\Modules\X203\Actions\DrRestoreTestAction;
 use App\Modules\X203\Models\RestoreTest;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -17,11 +18,17 @@ class DrDashboard extends Component
     public int $businessId = 0;
 
     public string $backupId = '';
+
     public string $expectedChecksum = '';
+
     public string $actualChecksum = '';
+
     public string $expectedRowCount = '';
+
     public string $restoredRowCount = '';
+
     public ?string $success = null;
+
     public ?string $error = null;
 
     public function mount(int $businessId = 0)
@@ -36,10 +43,11 @@ class DrDashboard extends Component
 
         if (empty($this->backupId)) {
             $this->error = 'Backup ID is required.';
+
             return;
         }
 
-        $result = app(\App\Modules\X203\Actions\DrRestoreTestAction::class)->handle(
+        $result = app(DrRestoreTestAction::class)->handle(
             Tenancy::idOrFail(),
             $this->backupId,
             $this->expectedChecksum,
@@ -48,7 +56,7 @@ class DrDashboard extends Component
             (int) $this->restoredRowCount
         );
 
-        $this->success = 'Recorded restore test outcome: ' . $result['status'] . ' (' . $result['reason'] . '). This feeds the restoration log lists; nothing downstream is wired to it yet.';
+        $this->success = 'Recorded restore test outcome: '.$result['status'].' ('.$result['reason'].'). This feeds the restoration log lists; nothing downstream is wired to it yet.';
         $this->backupId = '';
         $this->expectedChecksum = '';
         $this->actualChecksum = '';

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X103;
 
 use App\Modules\X103\Ui\Pages;
+use App\Modules\X103\Ui\SiteInventory;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -23,6 +24,7 @@ final class ModuleServiceProvider extends ServiceProvider
 
         if (class_exists(Livewire::class)) {
             Livewire::component('x-103.pages', Pages::class);
+            Livewire::component('x-103.site-inventory', SiteInventory::class);
         }
     }
 }

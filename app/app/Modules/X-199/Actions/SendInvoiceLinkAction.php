@@ -14,7 +14,7 @@ final class SendInvoiceLinkAction
     public function handle(Invoice $invoice, string $channel): array
     {
         // R245: Allow sending an existing invoice link via multiple channels (email, sms, whatsapp)
-        if (!in_array($channel, ['email', 'sms', 'whatsapp'])) {
+        if (! in_array($channel, ['email', 'sms', 'whatsapp'])) {
             throw new \InvalidArgumentException('Invalid channel');
         }
 
