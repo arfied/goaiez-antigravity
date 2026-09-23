@@ -11,6 +11,7 @@ use App\Enums\FetchTier;
 use App\Enums\RobotsVerdict;
 use App\Models\FetchAttempt;
 use App\Models\FetchSource;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\VendorLog;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
@@ -61,7 +62,7 @@ final class DirectFetchGateway implements FetchGateway
      *
      * @var list<int>
      */
-    private const array COOLDOWN_HOURS = [6, 24, 72];
+    public const array COOLDOWN_HOURS = [6, 24, 72];
 
     /**
      * A response larger than this is not a page we need. Caps memory on a path
@@ -94,6 +95,11 @@ final class DirectFetchGateway implements FetchGateway
     public function __construct(
         private readonly RobotsPolicy $robots,
     ) {}
+
+    private function cooldownHours(): array
+    {
+        return app(DefaultsRegistry::class)->intList('fetch.cooldown_hours');
+    }
 
     public function permits(string $sourceKey, FetchTier $tier = FetchTier::F0): bool
     {
@@ -327,7 +333,7 @@ final class DirectFetchGateway implements FetchGateway
             ->where('created_at', '>=', Carbon::now()->subDays(7))
             ->count();
 
-        return self::COOLDOWN_HOURS[min($recent, count(self::COOLDOWN_HOURS) - 1)];
+        return $this->cooldownHours()[min($recent, count($this->cooldownHours()) - 1)];
     }
 
     /**

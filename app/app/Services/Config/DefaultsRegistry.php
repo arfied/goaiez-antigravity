@@ -108,6 +108,39 @@ final class DefaultsRegistry
     }
 
     /**
+     * The value of a platform-wide key as a list of integers.
+     *
+     * A blank or malformed row falls back to the seed rather than to an empty schedule,
+     * because an empty schedule silently disables retries.
+     *
+     * @return list<int>
+     */
+    public function intList(string $key): array
+    {
+        $list = [];
+
+        foreach (explode(',', $this->string($key)) as $part) {
+            $part = trim($part);
+
+            if ($part !== '' && ctype_digit($part)) {
+                $list[] = (int) $part;
+            }
+        }
+
+        if ($list === []) {
+            foreach (explode(',', (string) $this->seedOf($key)) as $part) {
+                $part = trim($part);
+
+                if ($part !== '' && ctype_digit($part)) {
+                    $list[] = (int) $part;
+                }
+            }
+        }
+
+        return $list;
+    }
+
+    /**
      * The value of a platform-wide key as an integer.
      *
      * Numbers arrive from jsonb, where `250` reads back as an int but a row

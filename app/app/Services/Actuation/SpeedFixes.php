@@ -461,9 +461,9 @@ final class SpeedFixes
 
         $row->forceFill([
             'revert_attempts' => $attempts,
-            'revert_attempt_after' => $now->addHours(SiteMeasurements::REVERT_BACKOFF_HOURS[min(
+            'revert_attempt_after' => $now->addHours($this->measurements->revertBackoffHours()[min(
                 $attempts,
-                count(SiteMeasurements::REVERT_BACKOFF_HOURS),
+                count($this->measurements->revertBackoffHours()),
             ) - 1]),
         ])->save();
     }

@@ -3160,6 +3160,26 @@ final class DefaultsManifest
                 'group' => 'Operations',
                 'description' => 'Export in-flight reuse minutes.',
             ],
+            'billing.dunning.schedule_hours' => [
+                'seed' => '24,72,120',
+                'group' => 'Billing',
+                'description' => 'Dunning ladder schedule in hours.',
+            ],
+            'fetch.cooldown_hours' => [
+                'seed' => '6,24,72',
+                'group' => 'Fetch',
+                'description' => 'Fetch cooldown schedule in hours.',
+            ],
+            'sites.revert.backoff_hours' => [
+                'seed' => '0,0,24,24,48,48,96,168',
+                'group' => 'Actuation',
+                'description' => 'Revert backoff schedule in hours.',
+            ],
+            'scheduling.slot_hours' => [
+                'seed' => '9,11,14,16',
+                'group' => 'Scheduling',
+                'description' => 'Standard potential slots in hours.',
+            ],
         ];
 
         return array_merge($settings, self::mailSendingCeilings());
