@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Enums\AutopilotActionType;
 use App\Enums\UserRole;
 use App\Livewire\Account\Locations;
-use App\Models\Business;
+use App\Models\FeedbackPage;
 use App\Models\Location;
 use App\Models\User;
 use App\Support\Tenancy;
@@ -115,8 +115,8 @@ it('confirms the website address', function () {
 
 it('generates a review sign code', function () {
     $location = Location::factory()->forBusiness($this->biz->id)->create();
-    
-    App\Models\FeedbackPage::create([
+
+    FeedbackPage::create([
         'business_id' => $this->biz->id,
         'location_id' => $location->id,
         'slug' => 'test-slug',
