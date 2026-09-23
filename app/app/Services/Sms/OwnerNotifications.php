@@ -254,8 +254,9 @@ final class OwnerNotifications
      *     replies: list<array{id: int, answering: ?int, body: string, at: ?CarbonImmutable}>,
      * }
      */
-    public function ledgerFor(int $businessId, int $limit = self::LEDGER_LIMIT): array
+    public function ledgerFor(int $businessId, ?int $limit = null): array
     {
+        $limit ??= $this->ledgerLimit();
         return Tenancy::actingAs($businessId, function () use ($limit): array {
             $sends = array_values(OwnerNotification::query()
                 ->orderByDesc('id')
