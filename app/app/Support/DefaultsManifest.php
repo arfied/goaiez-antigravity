@@ -1904,6 +1904,12 @@ final class DefaultsManifest
                 'description' => 'The only domain this platform sends email from (decision 5500), superseding 2114\'s mail.goaiez.com and decision 30\'s reports.goaiez.com. A separately registered domain rather than a subdomain, because reputation, DMARC alignment and blocklisting all work at the organizational domain, so a subdomain of goaiez.com is not separation. SPF, DKIM and DMARC are published here and nowhere else, so a from address on any other domain fails authentication at the receiving server — PlatformMailer refuses one rather than sending it. ⚠️ Never the primary domain: that half of decision 30 is unchanged and separately enforced.',
             ],
 
+            'mail.health.window_days' => [
+                'seed' => 30,
+                'group' => 'Messaging',
+                'description' => 'Window days for complaint bounce summary action.',
+            ],
+
             /*
              * ⛔ **THE 24-HOUR SENDING CEILING IS NO LONGER A KEY, IT IS A KEY
              * PER MAILER** (4603, closing 4456). See
