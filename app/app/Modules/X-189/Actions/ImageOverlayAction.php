@@ -64,7 +64,10 @@ final class ImageOverlayAction
         $width = imagesx($canvas);
         $height = imagesy($canvas);
 
-        $hex = ltrim($card->accent_color ?? '#0284c7', '#');
+        $accentColorRaw = $brandMetadata['accent_color'] ?? $card->accent_color ?? '#0284c7';
+        $badgeTextRaw = $brandMetadata['phone_badge'] ?? $card->badge_text;
+
+        $hex = ltrim($accentColorRaw, '#');
         $r = hexdec(substr($hex, 0, 2));
         $g = hexdec(substr($hex, 2, 2));
         $b = hexdec(substr($hex, 4, 2));
@@ -75,19 +78,19 @@ final class ImageOverlayAction
         imagefilledrectangle($canvas, 0, $barTop, $width, $height, $accentColor);
 
         $textColor = imagecolorallocate($canvas, 255, 255, 255);
-        if ($card->badge_text) {
+        if ($badgeTextRaw) {
             $fontPath = app(DefaultsRegistry::class)->string('campaigns.overlay_font_path');
             if ($fontPath && ! str_starts_with($fontPath, DIRECTORY_SEPARATOR)) {
                 $fontPath = base_path($fontPath);
             }
             if ($fontPath && file_exists($fontPath)) {
                 $fontSize = $barHeight * 0.4;
-                $box = @imagettfbbox($fontSize, 0, $fontPath, $card->badge_text);
+                $box = @imagettfbbox($fontSize, 0, $fontPath, $badgeTextRaw);
                 if ($box) {
                     $textWidth = $box[2] - $box[0];
                     $x = (int) (($width - $textWidth) / 2);
                     $y = $barTop + (int) ($barHeight / 2) + (int) (($box[1] - $box[7]) / 2);
-                    @imagettftext($canvas, $fontSize, 0, $x, $y, $textColor, $fontPath, $card->badge_text);
+                    @imagettftext($canvas, $fontSize, 0, $x, $y, $textColor, $fontPath, $badgeTextRaw);
                 }
             }
         }
@@ -116,20 +119,12 @@ final class ImageOverlayAction
         Storage::disk('local')->put($outputPath, $outBytes);
         imagedestroy($canvas);
 
-        $overlayLayer = [
-            'colour' => $card->accent_color,
-            'badge' => $card->badge_text,
-            'logo_present' => $logoPresent,
-            'width' => $width,
-            'height' => $height,
-        ];
-
         $media = BrandedMedia::create([
             'business_id' => $businessId,
             'source_asset_url' => $sourceAssetUrl,
             'license_source' => $licenseSource,
             'output_media_url' => '',
-            'overlay_layer' => $overlayLayer,
+            'overlay_layer' => [],
             'destination' => $destination,
         ]);
 
@@ -138,7 +133,20 @@ final class ImageOverlayAction
             now()->addDays(7),
             ['business' => $businessId, 'branded' => $media->id]
         );
-        $media->update(['output_media_url' => $outputUrl]);
+
+        $overlayLayer = [
+            'tenant_watermark' => true,
+            'accent_color' => '#'.$hex,
+            'badge_text' => $badgeTextRaw,
+            'logo_url' => $logoPresent ? $outputUrl : null,
+            'width' => $width,
+            'height' => $height,
+        ];
+
+        $media->update([
+            'output_media_url' => $outputUrl,
+            'overlay_layer' => $overlayLayer,
+        ]);
 
         Event::dispatch(new MediaBranded($businessId, $media->id, $outputUrl));
 

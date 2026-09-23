@@ -88,13 +88,13 @@ class X189Test extends TestCase
         $this->assertEquals('branded', $brandedResult['status']);
         $this->assertTrue($brandedResult['has_branded_overlay']);
         $this->assertNotEmpty($brandedResult['output_media_url']);
-        // $this->assertTrue($brandedResult['overlay_layer']['tenant_watermark']);
-        // $this->assertEquals('#16a34a', $brandedResult['overlay_layer']['accent_color']);
+        $this->assertTrue($brandedResult['overlay_layer']['tenant_watermark']);
+        $this->assertEquals('#16a34a', $brandedResult['overlay_layer']['accent_color']);
 
         $savedMedia = BrandedMedia::where('business_id', $biz->id)->find($brandedResult['media_id']);
         $this->assertNotNull($savedMedia);
         $this->assertEquals('unsplash_commercial_license_9921', $savedMedia->license_source);
-        // $this->assertTrue($savedMedia->overlay_layer['tenant_watermark']);
+        $this->assertTrue($savedMedia->overlay_layer['tenant_watermark']);
 
         Event::assertDispatched(MediaBranded::class);
     }
@@ -130,9 +130,9 @@ class X189Test extends TestCase
         $stored = BrandedMedia::find($result['media_id']);
         $storedKeys = array_keys($stored->overlay_layer);
 
-        // $this->assertContains('tenant_watermark', $layerKeys);
-        // $this->assertContains('logo_url', $layerKeys);
-        $this->assertGreaterThanOrEqual(4, count($layerKeys));
+        $this->assertContains('tenant_watermark', $layerKeys);
+        $this->assertContains('logo_url', $layerKeys);
+        $this->assertGreaterThanOrEqual(5, count($layerKeys));
         $this->assertEqualsCanonicalizing($layerKeys, $storedKeys);
 
         foreach (array_merge($layerKeys, $storedKeys) as $key) {
