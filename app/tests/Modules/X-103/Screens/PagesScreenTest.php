@@ -10,6 +10,7 @@ use App\Modules\X103\Actions\PageCreateAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Events\PagePublished;
 use App\Modules\X103\Events\SitePublished;
+use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X103\Ui\Pages;
 use App\Modules\X157\Models\Deployment;
@@ -646,6 +647,147 @@ class PagesScreenTest extends TestCase
 
         Livewire::test(Pages::class)
             ->call('restore', 1, 1)
+            ->assertForbidden();
+    }
+
+    public function test_owner_deletes_a_never_published_page(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'scratch-z4q', 'Scratch');
+
+        Livewire::test(Pages::class)
+            ->call('deletePage', $page->id)
+            ->assertOk()
+            ->assertSee('Page deleted.');
+
+        $this->assertDatabaseMissing('pages', ['id' => $page->id]);
+
+        $this->get(route('x-103.pages'))
+            ->assertOk()
+            ->assertDontSee('scratch-z4q');
+    }
+
+    public function test_deleting_a_published_page_is_refused(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Storage::fake('local');
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'pub-page', 'Pub Page');
+
+        Livewire::test(Pages::class)->call('publish', $page->id);
+
+        Livewire::test(Pages::class)
+            ->call('deletePage', $page->id)
+            ->assertOk()
+            ->assertSee('Unpublish this page first — it has been published.');
+
+        $this->assertDatabaseHas('pages', ['id' => $page->id]);
+        $this->assertDatabaseHas('page_versions', ['page_id' => $page->id]);
+        $this->assertDatabaseHas('edge_zones', ['business_id' => $biz->id]);
+    }
+
+    public function test_deleting_an_unpublished_page_with_history_is_refused(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Storage::fake('local');
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'hist-page', 'Hist Page');
+
+        Livewire::test(Pages::class)->call('publish', $page->id);
+        Livewire::test(Pages::class)->call('unpublish', $page->id);
+
+        Livewire::test(Pages::class)
+            ->call('deletePage', $page->id)
+            ->assertOk()
+            ->assertSee('Unpublish this page first — it has been published.');
+
+        $this->assertDatabaseHas('pages', ['id' => $page->id]);
+    }
+
+    public function test_owner_duplicates_a_page(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Storage::fake('local');
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'src-page', 'Source Page');
+
+        Livewire::test(Pages::class)
+            ->set('faqQuestion', 'Q1')
+            ->set('faqAnswer', 'A1')
+            ->call('addFaq', $page->id);
+
+        $page->refresh();
+
+        Livewire::test(Pages::class)
+            ->call('duplicatePage', $page->id)
+            ->assertOk()
+            ->assertSee('Page duplicated.');
+
+        $this->assertDatabaseHas('pages', [
+            'business_id' => $biz->id,
+            'slug' => 'src-page-copy',
+            'title' => 'Copy of Source Page',
+            'is_published' => false,
+        ]);
+
+        $copy1 = Page::where('slug', 'src-page-copy')->first();
+        $this->assertEquals($page->draft_blocks, $copy1->draft_blocks);
+
+        Livewire::test(Pages::class)
+            ->call('duplicatePage', $page->id)
+            ->assertOk();
+
+        $this->assertDatabaseHas('pages', [
+            'business_id' => $biz->id,
+            'slug' => 'src-page-copy-2',
+        ]);
+    }
+
+    public function test_duplicate_of_another_tenants_page_is_refused(): void
+    {
+        $ownerA = User::factory()->create(['role' => UserRole::Owner]);
+        $bizA = $this->provisionTenant(['owner_user_id' => $ownerA->id]);
+
+        $ownerB = User::factory()->create(['role' => UserRole::Owner]);
+        $bizB = $this->provisionTenant(['owner_user_id' => $ownerB->id]);
+
+        $action = app(PageCreateAction::class);
+        $this->actingAs($ownerA);
+        Tenancy::set($bizA->id);
+        $pageA = $action->handle($bizA->id, 'page-a', 'Page A');
+
+        $this->actingAs($ownerB);
+        Tenancy::set($bizB->id);
+        Livewire::test(Pages::class)
+            ->call('duplicatePage', $pageA->id)
+            ->assertNotFound();
+    }
+
+    public function test_staff_cannot_delete_or_duplicate(): void
+    {
+        $employee = User::factory()->create(['role' => UserRole::Manager]);
+        $biz = $this->provisionTenant(['owner_user_id' => $employee->id]);
+        $this->actingAs($employee);
+
+        Livewire::test(Pages::class)
+            ->call('deletePage', 1)
+            ->assertForbidden();
+
+        Livewire::test(Pages::class)
+            ->call('duplicatePage', 1)
             ->assertForbidden();
     }
 }

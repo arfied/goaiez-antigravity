@@ -4,6 +4,8 @@ namespace App\Modules\X103\Ui;
 
 use App\Enums\UserRole;
 use App\Modules\X103\Actions\PageCreateAction;
+use App\Modules\X103\Actions\PageDeleteAction;
+use App\Modules\X103\Actions\PageDuplicateAction;
 use App\Modules\X103\Actions\PageRenameAction;
 use App\Modules\X103\Actions\PageRestoreVersionAction;
 use App\Modules\X103\Actions\PageUnpublishAction;
@@ -252,6 +254,44 @@ class Pages extends Component
         }
     }
 
+    public function deletePage(int $pageId, PageDeleteAction $action): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $page = Page::where('business_id', $this->businessId)->find($pageId);
+        if (! $page) {
+            abort(404);
+        }
+
+        try {
+            $action->handle($this->businessId, $page->id);
+            $this->success = 'Page deleted.';
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
+    public function duplicatePage(int $pageId, PageDuplicateAction $action): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $page = Page::where('business_id', $this->businessId)->find($pageId);
+        if (! $page) {
+            abort(404);
+        }
+
+        try {
+            $action->handle($this->businessId, $page->id);
+            $this->success = 'Page duplicated.';
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
     public function render()
     {
         $pages = Page::where('business_id', $this->businessId)->orderByDesc('id')->get();
@@ -268,10 +308,16 @@ class Pages extends Component
             ->get()
             ->groupBy('page_id');
 
+        $hasVersions = [];
+        foreach ($pages as $page) {
+            $hasVersions[$page->id] = isset($versions[$page->id]) && $versions[$page->id]->count() > 0;
+        }
+
         return view('x-103::pages', [
             'pages' => $pages,
             'deployments' => $deployments,
             'versions' => $versions,
+            'hasVersions' => $hasVersions,
         ]);
     }
 }
