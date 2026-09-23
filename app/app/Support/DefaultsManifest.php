@@ -153,6 +153,12 @@ final class DefaultsManifest
                 'description' => 'Days between charges (decision 147 — 30 days, not calendar months, which is 12.17 cycles a year). Sent to Stripe as the price\'s recurring interval when a Checkout Session is opened. ⚠️ Applies to new subscriptions only: an existing one keeps the interval it was created with.',
             ],
 
+            'billing.risk.days_overdue_high' => [
+                'seed' => 30,
+                'group' => 'Billing',
+                'description' => 'Invoices past this number of days overdue put a customer in the High risk tier.',
+            ],
+
             /*
              * The free instant audit (row 2). These two are the reason
              * `platform_settings` exists at all: `29` §6.2 puts the audit's

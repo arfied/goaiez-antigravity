@@ -8,10 +8,12 @@ use App\Models\User;
 use App\Modules\X121\Models\Person;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X211\Actions\ArApplyLateFeeAction;
+use App\Modules\X211\Actions\ArDunningHistoryAction;
 use App\Modules\X211\Actions\ArForceAchAction;
 use App\Modules\X211\Actions\ArLogOfflinePaymentAction;
 use App\Modules\X211\Actions\ArOfferPlanAction;
 use App\Modules\X211\Actions\ArPackageForCollectionsAction;
+use App\Modules\X211\Actions\ArRecordReasonAction;
 use App\Modules\X211\Domain\AlreadyPackagedException;
 use App\Modules\X211\Domain\ArEngine;
 use App\Modules\X211\Domain\FeeAtCapException;
@@ -697,5 +699,36 @@ class X211Test extends TestCase
             'INV-PKG-RACE has already been packaged for collections',
             $refused->getMessage()
         );
+    }
+
+    public function test_dunning_history_lists_newest_first(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Dunning Hist Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'K', 'last_name' => 'K']);
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-DUN',
+            'total_cents' => 60000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(15)->toDateString(),
+        ]);
+
+        $recordAction = new ArRecordReasonAction(app(ArEngine::class));
+        $recordAction->handle($biz->id, $invoice->id, 'silence');
+
+        sleep(1);
+
+        $recordAction->handle($biz->id, $invoice->id, 'promised');
+
+        $historyAction = new ArDunningHistoryAction;
+        $history = $historyAction->handle($biz->id, $invoice->id);
+
+        $this->assertCount(2, $history);
+        $this->assertEquals('promised', $history[0]['reason_code']);
+        $this->assertEquals('silence', $history[1]['reason_code']);
     }
 }

@@ -636,6 +636,7 @@ final class OwnerNav
             OwnerNavItem::make('Autopilot ladder', 'x-209.ladders-own-state', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Person', 'x-01.person', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Activity', 'x-01.history', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Payment risk', 'x-01.payment-risk', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Your documents', 'x-160.upload-drop', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Documents to review', 'x-160.review-screen', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Document vault', 'x-113.document-vault', OwnerNavItem::GROUP_CATALOG),
