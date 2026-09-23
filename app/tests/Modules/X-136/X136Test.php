@@ -4,18 +4,29 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X136;
 
+use App\Enums\UserRole;
+use App\Enums\VoiceEventType;
+use App\Events\Voice\CallMissed;
+use App\Models\User;
+use App\Modules\X01\Events\ContactCreated;
 use App\Modules\X136\Actions\SignalListAction;
 use App\Modules\X136\Actions\SignalScoreAction;
 use App\Modules\X136\Events\IntentHigh;
 use App\Modules\X136\Events\ProspectDecayed;
 use App\Modules\X136\Events\SignalDetected;
+use App\Modules\X136\Listeners\RecordMissedCallSignalListener;
 use App\Modules\X136\Models\DecayModel;
 use App\Modules\X136\Models\Signal;
 use App\Modules\X136\Models\SignalScore;
+use App\Modules\X136\Ui\CoolingView;
+use App\Modules\X155\Events\FormCaptured;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Voice\InboundCall;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X136Test extends TestCase
@@ -192,5 +203,274 @@ class X136Test extends TestCase
 
         $this->assertGreaterThanOrEqual(15, $visited);
         $this->assertGreaterThanOrEqual(3, $matchedControl);
+    }
+
+    public function test_a_new_contact_records_one_cooling_signal_and_a_decay_model(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new ContactCreated($biz->id, 7731, 'Distinctive Prospect 7731', '+15125567731', null));
+
+        $this->assertEquals(1, Signal::where('business_id', $biz->id)->where('prospect_identifier', 'person:7731')->where('signal_type', 'contact.created')->count());
+        $score = SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'person:7731')->first();
+        $this->assertEquals(50.0, $score->signal_value);
+        $this->assertFalse((bool) $score->is_high_intent);
+        $this->assertEquals('cooling', $score->cooling_status);
+        $this->assertTrue(DecayModel::where('business_id', $biz->id)->where('signal_type', 'contact.created')->exists());
+        $signal = Signal::where('business_id', $biz->id)->where('prospect_identifier', 'person:7731')->first();
+        $this->assertTrue($signal->payload['has_phone']);
+        $this->assertFalse($signal->payload['has_email']);
+    }
+
+    public function test_the_same_contact_created_twice_scores_once(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new ContactCreated($biz->id, 7731, 'Distinctive Prospect 7731', '+15125567731', null));
+        Event::dispatch(new ContactCreated($biz->id, 7731, 'Distinctive Prospect 7731', '+15125567731', null));
+
+        $this->assertEquals(1, Signal::where('business_id', $biz->id)->where('prospect_identifier', 'person:7731')->where('signal_type', 'contact.created')->count());
+        $this->assertEquals(1, SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'person:7731')->count());
+    }
+
+    public function test_the_cooling_screen_lists_the_new_prospect(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new ContactCreated($biz->id, 7731, 'Distinctive Prospect 7731', '+15125567731', null));
+
+        Livewire::actingAs($owner)->test(CoolingView::class)
+            ->assertSee('person:7731')
+            ->assertDontSee('Nobody is cooling');
+    }
+
+    public function test_another_tenants_contact_does_not_appear_here(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Biz A', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+        $this->artisan('defaults:sync');
+
+        $bizB = TestCase::provisionTenant(['name' => 'Biz B', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$bizB->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new ContactCreated($bizB->id, 7732, 'Distinctive Prospect 7732', '+15125567732', null));
+
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+        $this->assertEquals(0, Signal::where('business_id', $bizA->id)->where('prospect_identifier', 'person:7732')->count());
+    }
+
+    public function test_a_form_submission_records_one_high_intent_signal(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new FormCaptured(businessId: $biz->id, submissionId: 7741, formDefinitionId: 3, personId: 7731));
+
+        $this->assertEquals(1, Signal::where('business_id', $biz->id)->where('signal_type', 'form.submitted')->count());
+        $signal = Signal::where('business_id', $biz->id)->where('signal_type', 'form.submitted')->first();
+        $this->assertEquals('person:7731', $signal->prospect_identifier);
+        $this->assertEquals(7741, $signal->payload['submission_id']);
+
+        $score = SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'person:7731')->first();
+        $this->assertEquals(75.0, $score->signal_value);
+        $this->assertTrue((bool) $score->is_high_intent);
+        $this->assertEquals('fresh', $score->cooling_status);
+        $this->assertTrue(DecayModel::where('business_id', $biz->id)->where('signal_type', 'form.submitted')->exists());
+    }
+
+    public function test_the_same_submission_dispatched_twice_scores_once(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new FormCaptured(businessId: $biz->id, submissionId: 7741, formDefinitionId: 3, personId: 7731));
+        Event::dispatch(new FormCaptured(businessId: $biz->id, submissionId: 7741, formDefinitionId: 3, personId: 7731));
+
+        $this->assertEquals(1, Signal::where('business_id', $biz->id)->where('signal_type', 'form.submitted')->count());
+    }
+
+    public function test_two_submissions_by_one_prospect_are_two_signals(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new FormCaptured(businessId: $biz->id, submissionId: 7741, formDefinitionId: 3, personId: 7731));
+        Event::dispatch(new FormCaptured(businessId: $biz->id, submissionId: 7742, formDefinitionId: 3, personId: 7731));
+
+        $this->assertEquals(2, Signal::where('business_id', $biz->id)->where('signal_type', 'form.submitted')->count());
+    }
+
+    public function test_a_high_intent_prospect_is_fresh_not_cooling_on_the_screen(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new FormCaptured(businessId: $biz->id, submissionId: 7741, formDefinitionId: 3, personId: 7731));
+
+        Livewire::actingAs($owner)->test(CoolingView::class)
+            ->assertSee('Nobody is cooling')
+            ->assertDontSee('person:7731');
+    }
+
+    public function test_a_missed_call_records_one_high_intent_signal_keyed_by_phone(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        $inboundCall = new InboundCall(type: VoiceEventType::Missed, providerCallId: 'infobip-call-7731', numberId: 1, from: '+15125567731', to: '+15125560000', occurredAt: now()->toImmutable());
+        $event = new CallMissed($biz->id, $inboundCall);
+
+        app(RecordMissedCallSignalListener::class)->handle($event);
+
+        $this->assertEquals(1, Signal::where('business_id', $biz->id)->where('prospect_identifier', 'phone:+15125567731')->where('signal_type', 'call.missed')->count());
+        $signal = Signal::where('business_id', $biz->id)->where('prospect_identifier', 'phone:+15125567731')->where('signal_type', 'call.missed')->first();
+        $this->assertEquals('infobip-call-7731', $signal->payload['provider_call_id']);
+
+        $score = SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'phone:+15125567731')->first();
+        $this->assertEquals(75.0, $score->signal_value);
+        $this->assertTrue((bool) $score->is_high_intent);
+        $this->assertEquals('fresh', $score->cooling_status);
+        $this->assertTrue(DecayModel::where('business_id', $biz->id)->where('signal_type', 'call.missed')->exists());
+    }
+
+    public function test_a_known_customer_is_keyed_by_customer_id(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        $inboundCall = new InboundCall(type: VoiceEventType::Missed, providerCallId: 'infobip-call-7731', numberId: 1, from: '+15125567731', to: '+15125560000', occurredAt: now()->toImmutable(), customerId: 4471);
+        $event = new CallMissed($biz->id, $inboundCall);
+
+        app(RecordMissedCallSignalListener::class)->handle($event);
+
+        $this->assertEquals(1, Signal::where('business_id', $biz->id)->where('prospect_identifier', 'customer:4471')->where('signal_type', 'call.missed')->count());
+    }
+
+    public function test_the_same_call_redelivered_scores_once(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        $inboundCall = new InboundCall(type: VoiceEventType::Missed, providerCallId: 'infobip-call-7731', numberId: 1, from: '+15125567731', to: '+15125560000', occurredAt: now()->toImmutable());
+        $event = new CallMissed($biz->id, $inboundCall);
+
+        app(RecordMissedCallSignalListener::class)->handle($event);
+        app(RecordMissedCallSignalListener::class)->handle($event);
+
+        $this->assertEquals(1, Signal::where('business_id', $biz->id)->where('prospect_identifier', 'phone:+15125567731')->where('signal_type', 'call.missed')->count());
+    }
+
+    public function test_a_voicemail_only_event_records_nothing(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        $inboundCall = new InboundCall(type: VoiceEventType::VoicemailRecorded, providerCallId: 'infobip-call-7731', numberId: 1, from: '+15125567731', to: '+15125560000', occurredAt: now()->toImmutable());
+        $event = new CallMissed($biz->id, $inboundCall);
+
+        app(RecordMissedCallSignalListener::class)->handle($event);
+
+        $this->assertEquals(0, Signal::where('business_id', $biz->id)->where('signal_type', 'call.missed')->count());
+    }
+
+    public function test_the_listener_is_registered_for_the_core_event(): void
+    {
+        // hasListeners alone would also be true because of the text-back listener
+        $this->assertTrue(Event::hasListeners(CallMissed::class));
+    }
+
+    public function test_the_sweep_decays_a_cooling_signal_older_than_its_half_life(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new ContactCreated($biz->id, 7751, 'Old Prospect 7751', '+15125567751', null));
+        Event::dispatch(new ContactCreated($biz->id, 7752, 'New Prospect 7752', '+15125567752', null));
+
+        SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'person:7751')->update(['updated_at' => now()->subDays(30)]);
+
+        $this->artisan('x136:decay-signals')->assertExitCode(0);
+
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->assertEquals('decayed', SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'person:7751')->value('cooling_status'));
+        $this->assertEquals('cooling', SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'person:7752')->value('cooling_status'));
+    }
+
+    public function test_the_sweep_never_touches_a_fresh_high_intent_signal(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new FormCaptured(businessId: $biz->id, submissionId: 7753, formDefinitionId: 3, personId: 7753));
+        SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'person:7753')->update(['updated_at' => now()->subDays(30)]);
+
+        $this->artisan('x136:decay-signals')->assertExitCode(0);
+
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->assertEquals('fresh', SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'person:7753')->value('cooling_status'));
+    }
+
+    public function test_the_sweep_is_idempotent(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new ContactCreated($biz->id, 7751, 'Old Prospect 7751', '+15125567751', null));
+        SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'person:7751')->update(['updated_at' => now()->subDays(30)]);
+
+        $this->artisan('x136:decay-signals')->assertExitCode(0);
+        $this->artisan('x136:decay-signals')->expectsOutput('No signal has cooled past its half-life.')->assertExitCode(0);
+    }
+
+    public function test_the_sweep_is_scheduled_daily(): void
+    {
+        $events = collect(app(Schedule::class)->events())->filter(fn ($e) => str_contains($e->command ?? '', 'x136:decay-signals'));
+        $this->assertCount(1, $events);
+        $this->assertEquals('0 0 * * *', $events->first()->expression);
+    }
+
+    public function test_another_tenants_prospect_is_not_decayed_by_this_tenants_sweep(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $bizA = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+        $this->artisan('defaults:sync');
+        Event::dispatch(new ContactCreated($bizA->id, 7751, 'Old Prospect 7751', '+15125567751', null));
+        SignalScore::where('business_id', $bizA->id)->where('prospect_identifier', 'person:7751')->update(['updated_at' => now()->subDays(30)]);
+
+        $bizB = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        DB::statement("SET app.business_id = '{$bizB->id}'");
+        $this->artisan('defaults:sync');
+        Event::dispatch(new ContactCreated($bizB->id, 7752, 'New Prospect 7752', '+15125567752', null));
+
+        $this->artisan('x136:decay-signals')->assertExitCode(0);
+
+        DB::statement("SET app.business_id = '{$bizB->id}'");
+        $this->assertEquals('cooling', SignalScore::where('business_id', $bizB->id)->where('prospect_identifier', 'person:7752')->value('cooling_status'));
     }
 }
