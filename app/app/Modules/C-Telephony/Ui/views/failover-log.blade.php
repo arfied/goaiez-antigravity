@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="C-Telephony" screen="failover_log" />
     <div class="failover-log-container p-4">
         <h3 class="text-lg font-bold">Carrier Delivery & Failover Receipts</h3>
         @if($receipts->isEmpty())

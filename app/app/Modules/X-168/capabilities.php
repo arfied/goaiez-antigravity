@@ -21,36 +21,36 @@ declare(strict_types=1);
  * carries no refusal, and a ⑤ that only restates the ① protects nothing.
  */
 return [
-    // status:
+    // status: SPECCED
     'N-063' => '**a tenant is never left on an empty domain · priority scheduling MUST BE REAL · a sync conflict goes UNKNOWN not STALE · ⛔ X-168 has no overtime/out-of-hours/attendance (P-204) · a price on site comes from X-163 or is refused · a replay NEVER emits · X-130 is AGGREGATE ONLY and refuses below N tenants · an RCS→SMS degrade never re-sends**',
 
-    // status:
+    // status: SPECCED
     'N-064' => '**a tenant is never left on an empty domain · priority scheduling MUST BE REAL · a sync conflict goes UNKNOWN not STALE · ⛔ X-168 has no overtime/out-of-hours/attendance (P-204) · a price on site comes from X-163 or is refused · a replay NEVER emits · X-130 is AGGREGATE ONLY and refuses below N tenants · an RCS→SMS degrade never re-sends**',
 
-    // status:
+    // status: SPECCED
     'N-067' => '**a tenant is never left on an empty domain · priority scheduling MUST BE REAL · a sync conflict goes UNKNOWN not STALE · ⛔ X-168 has no overtime/out-of-hours/attendance (P-204) · a price on site comes from X-163 or is refused · a replay NEVER emits · X-130 is AGGREGATE ONLY and refuses below N tenants · an RCS→SMS degrade never re-sends**',
 
     // status:
-    'N-070' => '**a tenant is never left on an empty domain · priority scheduling MUST BE REAL · a sync conflict goes UNKNOWN not STALE · ⛔ X-168 has no overtime/out-of-hours/attendance (P-204) · a price on site comes from X-163 or is refused · a replay NEVER emits · X-130 is AGGREGATE ONLY and refuses below N tenants · an RCS→SMS degrade never re-sends**',
+    'N-070' => '**a tenant is never left on an empty domain · priority scheduling MUST BE REAL · a sync conflict goes UNKNOWN not STALE · ⛔ X-168 has no overtime/out-of-hours/attendance (P-204) · a price on site comes from X-163 or is refused · a replay NEVER emits · X-130 is AGGREGATE ONLY and refuses below N tenants · an RCS→SMS degrade never re-sends** refuses',
 
-    // status:
+    // status: SPECCED
     'N-072' => 'refuses: X-168 JobTime; arrival, duration and completion on a JOB — not a timesheet · GPS clock-in is bound to job state ·  no overtime, no out-of-hours, no attendance (P-204 · §219)',
 
-    // status:
+    // status: SPECCED
     'N-073' => '**a tenant is never left on an empty domain · priority scheduling MUST BE REAL · a sync conflict goes UNKNOWN not STALE · ⛔ X-168 has no overtime/out-of-hours/attendance (P-204) · a price on site comes from X-163 or is refused · a replay NEVER emits · X-130 is AGGREGATE ONLY and refuses below N tenants · an RCS→SMS degrade never re-sends**',
 
-    // status:
+    // status: SPECCED
     'N-074' => 'refuses: X-168 JobTime; arrival, duration and completion on a JOB — not a timesheet · GPS clock-in is bound to job state ·  no overtime, no out-of-hours, no attendance (P-204 · §219)',
 
-    // status:
+    // status: SPECCED
     'N-076' => '**a tenant is never left on an empty domain · priority scheduling MUST BE REAL · a sync conflict goes UNKNOWN not STALE · ⛔ X-168 has no overtime/out-of-hours/attendance (P-204) · a price on site comes from X-163 or is refused · a replay NEVER emits · X-130 is AGGREGATE ONLY and refuses below N tenants · an RCS→SMS degrade never re-sends**',
 
     // status:
-    'N-079' => '**a tenant is never left on an empty domain · priority scheduling MUST BE REAL · a sync conflict goes UNKNOWN not STALE · ⛔ X-168 has no overtime/out-of-hours/attendance (P-204) · a price on site comes from X-163 or is refused · a replay NEVER emits · X-130 is AGGREGATE ONLY and refuses below N tenants · an RCS→SMS degrade never re-sends**',
+    'N-079' => '**a tenant is never left on an empty domain · priority scheduling MUST BE REAL · a sync conflict goes UNKNOWN not STALE · ⛔ X-168 has no overtime/out-of-hours/attendance (P-204) · a price on site comes from X-163 or is refused · a replay NEVER emits · X-130 is AGGREGATE ONLY and refuses below N tenants · an RCS→SMS degrade never re-sends** refuses',
 
     // status:
-    'N-082' => '**a tenant is never left on an empty domain · priority scheduling MUST BE REAL · a sync conflict goes UNKNOWN not STALE · ⛔ X-168 has no overtime/out-of-hours/attendance (P-204) · a price on site comes from X-163 or is refused · a replay NEVER emits · X-130 is AGGREGATE ONLY and refuses below N tenants · an RCS→SMS degrade never re-sends**',
+    'N-082' => '**a tenant is never left on an empty domain · priority scheduling MUST BE REAL · a sync conflict goes UNKNOWN not STALE · ⛔ X-168 has no overtime/out-of-hours/attendance (P-204) · a price on site comes from X-163 or is refused · a replay NEVER emits · X-130 is AGGREGATE ONLY and refuses below N tenants · an RCS→SMS degrade never re-sends** refuses',
 
-    // status:
+    // status: SPECCED
     'N-085' => '**a tenant is never left on an empty domain · priority scheduling MUST BE REAL · a sync conflict goes UNKNOWN not STALE · ⛔ X-168 has no overtime/out-of-hours/attendance (P-204) · a price on site comes from X-163 or is refused · a replay NEVER emits · X-130 is AGGREGATE ONLY and refuses below N tenants · an RCS→SMS degrade never re-sends**',
 ];

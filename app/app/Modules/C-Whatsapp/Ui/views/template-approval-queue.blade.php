@@ -13,5 +13,33 @@
                 @endforeach
             </ul>
         @endif
+
+        <div class="mt-4 border-t pt-4">
+            <h3 class="font-bold">Submit Template</h3>
+            
+            @if($error)
+                <div class="text-red-500 mb-2">{{ $error }}</div>
+            @endif
+            
+            @if($success)
+                <div class="text-green-500 mb-2">{{ $success }}</div>
+            @endif
+
+            <form wire:submit="submit" class="space-y-4 max-w-sm mt-2">
+                <div>
+                    <label class="block text-sm">Name</label>
+                    <input type="text" wire:model="name" class="border p-2 w-full">
+                </div>
+                <div>
+                    <label class="block text-sm">Category</label>
+                    <input type="text" wire:model="category" class="border p-2 w-full">
+                </div>
+                <div>
+                    <label class="block text-sm">Body Text</label>
+                    <input type="text" wire:model="bodyText" class="border p-2 w-full">
+                </div>
+                <button type="submit" class="bg-surface text-ink border rounded p-2">Submit</button>
+            </form>
+        </div>
     </div>
 </div>

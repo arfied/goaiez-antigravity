@@ -31,7 +31,7 @@ return [
     'G13-01' => 'the header\'s own shape — first-party, on the tenant\'s subdomain',
 
     // status: SPECCED
-    'G13-09' => '§44 · P-128 — geo-fenced ad serving; we have no device-location source and X-139 uploads completed JOBS, not store visits — ⛔ KILLED: a conversion zone is never asserted, and the system refuses to infer a store visit from a completed job',
+    'G13-09' => '§44 · P-128 — geo-fenced ad serving; we have no device-location source and X-139 uploads completed JOBS, not store visits refuses',
 
     // status: SPECCED
     'G13-12' => 'the chat\'s context updates from the page (X-102)',

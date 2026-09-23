@@ -17,10 +17,30 @@ class WebhooksView extends Component
     #[Locked]
     public int $businessId = 0;
 
+    public string $url = '';
+    public string $events = '';
+    public ?string $success = null;
+    public ?string $error = null;
+
     public function mount(): void
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager, UserRole::SuperAdmin), 403);
         $this->businessId = Tenancy::id() ?? 0;
+    }
+
+    public function submit(\App\Modules\X142\Actions\WebhookSubscribeAction $action): void
+    {
+        $this->reset(['success', 'error']);
+
+        if (empty($this->url)) {
+            $this->error = 'URL is required.';
+            return;
+        }
+
+        $action->subscribe(Tenancy::idOrFail(), $this->url, $this->events);
+
+        $this->success = 'Webhook subscribed. This feeds the webhook list; nothing downstream is wired to it yet.';
+        $this->reset(['url', 'events']);
     }
 
     public function render()

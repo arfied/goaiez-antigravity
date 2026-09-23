@@ -1,9 +1,17 @@
 <div>
-    <x-surface.sample-state module="reads every module's `@renders matrix_view` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*" screen="matrix_view" />
     <div class="matrix-view-container p-4">
         <h3 class="text-lg font-bold">Integration Matrix & Seam Visualizer</h3>
+
+        @if($success)
+            <div class="text-ink-2 bg-surface border p-2 mb-4 rounded">{{ $success }}</div>
+        @endif
+
+        <form wire:submit="generateMatrix" class="mb-6 bg-surface p-4 rounded mt-4 border">
+            <button type="submit" class="bg-surface text-ink border rounded p-2">Generate matrix</button>
+        </form>
+
         @if(!$matrix)
-            <p class="text-gray-500">No matrix generated yet. Run matrix:generate to inspect seams.</p>
+            <p class="text-gray-500">No matrix generated yet. Generate one to inspect seams.</p>
         @else
             <p class="text-sm">Orphans: {{ $matrix->orphans_count }} | Violations: {{ $matrix->violations_count }}</p>
         @endif

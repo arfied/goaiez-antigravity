@@ -103,15 +103,19 @@ class X129Test extends TestCase
 
     /**
      * [N-129-01]
-     * REFUSED: "cutover reversible until DNS propagates"
-     * MigrationEngine::ensureReversible() exists but is an unconditional
-     * `return true` stub — there is no behaviour to assert. Restored to
-     * assertTrue(true) so this stays on the lane's tautology list until
-     * X-129 has a real reversibility path.
+     * "cutover reversible until DNS propagates"
      */
     public function test_n_129_capabilities(): void
     {
-        $this->assertTrue(true);
+        $engine = new \App\Modules\X129\Domain\MigrationEngine();
+        
+        // Reversible if DNS not propagated
+        $this->assertTrue($engine->ensureReversible(false, true));
+        
+        // Throws if DNS propagated and cutover complete
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage("Cutover cannot be reversed once DNS propagates");
+        $engine->ensureReversible(true, true);
     }
 
     /**

@@ -18,7 +18,9 @@ class SubmissionLogScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-109.submission-log'))->assertOk();
+        $this->get(route('x-109.submission-log'))
+            ->assertOk()
+            ->assertSeeText('No contact forms have been submitted for this tenant.');
 
         Livewire::test(SubmissionLog::class)->assertOk();
     }

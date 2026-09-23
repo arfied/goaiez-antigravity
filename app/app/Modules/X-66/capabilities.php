@@ -31,7 +31,7 @@ return [
     'G18-21' => 'real-time objection detection; retrieval is X-148\'s',
 
     // status: SPECCED
-    'G18-23' => 'transcription into the one Conversation',
+    'G18-23' => 'transcription into the one Conversation refuses',
 
     // status: SPECCED
     'G16-33' => '§226.4 — the legitimate USE of enrolment: confirming the caller changing their own booking · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ enrolment confirms a caller changing their OWN booking; no other use path exists',

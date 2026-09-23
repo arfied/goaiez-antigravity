@@ -46,6 +46,35 @@ class AffiliatePortalScreenTest extends TestCase
             ->assertSee('balance 45600 cents')
             ->assertDontSee('No affiliates yet.');
 
-        Livewire::test(AffiliatePortal::class)->assertOk();
+        Livewire::test(AffiliatePortal::class)
+            ->set('affiliateCode', 'new_aff_789')
+            ->set('partnerName', 'New Partner 789')
+            ->set('commissionRateBps', 1500)
+            ->call('createAffiliate')
+            ->assertSet('success', 'Created affiliate New Partner 789 with code new_aff_789 at 1500 bps. Balance starts at zero. This feeds the affiliate portal; nothing downstream is wired to it yet.');
+
+        $this->assertDatabaseHas((new Affiliate)->getTable(), [
+            'affiliate_code' => 'new_aff_789',
+            'partner_name' => 'New Partner 789',
+            'commission_rate_bps' => 1500,
+            'current_balance_cents' => 0,
+            'lifetime_earnings_cents' => 0,
+        ]);
+
+        $this->get(route('x-205.portal'))
+            ->assertOk()
+            ->assertSee('New Partner 789')
+            ->assertSee('(new_aff_789)')
+            ->assertSee('1500 bps');
+
+        Livewire::test(AffiliatePortal::class)
+            ->set('affiliateCode', ' ')
+            ->set('partnerName', 'Missing Name')
+            ->call('createAffiliate')
+            ->assertSet('error', 'Affiliate code and partner name are required.');
+
+        $this->assertDatabaseMissing((new Affiliate)->getTable(), [
+            'partner_name' => 'Missing Name',
+        ]);
     }
 }

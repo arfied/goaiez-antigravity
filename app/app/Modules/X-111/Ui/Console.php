@@ -6,6 +6,7 @@ namespace App\Modules\X111\Ui;
 
 use App\Modules\X111\Actions\ResolveAlertAction;
 use App\Modules\X111\Actions\ResolveTicketAction;
+use App\Modules\X111\Domain\OpsEngine;
 use App\Modules\X111\Models\OperatorAlert;
 use App\Modules\X111\Models\TenantTicket;
 use App\Support\Tenancy;
@@ -19,9 +20,32 @@ class Console extends Component
 
     public ?string $errorMessage = null;
 
+    public string $fullTranscript = '';
+
+    public string $category = 'human_escalation';
+
+    public ?string $error = null;
+
+    public ?string $success = null;
+
     public function mount(): void
     {
         $this->businessId = Tenancy::idOrFail();
+    }
+
+    public function createTicket(OpsEngine $engine): void
+    {
+        if (empty($this->fullTranscript) || empty($this->category)) {
+            $this->error = 'Transcript and category are required.';
+
+            return;
+        }
+
+        $this->error = null;
+        $ticket = $engine->createHumanTicket(Tenancy::idOrFail(), $this->fullTranscript, $this->category);
+
+        $this->success = 'Ticket created. This feeds the Escalated Tickets list and dispatches TicketOpened; nothing downstream acts on it yet.';
+        $this->fullTranscript = '';
     }
 
     public function resolveAlert(int $id, ResolveAlertAction $action): void

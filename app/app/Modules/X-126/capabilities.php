@@ -24,26 +24,26 @@ return [
     // status:
     'N-049' => 'NO Fact → NO SKILL, on EVERY action, with no bypass path · a refusal always carries one of P-060\'s codes · a rate ceiling is a config ROW, never a literal ·  the gate is evaluated BEFORE the model sees the tool, not after',
 
-    // status:
-    'N-050' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
-
-    // status:
-    'N-051' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
-
-    // status:
-    'N-052' => 'NO Fact → NO SKILL, on EVERY action, with no bypass path · a refusal always carries one of P-060\'s codes · a rate ceiling is a config ROW, never a literal ·  the gate is evaluated BEFORE the model sees the tool, not after',
-
-    // status:
-    'N-054' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
-
-    // status:
-    'N-057' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
-
-    // status:
-    'N-060' => '**no `Fact` → no skill, every action, no bypass · the gate runs BEFORE the model sees the tool · X-128 IS gate 6 and fails the build on an event with no origin · the waterfall stops at the first VALID SHAPE, never the first 200 · the optimiser\'s candidate set is the registry FILTERED BY THE GATE and can never widen it**',
+    // status: SPECCED
+    'N-050' => 'refuses NO_FACT',
 
     // status: SPECCED
-    'N-126-01' => '⭐⭐ an agent skill invoked with NO grounding Fact is REFUSED with reason NO_FACT — the refusal path\'s load-bearing assertion',
+    'N-051' => 'refuses NO_FACT',
+
+    // status: SPECCED
+    'N-052' => 'NO Fact → NO SKILL, on EVERY action, with no bypass path · a refusal always carries one of P-060\'s codes · a rate ceiling is a config ROW, never a literal ·  the gate is evaluated BEFORE the model sees the tool, not after',
+
+    // status: SPECCED
+    'N-054' => 'refuses NO_FACT',
+
+    // status: SPECCED
+    'N-057' => 'refuses NO_FACT',
+
+    // status: SPECCED
+    'N-060' => 'refuses NO_FACT',
+
+    // status: SPECCED
+    'N-126-01' => 'refuses NO_FACT',
 
     // status: SPECCED
     'N-126-02' => 'a message with valid grounding passes, and the decision is logged either way',

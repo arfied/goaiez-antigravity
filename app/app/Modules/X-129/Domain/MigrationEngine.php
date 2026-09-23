@@ -19,8 +19,11 @@ class MigrationEngine
         return ! $has404;
     }
 
-    public function ensureReversible()
+    public function ensureReversible(bool $dnsPropagated, bool $cutoverComplete)
     {
+        if ($cutoverComplete && $dnsPropagated) {
+            throw new \RuntimeException("Cutover cannot be reversed once DNS propagates");
+        }
         return true;
     }
 }

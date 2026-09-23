@@ -86,6 +86,7 @@ function schedulingOverlapWindows(): array
         'billing:reconcile-purchases' => 120,
         'content:release-holds' => 120,
         'campaigns:reconcile-unknown' => 120,
+        'disputes:check-deadlines' => 120,
         'proof:recompute' => 60,
 
         // Nightly, local work.

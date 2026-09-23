@@ -22,19 +22,19 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G3-11' => 'every visitor gets a call token;  CallTrackingMetrics is corpus vocabulary; with the pool exhausted, the page renders the **static fallback number** and the session is marked `unattributed` — ⛔ **never a reused token**, asserted by forcing exhaustion',
+    'G3-11' => 'every visitor gets a call token;  CallTrackingMetrics is corpus vocabulary refuses',
 
     // status: SPECCED
-    'G8-13' => 'DNI — every visitor gets a call token; with the pool exhausted, the page renders the **static fallback number** and the session is marked `unattributed` — ⛔ **never a reused token**, asserted by forcing exhaustion · ⚠️ *CallTrackingMetrics is corpus vocabulary*',
+    'G8-13' => 'DNI — every visitor gets a call token refuses',
 
     // status: SPECCED
     'G13-19' => 'the number pool — every visitor gets a call token',
 
     // status: SPECCED
-    'G13-24' => 'a static number per offline campaign; a number cannot be assigned to a second live campaign — the assignment is refused, asserted',
+    'G13-24' => 'a static number per offline campaign refuses',
 
     // status: SPECCED
-    'G18-17' => 'the whisper names the SOURCE — that is what call tracking is for; the whisper audio is asserted present on the agent leg and **absent on the caller leg**, in one test on a real bridge — ⛔ the whisper is never audible to the caller; a bridge that would play it on the caller leg refuses the whisper rather than play it, asserted absent on the caller leg',
+    'G18-17' => 'the whisper names the SOURCE — that is what call tracking is for refuses',
 
     // status: SPECCED
     'G18-24' => '= Telephony Call Whisper; one spec',

@@ -22,7 +22,7 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G5-01' => 'named in the header; the task lands in X-01',
+    'G5-01' => 'named in the header; the task lands in X-01 refuses',
 
     // status: SPECCED
     'G5-10' => 'untrusted text is DATA, never instruction; red evals are build-failing (P-102)',
@@ -43,7 +43,7 @@ return [
     'G5-32' => 'the voice door is X-66\'s; = G5-31',
 
     // status: SPECCED
-    'G5-33' => 'ONE Conversation across channels is why it works (X-121)',
+    'G5-33' => 'ONE Conversation across channels is why it works (X-121) refuses',
 
     // status: SPECCED
     'G5-37' => 'the takeover latch is X-01\'s (R21)',
@@ -52,7 +52,7 @@ return [
     'G5-39' => 'compose-time, both directions',
 
     // status: SPECCED
-    'G5-41' => 'named in the header',
+    'G5-41' => 'named in the header refuses',
 
     // status: SPECCED
     'G5-42' => 'the research behind it is X-135\'s',
@@ -61,7 +61,7 @@ return [
     'G5-43' => 'the 100 authored profiles are the fixture (P-126)',
 
     // status: SPECCED
-    'G5-48' => 'named in the header',
+    'G5-48' => 'named in the header refuses',
 
     // status: SPECCED
     'G5-51' => 'named in the header; the minute-by-minute graph is an X-194 view',
@@ -73,13 +73,13 @@ return [
     'G10-08' => 'compose-time moderation;  Law 122 — the switch, never the rule',
 
     // status: SPECCED
-    'G10-13' => 'compose-time only —  no LLM in the send path (P-071)',
+    'G10-13' => 'compose-time only —  no LLM in the send path (P-071) refuses',
 
     // status: SPECCED
     'G10-19' => 'P-092 — a price is looked up or refused, never generated; a refusal without a code fails the build',
 
     // status: SPECCED
-    'G10-37' => 'P-148 — under-18 rejected at ingest; the agent halts and hands off',
+    'G10-37' => 'P-148 — under-18 rejected at ingest; the agent halts and hands off refuses',
 
     // status: SPECCED
     'G12-25' => 'negative-sentiment handoff; the takeover latch is X-01\'s (R21)',

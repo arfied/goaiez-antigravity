@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X160\Ui;
 
+use App\Modules\X160\Actions\DocumentConfirmAction;
 use App\Modules\X160\Models\Document;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -16,9 +17,27 @@ class ReviewScreen extends Component
     #[Locked]
     public int $businessId = 0;
 
+    public ?string $confirmSuccess = null;
+
     public function mount(): void
     {
         $this->businessId = Tenancy::id() ?? 0;
+    }
+
+    public function confirmDocument(int $documentId, DocumentConfirmAction $action): void
+    {
+        $action->handle(Tenancy::idOrFail(), $documentId);
+
+        $doc = Document::where('business_id', Tenancy::idOrFail())->find($documentId);
+
+        if ($doc === null || $doc->status !== 'confirmed') {
+            $this->confirmSuccess = 'That document is still waiting to be read.';
+
+            return;
+        }
+
+        $this->confirmSuccess = $doc->title.' is confirmed and has left the review list. '
+            .'Nothing reads confirmed documents yet.';
     }
 
     public function render()

@@ -46,4 +46,57 @@ class DrDashboardScreenTest extends TestCase
 
         Livewire::test(DrDashboard::class)->assertOk();
     }
+
+    public function test_control_writes_and_clears_empty_states(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setUser($owner->id);
+
+        $table = (new RestoreTest)->getTable();
+
+        Livewire::test(DrDashboard::class)
+            ->set('backupId', 'backup_123')
+            ->set('expectedChecksum', 'abc')
+            ->set('actualChecksum', 'def')
+            ->set('expectedRowCount', '100')
+            ->set('restoredRowCount', '90')
+            ->call('recordTest')
+            ->assertSet('backupId', '')
+            ->assertSee('Recorded restore test outcome');
+
+        $this->assertDatabaseHas($table, [
+            'business_id' => $biz->id,
+            'backup_id' => 'backup_123',
+            'expected_row_count' => 100,
+        ]);
+
+        $this->get(route('x-203.dr-dashboard'))
+            ->assertSee('Backup backup_123')
+            ->assertDontSee('No restore tests executed.');
+
+        $this->get(route('x-203.restorationtest-log'))
+            ->assertDontSee('No restore tests logged.');
+    }
+
+    public function test_control_refuses_empty_input(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setUser($owner->id);
+
+        $table = (new RestoreTest)->getTable();
+
+        Livewire::test(DrDashboard::class)
+            ->set('backupId', '')
+            ->set('expectedChecksum', 'abc')
+            ->call('recordTest')
+            ->assertSet('error', 'Backup ID is required.');
+        
+        $this->assertDatabaseMissing($table, [
+            'expected_checksum' => 'abc',
+        ]);
+    }
 }

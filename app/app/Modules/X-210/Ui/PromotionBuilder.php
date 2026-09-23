@@ -25,6 +25,8 @@ class PromotionBuilder extends Component
 
     public string $maxUses = '';
 
+    public string $measurementWindowDays = '14';
+
     public string $saved = '';
 
     public function mount(int $businessId = 0)
@@ -42,6 +44,7 @@ class PromotionBuilder extends Component
             'discountType' => ['required', 'in:percentage,fixed_cents'],
             'amount' => $this->discountType === 'percentage' ? ['required', 'integer', 'min:1', 'max:100'] : ['required', 'numeric', 'min:0.01', 'max:100000'],
             'maxUses' => ['required', 'integer', 'min:1'],
+            'measurementWindowDays' => ['required', 'integer', 'min:1'],
         ];
 
         $messages = [
@@ -59,6 +62,9 @@ class PromotionBuilder extends Component
             'maxUses.required' => 'An offer needs a limit of at least one use.',
             'maxUses.integer' => 'An offer needs a limit of at least one use.',
             'maxUses.min' => 'An offer needs a limit of at least one use.',
+            'measurementWindowDays.required' => 'An offer needs a measurement window to track incrementality.',
+            'measurementWindowDays.integer' => 'The measurement window must be a number of days.',
+            'measurementWindowDays.min' => 'The measurement window must be at least 1 day.',
         ];
 
         $this->validate($rules, $messages);
@@ -75,10 +81,12 @@ class PromotionBuilder extends Component
             discountValue: $this->discountType === 'percentage' ? (int) $this->amount : (int) round((float) $this->amount * 100),
             discountType: $this->discountType,
             maxRedemptions: (int) $this->maxUses,
+            measurementWindowDays: (int) $this->measurementWindowDays,
         );
 
         $this->saved = $this->code;
         $this->reset('code', 'amount', 'maxUses');
+        $this->measurementWindowDays = '14';
     }
 
     public function render()

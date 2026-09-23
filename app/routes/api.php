@@ -12,6 +12,7 @@ use App\Http\Middleware\ResolveWidget;
 use App\Modules\X102\Http\Controllers\ChatCaptureController;
 use App\Modules\X102\Http\Controllers\ChatStartController;
 use App\Modules\X102\Http\Controllers\ChatTurnController;
+use App\Modules\X156\Http\Controllers\IngestWebhookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -212,3 +213,31 @@ Route::middleware('auth:sanctum')->group(function (): void {
 Route::get('/site/{key}', [T3InjectionController::class, 'payload'])
     ->middleware('throttle:t3-payload')
     ->name('api.site.payload');
+
+/*
+| Webhook Ingestion door (X-156).
+|
+| 1. DELIBERATELY UNAUTHENTICATED. Webhooks arriving from external vendors like
+| Meta, a CRM, or a form vendor have no account on this system. The HMAC signature
+| in the payload is the entire credential.
+|
+| 2. BUSINESS ID IS IN THE URL, NOT A SECRET. It must be there because the
+| `ingest_sources` table is under `FORCE ROW LEVEL SECURITY` with a strict
+| `tenant_isolation` policy. Without setting a tenant context first, every row is
+| invisible and the controller cannot look up its own source. This table must never
+| get a public read policy because `secret_key` lives in it.
+|
+| 3. NOTHING IS WRITTEN BEFORE VERIFICATION. The only exception is the `IngestRejection`
+| row, which is written on a bad signature to explicitly record the forged attempt.
+| This is the designed behavior of the action and the reason this route is throttled.
+|
+| 4. ⚠️ THE STALE COMMENT: The `/site/{key}` block above mentions that a test called
+| `Architecture/PixelTest` asserts that the exact set of routes matching the word
+| 'ingest' or 'pixel' is `['POST api/pixel/e']`. That test does NOT exist. There is
+| no file matching `*pixel*` under `tests/Feature/Architecture/`, and the route name
+| `api/pixel/e` only appears in a test helper. The route below contains `ingest` and
+| reddens nothing. The guard is gone.
+*/
+Route::post('/ingest/{business}/{source}', IngestWebhookController::class)
+    ->middleware('throttle:60,1')
+    ->name('api.ingest.webhook');

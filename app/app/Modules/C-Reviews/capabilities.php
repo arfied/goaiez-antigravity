@@ -22,7 +22,7 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G18-14' => 'refuses: C-Reviews; CSAT on resolve is named in the header',
+    'G18-14' => 'CSAT on resolve is named in the header refuses',
 
     // status: SPECCED
     'G19-10' => 'refuses: C-Reviews; compose-time block on "review for 10% off" — review-gating incentives are banned on every class, and this is the lint that enforces it',

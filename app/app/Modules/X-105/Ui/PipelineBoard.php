@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X105\Ui;
 
+use App\Modules\X01\Actions\ContactCreateAction;
 use App\Modules\X105\Actions\DemoRequestAction;
 use App\Modules\X105\Actions\OutreachHaltAction;
+use App\Modules\X105\Actions\OutreachStartAction;
 use App\Modules\X105\Models\OutreachLadder;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
@@ -35,6 +37,40 @@ class PipelineBoard extends Component
     {
         $this->isSample = ! $this->isSample;
         $this->actionFailed = false;
+        $this->error = null;
+        $this->success = null;
+    }
+
+    public string $prospectName = '';
+
+    public string $prospectEmail = '';
+
+    public ?string $success = null;
+
+    public ?string $error = null;
+
+    public function startOutreach(ContactCreateAction $contactAction, OutreachStartAction $ladderAction): void
+    {
+        if ($this->isSample) {
+            return;
+        }
+
+        $this->error = null;
+        $this->success = null;
+        $this->actionFailed = false;
+
+        if (empty($this->prospectName) || empty($this->prospectEmail)) {
+            $this->error = 'Name and email are required.';
+
+            return;
+        }
+
+        $person = $contactAction->handle(Tenancy::idOrFail(), $this->prospectName, null, $this->prospectEmail);
+        $ladder = $ladderAction->startLadder(Tenancy::idOrFail(), $person['id']);
+
+        $this->success = 'Started ladder and its four rungs. This feeds the pipeline board; nothing downstream is wired to it yet.';
+        $this->prospectName = '';
+        $this->prospectEmail = '';
     }
 
     public function halt(int $id, OutreachHaltAction $action): void

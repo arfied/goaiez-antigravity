@@ -91,8 +91,4 @@ class X196Test extends TestCase
     /**
      * [G2-03], [G3-05], [G3-24], [G3-32], [G3-39], [G12-08]
      */
-    public function test_extension_capabilities(): void
-    {
-        $this->assertTrue(true);
-    }
 }

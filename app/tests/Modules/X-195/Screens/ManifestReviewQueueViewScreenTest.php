@@ -33,4 +33,22 @@ class ManifestReviewQueueViewScreenTest extends TestCase
 
         Livewire::test(ManifestReviewQueueView::class)->assertOk();
     }
+
+    public function test_renders_unverified_items(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        \App\Modules\X195\Models\MarketItem::create([
+            'business_id' => $biz->id,
+            'item_slug' => 'queue-item',
+            'item_name' => 'Queue Item',
+            'version' => '1.0.0',
+            'manifest_json' => ['summary' => 'Queue summary'],
+            'is_verified' => false,
+        ]);
+
+        $this->get(route('x-195.manifest-review-queue'))->assertSee('Queue Item')->assertSee('Unverified');
+    }
 }

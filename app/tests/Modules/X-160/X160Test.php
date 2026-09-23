@@ -123,8 +123,4 @@ class X160Test extends TestCase
     /**
      * [G2-30], [G9-25]
      */
-    public function test_document_capabilities(): void
-    {
-        $this->assertTrue(true);
-    }
 }

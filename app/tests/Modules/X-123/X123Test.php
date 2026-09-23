@@ -219,6 +219,7 @@ class X123Test extends TestCase
 
     /**
      * [G4-48] named in the header
+     * [G4-50] they ride the same catalogue; the catalogue is X-122's
      */
     public function test_g4_48_header_contract(): void
     {
@@ -226,13 +227,7 @@ class X123Test extends TestCase
         $this->assertInstanceOf(EventReplayAction::class, $replay);
     }
 
-    /**
-     * [G4-50] they ride the same catalogue; the catalogue is X-122's
-     */
-    public function test_g4_50_catalogue_alignment(): void
-    {
-        $this->assertTrue(true);
-    }
+
 
     /**
      * [G7-26] RabbitMQ/SQS is corpus vocabulary — Horizon + Redis (§22)

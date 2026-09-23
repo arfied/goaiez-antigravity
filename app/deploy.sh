@@ -108,6 +108,18 @@ sz=$(stat -c %s "$BACKUP"); [ "$sz" -gt 10000 ] || die "backup is only ${sz} byt
 echo "  $BACKUP  ($((sz/1024)) KB)"
 export DATABASE_URL="postgresql://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}"
 
+# ── 3b. storage backup (before migrate, same rollback point as the dump) ──────────────
+say "3b. storage backup"
+STORAGE_BACKUP="storage/backups/${DB_NAME}-$(date +%Y%m%d-%H%M%S)-pre-${TO}-storage.tar.gz"
+if [ -d storage/app/private ]; then
+  tar -czf "$STORAGE_BACKUP" -C storage/app private \
+    || die "tar of storage/app/private failed — NOT migrating without a storage backup"
+  ls -la --time-style=full-iso "$STORAGE_BACKUP" | sed 's/^/  /'
+else
+  STORAGE_BACKUP=""
+  echo "  storage/app/private does not exist — nothing to archive"
+fi
+
 # ── 4. dependencies ───────────────────────────────────────────────────────────────────
 say "4. composer install --no-dev"
 composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist 2>&1 | tail -3 | sed 's/^/  /'
@@ -153,5 +165,6 @@ php artisan up >/dev/null && UP_DONE=1 && echo "  site is live"
 
 say "DEPLOYED $TO"
 echo "  backup   : $BACKUP"
+echo "  storage  : ${STORAGE_BACKUP:-（none — storage/app/private did not exist）}"
 echo "  seal     : $(php artisan doctor:selftest 2>/dev/null | grep -oE 'seal digest [0-9a-f]{16}' || echo '?')"
-echo "  rollback : git checkout $FROM && psql \"\$DATABASE_URL\" < $BACKUP && composer install --no-dev && php artisan config:cache && php artisan queue:restart"
+echo "  rollback : git checkout $FROM && psql \"\$DATABASE_URL\" < $BACKUP && composer install --no-dev && php artisan config:cache && php artisan queue:restart${STORAGE_BACKUP:+ && tar -xzf $STORAGE_BACKUP -C storage/app}"

@@ -26,6 +26,14 @@ final class FlowRunAction
             ->orderByDesc('version_number')
             ->firstOrFail();
 
+        if ($flow->status === 'paused' && ! $isManualRetry) {
+            return [
+                'status' => 'refused_paused',
+                'refusal_code' => 'FLOW_PAUSED_BY_OWNER',
+                'message' => 'Flow was paused by hand and will not run until it is resumed',
+            ];
+        }
+
         // 1. If flow is paused due to consecutive errors: REFUSE silent automatic retry (TEST ANCHOR)
         if ($flow->status === 'paused_error' && ! $isManualRetry) {
             return [

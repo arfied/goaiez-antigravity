@@ -8,6 +8,7 @@ use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\CAgent\Models\AgentTurn;
 use App\Modules\CAgent\Ui\GroundcheckScreen;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -38,5 +39,50 @@ class GroundcheckScreenScreenTest extends TestCase
             ->assertDontSee('No agent turns yet.');
 
         Livewire::test(GroundcheckScreen::class)->assertOk();
+    }
+
+    public function test_can_ask_agent(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(GroundcheckScreen::class)
+            ->set('userMessage', 'Hello there')
+            ->call('askAgent')
+            ->assertSet('error', null);
+
+        $turn = AgentTurn::where('business_id', $biz->id)->first();
+
+        $this->assertDatabaseHas((new AgentTurn)->getTable(), [
+            'business_id' => $biz->id,
+            'user_message' => 'Hello there',
+            'status' => 'answered',
+            'agent_reply' => 'Hello! How can I help you today?',
+        ]);
+
+        $this->get(route('c-agent.groundcheck-screen'))
+            ->assertSee('Hello there')
+            ->assertSee('1 answered · 0 refused · 0 handed off');
+
+        $this->get(route('c-agent.thread'))
+            ->assertSee('Hello there');
+    }
+
+    public function test_refuses_empty_message(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(GroundcheckScreen::class)
+            ->call('askAgent')
+            ->assertSet('error', 'Message cannot be empty.');
+
+        $this->assertDatabaseMissing((new AgentTurn)->getTable(), [
+            'business_id' => $biz->id,
+        ]);
     }
 }

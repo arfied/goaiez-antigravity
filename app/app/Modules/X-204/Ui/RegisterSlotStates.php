@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X204\Ui;
 
-use App\Modules\X204\Models\ComplianceRegister;
+use App\Modules\X204\Actions\GetRegistersAction;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -21,10 +21,10 @@ class RegisterSlotStates extends Component
         $this->businessId = Tenancy::id() ?? 0;
     }
 
-    public function render()
+    public function render(GetRegistersAction $action)
     {
         $registers = ($this->businessId > 0)
-            ? ComplianceRegister::where('business_id', $this->businessId)->get()
+            ? $action->handle($this->businessId)
             : collect();
 
         return view('x-204::register-slot-states', [

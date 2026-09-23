@@ -3,7 +3,7 @@
     <p>{{ $sentence }}</p>
 
     @if($routes->isEmpty())
-        <x-ui.empty-state title="No routes yet. A route appears when a technician's stops are ordered." />
+        <x-ui.empty-state heading="No routes yet" />
     @else
         @foreach($routes as $route)
             <section>

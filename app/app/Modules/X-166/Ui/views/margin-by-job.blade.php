@@ -3,6 +3,30 @@
         <h2>Margin by job</h2>
         <p>Expected comes from the pricebook; actual comes from the field.</p>
         
+        <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
+            <div class="flex gap-2">
+                <input type="text" wire:model="jobId" placeholder="Job ID" class="border rounded p-2 text-ink flex-1" />
+                <input type="text" wire:model="priceBookVersion" placeholder="Pricebook Version" class="border rounded p-2 text-ink flex-1" />
+            </div>
+            <div class="flex gap-2">
+                <input type="number" wire:model="revenueCents" placeholder="Revenue (cents)" class="border rounded p-2 text-ink flex-1" />
+                <input type="number" wire:model="laborCostCents" placeholder="Labor Cost (cents)" class="border rounded p-2 text-ink flex-1" />
+                <input type="number" wire:model="materialsCostCents" placeholder="Materials Cost (cents)" class="border rounded p-2 text-ink flex-1" />
+                <input type="number" wire:model="overheadCostCents" placeholder="Overhead Cost (cents)" class="border rounded p-2 text-ink flex-1" />
+            </div>
+            <div>
+                <x-ui.button size="default" wire:click="recordJobCost" wire:loading.attr="disabled" wire:target="recordJobCost">Record job cost</x-ui.button>
+            </div>
+        </div>
+
+        @if($error)
+            <x-ui.error-panel heading="That didn't go through">{{ $error }}</x-ui.error-panel>
+        @endif
+
+        @if($success)
+            <x-ui.attention-card state="ok" heading="Job cost recorded">{{ $success }}</x-ui.attention-card>
+        @endif
+
         @if($costs->isEmpty())
             <x-ui.empty-state>No costed jobs yet. A job is costed when it completes.</x-ui.empty-state>
         @else

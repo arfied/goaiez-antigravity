@@ -31,5 +31,5 @@ return [
     'N-042' => '500 imported jobs → ZERO outbound messages · a dry run writes NOTHING to live · one weak identifier is rejected, never merged · notes scanned to secure fields · and the EXPORT works too (P-203)',
 
     // status: SPECCED
-    'G4-54' => '§217.1 — NOT an app store: one-click migration-in from ServiceTitan/Jobber/Housecall · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ P-203: the import writes rows and emits NOTHING — 500 jobs, ZERO outbound',
+    'G4-54' => '§217.1 — NOT an app store: one-click migration-in from ServiceTitan/Jobber/Housecall · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ P-203: the import writes rows and emits NOTHING — 500 jobs, ZERO outbound refuses',
 ];

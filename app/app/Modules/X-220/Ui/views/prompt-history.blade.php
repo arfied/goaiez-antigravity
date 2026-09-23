@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="X-220" screen="prompt_history" />
     <div class="prompt-history-container p-4">
         <h3 class="text-lg font-bold">Prompt History & Versioning</h3>
         @if($prompts->isEmpty())

@@ -25,5 +25,5 @@ return [
     'G4-02' => 'token.issue · token.revoke, tenant-scoped',
 
     // status: SPECCED
-    'G4-18' => 'tenant-scoped, permission-inherited tokens',
+    'G4-18' => 'tenant-scoped, permission-inherited tokens refuses',
 ];

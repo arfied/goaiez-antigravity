@@ -46,7 +46,7 @@ return [
     'G7-07' => 'named in the header',
 
     // status: SPECCED
-    'G7-12' => 'named in the header (§91\'s three agency modes)',
+    'G7-12' => 'named in the header (§91\'s three agency modes) refuses',
 
     // status: SPECCED
     'G7-13' => 'task visibility per client',

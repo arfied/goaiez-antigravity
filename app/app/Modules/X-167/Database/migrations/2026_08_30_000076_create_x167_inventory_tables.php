@@ -55,7 +55,7 @@ return new class extends Migration
                 $table->jsonb('items');
                 $table->bigInteger('total_cents')->default(0);
                 $table->string('status')->default('proposed'); // proposed, approved, sent
-                $table->string('approved_action_id')->nullable(); // No PO is emailed without an approval action row (TEST ANCHOR)
+                $table->string('approved_action_id')->nullable(); // No PO is marked sent without an approval action row (TEST ANCHOR)
                 $table->timestamps();
             });
         }

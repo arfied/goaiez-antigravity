@@ -17,7 +17,6 @@
                     'reminded' => 'attention',
                     'cancelled' => 'alert',
                     'completed' => 'unknown',
-                    default => 'attention'
                 };
             @endphp
             <x-ui.status-pill :state="$statusState" :label="ucfirst($apt->status)" />

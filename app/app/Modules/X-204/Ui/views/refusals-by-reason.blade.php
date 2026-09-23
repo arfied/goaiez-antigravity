@@ -1,18 +1,41 @@
 <div>
-    <x-surface.sample-state module="⭐⭐ **The single decider of whether a message may be sent to a person on a channel. Every sender asks; no sender decides.** Returns GRANT or **exactly one of P-060's twenty refusal reasons — a refusal without a code fails the build**, and `platformFloorRefusal()` fails closed, so an unknown state refuses. Owns the **permit** *(immutable, provenance-carrying — lifts are recorded, never deleted)*, the **suppression list**, the **`ImportAttestation`**, and the **compliance-register slots**. **The three lanes:** a campaign declares its lane and this module reads it — Lane 1 transactional *(nothing blocks but STOP)*" screen="refusals_by_reason" />
     <div class="refusals-by-reason-container p-4">
         <h2 class="text-lg font-bold">Consent Refusals by Reason</h2>
         @if($refusals->isEmpty())
-            <p class="text-gray-500">No consent refusals recorded.</p>
+            <p class="text-ink-2">No consent refusals recorded.</p>
         @else
-            <ul class="divide-y divide-gray-200">
+            <ul class="divide-y divide-rule">
                 @foreach($refusals as $ref)
                     <li class="py-2">
-                        <span class="font-mono text-sm text-gray-800 mr-2">{{ $ref->recipient_phone }}</span>
+                        <span class="font-mono text-sm text-ink mr-2">{{ $ref->recipient_phone }}</span>
                         <span class="font-mono text-sm text-red-600">{{ $ref->refusal_reason }}</span>
                     </li>
                 @endforeach
             </ul>
         @endif
+
+        <div class="mt-8 bg-surface p-4 border rounded">
+            @if($success)
+                <div class="text-ink bg-surface border rounded p-2 mb-4">{{ $success }}</div>
+            @endif
+            @if($error)
+                <div class="text-ink bg-surface border rounded p-2 mb-4">{{ $error }}</div>
+            @endif
+
+            <h3 class="text-lg font-bold text-ink">Check whether a number may be messaged</h3>
+            <form wire:submit="decide" class="flex flex-col gap-4 mt-4 mb-8">
+                <input type="text" wire:model="decidePhone" placeholder="Phone Number" class="border rounded p-2 text-ink bg-surface">
+                <input type="text" wire:model="decideChannel" placeholder="Channel (e.g. sms)" class="border rounded p-2 text-ink bg-surface">
+                <button type="submit" class="bg-surface text-ink border rounded p-2">Check Number</button>
+            </form>
+
+            <h3 class="text-lg font-bold text-ink">Stop messages to a number</h3>
+            <form wire:submit="suppress" class="flex flex-col gap-4 mt-4">
+                <input type="text" wire:model="suppressPhone" placeholder="Phone Number" class="border rounded p-2 text-ink bg-surface">
+                <input type="text" wire:model="suppressChannel" placeholder="Channel (e.g. sms)" class="border rounded p-2 text-ink bg-surface">
+                <input type="text" wire:model="suppressReason" placeholder="Reason (e.g. opt_out)" class="border rounded p-2 text-ink bg-surface">
+                <button type="submit" class="bg-surface text-ink border rounded p-2">Suppress Number</button>
+            </form>
+        </div>
     </div>
 </div>

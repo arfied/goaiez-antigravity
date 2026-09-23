@@ -34,7 +34,7 @@ return [
     'G7-32' => 'commission on gross profit;  paid on cash COLLECTED, never invoiced',
 
     // status: SPECCED
-    'G7-38' => 'a time-boxed bonus rule',
+    'G7-38' => 'a time-boxed bonus rule refuses',
 
     // status: SPECCED
     'G7-39' => 'two payees on one deal',

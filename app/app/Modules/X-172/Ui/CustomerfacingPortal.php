@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X172\Ui;
 
-use App\Modules\X165\Models\Membership;
+use App\Modules\X165\Actions\MembershipStatusAction;
 use App\Modules\X172\Actions\PortalActionHandler;
 use App\Modules\X172\Actions\PortalLinkAction;
 use App\Modules\X172\Actions\PortalViewAction;
@@ -82,13 +82,8 @@ class CustomerfacingPortal extends Component
         $membershipStatus = null;
 
         if ($link && $link->is_active) {
-            if (class_exists(Membership::class) && $link->customer_id) {
-                $membership = Membership::where('business_id', $link->business_id)
-                    ->where('person_id', $link->customer_id)
-                    ->first();
-                if ($membership) {
-                    $membershipStatus = $membership->status;
-                }
+            if ($link->customer_id) {
+                $membershipStatus = app(MembershipStatusAction::class)->handle($link->business_id, $link->customer_id);
             }
 
             if ($link->resource_type === 'job') {

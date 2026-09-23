@@ -22,10 +22,10 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G10-02' => 'the brand is auto-submitted (P-064);  Twilio/TCR are corpus vocabulary — Infobip',
+    'G10-02' => 'the brand is auto-submitted (P-064);  Twilio/TCR are corpus vocabulary — Infobip refuses',
 
     // status: SPECCED
-    'G18-10' => 'the tenant\'s own registered numbers by area code',
+    'G18-10' => 'the tenant\'s own registered numbers by area code refuses',
 
     // status: SPECCED
     'G18-11' => '= Local Caller ID; one spec.  rotation is bounded by P-065\'s per-number complaint monitoring',

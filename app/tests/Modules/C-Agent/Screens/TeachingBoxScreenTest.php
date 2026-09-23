@@ -41,6 +41,32 @@ class TeachingBoxScreenTest extends TestCase
             ->assertSee('Distinctive instruction 4512')
             ->assertDontSee('No custom instructions defined.');
 
-        Livewire::test(TeachingBox::class)->assertOk();
+        Livewire::test(TeachingBox::class)
+            ->set('key', 'new_fact_key')
+            ->set('value', 'New Fact Value')
+            ->call('teachAgent')
+            ->assertSet('success', function ($val) {
+                return str_contains((string) $val, 'Set instruction ') && str_contains((string) $val, " with key 'new_fact_key' to 'New Fact Value'");
+            });
+
+        $this->assertDatabaseHas((new AgentInstruction)->getTable(), [
+            'instruction_key' => 'new_fact_key',
+            'instruction_text' => 'New Fact Value',
+        ]);
+
+        $this->get(route('c-agent.teaching-box'))
+            ->assertOk()
+            ->assertSee('new_fact_key')
+            ->assertSee('New Fact Value');
+
+        Livewire::test(TeachingBox::class)
+            ->set('key', ' ')
+            ->set('value', 'value without key')
+            ->call('teachAgent')
+            ->assertSet('error', 'Key and value are required.');
+
+        $this->assertDatabaseMissing((new AgentInstruction)->getTable(), [
+            'instruction_text' => 'value without key',
+        ]);
     }
 }

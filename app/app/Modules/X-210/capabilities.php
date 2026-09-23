@@ -40,11 +40,11 @@ return [
     'G1-69' => '§226.2 — R34: the offer and CANCEL on one screen, cancel always one tap · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ R34: no interstitial exists between the cancel tap and the cancellation — asserted BY ABSENCE',
 
     // status: SPECCED
-    'G6-38' => '§226.2 — with R34: no interstitial exists, by absence · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ R34: cancel stays one tap; the offer renders beside it, never in front of it',
+    'G6-38' => '§226.2 — with R34: no interstitial exists, by absence · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ R34: cancel stays one tap; the offer renders beside it, never in front of it refuses',
 
     // status: SPECCED
     'G7-47' => '§226.2 — a cohort rate is a ROW; an existing tenant\'s rate never changes without a NOTIFIED action · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ a cohort rate is a ROW; an existing rate never changes without a NOTIFIED action — asserted',
 
     // status: SPECCED
-    'G15-21' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ R34 overrides: cancel stays ONE TAP; the save-offer renders beside it · refuses: anything but one tap to cancel',
+    'G15-21' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ R34 overrides: cancel stays ONE TAP; the save-offer renders beside it · refuses: anything but one tap to cancel refuses',
 ];

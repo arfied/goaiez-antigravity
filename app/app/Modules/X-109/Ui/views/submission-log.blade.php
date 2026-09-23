@@ -8,7 +8,7 @@
         </div>
         
         @if ($logs->isEmpty())
-            <x-ui.empty-state icon="document-text" title="No submissions yet" description="No contact forms have been submitted for this tenant." />
+            <x-ui.empty-state heading="No submissions yet">No contact forms have been submitted for this tenant.</x-ui.empty-state>
         @else
             <table class="w-full text-left border-collapse border">
                 <thead>

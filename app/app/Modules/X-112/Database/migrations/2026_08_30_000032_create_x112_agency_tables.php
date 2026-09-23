@@ -87,6 +87,8 @@ return new class extends Migration
                         WITH CHECK (business_id = nullif(current_setting('app.business_id', true), '')::bigint)
                 SQL);
             }
+            DB::statement("GRANT SELECT, INSERT, UPDATE, DELETE ON {$table} TO goaiez_app");
+            try { DB::statement("GRANT USAGE, SELECT ON SEQUENCE {$table}_id_seq TO goaiez_app"); } catch(\Exception $e) {}
         }
     }
 

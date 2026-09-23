@@ -8,8 +8,6 @@ use App\Models\User;
 use App\Modules\X117\Domain\CheckoutEngine;
 use App\Modules\X117\Models\Sellable;
 use App\Modules\X198\Domain\GatewayEngine;
-use App\Modules\X198\Models\MerchantConnection;
-use App\Modules\X198\Models\Payment;
 use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
 use Illuminate\Console\Command;
@@ -76,8 +74,8 @@ final class EvidenceCheckoutCommand extends Command
             'order_id' => $checkoutRes['order_id'],
             'business_id' => $businessId,
             'order_status' => $checkoutRes['status'],
-            'merchant_connected' => MerchantConnection::where('business_id', $businessId)->where('is_connected', true)->exists(),
-            'payments_written' => Payment::where('business_id', $businessId)->count(),
+            'merchant_connected' => $gatewayEngine->hasConnectedMerchant($businessId),
+            'payments_written' => $gatewayEngine->paymentCount($businessId),
             'waiting_on' => 'a browser-side Stripe Elements / publishable-key card-entry surface (X-120 CardVault\'s, parked behind a contract)',
             'amount_cents' => 4500,
             'queue_driver' => config('queue.default'),

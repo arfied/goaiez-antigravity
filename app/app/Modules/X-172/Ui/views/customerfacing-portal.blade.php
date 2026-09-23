@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="self-service" screen="customerfacing_portal" />
     <livewire:x-124.chat-dock-every />
     
     <div class="max-w-xl mx-auto px-4 py-8" wire:loading.class="opacity-50">

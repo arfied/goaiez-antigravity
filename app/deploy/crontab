@@ -1,0 +1,3 @@
+# GOAIEZ — the one thing Laravel cannot do for itself.
+# Use ONLY if supervisor is unavailable. schedule:work and cron must never both run.
+* * * * * cd /var/www/goaiez && php artisan schedule:run >> /dev/null 2>&1

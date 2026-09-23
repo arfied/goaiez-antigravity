@@ -46,4 +46,55 @@ class PreviewPerDestinationScreenTest extends TestCase
 
         Livewire::test(PreviewPerDestination::class)->assertOk();
     }
+
+    public function test_can_brand_asset(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        $this->get(route('x-189.preview-per-destination'))
+            ->assertOk()
+            ->assertSee('Branded media');
+
+        Livewire::test(PreviewPerDestination::class)
+            ->set('sourceAssetUrl', 'https://example.com/test_asset.jpg')
+            ->set('licenseSource', 'client_upload')
+            ->set('destination', 'social_test')
+            ->call('brandAsset')
+            ->assertSet('error', null)
+            ->assertSet('success', 'Recorded branding for asset; no image was actually produced.');
+
+        $this->assertDatabaseHas((new BrandedMedia)->getTable(), [
+            'business_id' => $biz->id,
+            'source_asset_url' => 'https://example.com/test_asset.jpg',
+            'destination' => 'social_test',
+        ]);
+
+        $this->get(route('x-189.preview-per-destination'))
+            ->assertSee('social_test')
+            ->assertSee('test_asset.jpg');
+    }
+
+    public function test_refuses_empty_license_source(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        Livewire::test(PreviewPerDestination::class)
+            ->set('sourceAssetUrl', 'https://example.com/test_asset.jpg')
+            ->set('licenseSource', null)
+            ->set('destination', 'social_test')
+            ->call('brandAsset')
+            ->assertSet('error', 'An asset with no license_source is refused at ingest')
+            ->assertSet('success', null);
+
+        $this->assertDatabaseMissing((new BrandedMedia)->getTable(), [
+            'business_id' => $biz->id,
+            'source_asset_url' => 'https://example.com/test_asset.jpg',
+        ]);
+    }
 }
