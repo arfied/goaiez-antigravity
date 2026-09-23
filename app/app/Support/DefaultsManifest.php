@@ -27,9 +27,14 @@ use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X202\Domain\ApprovalDeskEngine;
 use App\Modules\X205\Domain\AffiliateEngine;
 use App\Modules\X219\Actions\ProviderHealthAction;
+use App\Services\Config\CredentialStore;
+use App\Services\Config\DefaultsRegistry;
+use App\Services\Conversations\ConversationThreads;
+use App\Services\Crm\CustomerDirectory;
 use App\Services\Mail\MailDrivers;
 use App\Services\Mail\MailQuota;
 use App\Services\Mail\MailSendRate;
+use App\Services\Messaging\MessageLog;
 use App\Services\Visibility\ReviewLossDetection;
 
 /**
@@ -184,6 +189,31 @@ final class DefaultsManifest
                 'seed' => EdgeDeployAction::PRICEBOOK_ITEMS_MAX,
                 'group' => 'Content',
                 'description' => 'Deploy pricebook items max.',
+            ],
+            'messaging.log.per_page' => [
+                'seed' => MessageLog::PER_PAGE,
+                'group' => 'Messaging',
+                'description' => 'Number of messages shown per page in the tenant message log.',
+            ],
+            'crm.directory.per_page' => [
+                'seed' => CustomerDirectory::PER_PAGE,
+                'group' => 'Marketing',
+                'description' => 'Number of customers shown per page in the directory.',
+            ],
+            'conversations.list_limit' => [
+                'seed' => ConversationThreads::LIST_LIMIT,
+                'group' => 'Messaging',
+                'description' => 'Maximum number of conversation threads shown in the list.',
+            ],
+            'settings.history_limit' => [
+                'seed' => DefaultsRegistry::HISTORY_LIMIT,
+                'group' => 'Operations',
+                'description' => 'Maximum number of change history entries shown per platform setting.',
+            ],
+            'credentials.history_limit' => [
+                'seed' => CredentialStore::HISTORY_LIMIT,
+                'group' => 'Operations',
+                'description' => 'Maximum number of change history entries shown per credential.',
             ],
 
             /*

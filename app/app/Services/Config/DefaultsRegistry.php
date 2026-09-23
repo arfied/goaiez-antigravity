@@ -564,6 +564,8 @@ final class DefaultsRegistry
         return $grouped;
     }
 
+    public const int HISTORY_LIMIT = 20;
+
     /**
      * The change history for one platform-wide key, newest first.
      *
@@ -574,8 +576,10 @@ final class DefaultsRegistry
      *
      * @return list<RegistryChange>
      */
-    public function historyFor(string $key, int $limit = 20): array
+    public function historyFor(string $key, ?int $limit = null): array
     {
+        $limit ??= $this->intOr('settings.history_limit', self::HISTORY_LIMIT);
+
         return array_values(
             RegistryChange::query()
                 ->where('setting_key', $key)
