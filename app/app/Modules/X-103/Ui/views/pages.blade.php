@@ -30,12 +30,23 @@
                                     @if(isset($deployments[$page->id]) && $deployments[$page->id]->status === 'deployed')
                                         <a href="{{ url('/sites/'.$businessId.'/'.$deployments[$page->id]->deploy_hash) }}" class="ml-2 text-ink underline">Live link</a>
                                     @endif
+                                    <button wire:click="unpublish({{ $page->id }})" class="ml-2 bg-paper border border-rule px-2 py-1 text-ink">Unpublish</button>
                                 @else
                                     <span class="bg-paper border border-rule px-2 py-1 text-ink-2">Draft</span>
                                     <button wire:click="publish({{ $page->id }})" class="ml-2 bg-paper border border-rule px-2 py-1 text-ink">Publish</button>
                                 @endif
                             </td>
                             <td class="py-2 text-ink">
+                                <details class="mb-2">
+                                    <summary class="cursor-pointer">Edit name</summary>
+                                    <div class="p-2 mt-2 bg-paper border border-rule">
+                                        <form wire:submit="rename({{ $page->id }})">
+                                            <input type="text" wire:model="renameSlug.{{ $page->id }}" placeholder="Slug" class="w-full bg-paper border border-rule text-ink p-1 mb-1">
+                                            <input type="text" wire:model="renameTitle.{{ $page->id }}" placeholder="Title" class="w-full bg-paper border border-rule text-ink p-1 mb-1">
+                                            <button type="submit" class="bg-paper border border-rule px-2 py-1">Rename</button>
+                                        </form>
+                                    </div>
+                                </details>
                                 <details>
                                     <summary class="cursor-pointer">Edit content</summary>
                                     <div class="p-2 mt-2 bg-paper border border-rule">

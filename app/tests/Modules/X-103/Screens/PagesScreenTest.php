@@ -360,4 +360,131 @@ class PagesScreenTest extends TestCase
             ->call('removeBlock', $page->id, 0)
             ->assertForbidden();
     }
+
+    public function test_owner_unpublishes_a_live_page(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Storage::fake('local');
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'live-page', 'Live Page');
+
+        Livewire::test(Pages::class)->call('publish', $page->id);
+
+        $deployment = Deployment::where('business_id', $biz->id)->where('page_id', $page->id)->firstOrFail();
+        $this->get("/sites/{$biz->id}/{$deployment->deploy_hash}")->assertOk();
+
+        Livewire::test(Pages::class)
+            ->call('unpublish', $page->id)
+            ->assertOk();
+
+        $this->get("/sites/{$biz->id}/{$deployment->deploy_hash}")->assertNotFound();
+
+        $this->assertEquals('unpublished', $deployment->fresh()->status);
+
+        $this->get(route('x-103.pages'))
+            ->assertSee('Draft')
+            ->assertDontSee('Live link');
+    }
+
+    public function test_republishing_serves_again(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Storage::fake('local');
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'repub-page', 'Repub Page');
+
+        Livewire::test(Pages::class)->call('publish', $page->id);
+        Livewire::test(Pages::class)->call('unpublish', $page->id);
+        Livewire::test(Pages::class)->call('publish', $page->id);
+
+        $deployment = Deployment::where('business_id', $biz->id)->where('page_id', $page->id)->latest('id')->firstOrFail();
+        $this->assertEquals('deployed', $deployment->status);
+
+        $this->get("/sites/{$biz->id}/{$deployment->deploy_hash}")->assertOk();
+    }
+
+    public function test_unpublishing_a_draft_is_refused(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'draft-page', 'Draft Page');
+
+        Livewire::test(Pages::class)
+            ->call('unpublish', $page->id)
+            ->assertSee('That page is not published.');
+
+        $this->assertFalse($page->fresh()->is_published);
+    }
+
+    public function test_owner_renames_a_page(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Storage::fake('local');
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'old-name', 'Old Title');
+
+        Livewire::test(Pages::class)
+            ->set('renameSlug.'.$page->id, 'about-k3p')
+            ->set('renameTitle.'.$page->id, 'About')
+            ->call('rename', $page->id)
+            ->assertSee('Renamed.');
+
+        Livewire::test(Pages::class)->call('publish', $page->id);
+
+        $deployment = Deployment::where('business_id', $biz->id)->where('page_id', $page->id)->firstOrFail();
+        $this->get("/sites/{$biz->id}/{$deployment->deploy_hash}")
+            ->assertOk()
+            ->assertSee('About');
+
+        $this->assertEquals('about-k3p', $page->fresh()->slug);
+    }
+
+    public function test_rename_refuses_a_duplicate_slug(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $action = app(PageCreateAction::class);
+        $page1 = $action->handle($biz->id, 'first-page', 'First');
+        $page2 = $action->handle($biz->id, 'second-page', 'Second');
+
+        Livewire::test(Pages::class)
+            ->set('renameSlug.'.$page2->id, 'first-page')
+            ->set('renameTitle.'.$page2->id, 'New Title')
+            ->call('rename', $page2->id)
+            ->assertSee('Another page already uses that address.');
+
+        $this->assertEquals('second-page', $page2->fresh()->slug);
+    }
+
+    public function test_staff_cannot_unpublish_or_rename(): void
+    {
+        $staff = User::factory()->create(['role' => UserRole::Manager]);
+        $biz = $this->provisionTenant(['owner_user_id' => $staff->id]);
+        $this->actingAs($staff);
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'staff-test-2', 'Staff 2');
+
+        Livewire::test(Pages::class)
+            ->call('unpublish', $page->id)
+            ->assertForbidden();
+
+        Livewire::test(Pages::class)
+            ->call('rename', $page->id)
+            ->assertForbidden();
+    }
 }

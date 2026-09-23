@@ -4,6 +4,8 @@ namespace App\Modules\X103\Ui;
 
 use App\Enums\UserRole;
 use App\Modules\X103\Actions\PageCreateAction;
+use App\Modules\X103\Actions\PageRenameAction;
+use App\Modules\X103\Actions\PageUnpublishAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
@@ -27,6 +29,10 @@ class Pages extends Component
     public ?string $error = null;
 
     public ?string $success = null;
+
+    public array $renameSlug = [];
+
+    public array $renameTitle = [];
 
     public function mount(): void
     {
@@ -166,6 +172,41 @@ class Pages extends Component
                 } else {
                     $this->success = 'published, not yet deployed';
                 }
+            }
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
+    public function unpublish(int $pageId, PageUnpublishAction $action): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        try {
+            $action->handle($this->businessId, $pageId);
+            $this->success = 'Page unpublished.';
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
+    public function rename(int $pageId, PageRenameAction $action): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $slug = $this->renameSlug[$pageId] ?? '';
+        $title = $this->renameTitle[$pageId] ?? '';
+
+        try {
+            $page = $action->handle($this->businessId, $pageId, $slug, $title);
+            if ($page->is_published) {
+                $this->success = 'Renamed. Publish again to update the live page.';
+            } else {
+                $this->success = 'Renamed.';
             }
         } catch (Throwable $e) {
             $this->error = $e->getMessage();
