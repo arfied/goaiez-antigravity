@@ -3091,6 +3091,7 @@ final class DefaultsManifest
             ],
             'gbp.zernio.free_tier_credit_cents' => [
                 'seed' => ZernioSpend::FREE_TIER_CREDIT_CENTS,
+                'group' => 'Google Business Profile',
                 'description' => 'Free tier credit in cents for Zernio spend.',
             ],
         ];

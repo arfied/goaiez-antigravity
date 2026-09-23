@@ -1,5 +1,6 @@
 <div>
-    <div class="flex justify-end mb-4">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Signal Volume & Precision</h2>
         <x-ui.button wire:click="toggleSample" size="sm" variant="secondary">
             {{ $isSample ? 'Hide sample' : 'Show sample' }}
         </x-ui.button>
@@ -10,7 +11,7 @@
     @else
         <x-ui.row-list>
             @foreach($stats as $stat)
-                <x-ui.row>
+                                <x-ui.row>
                     <div class="flex flex-col w-full">
                         <div class="flex justify-between items-center w-full">
                             <div>
@@ -37,9 +38,7 @@
                         @endif
                     </div>
                 </x-ui.row>
-                        </div>
-                        @if(isset($refusals[$stat->signal_type]))
-                            <div class="text-red-500 text-sm mt-1 font-bold">{{ $refusals[$stat->signal_type] }}</div>
-                        @endif
-                        @endif
-                    </div>
+            @endforeach
+        </x-ui.row-list>
+    @endif
+</div>
