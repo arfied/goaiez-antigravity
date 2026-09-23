@@ -42,18 +42,27 @@ use App\Services\Export\ExportBuilder;
 use App\Services\Fetch\RobotsPolicy;
 use App\Services\Gbp\ZernioSpend;
 use App\Services\Knowledge\DocumentChunker;
+use App\Services\Legal\SmsTermsAlignment;
 use App\Services\MagicLinkService;
+use App\Services\Mail\GooglePushTokenVerifier;
 use App\Services\Mail\MailDrivers;
 use App\Services\Mail\MailQuota;
 use App\Services\Mail\MailSendRate;
+use App\Services\Mail\SnsMessageVerifier;
+use App\Services\Mail\SnsSubscriptions;
 use App\Services\Ops\OperatorAlerts;
 use App\Services\Ops\PlatformHealthChecks;
 use App\Services\Ops\ScheduledRunMeter;
 use App\Services\Pixel\IngestRejects;
 use App\Services\Places\GooglePlacesClient;
+use App\Services\Sms\InboundMediaFetcher;
+use App\Services\Sms\InfobipClient;
+use App\Services\Sms\InfobipWebhookVerifier;
+use App\Services\Sms\OwnerNotifications;
 use App\Services\Storage\StorageRetention;
 use App\Services\Support\DataRequests;
 use App\Services\Visibility\ReviewLossDetection;
+use App\Services\Voice\InfobipVoiceProvider;
 use App\Services\Warehouse\L1Derivation;
 use App\Services\Warehouse\PixelSightings;
 use App\Services\Warehouse\Replayer;
@@ -3301,6 +3310,72 @@ final class DefaultsManifest
             'seed' => StorageRetention::CHUNK,
             'group' => 'Operations',
             'description' => 'Number of files to process per chunk during retention sweeps (A4 slice 8).',
+        ];
+
+        $settings['mail.sns.pending_ttl_seconds'] = [
+            'seed' => SnsSubscriptions::PENDING_TTL_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'Time to hold an SNS subscription pending confirmation.',
+        ];
+        $settings['mail.sns.confirm_timeout_seconds'] = [
+            'seed' => SnsSubscriptions::CONFIRM_TIMEOUT_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'Timeout for SNS subscription confirmation request.',
+        ];
+        $settings['mail.quota.alert_quiet_seconds'] = [
+            'seed' => MailQuota::ALERT_QUIET_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'How long the mail quota alert stays quiet after firing.',
+        ];
+        $settings['mail.google_push.certificate_ttl_seconds'] = [
+            'seed' => GooglePushTokenVerifier::CERTIFICATE_TTL_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'Google push token certificate TTL.',
+        ];
+        $settings['mail.sns.certificate_ttl_seconds'] = [
+            'seed' => SnsMessageVerifier::CERTIFICATE_TTL_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'SNS message certificate TTL.',
+        ];
+        $settings['sms.webhook.max_signature_age_seconds'] = [
+            'seed' => InfobipWebhookVerifier::MAX_SIGNATURE_AGE_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'Maximum allowed signature age for Infobip webhooks.',
+        ];
+        $settings['sms.inbound_media.timeout_seconds'] = [
+            'seed' => InboundMediaFetcher::TIMEOUT_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'Timeout for fetching inbound SMS media.',
+        ];
+        $settings['sms.owner_notifications.correlation_window_hours'] = [
+            'seed' => OwnerNotifications::CORRELATION_WINDOW_HOURS,
+            'group' => 'Notifications',
+            'description' => 'Correlation window hours for owner notifications.',
+        ];
+        $settings['sms.owner_notifications.ledger_limit'] = [
+            'seed' => OwnerNotifications::LEDGER_LIMIT,
+            'group' => 'Notifications',
+            'description' => 'Ledger limit for owner notifications.',
+        ];
+        $settings['sms.infobip.log_lookup_chunk'] = [
+            'seed' => InfobipClient::LOG_LOOKUP_CHUNK,
+            'group' => 'Messaging',
+            'description' => 'Chunk size for Infobip log lookups.',
+        ];
+        $settings['sms.infobip.log_lookup_limit'] = [
+            'seed' => InfobipClient::LOG_LOOKUP_LIMIT,
+            'group' => 'Messaging',
+            'description' => 'Limit for Infobip log lookups.',
+        ];
+        $settings['voice.media.download_timeout_seconds'] = [
+            'seed' => InfobipVoiceProvider::DOWNLOAD_TIMEOUT_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'Timeout for downloading voice media.',
+        ];
+        $settings['legal.sms_terms.max_name_length'] = [
+            'seed' => SmsTermsAlignment::MAX_NAME_LENGTH,
+            'group' => 'Legal',
+            'description' => 'Maximum length for SMS terms alignment name.',
         ];
 
         return array_merge($settings, self::mailSendingCeilings());

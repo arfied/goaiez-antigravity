@@ -6,6 +6,7 @@ namespace App\Services\Voice;
 
 use App\Contracts\VoiceProvider;
 use App\Enums\OutreachChannel;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Identifier;
 use App\Support\PlatformCredentials;
 use App\Support\VendorLog;
@@ -134,7 +135,12 @@ final class InfobipVoiceProvider implements VoiceProvider
      * Longer than the JSON reads because this one covers the audio download too,
      * and a voicemail is a file rather than an object.
      */
-    private const int DOWNLOAD_TIMEOUT_SECONDS = 30;
+    public const int DOWNLOAD_TIMEOUT_SECONDS = 30;
+
+    public function downloadTimeoutSeconds(): int
+    {
+        return app(DefaultsRegistry::class)->int('voice.media.download_timeout_seconds');
+    }
 
     /**
      * The ceiling on one recording.
@@ -275,7 +281,7 @@ final class InfobipVoiceProvider implements VoiceProvider
 
         $url = $base.'/calls/1/recordings/files/'.rawurlencode($providerFileId);
 
-        $request = $this->request(self::DOWNLOAD_TIMEOUT_SECONDS);
+        $request = $this->request($this->downloadTimeoutSeconds());
 
         if ($request === null) {
             return null;

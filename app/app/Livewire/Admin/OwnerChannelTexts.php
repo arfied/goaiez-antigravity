@@ -208,8 +208,8 @@ final class OwnerChannelTexts extends Component
                 'business' => null,
                 'timeline' => [],
                 'truncated' => false,
-                'windowHours' => OwnerNotifications::CORRELATION_WINDOW_HOURS,
-                'limit' => OwnerNotifications::LEDGER_LIMIT,
+                'windowHours' => $notifications->correlationWindowHours(),
+                'limit' => $notifications->ledgerLimit(),
             ]);
         }
 
@@ -224,10 +224,10 @@ final class OwnerChannelTexts extends Component
             // an operator has not been told is capped is a list they will read
             // as complete, and this one is the record of what an account holder
             // was told.
-            'truncated' => count($ledger['sends']) === OwnerNotifications::LEDGER_LIMIT
-                || count($ledger['replies']) === OwnerNotifications::LEDGER_LIMIT,
-            'windowHours' => OwnerNotifications::CORRELATION_WINDOW_HOURS,
-            'limit' => OwnerNotifications::LEDGER_LIMIT,
+            'truncated' => count($ledger['sends']) === $notifications->ledgerLimit()
+                || count($ledger['replies']) === $notifications->ledgerLimit(),
+            'windowHours' => $notifications->correlationWindowHours(),
+            'limit' => $notifications->ledgerLimit(),
         ]);
     }
 
