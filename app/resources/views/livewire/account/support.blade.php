@@ -29,7 +29,7 @@
                 <input
                     type="text"
                     wire:model="subject"
-                    maxlength="{{ \App\Services\Support\SupportDesk::SUBJECT_LIMIT }}"
+                    maxlength="{{ $this->subjectLimit() }}"
                     class="rounded-[--radius-control] border {{ $errors->has('subject') ? 'border-alert' : 'border-rule' }} bg-card px-3 py-2 text-base text-ink"
                     @error('subject') aria-invalid="true" @enderror
                 />

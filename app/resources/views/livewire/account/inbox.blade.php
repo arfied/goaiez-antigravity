@@ -211,7 +211,7 @@
                     <textarea
                         wire:model="reply"
                         rows="3"
-                        maxlength="{{ InboxReplies::BODY_LIMIT }}"
+                        maxlength="{{ $this->bodyLimit() }}"
                         class="rounded-[--radius-control] border border-rule bg-card px-3 py-2 text-base text-ink"
                     ></textarea>
                 </label>

@@ -67,8 +67,22 @@ use App\Services\Support\DataRequests;
 use App\Services\Config\CredentialStore;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Conversations\ConversationThreads;
+use App\Services\Conversations\InboxReplies;
+use App\Services\Crm\CrmNotes;
 use App\Services\Crm\CustomerDirectory;
+use App\Services\Crm\CustomerEditor;
+use App\Services\Crm\MergeDuplicateDetector;
+use App\Services\Feedback\FeedbackPages;
+use App\Services\Messaging\Composer\NameNormaliser;
 use App\Services\Messaging\MessageLog;
+use App\Services\Messaging\PlatformComplaintRate;
+use App\Services\Messaging\RecoveryCheckInSender;
+use App\Services\Messaging\SendingHealth;
+use App\Services\Reviews\ReplyGenerator;
+use App\Services\Reviews\ResponseTemplates;
+use App\Services\Reviews\ReviewHubPages;
+use App\Services\Reviews\ReviewReplies;
+use App\Services\Support\SupportDesk;
 use App\Services\Visibility\ReviewLossDetection;
 use App\Services\Warehouse\L1Derivation;
 use App\Services\Warehouse\PixelSightings;
@@ -128,7 +142,7 @@ final class DefaultsManifest
     /**
      * The only group names an entry may use.
      */
-    public const array GROUPS = ['AI', 'Affiliate', 'Agency', 'Assistant', 'Billing', 'Brand', 'Content', 'Credits', 'Free instant audit', 'Google Business Profile', 'Legal', 'Marketing', 'Messaging', 'Notifications', 'Operations', 'Pixel', 'Places', 'Reviews', 'Sites', 'Support', 'Trust'];
+    public const array GROUPS = ['AI', 'Affiliate', 'Agency', 'Assistant', 'Billing', 'Brand', 'Content', 'Credits', 'Free instant audit', 'Google Business Profile', 'Legal', 'Marketing', 'Messaging', 'Notifications', 'Operations', 'Pixel', 'Places', 'Reviews', 'Sites', 'Support', 'Trust', 'CRM'];
 
     /**
      * Platform-wide seeds → `platform_settings`.
@@ -3550,6 +3564,113 @@ final class DefaultsManifest
                 'group' => 'Content',
                 'description' => 'System prompt for generating the FAQ block.',
             ],
+
+
+            'reviews.reply.max_recovery_length' => [
+                'seed' => ReplyGenerator::MAX_RECOVERY_LENGTH,
+                'group' => 'Reviews',
+                'description' => 'Maximum length of a recovery reply.',
+            ],
+            'reviews.reply.max_label_length' => [
+                'seed' => ReplyGenerator::MAX_LABEL_LENGTH,
+                'group' => 'Reviews',
+                'description' => 'Maximum length of a reply label.',
+            ],
+            'reviews.templates.max_name_length' => [
+                'seed' => ResponseTemplates::MAX_NAME_LENGTH,
+                'group' => 'Reviews',
+                'description' => 'Maximum length of a template name.',
+            ],
+            'reviews.templates.max_body_length' => [
+                'seed' => ResponseTemplates::MAX_BODY_LENGTH,
+                'group' => 'Reviews',
+                'description' => 'Maximum length of a template body.',
+            ],
+            'reviews.publish.recheck_settle_minutes' => [
+                'seed' => ReviewReplies::PUBLISH_RECHECK_SETTLE_MINUTES,
+                'group' => 'Reviews',
+                'description' => 'Minutes to wait before rechecking a published reply.',
+            ],
+            'reviews.publish.retry_floor_minutes' => [
+                'seed' => ReviewReplies::PUBLISH_RETRY_FLOOR_MINUTES,
+                'group' => 'Reviews',
+                'description' => 'Minimum minutes before retrying a reply publish.',
+            ],
+            'reviews.hub.max_reviews' => [
+                'seed' => ReviewHubPages::MAX_REVIEWS,
+                'group' => 'Reviews',
+                'description' => 'Maximum number of reviews to show on the hub.',
+            ],
+            'crm.notes.max_length' => [
+                'seed' => CrmNotes::MAX_LENGTH,
+                'group' => 'CRM',
+                'description' => 'Maximum length of customer notes.',
+            ],
+            'crm.customer.max_name_length' => [
+                'seed' => CustomerEditor::MAX_NAME_LENGTH,
+                'group' => 'CRM',
+                'description' => 'Maximum length of a customer name.',
+            ],
+            'crm.customer.max_tags' => [
+                'seed' => CustomerEditor::MAX_TAGS,
+                'group' => 'CRM',
+                'description' => 'Maximum number of tags a customer can have.',
+            ],
+            'crm.customer.max_tag_length' => [
+                'seed' => CustomerEditor::MAX_TAG_LENGTH,
+                'group' => 'CRM',
+                'description' => 'Maximum length of a single customer tag.',
+            ],
+            'crm.merge.compared_digits' => [
+                'seed' => MergeDuplicateDetector::COMPARED_DIGITS,
+                'group' => 'CRM',
+                'description' => 'Number of digits compared when detecting duplicate phones.',
+            ],
+            'conversations.reply.body_limit' => [
+                'seed' => InboxReplies::BODY_LIMIT,
+                'group' => 'Messaging',
+                'description' => 'Maximum length of an inbox reply body.',
+            ],
+            'support.ticket.subject_limit' => [
+                'seed' => SupportDesk::SUBJECT_LIMIT,
+                'group' => 'Support',
+                'description' => 'Maximum length of a support ticket subject.',
+            ],
+            'support.ticket.body_limit' => [
+                'seed' => SupportDesk::BODY_LIMIT,
+                'group' => 'Support',
+                'description' => 'Maximum length of a support ticket body.',
+            ],
+            'feedback.pages.max_name_length' => [
+                'seed' => FeedbackPages::MAX_NAME_LENGTH,
+                'group' => 'Reviews',
+                'description' => 'Maximum length of a feedback page name.',
+            ],
+            'messaging.health.window_hours' => [
+                'seed' => SendingHealth::WINDOW_HOURS,
+                'group' => 'Messaging',
+                'description' => 'Window hours for calculating sending health.',
+            ],
+            'messaging.health.retention_days' => [
+                'seed' => SendingHealth::RETENTION_DAYS,
+                'group' => 'Messaging',
+                'description' => 'Days to retain sending health records.',
+            ],
+            'messaging.recovery.link_ttl_days' => [
+                'seed' => RecoveryCheckInSender::LINK_TTL_DAYS,
+                'group' => 'Messaging',
+                'description' => 'Days before a recovery link expires.',
+            ],
+            'messaging.complaint_rate.last_sample_ttl_hours' => [
+                'seed' => PlatformComplaintRate::LAST_SAMPLE_TTL_HOURS,
+                'group' => 'Messaging',
+                'description' => 'Hours before the last complaint sample expires.',
+            ],
+            'messaging.composer.name_max_length' => [
+                'seed' => NameNormaliser::MAX_LENGTH,
+                'group' => 'Messaging',
+                'description' => 'Maximum length of a name in the composer.',
+            ],        
         ];
 
         return array_merge($settings, self::mailSendingCeilings());

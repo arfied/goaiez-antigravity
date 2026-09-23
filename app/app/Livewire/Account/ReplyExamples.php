@@ -78,8 +78,8 @@ final class ReplyExamples extends Component
         // how many is checked here too, because an owner who has three deserves a
         // sentence rather than a 500 from the backstop.
         $this->validate([
-            'name' => ['required', 'string', 'max:'.ResponseTemplates::MAX_NAME_LENGTH],
-            'body' => ['required', 'string', 'max:'.ResponseTemplates::MAX_BODY_LENGTH],
+            'name' => ['required', 'string', 'max:'.app(ResponseTemplates::class)->maxNameLength()],
+            'body' => ['required', 'string', 'max:'.app(ResponseTemplates::class)->maxBodyLength()],
         ], [
             'name.required' => 'Give this example a short name so you can find it again.',
             'name.max' => 'That name is too long — keep it to a few words.',
@@ -164,8 +164,8 @@ final class ReplyExamples extends Component
             // submit, which reads as our page losing what somebody typed. It is
             // a hint either way — the server rule and the service's ceiling are
             // what enforce it.
-            'nameLimit' => ResponseTemplates::MAX_NAME_LENGTH,
-            'bodyLimit' => ResponseTemplates::MAX_BODY_LENGTH,
+            'nameLimit' => app(ResponseTemplates::class)->maxNameLength(),
+            'bodyLimit' => app(ResponseTemplates::class)->maxBodyLength(),
         ]);
     }
 }

@@ -44,6 +44,16 @@ final class Support extends Component
 
     public string $reply = '';
 
+    public function subjectLimit(): int
+    {
+        return app(SupportDesk::class)->subjectLimit();
+    }
+
+    public function bodyLimit(): int
+    {
+        return app(SupportDesk::class)->bodyLimit();
+    }
+
     public function open(int $ticketId): void
     {
         $this->openTicketId = $ticketId;
@@ -62,8 +72,8 @@ final class Support extends Component
         $this->requireTenant();
 
         $this->validate([
-            'subject' => ['required', 'string', 'min:3', 'max:'.SupportDesk::SUBJECT_LIMIT],
-            'body' => ['required', 'string', 'min:3', 'max:'.SupportDesk::BODY_LIMIT],
+            'subject' => ['required', 'string', 'min:3', 'max:'.$this->subjectLimit()],
+            'body' => ['required', 'string', 'min:3', 'max:'.$this->bodyLimit()],
         ]);
 
         $ticket = $desk->raise($this->user(), $this->subject, $this->body);
@@ -86,7 +96,7 @@ final class Support extends Component
         }
 
         $this->validate([
-            'reply' => ['required', 'string', 'min:2', 'max:'.SupportDesk::BODY_LIMIT],
+            'reply' => ['required', 'string', 'min:2', 'max:'.$this->bodyLimit()],
         ]);
 
         try {
