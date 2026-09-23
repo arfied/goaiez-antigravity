@@ -7,6 +7,7 @@ namespace App\Modules\X157\Actions;
 use App\Models\Business;
 use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X103\Actions\PageVersionAction;
+use App\Modules\X103\Domain\SiteBlockRenderer;
 use App\Modules\X108\Actions\AppointmentListAction;
 use App\Modules\X155\Actions\FormReadAction;
 use App\Modules\X157\Events\DeployCompleted;
@@ -295,6 +296,13 @@ final class EdgeDeployAction
                     if (Storage::disk('local')->put("sites/{$deployHash}.llms.txt", $llmsTxtContent) === false) {
                         Log::warning("the llms.txt artifact could not be written: sites/{$deployHash}.llms.txt");
                     }
+
+                    $context = [
+                        'businessName' => $businessName,
+                        'deployHash' => $deployHash,
+                        'tenant_storage_url_prefix' => Storage::disk('local')->url("tenant/{$businessId}"),
+                    ];
+                    $html .= app(SiteBlockRenderer::class)->render($contentBlocks, $context);
                 }
             }
 
@@ -340,26 +348,6 @@ final class EdgeDeployAction
                 $html .= implode(', ', $parts);
                 $html .= "</div>\n";
                 $html .= "</div>\n";
-            }
-
-            if (! empty($videos)) {
-                $html .= "<div id=\"videos-x176\">\n";
-                foreach ($videos as $video) {
-                    $html .= '  <div class="video-item" data-name="'.e($video['name']).'" data-url="'.e($video['contentUrl']).'">'.e($video['name'])."</div>\n";
-                }
-                $html .= "</div>\n";
-            }
-
-            if (! empty($faqs)) {
-                try {
-                    $html .= "<div id=\"faq-x176\">\n";
-                    foreach ($faqs as $faq) {
-                        $html .= '  <div class="faq-item" data-question="'.e((string) ($faq['question'] ?? '')).'">'.e((string) ($faq['question'] ?? '')).' - '.e((string) ($faq['answer'] ?? ''))."</div>\n";
-                    }
-                    $html .= "</div>\n";
-                } catch (\Throwable $e) {
-                    Log::warning('the faq block could not be rendered: '.$e->getMessage());
-                }
             }
 
             $internalLinksHtml = app(InternalLinkRenderAction::class)->handle($businessId);
