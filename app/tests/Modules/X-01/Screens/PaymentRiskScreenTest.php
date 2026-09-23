@@ -88,8 +88,18 @@ class PaymentRiskScreenTest extends TestCase
         Tenancy::setUser($ownerB->id);
         Tenancy::set((int) $bizB->id);
 
-        $this->expectException(ModelNotFoundException::class);
-        Livewire::test(PaymentRisk::class)
-            ->call('recordReason', $invoice1->id, 'promised');
+        try {
+            Livewire::test(PaymentRisk::class)
+                ->call('recordReason', $invoice1->id, 'promised');
+            $this->fail('Expected 404 ModelNotFoundException when acting as another tenant.');
+        } catch (ModelNotFoundException $e) {
+            // It correctly threw a 404.
+        }
+
+        $this->assertDatabaseMissing('ar_dunning_actions', [
+            'invoice_id' => $invoice1->id,
+            'reason' => 'promised',
+            'business_id' => $bizB->id,
+        ]);
     }
 }
