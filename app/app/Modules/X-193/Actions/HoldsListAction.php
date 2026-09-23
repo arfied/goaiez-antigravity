@@ -43,7 +43,7 @@ final class HoldsListAction
             $holds[] = [
                 'what' => $run->automation_key,
                 'why' => $output['reason'] ?? 'unknown',
-                'since' => \Carbon\Carbon::parse($run->started_at)->toDateTimeString(),
+                'since' => Carbon::parse($run->started_at)->toDateTimeString(),
                 'until' => $output['window'] ?? null,
                 'source' => 'autopilot',
             ];
