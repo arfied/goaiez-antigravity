@@ -113,10 +113,11 @@ class X220Test extends TestCase
         ]);
 
         $res = $this->evaluator->handle($biz->id, $p->id);
-        $this->assertTrue($res['passed']);
-        $this->assertGreaterThanOrEqual(80, $res['score']);
+        $this->assertEquals('not_run', $res['status']);
+        $this->assertEquals('no_evaluator', $res['reason']);
+        $this->assertEquals(1, $res['test_cases_count']);
 
-        Event::assertDispatched(EvalCompleted::class);
+        Event::assertNotDispatched(EvalCompleted::class);
     }
 
     /**

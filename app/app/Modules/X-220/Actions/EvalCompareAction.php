@@ -13,11 +13,14 @@ final class EvalCompareAction
         $resA = $this->runner->handle($businessId, $promptIdA);
         $resB = $this->runner->handle($businessId, $promptIdB);
 
+        $scoreA = $resA['score'] ?? 0;
+        $scoreB = $resB['score'] ?? 0;
+
         return [
             'version_a' => $resA,
             'version_b' => $resB,
-            'delta_score' => $resB['score'] - $resA['score'],
-            'regression' => $resB['score'] < $resA['score'],
+            'delta_score' => $scoreB - $scoreA,
+            'regression' => $scoreB < $scoreA,
         ];
     }
 }

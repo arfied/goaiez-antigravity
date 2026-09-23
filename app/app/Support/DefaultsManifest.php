@@ -2830,6 +2830,16 @@ final class DefaultsManifest
                 'group' => 'Signals',
                 'description' => 'The default decay rate percentage for signal decay models (C1).',
             ],
+            'ai.eval.pass_threshold_pct' => [
+                'seed' => 90,
+                'group' => 'Ai',
+                'description' => 'Threshold percentage for an AI evaluation to pass (C2b).',
+            ],
+            'ai.eval.max_cases_per_set' => [
+                'seed' => 50,
+                'group' => 'Ai',
+                'description' => 'Maximum number of cases kept in a golden set before the oldest is dropped (C2b).',
+            ],
         ];
 
         return array_merge($settings, self::mailSendingCeilings());
