@@ -1475,6 +1475,7 @@ class X157Test extends TestCase
             'business_id' => $biz->id,
             'title' => 'Home',
             'slug' => 'home',
+            'is_published' => true,
         ]);
 
         $commitId = 'commit_'.Str::random(16);
@@ -2408,5 +2409,35 @@ class X157Test extends TestCase
         $html2 = Storage::disk('local')->get("sites/{$res2['deploy_hash']}.html");
 
         $this->assertStringContainsString('<title>Fox &amp; Page</title>', $html2);
+    }
+
+    public function test_a_page_with_the_seo_block_and_an_owner_title_deploys_exactly_one_title(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Fox < Title',
+            'seo_title' => 'Fox & Sons Drains',
+            'seo_description' => 'Fast & reliable "drain" cleaning.',
+            'is_published' => true,
+        ]);
+
+        $action = app(EdgeDeployAction::class);
+        $res = $action->handle($biz->id, $zone->id, 120, 1500, $page->id, 'commit_123', 'Fox Business');
+
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
+        $this->assertSame(
+            1,
+            substr_count($html, '<title'),
+            'exactly one title tag expected'
+        );
+        $this->assertStringContainsString('<title id="seo-meta-x176">Fox &amp; Sons Drains</title>', $html);
+        $this->assertSame(1, substr_count($html, 'name="description"'));
     }
 }

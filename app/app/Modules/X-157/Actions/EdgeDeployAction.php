@@ -143,14 +143,59 @@ final class EdgeDeployAction
             $html = '<html><head>';
             $html .= "<meta name=\"ssl\" content=\"valid\">\n";
 
+            $x176Usable = false;
+            $breadcrumbs = [];
+            if ($pageId !== null && $businessName !== null && $commitId !== null) {
+                $x176Usable = true;
+                $page = app(PageReadAction::class)->findForBusiness($businessId, $pageId);
+                if ($page && ! empty($page->slug) && trim((string) $page->title) !== '') {
+                    $parts = explode('/', trim($page->slug, '/'));
+                    $paths = [];
+                    $current = '';
+                    foreach ($parts as $part) {
+                        $current = $current ? $current.'/'.$part : $part;
+                        $paths[] = $current;
+                    }
+                    $pages = app(PageReadAction::class)->publishedForSlugs($businessId, $paths);
+                    $hierarchyPages = [];
+                    foreach ($pages as $p) {
+                        $norm = trim((string) $p->slug, '/');
+                        if (isset($hierarchyPages[$norm])) {
+                            $x176Usable = false;
+                            break;
+                        }
+                        $hierarchyPages[$norm] = $p;
+                    }
+                    if ($x176Usable) {
+                        foreach ($paths as $path) {
+                            if (! isset($hierarchyPages[$path]) || trim((string) $hierarchyPages[$path]->title) === '') {
+                                $x176Usable = false;
+                                break;
+                            }
+                            if (count($parts) > 1) {
+                                $breadcrumbs[] = [
+                                    'name' => $hierarchyPages[$path]->title,
+                                    'slug' => $path,
+                                ];
+                            }
+                        }
+                    }
+                    if (! $x176Usable) {
+                        $breadcrumbs = [];
+                    }
+                }
+            }
+
             $headPage = null;
             if ($pageId !== null) {
                 $headPage = app(PageReadAction::class)->findForBusiness($businessId, $pageId);
             }
-            $seoTitle = $headPage ? ($headPage->seo_title ?: $headPage->title ?: $businessName) : $businessName;
-            $html .= '<title>'.e((string) $seoTitle)."</title>\n";
-            if ($headPage && ! empty($headPage->seo_description)) {
-                $html .= '<meta name="description" content="'.e($headPage->seo_description)."\">\n";
+            if (! $x176Usable) {
+                $seoTitle = $headPage ? ($headPage->seo_title ?: $headPage->title ?: $businessName) : $businessName;
+                $html .= '<title>'.e((string) $seoTitle)."</title>\n";
+                if ($headPage && ! empty($headPage->seo_description)) {
+                    $html .= '<meta name="description" content="'.e($headPage->seo_description)."\">\n";
+                }
             }
 
             $html .= "</head><body>\n";
@@ -213,50 +258,7 @@ final class EdgeDeployAction
                 }
             }
 
-            $breadcrumbs = [];
-            if ($pageId !== null && $businessName !== null && $commitId !== null) {
-                $page = app(PageReadAction::class)->findForBusiness($businessId, $pageId);
-                if ($page && ! empty($page->slug) && trim((string) $page->title) !== '') {
-                    $parts = explode('/', trim($page->slug, '/'));
-                    if (count($parts) > 1) {
-                        $paths = [];
-                        $current = '';
-                        foreach ($parts as $part) {
-                            $current = $current ? $current.'/'.$part : $part;
-                            $paths[] = $current;
-                        }
-
-                        $pages = app(PageReadAction::class)->publishedForSlugs($businessId, $paths);
-
-                        $hierarchyPages = [];
-                        $usable = true;
-                        foreach ($pages as $p) {
-                            $norm = trim((string) $p->slug, '/');
-                            if (isset($hierarchyPages[$norm])) {
-                                $usable = false;
-                                break;
-                            }
-                            $hierarchyPages[$norm] = $p;
-                        }
-
-                        if ($usable) {
-                            foreach ($paths as $path) {
-                                if (! isset($hierarchyPages[$path]) || trim((string) $hierarchyPages[$path]->title) === '') {
-                                    $usable = false;
-                                    break;
-                                }
-                                $breadcrumbs[] = [
-                                    'name' => $hierarchyPages[$path]->title,
-                                    'slug' => $path,
-                                ];
-                            }
-                        }
-                        if (! $usable) {
-                            $breadcrumbs = [];
-                        }
-                    }
-                }
-
+            if ($x176Usable) {
                 $seoResult = app(SeoRenderAction::class)->handle(
                     $businessId,
                     $pageId,
@@ -276,7 +278,9 @@ final class EdgeDeployAction
                     "<link rel=\"canonical\" href=\"{$escapedCanonical}\">\n</head>",
                     $html
                 );
+            }
 
+            if ($pageId !== null && $businessName !== null && $commitId !== null) {
                 $schemaResult = app(SchemaRenderAction::class)->handle(
                     $businessId,
                     $pageId,
