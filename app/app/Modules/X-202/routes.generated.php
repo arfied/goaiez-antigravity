@@ -6,7 +6,6 @@ use App\Modules\X202\Ui\AuditExport;
 use App\Modules\X202\Ui\Item;
 use App\Modules\X202\Ui\Mobile;
 use App\Modules\X202\Ui\Queue;
-use App\Modules\X202\Ui\Slack;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'auth', 'tenant.role'])->prefix('app/x-202')->group(function () {
