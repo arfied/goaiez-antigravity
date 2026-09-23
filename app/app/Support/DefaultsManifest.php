@@ -7,6 +7,7 @@ namespace App\Support;
 use App\Enums\AiTask;
 use App\Enums\Plan;
 use App\Enums\StoredObjectKind;
+use App\Services\Activity\ActivityFeed;
 use App\Services\Actuation\SiteChanges;
 use App\Services\Actuation\SiteMeasurements;
 use App\Services\Actuation\SpeedDecider;
@@ -16,8 +17,15 @@ use App\Services\Actuation\T3FaqBlock as FaqBlock;
 use App\Services\Actuation\T3InternalLink as InternalLink;
 use App\Services\Actuation\T3MetaUpsert as MetaUpsert;
 use App\Services\Actuation\WordPress\WordPressRestClient;
+use App\Services\Agent\AgentComposer;
+use App\Services\Agent\AgentNudges;
+use App\Services\Agent\ThreadCloseSummaries;
+use App\Services\Assistant\PriceSheet;
+use App\Services\Audit\Checks\ReviewStatsCheck;
+use App\Services\Audit\PublicAuditStarter;
 use App\Services\Billing\PurchaseReconciliation;
 use App\Services\Gbp\ZernioSpend;
+use App\Services\MagicLinkService;
 use App\Services\Mail\MailDrivers;
 use App\Services\Mail\MailQuota;
 use App\Services\Mail\MailSendRate;
@@ -3041,6 +3049,46 @@ final class DefaultsManifest
                 'seed' => ZernioSpend::FREE_TIER_CREDIT_CENTS,
                 'group' => 'Google Business Profile',
                 'description' => 'Free tier credit in cents for Zernio spend.',
+            ],
+            'auth.magic_link.lifetime_minutes' => [
+                'seed' => MagicLinkService::LIFETIME_MINUTES,
+                'group' => 'Operations',
+                'description' => 'Lifetime of a magic link in minutes.',
+            ],
+            'activity.feed.per_page' => [
+                'seed' => ActivityFeed::PER_PAGE,
+                'group' => 'Operations',
+                'description' => 'Items per page in the activity feed.',
+            ],
+            'agent.compose.snippet_chars' => [
+                'seed' => AgentComposer::SNIPPET_CHARACTERS,
+                'group' => 'Messaging',
+                'description' => 'Length of snippets in agent compose.',
+            ],
+            'agent.summary.messages_read' => [
+                'seed' => ThreadCloseSummaries::MESSAGES_READ,
+                'group' => 'Messaging',
+                'description' => 'Number of messages read for thread close summaries.',
+            ],
+            'audit.public.reuse_window_seconds' => [
+                'seed' => PublicAuditStarter::REUSE_WINDOW_SECONDS,
+                'group' => 'Reviews',
+                'description' => 'Window for public audit reuse in seconds.',
+            ],
+            'audit.reviews.thin_count' => [
+                'seed' => ReviewStatsCheck::THIN_REVIEW_COUNT,
+                'group' => 'Reviews',
+                'description' => 'Threshold for thin review count.',
+            ],
+            'pricebook.sheet.max_kilobytes' => [
+                'seed' => PriceSheet::MAX_KILOBYTES,
+                'group' => 'Content',
+                'description' => 'Max kilobytes for price sheet uploads.',
+            ],
+            'agent.nudges.window_hours' => [
+                'seed' => AgentNudges::WINDOW_HOURS,
+                'group' => 'Assistant',
+                'description' => 'Window in hours for agent nudges.',
             ],
         ];
 

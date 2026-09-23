@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Assistant;
 
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Knowledge\DocumentText;
 use InvalidArgumentException;
 
@@ -60,6 +61,11 @@ final readonly class PriceSheet
      */
     public const int MAX_KILOBYTES = 256;
 
+    public function maxKilobytes(): int
+    {
+        return $this->defaults->int('pricebook.sheet.max_kilobytes');
+    }
+
     /**
      * The most rows one upload may propose.
      *
@@ -78,7 +84,10 @@ final readonly class PriceSheet
      */
     private const int MAX_LABEL_LENGTH = 120;
 
-    public function __construct(private DocumentText $text) {}
+    public function __construct(
+        private DocumentText $text,
+        private readonly DefaultsRegistry $defaults,
+    ) {}
 
     /**
      * Read a file's worth of prices.

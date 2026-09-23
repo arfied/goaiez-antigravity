@@ -175,7 +175,7 @@ final class TableHorizons
             // the table is the day, and the day is a literal in that method.
             'magic_link_tokens' => [
                 'command' => 'auth:prune-magic-links',
-                'keeps' => 'a day past expiry ('.MagicLinkService::LIFETIME_MINUTES.' minutes)',
+                'keeps' => 'a day past expiry ('.app(MagicLinkService::class)->lifetimeMinutes().' minutes)',
                 'scope' => RetentionScope::Rows,
                 'key' => null,
             ],
