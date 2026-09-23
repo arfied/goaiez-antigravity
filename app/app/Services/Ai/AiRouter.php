@@ -145,23 +145,19 @@ final class AiRouter
             return AiResponse::failed($model, $refusal);
         }
 
-        $promptId = null;
-        $promptVersion = null;
+        $key = $request->promptKey ?? $request->task->value;
+        $effectiveText = ($request->system ?? '').$request->prompt;
 
-        if ($request->promptKey !== null) {
-            $effectiveText = ($request->system ?? '').$request->prompt;
+        // @phpstan-ignore class.notFound
+        $registered = app(PromptRegisterAction::class)->handle(
+            Tenancy::idOrFail(),
+            $key,
+            debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['class'] ?? 'unknown',
+            $effectiveText
+        );
 
-            // @phpstan-ignore class.notFound
-            $registered = app(PromptRegisterAction::class)->handle(
-                Tenancy::idOrFail(),
-                $request->promptKey,
-                debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['class'] ?? 'unknown',
-                $effectiveText
-            );
-
-            $promptId = $registered->id;
-            $promptVersion = $registered->version;
-        }
+        $promptId = $registered->id;
+        $promptVersion = $registered->version;
 
         $response = $this->client($model)->complete($request);
 
@@ -236,9 +232,17 @@ final class AiRouter
             return EmbeddingResponse::failed($model, $refusal);
         }
 
+        // @phpstan-ignore class.notFound
+        $registered = app(PromptRegisterAction::class)->handle(
+            Tenancy::idOrFail(),
+            $request->task->value,
+            debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['class'] ?? 'unknown',
+            ''
+        );
+
         $response = $this->embeddingClient($model)->embed($request);
 
-        $this->spend->recordEmbedding($request->task, $response);
+        $this->spend->recordEmbedding($request->task, $response, $registered->id, $registered->version);
 
         $this->watch($model, $response->failureReason);
 

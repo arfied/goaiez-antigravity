@@ -203,9 +203,10 @@ class X220Test extends TestCase
             task: AiTask::Conversation,
             prompt: 'Hello 2',
         ));
-        $callNull = AiCall::where('business_id', $biz->id)->latest('id')->first();
-        $this->assertNull($callNull->prompt_id);
-        $this->assertNull($callNull->prompt_version);
+        $callNoKey = AiCall::where('business_id', $biz->id)->latest('id')->first();
+        $this->assertNotNull($callNoKey->prompt_id);
+        $this->assertEquals(1, $callNoKey->prompt_version);
+        $this->assertEquals(AiTask::Conversation->value, AiPrompt::find($callNoKey->prompt_id)->prompt_key);
     }
 
     public function test_c2a_prompt_history_screen_and_freeze(): void
