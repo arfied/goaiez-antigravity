@@ -46,6 +46,11 @@ use App\Services\Ops\PlatformHealthChecks;
 use App\Services\Ops\ScheduledRunMeter;
 use App\Services\Pixel\IngestRejects;
 use App\Services\Support\DataRequests;
+use App\Services\Config\CredentialStore;
+use App\Services\Config\DefaultsRegistry;
+use App\Services\Conversations\ConversationThreads;
+use App\Services\Crm\CustomerDirectory;
+use App\Services\Messaging\MessageLog;
 use App\Services\Visibility\ReviewLossDetection;
 use App\Services\Warehouse\L1Derivation;
 use App\Services\Warehouse\PixelSightings;
@@ -219,6 +224,31 @@ final class DefaultsManifest
                 'seed' => EdgeDeployAction::PRICEBOOK_ITEMS_MAX,
                 'group' => 'Content',
                 'description' => 'Deploy pricebook items max.',
+            ],
+            'messaging.log.per_page' => [
+                'seed' => MessageLog::PER_PAGE,
+                'group' => 'Messaging',
+                'description' => 'Number of messages shown per page in the tenant message log.',
+            ],
+            'crm.directory.per_page' => [
+                'seed' => CustomerDirectory::PER_PAGE,
+                'group' => 'Marketing',
+                'description' => 'Number of customers shown per page in the directory.',
+            ],
+            'conversations.list_limit' => [
+                'seed' => ConversationThreads::LIST_LIMIT,
+                'group' => 'Messaging',
+                'description' => 'Maximum number of conversation threads shown in the list.',
+            ],
+            'settings.history_limit' => [
+                'seed' => DefaultsRegistry::HISTORY_LIMIT,
+                'group' => 'Operations',
+                'description' => 'Maximum number of change history entries shown per platform setting.',
+            ],
+            'credentials.history_limit' => [
+                'seed' => CredentialStore::HISTORY_LIMIT,
+                'group' => 'Operations',
+                'description' => 'Maximum number of change history entries shown per credential.',
             ],
 
             /*

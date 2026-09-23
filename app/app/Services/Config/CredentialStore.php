@@ -613,6 +613,8 @@ final class CredentialStore
         return $board;
     }
 
+    public const int HISTORY_LIMIT = 20;
+
     /**
      * The change history for one credential, newest first.
      *
@@ -622,8 +624,10 @@ final class CredentialStore
      *
      * @return list<CredentialChange>
      */
-    public function historyFor(string $key, int $limit = 20): array
+    public function historyFor(string $key, ?int $limit = null): array
     {
+        $limit ??= app(DefaultsRegistry::class)->int('credentials.history_limit');
+
         return array_values(
             CredentialChange::query()
                 ->where('credential_key', $key)
