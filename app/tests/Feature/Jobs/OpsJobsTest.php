@@ -158,6 +158,7 @@ it('records queue heartbeat', function () {
     $job = new RecordQueueHeartbeat;
 
     // First run
+    Carbon::setTestNow(Carbon::parse('2026-03-04 12:00:00'));
     $job->handle(app(PlatformHealth::class));
     $lastAt = app(PlatformHealth::class)->lastBeat('queue');
     expect($lastAt)->not->toBeNull();
@@ -169,7 +170,7 @@ it('records queue heartbeat', function () {
         ->count();
 
     // Second run
-    Carbon::setTestNow(now()->addMinutes(5));
+    Carbon::setTestNow(Carbon::parse('2026-03-04 12:01:00'));
     $job->handle(app(PlatformHealth::class));
 
     $count2 = DB::table('platform_health_windows')
@@ -178,5 +179,17 @@ it('records queue heartbeat', function () {
         ->count();
 
     expect($count2)->toBe($count);
+    expect(app(PlatformHealth::class)->lastBeat('queue')->format('Y-m-d H:i:s'))->toBe('2026-03-04 12:01:00');
+
+    // Third run
+    Carbon::setTestNow(Carbon::parse('2026-03-04 13:00:00'));
+    $job->handle(app(PlatformHealth::class));
+
+    $count3 = DB::table('platform_health_windows')
+        ->where('signal', PlatformHealthSignal::Heartbeat->value)
+        ->where('source', 'queue')
+        ->count();
+
+    expect($count3)->toBe($count + 1);
     Carbon::setTestNow();
 });
