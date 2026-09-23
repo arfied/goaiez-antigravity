@@ -299,6 +299,7 @@ final class OwnerNav
             // tag is working. A screen nobody can reach would leave them guessing
             // whether we are actually collecting their data.
             OwnerNavItem::make('Is our tag working', 'x-110.install-verify', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Tag versions', 'x-110.tag-version-per', OwnerNavItem::GROUP_CATALOG),
 
             // What their pages earn (X-138). Ruled to be under More deliberately,
             // despite being potentially daily: the primary row is a design the

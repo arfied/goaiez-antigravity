@@ -25,7 +25,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 function sampleStateRoutes(): array
 {
     return [
-        'x-110.tag-version-per',
     ];
 }
 
