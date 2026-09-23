@@ -48,6 +48,7 @@ final class ReviewAnalyzer
             prompt: $this->prompt($rating, $comment, $fence),
             system: $this->system($fence),
             jsonSchema: $this->schema(),
+            promptKey: 'review.analyse',
         ));
 
         if (! $response->isUsable() || ! is_array($response->json)) {

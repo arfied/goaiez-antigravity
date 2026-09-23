@@ -223,6 +223,7 @@ final class ReplyGenerator
             task: AiTask::ReplyGeneration,
             prompt: $this->prompt($review, $business, $location, $reviewerLabel, $fence, $exampleBlock),
             system: $this->system($voice, $fence),
+            promptKey: 'reply.generate',
         ));
 
         if ($response->failureReason !== null) {
@@ -359,6 +360,7 @@ final class ReplyGenerator
             task: AiTask::ReplyGeneration,
             prompt: $this->recoveryPrompt($review, $business, $location, $reviewerLabel, $fence),
             system: $this->recoverySystem($voice, $fence),
+            promptKey: 'reply.generate.retry',
         ));
 
         if ($response->failureReason !== null) {

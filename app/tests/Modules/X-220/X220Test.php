@@ -4,16 +4,25 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X220;
 
+use App\Enums\AiTask;
+use App\Models\AiCall;
 use App\Modules\X220\Actions\EvalCompareAction;
 use App\Modules\X220\Actions\EvalRunAction;
 use App\Modules\X220\Actions\PromptFreezeAction;
+use App\Modules\X220\Actions\PromptRegisterAction;
 use App\Modules\X220\Actions\PromptResolveAction;
 use App\Modules\X220\Events\EvalCompleted;
 use App\Modules\X220\Events\PromptFrozen;
 use App\Modules\X220\Models\AiPrompt;
 use App\Modules\X220\Models\GoldenSet;
+use App\Modules\X220\Ui\PromptHistory;
+use App\Services\Ai\AiRequest;
+use App\Services\Ai\AiRouter;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X220Test extends TestCase
@@ -124,5 +133,95 @@ class X220Test extends TestCase
         $res = $this->comparator->handle($biz->id, $p1->id, $p2->id);
         $this->assertArrayHasKey('delta_score', $res);
         $this->assertArrayHasKey('regression', $res);
+    }
+
+    public function test_c2a_prompt_register_creates_v1_and_v2(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Prompt Biz', 'currency' => 'USD']);
+
+        $action = app(PromptRegisterAction::class);
+
+        $prompt1 = $action->handle($biz->id, 'test.key', 'TestClass', 'body 1');
+        $this->assertEquals(1, $prompt1->version);
+        $this->assertEquals('body 1', $prompt1->body);
+
+        $prompt1Same = $action->handle($biz->id, 'test.key', 'TestClass', 'body 1');
+        $this->assertEquals($prompt1->id, $prompt1Same->id);
+
+        $prompt2 = $action->handle($biz->id, 'test.key', 'TestClass', 'body 2');
+        $this->assertEquals(2, $prompt2->version);
+        $this->assertEquals('body 2', $prompt2->body);
+
+        $prompt1Fresh = AiPrompt::find($prompt1->id);
+        $this->assertNull($prompt1Fresh->frozen_at); // leaves v1 intact (frozen or not)
+
+        Http::assertNothingSent();
+    }
+
+    public function test_c2a_airouter_dispatch_writes_prompt_id(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Router Biz', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        \App\Modules\CAi\Models\AiTask::create([
+            'business_id' => $biz->id,
+            'task_name' => 'conversation',
+            'max_ttft_ms' => 1000,
+            'cost_limit_cents' => 5000,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'choices' => [
+                    ['message' => ['content' => 'fake answer']],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10],
+            ]),
+            'api.anthropic.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'type' => 'message',
+                'stop_reason' => 'end_turn',
+                'content' => [['type' => 'text', 'text' => 'fake answer']],
+                'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+            ]),
+        ]);
+
+        $router = app(AiRouter::class);
+        $router->dispatch(new AiRequest(
+            task: AiTask::Conversation,
+            prompt: 'Hello',
+            promptKey: 'test.router.key'
+        ));
+
+        $call = AiCall::where('business_id', $biz->id)->latest('id')->first();
+        $this->assertNotNull($call);
+        $this->assertNotNull($call->prompt_id);
+        $this->assertEquals(1, $call->prompt_version);
+
+        $router->dispatch(new AiRequest(
+            task: AiTask::Conversation,
+            prompt: 'Hello 2',
+        ));
+        $callNull = AiCall::where('business_id', $biz->id)->latest('id')->first();
+        $this->assertNull($callNull->prompt_id);
+        $this->assertNull($callNull->prompt_version);
+    }
+
+    public function test_c2a_prompt_history_screen_and_freeze(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'History Biz', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $action = app(PromptRegisterAction::class);
+        $prompt = $action->handle($biz->id, 'test.screen.key', 'TestClass', 'body 1');
+
+        Livewire::test(PromptHistory::class)
+            ->assertSee('test.screen.key')
+            ->assertSee('v1')
+            ->call('freeze', $prompt->id);
+
+        $this->assertNotNull($prompt->fresh()->frozen_at);
+        Http::assertNothingSent();
     }
 }

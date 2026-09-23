@@ -190,6 +190,7 @@ final class AgentComposer
             task: AiTask::Conversation,
             prompt: $prompt,
             system: $this->system($businessName, $skills),
+            promptKey: 'agent.compose',
         ));
 
         // ⚠️ **ONE CHECK FOR THREE OUTCOMES, AND THAT IS `AiResponse`'s DESIGN

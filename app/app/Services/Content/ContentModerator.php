@@ -109,6 +109,7 @@ final class ContentModerator
             prompt: $this->prompt($text, $fence),
             system: $this->system($fence),
             jsonSchema: $this->schema(),
+            promptKey: 'content.moderate',
         ));
 
         // A refusal is a successful 200. It withholds for a person and is not an

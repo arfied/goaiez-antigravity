@@ -9,7 +9,9 @@ use App\Contracts\EmbeddingClient;
 use App\Enums\AiModel;
 use App\Enums\AiProvider;
 use App\Enums\PlatformHealthSignal;
+use App\Modules\X220\Actions\PromptRegisterAction;
 use App\Services\Ops\PlatformHealth;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\Log;
 use LogicException;
 
@@ -143,13 +145,31 @@ final class AiRouter
             return AiResponse::failed($model, $refusal);
         }
 
+        $promptId = null;
+        $promptVersion = null;
+
+        if ($request->promptKey !== null) {
+            $effectiveText = ($request->system ?? '').$request->prompt;
+
+            // @phpstan-ignore class.notFound
+            $registered = app(PromptRegisterAction::class)->handle(
+                Tenancy::idOrFail(),
+                $request->promptKey,
+                debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['class'] ?? 'unknown',
+                $effectiveText
+            );
+
+            $promptId = $registered->id;
+            $promptVersion = $registered->version;
+        }
+
         $response = $this->client($model)->complete($request);
 
         // Recorded whatever happened — answered, refused, or failed. A refusal
         // bills for what was generated before the classifier fired, and a call
         // that errors after the model has read the prompt can still bill for
         // input. See AiSpend::record().
-        $this->spend->record($request->task, $response);
+        $this->spend->record($request->task, $response, $promptId, $promptVersion);
 
         $this->watch($model, $response->failureReason);
 
