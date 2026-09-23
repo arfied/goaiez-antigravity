@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\X103\Ui;
 
-use App\Models\Business;
 use App\Models\Location;
 use App\Modules\X103\Actions\SiteBuildRunAction;
 use App\Modules\X103\Actions\SitePublishAction;
@@ -14,10 +13,12 @@ use App\Modules\X157\Actions\CustomDomainStatusAction;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
 use App\Modules\X157\Actions\PlatformSiteAddressAction;
 use App\Services\Config\DefaultsRegistry;
-use Illuminate\Support\Facades\Auth;
+use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Throwable;
 
+#[Layout('components.account.layout', ['heading' => 'Build my site'])]
 class SiteBuild extends Component
 {
     public int $businessId;
@@ -38,11 +39,7 @@ class SiteBuild extends Component
 
     public function mount()
     {
-        $user = Auth::user();
-        abort_unless($user !== null, 403);
-        $business = Business::where('owner_user_id', $user->id)->first();
-        abort_unless($business !== null, 403);
-        $this->businessId = $business->id;
+        $this->businessId = Tenancy::idOrFail();
         $location = Location::where('business_id', $this->businessId)->first();
         $this->locationId = $location ? $location->id : 0;
     }
