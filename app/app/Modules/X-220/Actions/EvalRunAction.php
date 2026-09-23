@@ -77,6 +77,7 @@ final class EvalRunAction
                 AiTask::Moderation => AiTask::Moderation,
                 AiTask::Conversation => AiTask::Conversation,
                 AiTask::KnowledgeEmbedding => AiTask::KnowledgeEmbedding,
+                AiTask::SiteCopy => AiTask::SiteCopy,
             };
         }
 
