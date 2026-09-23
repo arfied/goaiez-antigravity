@@ -40,7 +40,8 @@ it('a card expiring in 35 days alerts when the window is written as 40', functio
     CardToken::create([
         'business_id' => $this->biz->id,
         
-        'card_token' => 'tok_123',
+        'gateway_customer_id' => 'cus_123',
+        'gateway_payment_method_id' => 'tok_123',
         'last_four' => '4242',
         'brand' => 'visa',
         'exp_month' => $expDate->month,
