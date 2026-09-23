@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X103\Ui;
 
+use App\Models\Location;
 use App\Modules\X103\Actions\SiteCrawlAction;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Support\Tenancy;
@@ -18,8 +19,9 @@ final class SiteInventory extends Component
     {
         try {
             $tenantId = Tenancy::idOrFail();
+            $location = Location::where('business_id', $tenantId)->first();
 
-            $result = $action->handle($tenantId, $tenantId);
+            $result = $action->handle($tenantId, $location ? $location->id : $tenantId);
 
             if ($result['status'] === 'refused') {
                 $reason = $result['reason'] ?? 'unknown';

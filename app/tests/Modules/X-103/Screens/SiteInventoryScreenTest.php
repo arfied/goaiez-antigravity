@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use App\Exceptions\TenantNotResolved;
 use App\Models\Location;
 use App\Models\User;
+use App\Modules\X103\Actions\SiteCrawlAction;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Modules\X103\Ui\SiteInventory;
 use App\Services\Config\DefaultsRegistry;
@@ -65,21 +66,22 @@ it('crawls a two-page fake site', function () {
         ),
     ]);
 
-    Livewire::actingAs($owner)
-        ->test(SiteInventory::class)
-        ->call('crawl')
-        ->assertDispatched('toast', message: 'Crawled 2 pages, 0 refused');
+    $action = app(SiteCrawlAction::class);
+    $result = $action->handle($biz->id, Location::where('business_id', $biz->id)->first()->id);
+    expect($result)->toBe(['status' => 'fetched', 'pages' => 2, 'refused' => 0]);
 
     $pages = SiteInventoryPage::where('business_id', $biz->id)->get();
     expect($pages)->toHaveCount(2);
 
     $home = $pages->firstWhere('url', 'https://example.com');
     expect($home->title)->toBe('Home')
+        ->and($home->status)->toBe('fetched')
         ->and($home->headings)->toBe(['Welcome'])
         ->and($home->image_urls)->toContain('https://example.com/logo.png');
 
     $services = $pages->firstWhere('url', 'https://example.com/services');
     expect($services->title)->toBe('Services')
+        ->and($services->status)->toBe('fetched')
         ->and($services->headings)->toBe(['Our Services'])
         ->and($services->image_urls)->toContain('https://example.com/service1.png');
 });
@@ -133,7 +135,16 @@ it('honours the max_pages registry cap', function () {
     Livewire::actingAs($owner)
         ->test(SiteInventory::class)
         ->call('crawl')
-        ->assertDispatched('toast', message: 'Crawled 2 pages, 0 refused');
+        ->assertDispatched('toast');
 
-    expect(SiteInventoryPage::where('business_id', $biz->id)->count())->toBe(2);
+    $pages = SiteInventoryPage::where('business_id', $biz->id)->get();
+    expect($pages)->toHaveCount(2);
+
+    $page1 = $pages->firstWhere('url', 'https://example.com');
+    expect($page1->status)->toBe('fetched')
+        ->and($page1->url)->toBe('https://example.com');
+
+    $page2 = $pages->firstWhere('url', 'https://example.com/page2');
+    expect($page2->status)->toBe('fetched')
+        ->and($page2->url)->toBe('https://example.com/page2');
 });
