@@ -10,6 +10,7 @@ use App\Modules\X103\Actions\PageCreateAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Events\PagePublished;
 use App\Modules\X103\Events\SitePublished;
+use App\Modules\X103\Models\PageVersion;
 use App\Modules\X103\Ui\Pages;
 use App\Modules\X157\Models\Deployment;
 use Illuminate\Support\Facades\Event;
@@ -210,5 +211,153 @@ class PagesScreenTest extends TestCase
 
         $this->get("/sites/{$bizA->id}/{$deploymentB->deploy_hash}")
             ->assertNotFound();
+    }
+
+    public function test_owner_authors_a_faq_and_it_publishes_into_the_page(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Storage::fake('local');
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'faq-test', 'FAQ');
+
+        Livewire::test(Pages::class)
+            ->set('faqQuestion', 'Do you serve Austin?')
+            ->set('faqAnswer', 'Yes, all of Travis County.')
+            ->call('addFaq', $page->id)
+            ->assertOk();
+
+        $page->refresh();
+        $this->assertCount(1, $page->draft_blocks);
+        $this->assertEquals('faq', $page->draft_blocks[0]['type']);
+
+        Livewire::test(Pages::class)
+            ->call('publish', $page->id)
+            ->assertOk();
+
+        $this->assertDatabaseHas('page_versions', [
+            'page_id' => $page->id,
+        ]);
+
+        $version = PageVersion::where('page_id', $page->id)->latest('id')->first();
+        $this->assertEquals('Yes, all of Travis County.', $version->content_blocks[0]['answer']);
+
+        $deployment = Deployment::where('business_id', $biz->id)->where('page_id', $page->id)->firstOrFail();
+
+        $this->get("/sites/{$biz->id}/{$deployment->deploy_hash}")
+            ->assertOk()
+            ->assertSee('Travis County');
+    }
+
+    public function test_owner_authors_a_video_and_it_publishes(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Storage::fake('local');
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'vid-test', 'Video');
+
+        Livewire::test(Pages::class)
+            ->set('videoName', 'Roof walkthrough')
+            ->set('videoUrl', 'https://example.com/video.mp4')
+            ->set('videoDate', '2026-09-22')
+            ->call('addVideo', $page->id)
+            ->assertOk();
+
+        $page->refresh();
+        $this->assertCount(1, $page->draft_blocks);
+
+        Livewire::test(Pages::class)
+            ->call('publish', $page->id)
+            ->assertOk();
+
+        $version = PageVersion::where('page_id', $page->id)->latest('id')->first();
+        $this->assertEquals('Roof walkthrough', $version->content_blocks[0]['name']);
+
+        $deployment = Deployment::where('business_id', $biz->id)->where('page_id', $page->id)->firstOrFail();
+
+        $this->get("/sites/{$biz->id}/{$deployment->deploy_hash}")
+            ->assertOk()
+            ->assertSee('Roof walkthrough');
+    }
+
+    public function test_a_non_https_video_url_is_refused(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'vid-test-2', 'Video 2');
+
+        Livewire::test(Pages::class)
+            ->set('videoName', 'Roof walkthrough')
+            ->set('videoUrl', 'http://example.com/video.mp4')
+            ->set('videoDate', '2026-09-22')
+            ->call('addVideo', $page->id)
+            ->assertSee('Video URL must start with https://');
+
+        $page->refresh();
+        $this->assertNull($page->draft_blocks);
+    }
+
+    public function test_removing_a_block_drops_it_from_the_next_publish(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Storage::fake('local');
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'drop-test', 'Drop');
+
+        Livewire::test(Pages::class)
+            ->set('faqQuestion', 'Q1')
+            ->set('faqAnswer', 'A1')
+            ->call('addFaq', $page->id);
+
+        $page->refresh();
+        $this->assertCount(1, $page->draft_blocks);
+
+        Livewire::test(Pages::class)
+            ->call('removeBlock', $page->id, 0)
+            ->assertOk();
+
+        $page->refresh();
+        $this->assertCount(0, $page->draft_blocks);
+
+        Livewire::test(Pages::class)
+            ->call('publish', $page->id)
+            ->assertOk();
+
+        $version = PageVersion::where('page_id', $page->id)->latest('id')->first();
+        $faqs = array_filter($version->content_blocks, fn ($b) => ($b['type'] ?? '') === 'faq');
+        $this->assertEmpty($faqs);
+    }
+
+    public function test_staff_cannot_author(): void
+    {
+        $employee = User::factory()->create(['role' => UserRole::Manager]);
+        $biz = $this->provisionTenant(['owner_user_id' => $employee->id]);
+        $this->actingAs($employee);
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'staff-test', 'Staff');
+
+        Livewire::test(Pages::class)
+            ->call('addFaq', $page->id)
+            ->assertForbidden();
+
+        Livewire::test(Pages::class)
+            ->call('addVideo', $page->id)
+            ->assertForbidden();
+
+        Livewire::test(Pages::class)
+            ->call('removeBlock', $page->id, 0)
+            ->assertForbidden();
     }
 }

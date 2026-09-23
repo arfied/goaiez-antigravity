@@ -55,6 +55,90 @@ class Pages extends Component
         }
     }
 
+    public string $faqQuestion = '';
+
+    public string $faqAnswer = '';
+
+    public string $videoName = '';
+
+    public string $videoUrl = '';
+
+    public string $videoDate = '';
+
+    public function addFaq(int $pageId): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if (trim($this->faqQuestion) === '' || trim($this->faqAnswer) === '') {
+            $this->error = 'Fields cannot be empty.';
+
+            return;
+        }
+
+        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
+        $blocks = $page->draft_blocks ?? [];
+        $blocks[] = [
+            'type' => 'faq',
+            'question' => $this->faqQuestion,
+            'answer' => $this->faqAnswer,
+        ];
+        $page->update(['draft_blocks' => $blocks]);
+
+        $this->faqQuestion = '';
+        $this->faqAnswer = '';
+        $this->success = 'Block added.';
+    }
+
+    public function addVideo(int $pageId): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if (trim($this->videoName) === '' || trim($this->videoUrl) === '' || trim($this->videoDate) === '') {
+            $this->error = 'Fields cannot be empty.';
+
+            return;
+        }
+
+        if (! str_starts_with($this->videoUrl, 'https://')) {
+            $this->error = 'Video URL must start with https://';
+
+            return;
+        }
+
+        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
+        $blocks = $page->draft_blocks ?? [];
+        $blocks[] = [
+            'type' => 'video_embed',
+            'name' => $this->videoName,
+            'contentUrl' => $this->videoUrl,
+            'uploadDate' => $this->videoDate,
+        ];
+        $page->update(['draft_blocks' => $blocks]);
+
+        $this->videoName = '';
+        $this->videoUrl = '';
+        $this->videoDate = '';
+        $this->success = 'Block added.';
+    }
+
+    public function removeBlock(int $pageId, int $index): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
+        $blocks = $page->draft_blocks ?? [];
+        if (isset($blocks[$index])) {
+            array_splice($blocks, $index, 1);
+            $page->update(['draft_blocks' => $blocks]);
+        }
+    }
+
     public function publish(int $pageId, SitePublishAction $action): void
     {
         $this->error = null;
@@ -71,7 +155,7 @@ class Pages extends Component
         try {
             app(PlatformSiteAddressAction::class)->handle($this->businessId);
 
-            $result = $action->handle($this->businessId, $page->id, []);
+            $result = $action->handle($this->businessId, $page->id, $page->draft_blocks ?? []);
             if ($result['status'] === 'published') {
                 $deployment = app(LatestDeploymentForPageAction::class)->handle($this->businessId, $page->id);
 
