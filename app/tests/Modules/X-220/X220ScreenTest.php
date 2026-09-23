@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Account;
+namespace Tests\Modules\X220;
 
 use App\Jobs\PostReplyJob;
 use App\Models\Reply;
@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Tests\TestCase;
 
-class ReplyQueueScreenTest extends TestCase
+final class X220ScreenTest extends TestCase
 {
     public function test_approving_a_reply_appends_to_golden_set_and_drops_oldest(): void
     {

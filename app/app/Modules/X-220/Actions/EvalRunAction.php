@@ -148,7 +148,7 @@ final class EvalRunAction
         }
 
         $finishedAt = Carbon::now();
-        $scorePct = $totalCases > 0 ? (int) round(($casesPassed / $totalCases) * 100) : 0;
+        $scorePct = (int) round(($casesPassed / $totalCases) * 100);
         $overallPassed = $scorePct >= $threshold;
 
         $runId = DB::table('x220_eval_runs')->insertGetId([
