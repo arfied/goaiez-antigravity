@@ -274,7 +274,10 @@ final class PriceBook
         // rows is two hundred round trips otherwise — and the read is the
         // tenant-scoped query, so a name another business prices is invisible
         // here and cannot collide.
-        $taken = $this->query()->pluck('slug')->all();
+        $taken = $this->query()
+            ->pluck('service_name')
+            ->map(fn (string $name): string => $this->slugFor($name))
+            ->all();
 
         foreach ($reading->rows as $row) {
             $slug = $this->slugFor($row['label']);

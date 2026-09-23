@@ -196,3 +196,56 @@ it('confirms and discards proposals', function () {
         'service_name' => 'Gutter cleaning',
     ]);
 });
+
+use Illuminate\Http\UploadedFile;
+
+it('uploads a sheet proposing two new prices', function () {
+    $csv = "Front door lockout - 85\nRekey a cylinder: $95.50";
+    Livewire::test(AssistantAnswers::class)
+        ->set('sheet', UploadedFile::fake()->createWithContent('prices.csv', $csv))
+        ->call('uploadSheet')
+        ->assertHasNoErrors();
+
+    $this->assertDatabaseHas('price_book_items', [
+        'service_name' => 'Front door lockout',
+        'is_confirmed' => false,
+        'confirmed_at' => null,
+    ]);
+
+    $this->assertDatabaseHas('price_book_items', [
+        'service_name' => 'Rekey a cylinder',
+        'is_confirmed' => false,
+        'confirmed_at' => null,
+    ]);
+});
+
+it('skips a label that matches an already-set price', function () {
+    Livewire::test(AssistantAnswers::class)
+        ->set('jobName', 'Back window repair')
+        ->set('price', '85')
+        ->call('savePrice')
+        ->assertHasNoErrors();
+
+    $csv = 'Back window repair, 100';
+    Livewire::test(AssistantAnswers::class)
+        ->set('sheet', UploadedFile::fake()->createWithContent('prices.csv', $csv))
+        ->call('uploadSheet')
+        ->assertHasNoErrors();
+
+    $this->assertDatabaseMissing('price_book_items', [
+        'service_name' => 'Back window repair',
+        'is_confirmed' => false,
+    ]);
+});
+
+it('skips a label the slugger empties', function () {
+    $csv = '??? - 100';
+    Livewire::test(AssistantAnswers::class)
+        ->set('sheet', UploadedFile::fake()->createWithContent('prices.csv', $csv))
+        ->call('uploadSheet')
+        ->assertHasNoErrors();
+
+    $this->assertDatabaseMissing('price_book_items', [
+        'service_name' => '???',
+    ]);
+});
