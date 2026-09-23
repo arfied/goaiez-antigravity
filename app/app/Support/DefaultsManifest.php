@@ -2336,6 +2336,16 @@ final class DefaultsManifest
                 'group' => 'Operations',
                 'description' => 'How old the scheduler\'s or a queue worker\'s last heartbeat may be before the operator is alerted (T176 P23). 0 disables the check. ⛔ THIS IS THE ONE ALERT THAT FIRES ON ABSENCE, and it is why the check does not run in the scheduler: a dead scheduler produces silence, not an error, and a check that only runs while the thing it checks is running cannot report that it stopped. It runs in the web process instead. ⚠️ FIFTEEN RATHER THAN TWO, because both processes are restarted on every deploy and a threshold under a deploy\'s length pages somebody every release. ⚠️ A process that has NEVER beaten is not alerted — a fresh install would otherwise page on its first request.',
             ],
+            'fixer.ladder.start_level' => [
+                'seed' => 3,
+                'group' => 'Operations',
+                'description' => 'The level a NEW action type starts at in the Fixer ladder.',
+            ],
+            'fixer.ladder.auto_level' => [
+                'seed' => 3,
+                'group' => 'Operations',
+                'description' => 'At or above this level a command runs without a tap. Below it, the command waits in One-Tap Approval.',
+            ],
 
             /*
              * §10's Delivery paragraph, read literally rather than guessed:

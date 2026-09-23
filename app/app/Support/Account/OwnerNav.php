@@ -632,6 +632,7 @@ final class OwnerNav
             OwnerNavItem::make('Approvals', 'x-202.queue', OwnerNavItem::GROUP_CATALOG, alsoCurrentFor: ['x-202.item']),
             OwnerNavItem::make('Approval history', 'x-202.audit-export', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Fixer inbox', 'x-209.private-inbox', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('One-tap approval', 'x-209.onetap-approval-card', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Autopilot ladder', 'x-209.ladders-own-state', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Person', 'x-01.person', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Activity', 'x-01.history', OwnerNavItem::GROUP_CATALOG),
