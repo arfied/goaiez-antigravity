@@ -7,16 +7,26 @@ namespace App\Support;
 use App\Enums\AiTask;
 use App\Enums\Plan;
 use App\Enums\StoredObjectKind;
+use App\Modules\CBilling\Domain\BillingLedgerEngine;
+use App\Modules\CMail\Actions\EmailWarmupAction;
 use App\Modules\CReviews\Actions\ReviewRequestAction;
 use App\Modules\X01\Domain\UnifiedInboxManager;
 use App\Modules\X120\Actions\CardExpiringScanAction;
+use App\Modules\X136\Actions\SignalScoreAction;
 use App\Modules\X137\Actions\CallAttributeAction;
+use App\Modules\X139\Domain\ConversionUploadEngine;
 use App\Modules\X153\Actions\AlertSendAction;
 use App\Modules\X157\Actions\EdgeDeployAction;
+use App\Modules\X165\Actions\PlanProposeAction;
 use App\Modules\X172\Actions\PortalLinkAction;
+use App\Modules\X176\Actions\InternalLinkRenderAction;
 use App\Modules\X181\Actions\QaTicketCreateAction;
+use App\Modules\X191\Actions\LinkPitchAction;
+use App\Modules\X199\Actions\InvoiceDraftAction;
+use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X202\Domain\ApprovalDeskEngine;
 use App\Modules\X205\Domain\AffiliateEngine;
+use App\Modules\X219\Actions\ProviderHealthAction;
 use App\Services\Mail\MailDrivers;
 use App\Services\Mail\MailQuota;
 use App\Services\Mail\MailSendRate;
@@ -2972,6 +2982,66 @@ final class DefaultsManifest
                 'seed' => 40,
                 'group' => 'Brand',
                 'description' => 'Maximum characters allowed in the badge text.',
+            ],
+            'billing.topup.daily_ceiling_cents' => [
+                'seed' => BillingLedgerEngine::DAILY_TOPUP_CEILING_CENTS,
+                'group' => 'Billing',
+                'description' => 'Daily ceiling for ledger topups.',
+            ],
+            'billing.cycle.voicemail_only_from_day' => [
+                'seed' => BillingLedgerEngine::VOICEMAIL_ONLY_FROM_DAY,
+                'group' => 'Billing',
+                'description' => 'Day in the cycle when voicemail-only restrictions apply.',
+            ],
+            'invoices.default_credit_limit_cents' => [
+                'seed' => InvoiceEngine::DEFAULT_CREDIT_LIMIT_CENTS,
+                'group' => 'Billing',
+                'description' => 'Default credit limit for invoices in cents.',
+            ],
+            'invoices.default_due_days' => [
+                'seed' => InvoiceDraftAction::DEFAULT_DUE_DAYS,
+                'group' => 'Billing',
+                'description' => 'Default due days for invoices.',
+            ],
+            'plans.default_interval_months' => [
+                'seed' => PlanProposeAction::DEFAULT_INTERVAL_MONTHS,
+                'group' => 'Billing',
+                'description' => 'Default interval in months for plans.',
+            ],
+            'mail.warmup.jitter_pct' => [
+                'seed' => EmailWarmupAction::JITTER_PCT,
+                'group' => 'Messaging',
+                'description' => 'Jitter percentage for email warmup.',
+            ],
+            'mail.warmup.daily_allowance' => [
+                'seed' => EmailWarmupAction::DAILY_ALLOWANCE,
+                'group' => 'Messaging',
+                'description' => 'Daily allowance for email warmup.',
+            ],
+            'links.pitch.monthly_send_ceiling' => [
+                'seed' => LinkPitchAction::MONTHLY_SEND_CEILING,
+                'group' => 'Marketing',
+                'description' => 'Monthly send ceiling for link pitches.',
+            ],
+            'links.internal.emitted_max' => [
+                'seed' => InternalLinkRenderAction::EMITTED_MAX,
+                'group' => 'Content',
+                'description' => 'Maximum number of internal links emitted.',
+            ],
+            'attribution.conversion.window_days' => [
+                'seed' => ConversionUploadEngine::ATTRIBUTION_WINDOW_DAYS,
+                'group' => 'Marketing',
+                'description' => 'Attribution window days for conversions.',
+            ],
+            'signals.high_intent_score' => [
+                'seed' => SignalScoreAction::HIGH_INTENT_SCORE,
+                'group' => 'Marketing',
+                'description' => 'High intent score for signals.',
+            ],
+            'ai.provider.degraded_error_rate_pct' => [
+                'seed' => ProviderHealthAction::DEGRADED_ERROR_RATE_PCT,
+                'group' => 'Operations',
+                'description' => 'Degraded error rate percentage for AI providers.',
             ],
         ];
 

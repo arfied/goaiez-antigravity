@@ -46,7 +46,7 @@ class CMailTest extends TestCase
         $consentService = app(ConsentService::class);
         $this->sendAction = new EmailSendAction($consentService);
         $this->dnsAction = new EmailDnsCheckAction;
-        $this->warmupAction = new EmailWarmupAction;
+        $this->warmupAction = new EmailWarmupAction(app(DefaultsRegistry::class));
         $this->unsubscribeAction = new EmailUnsubscribeAction($consentService);
         $this->haltSeedAction = new EmailHaltSeedAction;
     }

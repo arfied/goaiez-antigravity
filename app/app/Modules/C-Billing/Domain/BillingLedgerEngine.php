@@ -7,14 +7,31 @@ namespace App\Modules\CBilling\Domain;
 use App\Modules\CBilling\Models\CreditLedgerEntry;
 use App\Modules\CBilling\Models\DunningState;
 use App\Modules\CBilling\Models\TrialLimit;
+use App\Services\Config\DefaultsRegistry;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 final class BillingLedgerEngine
 {
+    public const DAILY_TOPUP_CEILING_CENTS = 50000;
+
+    public const VOICEMAIL_ONLY_FROM_DAY = 21;
+
     /**
      * Debit ledger with atomic balance update and hundredths-of-a-cent precision (TEST ANCHOR, G1-18, G1-20).
      */
+    private function dailyTopupCeilingCents(): int
+    {
+        return $this->registry->int('billing.topup.daily_ceiling_cents');
+    }
+
+    private function voicemailOnlyFromDay(): int
+    {
+        return $this->registry->int('billing.cycle.voicemail_only_from_day');
+    }
+
+    public function __construct(private DefaultsRegistry $registry) {}
+
     public function debit(
         int $businessId,
         int $amountHundredthsCents,
@@ -91,7 +108,7 @@ final class BillingLedgerEngine
             if ($limit === null) {
                 $limit = TrialLimit::create([
                     'business_id' => $businessId,
-                    'daily_topup_ceiling_cents' => 50000,
+                    'daily_topup_ceiling_cents' => $this->dailyTopupCeilingCents(),
                 ]);
             }
 
@@ -146,14 +163,14 @@ final class BillingLedgerEngine
 
             $status = match (true) {
                 $dayInCycle < 10 => 'warning',
-                $dayInCycle < 21 => 'banner',
+                $dayInCycle < $this->voicemailOnlyFromDay() => 'banner',
                 default => 'ai_off_voicemail_only',
             };
 
             // At day 21: AI off, phone answering still true, voicemail only (TEST ANCHOR & P-095)
-            $aiEnabled = ($dayInCycle < 21);
+            $aiEnabled = ($dayInCycle < $this->voicemailOnlyFromDay());
             $phoneAnswering = true; // phone KEEPS ANSWERING always (G1-19, G1-28)
-            $voicemailOnly = ($dayInCycle >= 21);
+            $voicemailOnly = ($dayInCycle >= $this->voicemailOnlyFromDay());
 
             $state->update([
                 'day_in_cycle' => $dayInCycle,

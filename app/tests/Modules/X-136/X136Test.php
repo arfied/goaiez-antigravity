@@ -12,6 +12,7 @@ use App\Modules\X136\Events\SignalDetected;
 use App\Modules\X136\Models\DecayModel;
 use App\Modules\X136\Models\Signal;
 use App\Modules\X136\Models\SignalScore;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
@@ -26,7 +27,7 @@ class X136Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->scoreAction = new SignalScoreAction;
+        $this->scoreAction = new SignalScoreAction(app(DefaultsRegistry::class));
         $this->listAction = new SignalListAction;
     }
 

@@ -6,17 +6,25 @@ namespace App\Modules\X199\Actions;
 
 use App\Modules\X199\Domain\InvalidTermsException;
 use App\Modules\X199\Models\CreditTerm;
+use App\Services\Config\DefaultsRegistry;
 
 final class TermsSetAction
 {
     /** The closed set. `net_60` is in the plan ("terms net 15/30/60") and was missing. */
     public const TYPES = ['due_on_receipt', 'net_15', 'net_30', 'net_60'];
 
+    private function defaultCreditLimitCents(): int
+    {
+        return $this->registry->int('invoices.default_credit_limit_cents');
+    }
+
+    public function __construct(private DefaultsRegistry $registry) {}
+
     public function handle(
         int $businessId,
         int $customerId,
         string $termsType = 'net_30',
-        int $creditLimitCents = 500000,
+        ?int $creditLimitCents = null,
         ?string $cardOnFileToken = null
     ): CreditTerm {
         if (! in_array($termsType, self::TYPES, true)) {
@@ -27,6 +35,7 @@ final class TermsSetAction
             throw new InvalidTermsException('A credit limit is never negative.');
         }
 
+        $creditLimitCents ??= $this->defaultCreditLimitCents();
         $values = [
             'terms_type' => $termsType,
             'credit_limit_cents' => $creditLimitCents,

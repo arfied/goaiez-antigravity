@@ -6,6 +6,7 @@ namespace App\Tests\Modules\CMail;
 
 use App\Modules\CMail\Actions\EmailWarmupAction;
 use App\Modules\CMail\Exceptions\ConstantWarmupQuantityRefused;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -21,7 +22,7 @@ final class G1531Test extends TestCase
         $businessId = $business->id;
 
         Tenancy::actingAs($businessId, function () use ($businessId) {
-            $action = new EmailWarmupAction;
+            $action = new EmailWarmupAction(app(DefaultsRegistry::class));
 
             $schedule = [
                 'day_1' => ['min' => 50, 'max' => 50, 'quantity' => 50],

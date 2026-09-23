@@ -7,24 +7,35 @@ namespace App\Modules\X139\Domain;
 use App\Modules\X139\Events\ConversionRejected;
 use App\Modules\X139\Events\ConversionUploaded;
 use App\Modules\X139\Models\ConversionUpload;
+use App\Services\Config\DefaultsRegistry;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 
 final class ConversionUploadEngine
 {
+    public const ATTRIBUTION_WINDOW_DAYS = 90;
+
     /**
      * Uploads offline conversion to ad platform (G13-22).
      * Zero bid/budget/campaign management code (TEST ANCHOR).
      * A completed job outside the attribution window is NOT uploaded (TEST ANCHOR).
      */
+    public function attributionWindowDays(): int
+    {
+        return $this->registry->int('attribution.conversion.window_days');
+    }
+
+    public function __construct(private DefaultsRegistry $registry) {}
+
     public function upload(
         int $businessId,
         int $jobId,
         int $conversionValueCents,
         Carbon $touchTimestamp,
         ?string $gclidOrFbc = null,
-        int $attributionWindowDays = 90
+        ?int $attributionWindowDays = null
     ): array {
+        $attributionWindowDays ??= $this->attributionWindowDays();
         $now = Carbon::now();
         $daysDiff = (int) round($touchTimestamp->diffInDays($now));
 

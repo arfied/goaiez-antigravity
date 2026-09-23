@@ -9,6 +9,7 @@ use App\Modules\X121\Models\Person;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Ui\MoneyPaidToday;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -53,7 +54,7 @@ class MoneyPaidTodayScreenTest extends TestCase
         ]);
 
         // today's invoice paid through recordPayment() appears with its Paid: time and its lines on explain
-        $engine = new InvoiceEngine;
+        $engine = new InvoiceEngine(app(DefaultsRegistry::class));
         $issued = $engine->issueInvoice($biz->id, $customer->id, [
             ['description' => 'Roofing service', 'quantity' => 1, 'unit_price_cents' => 10000],
             ['description' => 'Materials', 'quantity' => 1, 'unit_price_cents' => 2500],

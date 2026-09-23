@@ -15,15 +15,25 @@ use App\Modules\X199\Models\CreditTerm;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\InvoiceLine;
 use App\Modules\X199\Models\OverflowCharge;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 
 final class InvoiceEngine
 {
+    public const DEFAULT_CREDIT_LIMIT_CENTS = 500000;
+
     /**
      * Issue invoice with net-30 limit checking and overflow card charge (TEST ANCHOR).
      */
+    public function defaultCreditLimitCents(): int
+    {
+        return $this->registry->int('invoices.default_credit_limit_cents');
+    }
+
+    public function __construct(private DefaultsRegistry $registry) {}
+
     public function issueInvoice(
         int $businessId,
         int $customerId,
@@ -40,7 +50,7 @@ final class InvoiceEngine
                 ['business_id' => $businessId, 'customer_id' => $customerId],
                 [
                     'terms_type' => $termsType,
-                    'credit_limit_cents' => 500000, // $5,000 credit limit
+                    'credit_limit_cents' => $this->defaultCreditLimitCents(), // $5,000 credit limit
                     'current_outstanding_cents' => 0,
                     'card_on_file_token' => null,
                 ]

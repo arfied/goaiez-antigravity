@@ -12,6 +12,7 @@ use App\Modules\X136\Models\Signal;
 use App\Modules\X136\Models\SignalScore;
 use App\Modules\X136\Ui\CoolingView;
 use App\Modules\X136\Ui\SignalVolumePrecisionView;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
@@ -184,7 +185,7 @@ class X136ScreensTest extends TestCase
 
     public function test_signal_volume_precision_shows_stats(): void
     {
-        $action = new SignalScoreAction;
+        $action = new SignalScoreAction(app(DefaultsRegistry::class));
         $action->recordAndScore($this->businessId, 'p1', 'pricing_visit', [], 80.0);
         $action->recordAndScore($this->businessId, 'p2', 'pricing_visit', [], 40.0);
 
@@ -205,7 +206,7 @@ class X136ScreensTest extends TestCase
 
     public function test_signal_volume_precision_no_decay_model(): void
     {
-        $action = new SignalScoreAction;
+        $action = new SignalScoreAction(app(DefaultsRegistry::class));
         $action->recordAndScore($this->businessId, 'p1', 'hiring', [], 80.0);
 
         Livewire::test(SignalVolumePrecisionView::class, ['businessId' => $this->businessId])
