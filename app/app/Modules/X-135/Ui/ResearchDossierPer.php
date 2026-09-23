@@ -10,9 +10,11 @@ use App\Modules\X135\Models\ResearchRun;
 use App\Support\Tenancy;
 use Carbon\Carbon;
 use InvalidArgumentException;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Research dossiers'])]
 class ResearchDossierPer extends Component
 {
     #[Locked]
