@@ -22,7 +22,7 @@ it('renders for a tenant', function () {
     $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
     $this->actingAs($owner)
-        ->get('/app/x-103/site-inventory')
+        ->get(route('x-103.site-inventory'))
         ->assertOk()
         ->assertSee('Your current website');
 });
@@ -34,7 +34,7 @@ it('refuses no-tenant requests', function () {
     $this->withoutExceptionHandling();
 
     try {
-        $this->get('/app/x-103/site-inventory');
+        $this->get(route('x-103.site-inventory'));
     } catch (TenantNotResolved $e) {
         expect(true)->toBeTrue();
     } catch (HttpException $e) {

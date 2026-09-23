@@ -6,6 +6,7 @@ namespace Tests\Modules\X103\Screens;
 
 use App\Enums\UserRole;
 use App\Models\Location;
+use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Ui\SiteBuild;
@@ -21,6 +22,21 @@ use Tests\TestCase;
 class SiteBuildScreenTest extends TestCase
 {
     use RefreshesTenantDatabase;
+
+    public function test_screen_renders_for_tenant(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $this->get(route('x-103.site-build'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console');
+
+        Livewire::test(SiteBuild::class)->assertOk();
+    }
 
     public function test_full_build_pipeline_and_publish(): void
     {
