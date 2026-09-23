@@ -89,7 +89,7 @@ final class OwnerNav
 
             // The profile has no entry of its own: it is one contact rather
             // than a destination, so the list it came from stays marked.
-            OwnerNavItem::make('Your customers', 'account.customers', alsoCurrentFor: ['account.customers.show']),
+            OwnerNavItem::make('Your customers', 'account.customers', alsoCurrentFor: ['account.customers.show', 'x-179.match-scores']),
 
             // R21 calls the Inbox the tenant's daily surface, so it sits in the
             // primary row rather than under More — the distinction `44` §2 draws
