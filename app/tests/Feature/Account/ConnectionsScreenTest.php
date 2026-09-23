@@ -248,3 +248,7 @@ it('refuses to interact with other tenants connection', function () {
 
     Mail::assertNothingSent();
 });
+
+afterEach(function () {
+    Tenancy::forget();
+});
