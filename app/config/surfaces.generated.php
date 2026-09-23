@@ -173,6 +173,7 @@ return [
         ],
         'Website' => [
             ['label' => 'Pages', 'route' => 'x-103.pages', 'module' => 'X-103'],
+            ['label' => 'Build my site', 'route' => 'x-103.site-build', 'module' => 'X-103'],
             ['label' => 'Site Inventory', 'route' => 'x-103.site-inventory', 'module' => 'X-103'],
             ['label' => 'Plugin Settings Page', 'route' => 'x-104.plugin-settings-page', 'module' => 'X-104'],
             ['label' => 'Install Count', 'route' => 'x-104.install-count', 'module' => 'X-104'],

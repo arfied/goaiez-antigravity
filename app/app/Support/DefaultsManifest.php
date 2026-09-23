@@ -2514,6 +2514,16 @@ final class DefaultsManifest
                 'group' => 'Marketing',
                 'description' => 'Whether the signed-out site says a site is built from a conversation. ⛔ A CLAIM SWITCH — see `features.commerce`.',
             ],
+            'sites.build.recrawl_after_hours' => [
+                'seed' => 24,
+                'group' => 'Sites',
+                'description' => 'Re-run crawls again only if this many hours have passed.',
+            ],
+            'sites.build.max_pages_publish' => [
+                'seed' => 12,
+                'group' => 'Sites',
+                'description' => 'Maximum number of pages to publish during build.',
+            ],
             'sites.crawl.max_pages' => [
                 'seed' => 25,
                 'group' => 'Sites',

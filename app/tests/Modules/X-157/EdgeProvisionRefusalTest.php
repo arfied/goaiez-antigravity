@@ -26,7 +26,10 @@ class EdgeProvisionRefusalTest extends TestCase
             }
         }
 
-        $expected = ['app/app/Modules/X-157/Actions/EdgeProvisionAction.php'];
+        $expected = [
+            'app/app/Modules/X-103/Ui/SiteBuild.php',
+            'app/app/Modules/X-157/Actions/EdgeProvisionAction.php',
+        ];
 
         $failureMessage = 'EdgeProvisionAction mints zone_id and ssl_certificate_id with Str::random() and takes has_valid_ssl as an argument, so any production caller would make J11\'s ssl element green off a fabricated certificate.';
 
