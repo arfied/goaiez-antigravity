@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Warehouse;
 
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
@@ -158,6 +159,11 @@ final class WarehouseRetention
      * source is gone.
      */
     public const int L2_RETENTION_DAYS = 730;
+
+    public static function l2RetentionDays(): int
+    {
+        return app(DefaultsRegistry::class)->int('warehouse.l2_retention_days');
+    }
 
     /**
      * Rows per DELETE — `PrunePublicAudits`' figure, and the table this matters

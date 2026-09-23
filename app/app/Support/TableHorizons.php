@@ -269,7 +269,7 @@ final class TableHorizons
             ],
             'operator_alerts' => [
                 'command' => 'ops:watch-platform-health',
-                'keeps' => OperatorAlerts::RETENTION_DAYS.' days, or the quiet window if that is longer',
+                'keeps' => app(OperatorAlerts::class)->retentionDays().' days, or the quiet window if that is longer',
                 'scope' => RetentionScope::Rows,
                 'key' => null,
             ],
@@ -409,7 +409,7 @@ final class TableHorizons
 
         $days = [
             'l1' => WarehouseRetention::L1_RETENTION_DAYS,
-            'l2' => WarehouseRetention::L2_RETENTION_DAYS,
+            'l2' => WarehouseRetention::l2RetentionDays(),
         ];
 
         foreach (DerivedTables::DERIVED_TABLES as $layer => $tables) {

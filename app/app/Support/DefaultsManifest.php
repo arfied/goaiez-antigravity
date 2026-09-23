@@ -19,7 +19,12 @@ use App\Services\Actuation\WordPress\WordPressRestClient;
 use App\Services\Mail\MailDrivers;
 use App\Services\Mail\MailQuota;
 use App\Services\Mail\MailSendRate;
+use App\Services\Ops\OperatorAlerts;
 use App\Services\Visibility\ReviewLossDetection;
+use App\Services\Warehouse\L1Derivation;
+use App\Services\Warehouse\PixelSightings;
+use App\Services\Warehouse\Replayer;
+use App\Services\Warehouse\WarehouseRetention;
 
 /**
  * THE SEED MANIFEST — doc `38` Part 2's "one reviewed file", CFG1.
@@ -2925,6 +2930,56 @@ final class DefaultsManifest
                 'seed' => 50,
                 'group' => 'Ai',
                 'description' => 'Maximum number of cases kept in a golden set before the oldest is dropped (C2b).',
+            ],
+            'ops.alerts.push_budget_per_kind' => [
+                'seed' => OperatorAlerts::PUSH_BUDGET_PER_KIND,
+                'group' => 'Operations',
+                'description' => 'Operator alerts push budget per kind.',
+            ],
+            'ops.alerts.push_budget_hours' => [
+                'seed' => OperatorAlerts::PUSH_BUDGET_HOURS,
+                'group' => 'Operations',
+                'description' => 'Operator alerts push budget hours.',
+            ],
+            'ops.alerts.mail_path_repeat_hours' => [
+                'seed' => OperatorAlerts::MAIL_PATH_REPEAT_HOURS,
+                'group' => 'Operations',
+                'description' => 'Operator alerts mail path repeat hours.',
+            ],
+            'ops.alerts.summary_limit' => [
+                'seed' => OperatorAlerts::SUMMARY_LIMIT,
+                'group' => 'Operations',
+                'description' => 'Operator alerts summary limit.',
+            ],
+            'ops.alerts.min_opening' => [
+                'seed' => OperatorAlerts::MIN_OPENING,
+                'group' => 'Operations',
+                'description' => 'Operator alerts minimum opening.',
+            ],
+            'ops.alerts.retention_days' => [
+                'seed' => OperatorAlerts::RETENTION_DAYS,
+                'group' => 'Operations',
+                'description' => 'Operator alerts retention days.',
+            ],
+            'warehouse.bot_threshold' => [
+                'seed' => L1Derivation::BOT_THRESHOLD,
+                'group' => 'Pixel',
+                'description' => 'Warehouse bot threshold.',
+            ],
+            'warehouse.attribution_window_days' => [
+                'seed' => Replayer::ATTRIBUTION_WINDOW_DAYS,
+                'group' => 'Pixel',
+                'description' => 'Warehouse attribution window days.',
+            ],
+            'warehouse.sightings_fresh_days' => [
+                'seed' => PixelSightings::FRESH_DAYS,
+                'group' => 'Pixel',
+                'description' => 'Warehouse sightings fresh days.',
+            ],
+            'warehouse.l2_retention_days' => [
+                'seed' => WarehouseRetention::L2_RETENTION_DAYS,
+                'group' => 'Pixel',
+                'description' => 'Warehouse L2 retention days.',
             ],
         ];
 
