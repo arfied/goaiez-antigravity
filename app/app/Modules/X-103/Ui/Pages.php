@@ -5,9 +5,11 @@ namespace App\Modules\X103\Ui;
 use App\Enums\UserRole;
 use App\Modules\X103\Actions\PageCreateAction;
 use App\Modules\X103\Actions\PageRenameAction;
+use App\Modules\X103\Actions\PageRestoreVersionAction;
 use App\Modules\X103\Actions\PageUnpublishAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
+use App\Modules\X103\Models\PageVersion;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
 use App\Modules\X157\Actions\PlatformSiteAddressAction;
 use App\Support\Tenancy;
@@ -213,6 +215,43 @@ class Pages extends Component
         }
     }
 
+    public array $showHistory = [];
+
+    public function toggleHistory(int $pageId): void
+    {
+        if (! empty($this->showHistory[$pageId])) {
+            $this->showHistory[$pageId] = false;
+        } else {
+            $this->showHistory[$pageId] = true;
+        }
+    }
+
+    public function restore(int $pageId, int $versionId, PageRestoreVersionAction $action): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
+        $version = PageVersion::where('business_id', $this->businessId)->where('page_id', $pageId)->find($versionId);
+        if (! $version) {
+            abort(404);
+        }
+
+        if ($page->current_version_id === $versionId) {
+            $this->error = 'Cannot restore the current version.';
+
+            return;
+        }
+
+        try {
+            $result = $action->handle($this->businessId, $pageId, $versionId);
+            $this->success = "Restored version {$result['restored_commit_id']} as new commit {$result['commit_id']}.";
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
     public function render()
     {
         $pages = Page::where('business_id', $this->businessId)->orderByDesc('id')->get();
@@ -223,9 +262,16 @@ class Pages extends Component
         }
         $deployments = collect($deployments)->filter();
 
+        $versions = PageVersion::where('business_id', $this->businessId)
+            ->whereIn('page_id', $pages->pluck('id')->toArray())
+            ->orderByDesc('id')
+            ->get()
+            ->groupBy('page_id');
+
         return view('x-103::pages', [
             'pages' => $pages,
             'deployments' => $deployments,
+            'versions' => $versions,
         ]);
     }
 }

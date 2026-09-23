@@ -13,6 +13,7 @@ use App\Modules\X103\Events\SitePublished;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X103\Ui\Pages;
 use App\Modules\X157\Models\Deployment;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
@@ -485,6 +486,166 @@ class PagesScreenTest extends TestCase
 
         Livewire::test(Pages::class)
             ->call('rename', $page->id)
+            ->assertForbidden();
+    }
+
+    public function test_history_lists_versions_newest_first_and_marks_current(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Storage::fake('local');
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'history-test', 'History Test');
+
+        Livewire::test(Pages::class)
+            ->set('faqQuestion', 'Q1')
+            ->set('faqAnswer', 'Answer one k1')
+            ->call('addFaq', $page->id)
+            ->call('publish', $page->id);
+
+        $v1 = PageVersion::where('page_id', $page->id)->latest('id')->first();
+
+        Livewire::test(Pages::class)
+            ->call('unpublish', $page->id)
+            ->call('removeBlock', $page->id, 0)
+            ->set('faqQuestion', 'Q2')
+            ->set('faqAnswer', 'Answer two k2')
+            ->call('addFaq', $page->id)
+            ->call('publish', $page->id);
+
+        $v2 = PageVersion::where('page_id', $page->id)->latest('id')->first();
+
+        Livewire::test(Pages::class)
+            ->call('toggleHistory', $page->id)
+            ->assertSee($v2->commit_id)
+            ->assertSee($v1->commit_id)
+            ->assertSeeInOrder([$v2->commit_id, $v1->commit_id]) // newest first
+            ->assertSee('(Current)'); // marks current (v2)
+    }
+
+    public function test_restoring_a_previous_version_publishes_its_blocks_again(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Storage::fake('local');
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'restore-test', 'Restore Test');
+
+        Livewire::test(Pages::class)
+            ->set('faqQuestion', 'Q1')
+            ->set('faqAnswer', 'Answer one k1')
+            ->call('addFaq', $page->id)
+            ->call('publish', $page->id);
+
+        $v1 = PageVersion::where('page_id', $page->id)->latest('id')->first();
+
+        Livewire::test(Pages::class)
+            ->call('unpublish', $page->id)
+            ->call('removeBlock', $page->id, 0)
+            ->set('faqQuestion', 'Q2')
+            ->set('faqAnswer', 'Answer two k2')
+            ->call('addFaq', $page->id)
+            ->call('publish', $page->id);
+
+        Livewire::test(Pages::class)
+            ->call('restore', $page->id, $v1->id)
+            ->assertSee('Restored version');
+
+        $v3 = PageVersion::where('page_id', $page->id)->latest('id')->first();
+        $this->assertNotEquals($v1->id, $v3->id);
+
+        $hasK1 = collect($v3->content_blocks)->pluck('answer')->contains('Answer one k1');
+        $this->assertTrue($hasK1);
+
+        $page->refresh();
+        $hasK1Draft = collect($page->draft_blocks)->pluck('answer')->contains('Answer one k1');
+        $this->assertTrue($hasK1Draft);
+
+        $deployment = Deployment::where('business_id', $biz->id)->where('page_id', $page->id)->latest('id')->firstOrFail();
+        $this->assertEquals('deployed', $deployment->status);
+
+        $this->get("/sites/{$biz->id}/{$deployment->deploy_hash}")
+            ->assertOk()
+            ->assertSee('Answer one k1')
+            ->assertDontSee('Answer two k2');
+    }
+
+    public function test_restore_refuses_another_tenants_version(): void
+    {
+        $ownerA = User::factory()->create(['role' => UserRole::Owner]);
+        $bizA = $this->provisionTenant(['owner_user_id' => $ownerA->id]);
+
+        $ownerB = User::factory()->create(['role' => UserRole::Owner]);
+        $bizB = $this->provisionTenant(['owner_user_id' => $ownerB->id]);
+
+        Storage::fake('local');
+
+        $action = app(PageCreateAction::class);
+
+        $this->actingAs($ownerA);
+        Tenancy::set($bizA->id);
+        $pageA = $action->handle($bizA->id, 'page-a', 'Page A');
+
+        Livewire::test(Pages::class)
+            ->set('faqQuestion', 'QA')
+            ->set('faqAnswer', 'AA')
+            ->call('addFaq', $pageA->id)
+            ->call('publish', $pageA->id);
+
+        $vA = PageVersion::where('page_id', $pageA->id)->latest('id')->first();
+
+        $this->actingAs($ownerB);
+        Tenancy::set($bizB->id);
+        $pageB = $action->handle($bizB->id, 'page-b', 'Page B');
+
+        Livewire::test(Pages::class)
+            ->call('restore', $pageB->id, $vA->id)
+            ->assertNotFound();
+    }
+
+    public function test_restore_of_the_current_version_is_refused(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Storage::fake('local');
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'restore-current', 'Restore Current');
+
+        Livewire::test(Pages::class)
+            ->set('faqQuestion', 'Q1')
+            ->set('faqAnswer', 'A1')
+            ->call('addFaq', $page->id)
+            ->call('publish', $page->id);
+
+        $v1 = PageVersion::where('page_id', $page->id)->latest('id')->first();
+
+        Livewire::test(Pages::class)
+            ->call('restore', $page->id, $v1->id)
+            ->assertSee('Cannot restore the current version.');
+
+        $this->assertDatabaseCount('page_versions', 1);
+    }
+
+    public function test_staff_cannot_restore(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+        $staff = User::factory()->create(['role' => UserRole::Manager]);
+        $this->provisionTenant(['owner_user_id' => $staff->id]);
+        // Put staff in same tenant
+        $staff->update(['tenant_id' => $biz->id]); // wait, provisionTenant creates a new one
+        // actually just using manager role
+        $this->actingAs($staff);
+
+        Livewire::test(Pages::class)
+            ->call('restore', 1, 1)
             ->assertForbidden();
     }
 }
