@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Actuation;
 
 use App\Enums\T3InjectionKind;
+use App\Services\Config\DefaultsRegistry;
 
 /**
  * One link from this page to another page on the same site.
@@ -33,8 +34,11 @@ final readonly class T3InternalLink implements T3Operation
      */
     public static function fromFields(array $fields): ?self
     {
+        $registry = app(DefaultsRegistry::class);
+        $maxText = $registry->int('actuation.internal_link.max_text_chars');
+
         $path = T3Value::path($fields['path'] ?? null);
-        $text = T3Value::text($fields['text'] ?? null, self::MAX_TEXT);
+        $text = T3Value::text($fields['text'] ?? null, $maxText);
 
         if ($path === null || $text === null) {
             return null;

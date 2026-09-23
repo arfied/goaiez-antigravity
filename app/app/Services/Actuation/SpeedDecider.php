@@ -12,6 +12,7 @@ use App\Enums\SpeedTrigger;
 use App\Enums\SpeedVerdict;
 use App\Enums\WebVital;
 use App\Services\ActivityService;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Warehouse\ConversionReading;
 use App\Services\Warehouse\JsErrorRate;
 use App\Services\Warehouse\SiteConversions;
@@ -107,7 +108,7 @@ final readonly class SpeedDecider
      */
     private const array TRIGGER_METRICS = [WebVital::Lcp, WebVital::Inp, WebVital::Cls];
 
-    public function __construct(
+    public function __construct(private readonly DefaultsRegistry $registry,
         private SpeedFixes $fixes,
         private SiteVitals $vitals,
         private SiteConversions $conversions,
@@ -192,7 +193,7 @@ final readonly class SpeedDecider
         }
 
         $baselineTo = $subject->appliedAt->subDay()->startOfDay();
-        $baselineFrom = $baselineTo->subDays(self::BASELINE_DAYS - 1);
+        $baselineFrom = $baselineTo->subDays($this->registry->int('speed.baseline_days') - 1);
 
         $triggers = [];
 

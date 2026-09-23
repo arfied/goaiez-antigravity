@@ -10,6 +10,7 @@ use App\Enums\SiteSnapshotState;
 use App\Enums\SpeedFix;
 use App\Models\SiteChange;
 use App\Services\ActivityService;
+use App\Services\Config\DefaultsRegistry;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -149,7 +150,7 @@ final class SiteMeasurements
      */
     public const array REVERT_BACKOFF_HOURS = [0, 0, 24, 24, 48, 48, 96, 168];
 
-    public function __construct(
+    public function __construct(private readonly DefaultsRegistry $registry,
         private readonly SiteChanges $siteChanges,
         private readonly ActivityService $activity,
     ) {}
@@ -204,7 +205,7 @@ final class SiteMeasurements
                 ->whereNull('measured_at')
                 ->whereNull('rolled_back_at')
                 ->whereNotIn('change_type', SpeedFix::changeTypes())
-                ->where('applied_at', '<=', $now->subDays(self::MEASURED_WINDOW_ENDS_DAYS)),
+                ->where('applied_at', '<=', $now->subDays($this->registry->int('sites.measure.window_ends_days'))),
             $limit,
         );
     }
@@ -541,7 +542,7 @@ final class SiteMeasurements
         }
 
         $attempts = (int) $change->revert_attempts + 1;
-        $exhausted = $attempts >= self::REVERT_ATTEMPT_CEILING;
+        $exhausted = $attempts >= $this->registry->int('sites.revert.attempt_ceiling');
 
         // forceFill because the columns are guarded on the model: this service
         // is their only writer and a request body must never be one.
@@ -598,7 +599,7 @@ final class SiteMeasurements
                 'site_change_id' => (int) $change->id,
                 'change_type' => $change->change_type,
                 'url' => $change->url,
-                'attempts' => self::REVERT_ATTEMPT_CEILING,
+                'attempts' => $this->registry->int('sites.revert.attempt_ceiling'),
             ],
             'A change on your website needs you to take it off',
         );

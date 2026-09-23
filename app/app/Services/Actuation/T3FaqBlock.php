@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Actuation;
 
 use App\Enums\T3InjectionKind;
+use App\Services\Config\DefaultsRegistry;
 
 /**
  * A question-and-answer block, rendered into the module's own container.
@@ -40,9 +41,13 @@ final readonly class T3FaqBlock implements T3Operation
      */
     public static function fromFields(array $fields): ?self
     {
+        $registry = app(DefaultsRegistry::class);
+        $maxItems = $registry->int('actuation.faq.max_items');
+        $maxAnswer = $registry->int('actuation.faq.max_answer_chars');
+
         $raw = $fields['faq'] ?? null;
 
-        if (! is_array($raw) || $raw === [] || count($raw) > self::MAX_ITEMS) {
+        if (! is_array($raw) || $raw === [] || count($raw) > $maxItems) {
             return null;
         }
 
@@ -54,7 +59,7 @@ final readonly class T3FaqBlock implements T3Operation
             }
 
             $question = T3Value::text($entry['q'] ?? null, self::MAX_QUESTION);
-            $answer = T3Value::text($entry['a'] ?? null, self::MAX_ANSWER);
+            $answer = T3Value::text($entry['a'] ?? null, $maxAnswer);
 
             // ⚠️ ONE BAD PAIR REFUSES THE WHOLE BLOCK rather than being skipped.
             // A half-rendered FAQ is a page carrying a question with no answer,

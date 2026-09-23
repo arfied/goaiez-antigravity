@@ -7,6 +7,15 @@ namespace App\Support;
 use App\Enums\AiTask;
 use App\Enums\Plan;
 use App\Enums\StoredObjectKind;
+use App\Services\Actuation\SiteChanges;
+use App\Services\Actuation\SiteMeasurements;
+use App\Services\Actuation\SpeedDecider;
+use App\Services\Actuation\SpeedFixes;
+use App\Services\Actuation\T3AltText as AltText;
+use App\Services\Actuation\T3FaqBlock as FaqBlock;
+use App\Services\Actuation\T3InternalLink as InternalLink;
+use App\Services\Actuation\T3MetaUpsert as MetaUpsert;
+use App\Services\Actuation\WordPress\WordPressRestClient;
 use App\Services\Mail\MailDrivers;
 use App\Services\Mail\MailQuota;
 use App\Services\Mail\MailSendRate;
@@ -2698,6 +2707,71 @@ final class DefaultsManifest
                 'seed' => false,
                 'group' => 'Content',
                 'description' => 'Whether this platform may write to a tenant\'s own website — pages published and fixes applied on their site, on its own, without anybody here pressing anything again. ⛔ This alone answers nothing: a website adapter must also be connected on this deployment, and every write is refused unless that adapter reports the site reachable. ⚠️ Which adapter a deployment has connected is a setting on the machine, not in this database, so nothing written here can tell you — the confirmation shown when you turn this on states what this deployment actually has. ⚠️ It does not switch off the advisory hand-off, which transmits nothing to any website and needs no revert. Turning it off takes one press.',
+            ],
+            'actuation.faq.max_items' => [
+                'seed' => FaqBlock::MAX_ITEMS,
+                'group' => 'Content',
+                'description' => 'The maximum number of items allowed in a FAQ block.',
+            ],
+            'actuation.faq.max_answer_chars' => [
+                'seed' => FaqBlock::MAX_ANSWER,
+                'group' => 'Content',
+                'description' => 'The maximum number of characters allowed in a FAQ answer.',
+            ],
+            'actuation.alt_text.max_chars' => [
+                'seed' => AltText::MAX_TEXT,
+                'group' => 'Content',
+                'description' => 'The maximum number of characters allowed in alt text.',
+            ],
+            'actuation.internal_link.max_text_chars' => [
+                'seed' => InternalLink::MAX_TEXT,
+                'group' => 'Content',
+                'description' => 'The maximum number of characters allowed in an internal link text.',
+            ],
+            'actuation.meta.max_content_chars' => [
+                'seed' => MetaUpsert::MAX_CONTENT,
+                'group' => 'Content',
+                'description' => 'The maximum number of characters allowed in a meta tag content attribute.',
+            ],
+            'speed.min_hours_between_fixes' => [
+                'seed' => SpeedFixes::MINIMUM_HOURS_BETWEEN_FIXES,
+                'group' => 'Content',
+                'description' => 'The minimum number of hours that must elapse before a subsequent speed fix can be applied.',
+            ],
+            'speed.baseline_days' => [
+                'seed' => SpeedDecider::BASELINE_DAYS,
+                'group' => 'Content',
+                'description' => 'The number of days to measure performance before applying a speed fix.',
+            ],
+            'sites.measure.window_starts_days' => [
+                'seed' => SiteMeasurements::MEASURED_WINDOW_STARTS_DAYS,
+                'group' => 'Content',
+                'description' => 'The number of days after a site change when the measurement window begins.',
+            ],
+            'sites.measure.window_ends_days' => [
+                'seed' => SiteMeasurements::MEASURED_WINDOW_ENDS_DAYS,
+                'group' => 'Content',
+                'description' => 'The number of days after a site change when the measurement window ends.',
+            ],
+            'sites.measure.baseline_days' => [
+                'seed' => SiteMeasurements::BASELINE_DAYS,
+                'group' => 'Content',
+                'description' => 'The number of days to measure performance prior to a site change for comparison.',
+            ],
+            'sites.revert.attempt_ceiling' => [
+                'seed' => SiteMeasurements::REVERT_ATTEMPT_CEILING,
+                'group' => 'Content',
+                'description' => 'The maximum number of times to attempt reverting a site change before giving up.',
+            ],
+            'sites.undo.in_progress_minutes' => [
+                'seed' => SiteChanges::UNDO_IN_PROGRESS_MINUTES,
+                'group' => 'Content',
+                'description' => 'The maximum time in minutes allowed for an undo operation before it is considered stuck or failed.',
+            ],
+            'wordpress.timeout_seconds' => [
+                'seed' => WordPressRestClient::TIMEOUT_SECONDS,
+                'group' => 'Content',
+                'description' => 'The timeout in seconds for requests made to a WordPress site via the REST API.',
             ],
 
             /*

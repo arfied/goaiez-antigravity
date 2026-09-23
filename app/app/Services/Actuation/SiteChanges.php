@@ -19,6 +19,7 @@ use App\Models\Location;
 use App\Models\SiteChange;
 use App\Services\ActivityService;
 use App\Services\AuditService;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Collection;
@@ -60,7 +61,7 @@ use Illuminate\Support\Facades\DB;
  */
 final class SiteChanges
 {
-    public function __construct(
+    public function __construct(private readonly DefaultsRegistry $registry,
         private readonly CmsAdapter $adapter,
         private readonly ActivityService $activity,
         private readonly AuditService $audit,
@@ -555,7 +556,7 @@ final class SiteChanges
      * commit, so it can never read a row that says nobody asked; and the stamp
      * happens first, so a queue that swallows the job leaves a card that says
      * *"undoing"* rather than one that silently did nothing — bounded by
-     * {@see self::UNDO_IN_PROGRESS_MINUTES}.
+     * {@see $this->registry->int('sites.undo.in_progress_minutes')}.
      *
      * ⚠️ **AUDITED HERE AS WELL AS AT THE REVERT** (`29` §2 rule 42). The revert
      * writes the entry that says a customer's website changed; **this writes the
@@ -727,7 +728,7 @@ final class SiteChanges
 
         $requested = $change->undo_requested_at;
 
-        if ($requested !== null && $now->diffInMinutes(CarbonImmutable::instance($requested), true) < self::UNDO_IN_PROGRESS_MINUTES) {
+        if ($requested !== null && $now->diffInMinutes(CarbonImmutable::instance($requested), true) < $this->registry->int('sites.undo.in_progress_minutes')) {
             return SiteChangeUndoState::InProgress;
         }
 

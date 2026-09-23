@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Actuation;
 
 use App\Enums\T3InjectionKind;
+use App\Services\Config\DefaultsRegistry;
 
 /**
  * One `<meta>` tag's content, set on the tag that is there or on one we add.
@@ -56,8 +57,11 @@ final readonly class T3MetaUpsert implements T3Operation
      */
     public static function fromFields(array $fields): ?self
     {
+        $registry = app(DefaultsRegistry::class);
+        $maxContent = $registry->int('actuation.meta.max_content_chars');
+
         $name = T3Value::text($fields['name'] ?? null, 64);
-        $content = T3Value::text($fields['content'] ?? null, self::MAX_CONTENT);
+        $content = T3Value::text($fields['content'] ?? null, $maxContent);
 
         if ($name === null || $content === null) {
             return null;

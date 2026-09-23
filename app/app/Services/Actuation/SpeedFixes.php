@@ -13,6 +13,7 @@ use App\Exceptions\TenantMismatch;
 use App\Models\Location;
 use App\Models\SpeedChangeSet;
 use App\Services\Actuation\WordPress\WordPressAdapter;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Content\Publishing;
 use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
@@ -79,7 +80,7 @@ final class SpeedFixes
      */
     public const int MINIMUM_HOURS_BETWEEN_FIXES = 48;
 
-    public function __construct(
+    public function __construct(private readonly DefaultsRegistry $registry,
         private readonly CmsAdapter $adapter,
         private readonly ActuationTiers $tiers,
         private readonly SiteChanges $siteChanges,
@@ -109,7 +110,7 @@ final class SpeedFixes
         $inFlight = $this->inFlight($location->id) !== null;
         $lastApplied = $this->lastAppliedAt($location->id);
         $tooSoon = $lastApplied !== null
-            && $lastApplied->addHours(self::MINIMUM_HOURS_BETWEEN_FIXES)->greaterThan($now);
+            && $lastApplied->addHours($this->registry->int('speed.min_hours_between_fixes'))->greaterThan($now);
 
         $options = [];
 
@@ -380,7 +381,7 @@ final class SpeedFixes
         $spent = SpeedChangeSet::query()
             ->where('status', SpeedFixStatus::RevertFailed)
             ->whereNull('revert_attempts_exhausted_at')
-            ->where('revert_attempts', '>=', SiteMeasurements::REVERT_ATTEMPT_CEILING)
+            ->where('revert_attempts', '>=', $this->registry->int('sites.revert.attempt_ceiling'))
             ->orderBy('id')
             ->limit(SiteMeasurements::SWEEP_LIMIT)
             ->get(['id', 'change_set_id']);
@@ -565,7 +566,7 @@ final class SpeedFixes
     {
         $last = $this->lastAppliedAt($locationId);
 
-        return $last !== null && $last->addHours(self::MINIMUM_HOURS_BETWEEN_FIXES)->greaterThan($now);
+        return $last !== null && $last->addHours($this->registry->int('speed.min_hours_between_fixes'))->greaterThan($now);
     }
 
     /**
