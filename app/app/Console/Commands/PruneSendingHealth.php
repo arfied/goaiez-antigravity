@@ -14,7 +14,7 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
- * Delete per-tenant sending buckets past {@see SendingHealth::RETENTION_DAYS}
+ * Delete per-tenant sending buckets past {@see app(SendingHealth::class)->retentionDays()}
  * (7760-7779, closing 2199).
  *
  * ## ⛔ WHAT THIS CLOSES, AND WHY IT IS THE SAME SHAPE AS THE TABLE'S OWN
@@ -111,10 +111,10 @@ final class PruneSendingHealth extends Command
         Tenancy::forgetAll();
 
         $this->info($deleted === 0
-            ? 'No sending health buckets older than '.SendingHealth::RETENTION_DAYS." days across {$accounts} "
+            ? 'No sending health buckets older than '.app(SendingHealth::class)->retentionDays()." days across {$accounts} "
                 .str('account')->plural($accounts).'.'
             : "Pruned {$deleted} sending health ".str('bucket')->plural($deleted)
-                .' older than '.SendingHealth::RETENTION_DAYS." days across {$accounts} "
+                .' older than '.app(SendingHealth::class)->retentionDays()." days across {$accounts} "
                 .str('account')->plural($accounts).'.');
 
         return self::SUCCESS;
@@ -142,7 +142,7 @@ final class PruneSendingHealth extends Command
         foreach ($businessIds as $businessId) {
             $deleted += Tenancy::actingAs(
                 (int) $businessId,
-                fn (): int => $health->prune(SendingHealth::RETENTION_DAYS),
+                fn (): int => $health->prune(app(SendingHealth::class)->retentionDays()),
             );
         }
 

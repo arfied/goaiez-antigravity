@@ -18,6 +18,7 @@ use App\Models\Reply;
 use App\Models\Review;
 use App\Services\ActivityService;
 use App\Services\AuditService;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Gbp\GbpReplyReceipt;
 use App\Support\Tenancy;
 use Carbon\CarbonInterface;
@@ -91,7 +92,7 @@ final class ReviewReplies
     public const int AUTO_POST_RATING_FLOOR = 4;
 
     /** The actor recorded when configuration, rather than a person, decided. */
-    private const string AUTO_POST_ACTOR = 'system:auto_post';
+    public const string AUTO_POST_ACTOR = 'system:auto_post';
 
     /**
      * The actor recorded when a provider read, rather than a person, settled an
@@ -104,7 +105,7 @@ final class ReviewReplies
      * third party's data cleared a publication block — and an actor a caller
      * supplies is one a caller can dress up as a person.
      */
-    private const string PUBLISH_RECHECK_ACTOR = 'system:publish_recheck';
+    public const string PUBLISH_RECHECK_ACTOR = 'system:publish_recheck';
 
     /**
      * The actor recorded when the stranded-reply sweep, rather than a person,
@@ -117,7 +118,7 @@ final class ReviewReplies
      * spells them the same way cannot answer which of them put text on a
      * listing.
      */
-    private const string PUBLISH_RETRY_ACTOR = 'system:publish_retry';
+    public const string PUBLISH_RETRY_ACTOR = 'system:publish_retry';
 
     /**
      * How long an unanswered attempt is given to settle before a provider read
@@ -146,7 +147,7 @@ final class ReviewReplies
      * of our own uncertainty about somebody else's cache, and an Ops row would
      * invite an operator to tune a number neither of us can measure.
      */
-    private const int PUBLISH_RECHECK_SETTLE_MINUTES = 60;
+    public const int PUBLISH_RECHECK_SETTLE_MINUTES = 60;
 
     /**
      * How long after approval a reply may first be re-dispatched by the sweep.
@@ -170,13 +171,24 @@ final class ReviewReplies
      * exactly: it is arithmetic over two figures on `AutopilotJob`, and an Ops
      * row would invite an operator to tune it out of step with them.
      */
-    private const int PUBLISH_RETRY_FLOOR_MINUTES = 45;
+    public const int PUBLISH_RETRY_FLOOR_MINUTES = 45;
 
     public function __construct(
         private readonly ActivityService $activity,
         private readonly AuditService $audit,
         private readonly ReplyGuardrails $guardrails,
+        private readonly DefaultsRegistry $registry,
     ) {}
+
+    public function publishRecheckSettleMinutes(): int
+    {
+        return $this->registry->int('reviews.publish.recheck_settle_minutes');
+    }
+
+    public function publishRetryFloorMinutes(): int
+    {
+        return $this->registry->int('reviews.publish.retry_floor_minutes');
+    }
 
     /**
      * Every reply still waiting on the owner in the current tenant.
@@ -282,7 +294,7 @@ final class ReviewReplies
      * ladder — 1,575 seconds at the top of the jitter — and each attempt may
      * burn the worker's own 60-second timeout, so a first dispatch is finished
      * with within about 29½ minutes of approval.
-     * {@see self::PUBLISH_RETRY_FLOOR_MINUTES} is comfortably past that. ⛔ **It
+     * {@see $this->publishRetryFloorMinutes()} is comfortably past that. ⛔ **It
      * is not a safety guard and must not be read as one**: a double post is
      * refused by `automation_runs`' unique idempotency key and by
      * `isPublishable()` seeing a `Posted` row, both of which hold at any
@@ -312,7 +324,7 @@ final class ReviewReplies
             ->whereNull('provider_declined_at')
             ->whereNull('publish_retry_dispatched_at')
             ->whereNotNull('approved_at')
-            ->where('approved_at', '<=', now()->subMinutes(self::PUBLISH_RETRY_FLOOR_MINUTES))
+            ->where('approved_at', '<=', now()->subMinutes($this->publishRetryFloorMinutes()))
             // ⚠️ A SUBQUERY RATHER THAN `whereHas()`, ON `AutoTopUps`' STATED
             // REASON: the relation's builder is generic, so a
             // `where('source', …)` inside its closure is unverifiable at level
@@ -1415,7 +1427,7 @@ final class ReviewReplies
      * review"* settles ours without naming whose it is not.
      *
      * ⚠️ **THE SETTLE WINDOW IS A GUESS AND IT IS DECLARED AS ONE**
-     * (7124). See {@see self::PUBLISH_RECHECK_SETTLE_MINUTES}.
+     * (7124). See {@see $this->publishRecheckSettleMinutes()}.
      *
      * ⛔ **IT CLEARS AND DOES NOT RE-DISPATCH, WHICH IS HALF OF 6832 REFUSED
      * ON PURPOSE** (7126). Re-dispatching from here is unbounded: the fresh
@@ -1471,7 +1483,7 @@ final class ReviewReplies
             return null;
         }
 
-        $settledBefore = $observedAt->copy()->subMinutes(self::PUBLISH_RECHECK_SETTLE_MINUTES);
+        $settledBefore = $observedAt->copy()->subMinutes($this->publishRecheckSettleMinutes());
 
         // A cheap existence check before the locking transaction, which is the
         // shape `publishIsUnconfirmed()` already uses: this runs once per

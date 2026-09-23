@@ -43,6 +43,11 @@ final class Tickets extends Component
 
     public ?int $confirmingResolveId = null;
 
+    public function bodyLimit(): int
+    {
+        return app(SupportDesk::class)->bodyLimit();
+    }
+
     public function mount(): void
     {
         $this->authorize(SupportAccess::GATE);
@@ -107,7 +112,7 @@ final class Tickets extends Component
         }
 
         $this->validate([
-            'reply' => ['required', 'string', 'min:2', 'max:'.SupportDesk::BODY_LIMIT],
+            'reply' => ['required', 'string', 'min:2', 'max:'.$this->bodyLimit()],
         ]);
 
         try {

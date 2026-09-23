@@ -117,7 +117,7 @@ final class RecoveryCheckInSender
      * `content.growth-page.hold`'s own precedent — rather than a claim about
      * the answer going stale.
      */
-    private const int LINK_TTL_DAYS = 30;
+    public const int LINK_TTL_DAYS = 30;
 
     public function __construct(
         private readonly ConsentService $consent,
@@ -131,6 +131,11 @@ final class RecoveryCheckInSender
         private readonly SendCollisionArbiter $arbiter,
         private readonly ReviewRouter $router,
     ) {}
+
+    public function linkTtlDays(): int
+    {
+        return $this->defaults->int('messaging.recovery.link_ttl_days');
+    }
 
     /**
      * Send the check-in, or decline to and say why.
@@ -179,7 +184,7 @@ final class RecoveryCheckInSender
 
         $checkInUrl = URL::temporarySignedRoute(
             'reviews.fix-then-ask.checkin.show',
-            now()->addDays(self::LINK_TTL_DAYS),
+            now()->addDays($this->linkTtlDays()),
             ['business' => Tenancy::idOrFail(), 'conversation' => $conversation->getKey()],
         );
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Crm;
 
 use App\Models\Customer;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Identifier;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\Builder;
@@ -70,7 +71,12 @@ final class MergeDuplicateDetector
      * international number whose last ten digits coincide arrives as a candidate
      * and `isDuplicate()` throws it away.
      */
-    private const int COMPARED_DIGITS = 10;
+    public const int COMPARED_DIGITS = 10;
+
+    public function comparedDigits(): int
+    {
+        return app(DefaultsRegistry::class)->int('crm.merge.compared_digits');
+    }
 
     /**
      * The contacts that look like this one, newest activity first.
@@ -156,8 +162,8 @@ final class MergeDuplicateDetector
                 if ($phone !== null) {
                     $query->orWhereRaw(
                         "right(regexp_replace(coalesce(phone, ''), '\\D', '', 'g'), "
-                        .self::COMPARED_DIGITS.') = ?',
-                        [self::tail($phone)],
+                        .$this->comparedDigits().') = ?',
+                        [$this->tail($phone)],
                     );
                 }
 
@@ -195,10 +201,10 @@ final class MergeDuplicateDetector
         return $email !== null && $email === Identifier::email($other->email);
     }
 
-    private static function tail(string $normalisedPhone): string
+    private function tail(string $normalisedPhone): string
     {
         $digits = preg_replace('/\D/', '', $normalisedPhone) ?? '';
 
-        return substr($digits, -self::COMPARED_DIGITS);
+        return substr($digits, -$this->comparedDigits());
     }
 }
