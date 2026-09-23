@@ -11,7 +11,7 @@ use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\SiteInventoryImage;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Modules\X113\Actions\StaffRosterAction;
-use App\Modules\X155\Models\FormDefinition;
+use App\Modules\X155\Actions\FormReadAction;
 use App\Services\Assistant\PriceBook;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Links\TenantLinks;
@@ -129,25 +129,18 @@ final class SiteDraftAction
         };
 
         $buildFormBlock = function () use ($businessId, &$blocksGenerated, &$sourcesUsed, &$sourcesWithoutData) {
-            $form = FormDefinition::where('business_id', $businessId)->orderBy('id')->first();
-            if ($form) {
-                $fields = $form->schema['fields'] ?? [];
-                $required = [];
-                if (isset($form->steps) && is_array($form->steps) && isset($form->steps[0]['required'])) {
-                    $required = $form->steps[0]['required'];
-                }
-                $honeypot = $form->honeypot_field ?? 'website_url';
-
+            $definition = (new FormReadAction)->firstDefinitionForBusiness($businessId);
+            if ($definition) {
                 $blocksGenerated++;
                 $sourcesUsed[] = 'forms';
 
                 return [
                     'type' => 'form',
                     'source' => 'forms',
-                    'definition_id' => $form->id,
-                    'fields' => $fields,
-                    'required' => $required,
-                    'honeypot' => $honeypot,
+                    'definition_id' => $definition['id'],
+                    'fields' => $definition['fields'],
+                    'required' => $definition['required'],
+                    'honeypot' => $definition['honeypot'],
                 ];
             }
             $sourcesWithoutData[] = 'forms';

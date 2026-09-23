@@ -12,6 +12,7 @@ use App\Modules\X155\Actions\FormAdaptiveStepsAction;
 use App\Modules\X155\Actions\FormCaptureAction;
 use App\Modules\X155\Actions\FormCreateAction;
 use App\Modules\X155\Actions\FormGenerateAction;
+use App\Modules\X155\Actions\FormReadAction;
 use App\Modules\X155\Actions\FormReleaseAction;
 use App\Modules\X155\Actions\FormValidateAction;
 use App\Modules\X155\Events\FormCaptured;
@@ -1661,5 +1662,39 @@ class X155Test extends TestCase
 
         $formB = $action->handle($bizB->id, 'Shared Name');
         $this->assertEquals('shared-name', $formB->slug);
+    }
+
+    public function test_form_read_returns_the_oldest_definition_shape(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Form Read Shape Tenant']);
+        $action = new FormReadAction;
+
+        $this->assertNull($action->firstDefinitionForBusiness($biz->id));
+
+        $form1 = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Oldest Form',
+            'slug' => 'oldest',
+            'schema' => ['fields' => [['name' => 'first_name']]],
+            'steps' => [['step' => 1, 'required' => ['first_name']]],
+            'honeypot_field' => 'bot_trap',
+        ]);
+
+        $form2 = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Newer Form',
+            'slug' => 'newer',
+            'schema' => ['fields' => [['name' => 'phone']]],
+            'steps' => [['step' => 1, 'required' => ['phone']]],
+            'honeypot_field' => 'bot_trap2',
+        ]);
+
+        $shape = $action->firstDefinitionForBusiness($biz->id);
+
+        $this->assertNotNull($shape);
+        $this->assertEquals($form1->id, $shape['id']);
+        $this->assertEquals([['name' => 'first_name']], $shape['fields']);
+        $this->assertEquals(['first_name'], $shape['required']);
+        $this->assertEquals('bot_trap', $shape['honeypot']);
     }
 }
