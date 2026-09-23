@@ -439,7 +439,7 @@ final class CustomerProfile extends Component
         // was rendered with and undo it.
         $this->contactRegion = $customer->region_code ?? '';
 
-        Toaster::success('Merged. You can undo this for '.CustomerMerges::UNDO_WINDOW_DAYS.' days.');
+        Toaster::success('Merged. You can undo this for '.app(CustomerMerges::class)->undoWindowDays().' days.');
     }
 
     /**

@@ -15,6 +15,7 @@ use App\Models\Business;
 use App\Models\Location;
 use App\Models\StripeCustomer;
 use App\Models\Subscription;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\PlanQuote;
 use App\Support\PlanSelection;
 use Illuminate\Support\Carbon;
@@ -64,6 +65,7 @@ final class Subscriptions
      * those call sites for no benefit.
      */
     public function __construct(
+        private readonly ?DefaultsRegistry $defaults = null,
         private readonly PlanCharges $charges = new PlanCharges,
     ) {}
 
@@ -1189,7 +1191,7 @@ final class Subscriptions
      * and this method does not reverse it. What it removes is the *concurrent*
      * road to a duplicate; what survives is the one that was always there, a
      * crash between the send and the record, and after
-     * {@see self::RENEWAL_REMINDER_CLAIM_MINUTES} that crash produces a second
+     * {@see $this->renewalReminderClaimMinutes()} that crash produces a second
      * notice rather than none.
      *
      * ⚠️ **NO TRANSACTION HERE, UNLIKE EVERY OTHER WRITER ON THIS CLASS**, and
@@ -1209,7 +1211,7 @@ final class Subscriptions
      */
     public function claimRenewalReminder(Business $business, Carbon $renewalDate): bool
     {
-        $lapsedBefore = Carbon::now()->subMinutes(self::RENEWAL_REMINDER_CLAIM_MINUTES);
+        $lapsedBefore = Carbon::now()->subMinutes($this->renewalReminderClaimMinutes());
 
         $claimed = Subscription::query()
             ->where('business_id', $business->id)
@@ -1449,4 +1451,9 @@ final class Subscriptions
      * fourteen days began — decision 505's reasoning, on the key whose value the
      * marketing home also prints (518).
      */
+
+    public function renewalReminderClaimMinutes(): int
+    {
+        return ($this->defaults ?? app(DefaultsRegistry::class))->int('billing.renewal.claim_minutes');
+    }
 }

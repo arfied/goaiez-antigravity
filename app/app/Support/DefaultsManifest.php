@@ -21,9 +21,19 @@ use App\Services\Agent\AgentComposer;
 use App\Services\Agent\AgentNudges;
 use App\Services\Agent\ThreadCloseSummaries;
 use App\Services\Assistant\PriceSheet;
+use App\Services\Audit\AuditEngine;
 use App\Services\Audit\Checks\ReviewStatsCheck;
 use App\Services\Audit\PublicAuditStarter;
+use App\Services\Auth\FailedSignIns;
 use App\Services\Billing\PurchaseReconciliation;
+use App\Services\Billing\RenewalReminders;
+use App\Services\Billing\Subscriptions;
+use App\Services\Billing\TrialEligibility;
+use App\Services\Campaigns\UnknownSendReconciler;
+use App\Services\Content\ContentSelfAudit;
+use App\Services\Content\Publishing;
+use App\Services\Crm\CustomerMerges;
+use App\Services\Export\ExportBuilder;
 use App\Services\Gbp\ZernioSpend;
 use App\Services\MagicLinkService;
 use App\Services\Mail\MailDrivers;
@@ -3089,6 +3099,66 @@ final class DefaultsManifest
                 'seed' => AgentNudges::WINDOW_HOURS,
                 'group' => 'Assistant',
                 'description' => 'Window in hours for agent nudges.',
+            ],
+            'auth.failed_sign_ins.window_minutes' => [
+                'seed' => FailedSignIns::WINDOW_MINUTES,
+                'group' => 'Operations',
+                'description' => 'Window in minutes for failed sign-ins.',
+            ],
+            'campaigns.unknown_send.vendor_log_window_hours' => [
+                'seed' => UnknownSendReconciler::VENDOR_LOG_WINDOW_HOURS,
+                'group' => 'Messaging',
+                'description' => 'Vendor log window hours for unknown sends.',
+            ],
+            'audit.engine.budget_seconds' => [
+                'seed' => AuditEngine::BUDGET_SECONDS,
+                'group' => 'Reviews',
+                'description' => 'Budget seconds for audit engine.',
+            ],
+            'content.self_audit.impression_window_days' => [
+                'seed' => ContentSelfAudit::IMPRESSION_WINDOW_DAYS,
+                'group' => 'Content',
+                'description' => 'Impression window days for self audits.',
+            ],
+            'billing.trial.signup_origin_window_days' => [
+                'seed' => TrialEligibility::SIGNUP_ORIGIN_WINDOW_DAYS,
+                'group' => 'Billing',
+                'description' => 'Signup origin window days for trials.',
+            ],
+            'billing.renewal.opens_days_before' => [
+                'seed' => RenewalReminders::OPENS_DAYS_BEFORE,
+                'group' => 'Billing',
+                'description' => 'Days before renewal opens.',
+            ],
+            'billing.renewal.closes_days_before' => [
+                'seed' => RenewalReminders::CLOSES_DAYS_BEFORE,
+                'group' => 'Billing',
+                'description' => 'Days before renewal closes.',
+            ],
+            'billing.renewal.claim_minutes' => [
+                'seed' => Subscriptions::RENEWAL_REMINDER_CLAIM_MINUTES,
+                'group' => 'Billing',
+                'description' => 'Renewal reminder claim minutes.',
+            ],
+            'content.publishing.hold_hours' => [
+                'seed' => Publishing::HOLD_HOURS,
+                'group' => 'Content',
+                'description' => 'Publishing hold hours.',
+            ],
+            'crm.merge.undo_window_days' => [
+                'seed' => CustomerMerges::UNDO_WINDOW_DAYS,
+                'group' => 'Marketing',
+                'description' => 'Undo window days for customer merges.',
+            ],
+            'export.request_cooldown_minutes' => [
+                'seed' => ExportBuilder::REQUEST_COOLDOWN_MINUTES,
+                'group' => 'Operations',
+                'description' => 'Export request cooldown minutes.',
+            ],
+            'export.in_flight_reuse_minutes' => [
+                'seed' => ExportBuilder::IN_FLIGHT_REUSE_MINUTES,
+                'group' => 'Operations',
+                'description' => 'Export in-flight reuse minutes.',
             ],
         ];
 

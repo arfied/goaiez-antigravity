@@ -39,6 +39,7 @@ use App\Services\Billing\MessageRates;
 use App\Services\Billing\SendCredits;
 use App\Services\Campaigns\CampaignReplyResolver;
 use App\Services\Config\CredentialStore;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Consent\IdentifierHashEpochs;
 use App\Services\Fetch\DirectFetchGateway;
 use App\Services\Fetch\RobotsPolicy;
@@ -927,6 +928,7 @@ class AppServiceProvider extends ServiceProvider
     private function registerAuditEngine(): void
     {
         $this->app->bind(AuditEngine::class, fn ($app): AuditEngine => new AuditEngine(
+            $app->make(DefaultsRegistry::class),
             $app->make(AuditContextBuilder::class),
             [
                 $app->make(GbpCompletenessCheck::class),

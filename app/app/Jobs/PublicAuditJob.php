@@ -55,7 +55,7 @@ final class PublicAuditJob implements ShouldBeUnique, ShouldQueue
      * wedged fetch cannot hold a worker open indefinitely on a free endpoint
      * anyone can hit.
      */
-    public int $timeout = AuditEngine::BUDGET_SECONDS;
+    public int $timeout = app(AuditEngine::class)->budgetSeconds();
 
     /**
      * Long enough that a duplicate cannot slip in behind a job still running,

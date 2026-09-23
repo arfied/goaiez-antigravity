@@ -146,6 +146,7 @@ final class Publishing
     public const string WAITING_HANDED_TO_OWNER = 'handed_to_owner';
 
     public function __construct(
+        private readonly DefaultsRegistry $defaults,
         private readonly GrowthPages $pages,
         private readonly PublishingVolume $volume,
         private readonly AuthorByline $byline,
@@ -527,7 +528,7 @@ final class Publishing
             return PublishRefusal::OwnerNoticeUndeliverable;
         }
 
-        $until = Carbon::now()->addHours(self::HOLD_HOURS);
+        $until = Carbon::now()->addHours($this->holdHours());
 
         // ⛔ **THE NOTICE FIRST AND THE HOLD SECOND, AND THE TWO LINES WERE THE
         // OTHER WAY ROUND UNTIL 11010.** `deliverNow()` throws, so a page whose
@@ -910,5 +911,10 @@ final class Publishing
         }
 
         return $fields;
+    }
+
+    public function holdHours(): int
+    {
+        return $this->defaults->int('content.publishing.hold_hours');
     }
 }
