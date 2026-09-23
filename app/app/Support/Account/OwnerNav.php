@@ -628,7 +628,7 @@ final class OwnerNav
             OwnerNavItem::make('Time to first minute', 'x-118.ttfm-distribution', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Dry-run preview', 'x-212.dryrun-preview', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Import rejections', 'x-212.postimport-audit', OwnerNavItem::GROUP_CATALOG),
-            OwnerNavItem::make('Approvals', 'x-202.queue', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Approvals', 'x-202.queue', OwnerNavItem::GROUP_CATALOG, alsoCurrentFor: ['x-202.item']),
             OwnerNavItem::make('Approval history', 'x-202.audit-export', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Fixer inbox', 'x-209.private-inbox', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Autopilot ladder', 'x-209.ladders-own-state', OwnerNavItem::GROUP_CATALOG),

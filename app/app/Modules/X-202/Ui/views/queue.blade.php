@@ -28,7 +28,9 @@
             <ul class="divide-y divide-rule">
                 @foreach($items as $i)
                     <li class="py-2" wire:key="item-{{ $i->id }}">
-                        <span class="font-semibold">{{ $i->subject }}</span>
+                        <a href="{{ route('x-202.item', ['id' => $i->id]) }}" class="font-semibold text-blue-600 underline" wire:navigate>
+                            {{ $i->subject }}
+                        </a>
                         <span class="text-sm text-ink-2">{{ $i->item_type }}</span>
                         <span class="text-sm text-ink-2">{{ $i->status }}</span>
                         @if($i->status === 'pending')
