@@ -6,6 +6,7 @@ namespace Tests\Modules\X220;
 
 use App\Enums\AiTask;
 use App\Models\AiCall;
+use App\Models\PlatformSetting;
 use App\Modules\X220\Actions\EvalCompareAction;
 use App\Modules\X220\Actions\EvalRunAction;
 use App\Modules\X220\Actions\PromptFreezeAction;
@@ -18,6 +19,7 @@ use App\Modules\X220\Models\GoldenSet;
 use App\Modules\X220\Ui\PromptHistory;
 use App\Services\Ai\AiRequest;
 use App\Services\Ai\AiRouter;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -92,7 +94,14 @@ class X220Test extends TestCase
      */
     public function test_n_220_03_golden_set_eval_run(): void
     {
-        Event::fake([EvalCompleted::class]);
+        Event::fake([EvalCompleted::class, EvalRegressed::class]);
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'choices' => [
+                    ['message' => ['content' => 'fake completion']],
+                ],
+            ]),
+        ]);
 
         $biz = TestCase::provisionTenant(['name' => 'Eval Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -113,11 +122,10 @@ class X220Test extends TestCase
         ]);
 
         $res = $this->evaluator->handle($biz->id, $p->id);
-        $this->assertEquals('not_run', $res['status']);
-        $this->assertEquals('no_evaluator', $res['reason']);
-        $this->assertEquals(1, $res['test_cases_count']);
+        $this->assertEquals('run', $res['status']);
+        $this->assertEquals(1, $res['cases_total']);
 
-        Event::assertNotDispatched(EvalCompleted::class);
+        Event::assertDispatched(EvalCompleted::class);
     }
 
     /**
@@ -225,5 +233,138 @@ class X220Test extends TestCase
 
         $this->assertNotNull($prompt->fresh()->frozen_at);
         Http::assertNothingSent();
+    }
+
+    public function test_c2c_real_eval_run(): void
+    {
+        Event::fake([EvalCompleted::class, \App\Modules\X220\Events\EvalRegressed::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Eval Tenant 2', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'choices' => [['message' => ['content' => 'booked']]],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10],
+            ]),
+            'api.anthropic.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'type' => 'message',
+                'stop_reason' => 'end_turn',
+                'content' => [['type' => 'text', 'text' => 'booked']],
+                'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+            ]),
+        ]);
+
+        $p = AiPrompt::create([
+            'business_id' => $biz->id,
+            'prompt_key' => 'conversation',
+            'version' => 1,
+            'body' => 'Book the appointment',
+        ]);
+
+        $golden = GoldenSet::create([
+            'business_id' => $biz->id,
+            'prompt_id' => $p->id,
+            'prompt_version' => 1,
+            'test_cases' => [
+                ['input' => 'book oil change'],
+                ['input' => 'book a completely different thing'],
+            ],
+            'expected_outputs' => [
+                ['expected' => 'booked'],
+                ['expected' => 'refused'],
+            ],
+            'score_threshold' => 90,
+        ]);
+
+        $res = $this->evaluator->handle($biz->id, $p->id);
+        $this->assertEquals('run', $res['status']);
+        $this->assertEquals(2, $res['cases_total']);
+        $this->assertEquals(1, $res['cases_passed']);
+        $this->assertEquals(50, $res['score_pct']);
+        $this->assertFalse((bool) $res['passed']);
+        $this->assertNotNull($res['model_requested']);
+        $this->assertNotNull($res['model_served']);
+
+        Event::assertDispatched(EvalCompleted::class);
+        Event::assertDispatched(\App\Modules\X220\Events\EvalRegressed::class);
+    }
+
+    public function test_c2c_budget_refused(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Budget Tenant', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        app(DefaultsRegistry::class)->set('ai.monthly_cap_per_tenant', 0, 'test');
+
+        $p = AiPrompt::create([
+            'business_id' => $biz->id,
+            'prompt_key' => 'conversation',
+            'version' => 1,
+            'body' => 'Test',
+        ]);
+
+        GoldenSet::create([
+            'business_id' => $biz->id,
+            'prompt_id' => $p->id,
+            'prompt_version' => 1,
+            'test_cases' => [['input' => '1']],
+            'score_threshold' => 90,
+        ]);
+
+        $res = $this->evaluator->handle($biz->id, $p->id);
+        $this->assertEquals('refused', $res['status']);
+        $this->assertEquals('budget', $res['reason']);
+
+        Http::assertNothingSent();
+
+        PlatformSetting::where('key', 'ai.monthly_cap_per_tenant')->delete();
+    }
+
+    public function test_c2c_cap_cases(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Cap Tenant', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        app(DefaultsRegistry::class)->set('ai.eval.max_cases_per_run', 20, 'test');
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'choices' => [['message' => ['content' => 'ok']]],
+                'usage' => ['prompt_tokens' => 1, 'completion_tokens' => 1],
+            ]),
+            'api.anthropic.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'type' => 'message',
+                'stop_reason' => 'end_turn',
+                'content' => [['type' => 'text', 'text' => 'ok']],
+                'usage' => ['input_tokens' => 1, 'output_tokens' => 1],
+            ]),
+        ]);
+
+        $p = AiPrompt::create(['business_id' => $biz->id, 'prompt_key' => 'conversation', 'version' => 1, 'body' => 'T']);
+
+        $cases = [];
+        $outputs = [];
+        for ($i = 0; $i < 25; $i++) {
+            $cases[] = ['input' => '1'];
+            $outputs[] = ['expected' => 'ok'];
+        }
+
+        $golden = GoldenSet::create([
+            'business_id' => $biz->id,
+            'prompt_id' => $p->id,
+            'prompt_version' => 1,
+            'test_cases' => $cases,
+            'expected_outputs' => $outputs,
+            'score_threshold' => 90,
+        ]);
+
+        $res = $this->evaluator->handle($biz->id, $p->id);
+        $this->assertEquals('run', $res['status']);
+        $this->assertEquals(20, $res['cases_total']);
     }
 }

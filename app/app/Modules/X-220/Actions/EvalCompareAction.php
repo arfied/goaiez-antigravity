@@ -13,8 +13,8 @@ final class EvalCompareAction
         $resA = $this->runner->handle($businessId, $promptIdA);
         $resB = $this->runner->handle($businessId, $promptIdB);
 
-        $scoreA = $resA['score'] ?? 0;
-        $scoreB = $resB['score'] ?? 0;
+        $scoreA = $resA['score_pct'] ?? 0;
+        $scoreB = $resB['score_pct'] ?? 0;
 
         return [
             'version_a' => $resA,

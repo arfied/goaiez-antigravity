@@ -7,6 +7,7 @@ namespace App\Modules\X220\Ui;
 use App\Modules\X220\Actions\EvalRunAction;
 use App\Modules\X220\Models\GoldenSet;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -41,8 +42,23 @@ class EvalReport extends Component
             ? GoldenSet::where('business_id', $this->businessId)->get()
             : collect();
 
+        $latestRuns = [];
+        if ($this->businessId > 0) {
+            $runs = DB::table('x220_eval_runs')
+                ->where('business_id', $this->businessId)
+                ->orderBy('id', 'desc')
+                ->get();
+
+            foreach ($runs as $run) {
+                if (! isset($latestRuns[$run->golden_set_id])) {
+                    $latestRuns[$run->golden_set_id] = (array) $run;
+                }
+            }
+        }
+
         return view('x-220::eval-report', [
             'sets' => $sets,
+            'latestRuns' => $latestRuns,
         ]);
     }
 }

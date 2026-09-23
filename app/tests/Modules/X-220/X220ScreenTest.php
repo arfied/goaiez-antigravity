@@ -12,6 +12,7 @@ use App\Modules\X220\Ui\EvalReport;
 use App\Services\Reviews\ReviewReplies;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -74,12 +75,20 @@ class ReplyQueueScreenTest extends TestCase
         $biz = self::provisionTenant(['name' => 'Biz2', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
 
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'choices' => [['message' => ['content' => 'fake completion']]],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10],
+            ]),
+        ]);
+
         $prompt = AiPrompt::create(['business_id' => $biz->id, 'prompt_key' => 'reply.generate', 'version' => 1, 'body' => 'Test']);
         $golden = GoldenSet::create([
             'business_id' => $biz->id,
             'prompt_id' => $prompt->id,
             'prompt_version' => 1,
-            'test_cases' => [['input' => '1'], ['input' => '2']],
+            'test_cases' => [['input' => '1', 'expected' => 'fake completion'], ['input' => '2', 'expected' => 'fake completion']],
+            'expected_outputs' => [['expected' => 'fake completion'], ['expected' => 'fake completion']],
             'score_threshold' => 90,
         ]);
 
@@ -88,8 +97,7 @@ class ReplyQueueScreenTest extends TestCase
             ->assertSee('Cases: 2')
             ->assertSee('No evaluation run yet')
             ->call('run', $golden->id)
-            ->assertSee('No evaluation run yet'); // wait, the UI might show not run?
-        // "last result (not_run shown as 'No evaluation run yet')"
+            ->assertSee('100% (Passed)');
     }
 
     public function test_screen_403_no_tenant(): void
