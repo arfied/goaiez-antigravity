@@ -16,6 +16,7 @@ use App\Modules\X136\Models\DecayModel;
 use App\Modules\X136\Models\Signal;
 use App\Modules\X136\Models\SignalScore;
 use App\Modules\X136\Ui\CoolingView;
+use App\Modules\X155\Events\FormCaptured;
 use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -260,5 +261,64 @@ class X136Test extends TestCase
 
         DB::statement("SET app.business_id = '{$bizA->id}'");
         $this->assertEquals(0, Signal::where('business_id', $bizA->id)->where('prospect_identifier', 'person:7732')->count());
+    }
+
+    public function test_a_form_submission_records_one_high_intent_signal(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new FormCaptured(businessId: $biz->id, submissionId: 7741, formDefinitionId: 3, personId: 7731));
+
+        $this->assertEquals(1, Signal::where('business_id', $biz->id)->where('signal_type', 'form.submitted')->count());
+        $signal = Signal::where('business_id', $biz->id)->where('signal_type', 'form.submitted')->first();
+        $this->assertEquals('person:7731', $signal->prospect_identifier);
+        $this->assertEquals(7741, $signal->payload['submission_id']);
+
+        $score = SignalScore::where('business_id', $biz->id)->where('prospect_identifier', 'person:7731')->first();
+        $this->assertEquals(75.0, $score->signal_value);
+        $this->assertTrue((bool) $score->is_high_intent);
+        $this->assertEquals('fresh', $score->cooling_status);
+        $this->assertTrue(DecayModel::where('business_id', $biz->id)->where('signal_type', 'form.submitted')->exists());
+    }
+
+    public function test_the_same_submission_dispatched_twice_scores_once(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new FormCaptured(businessId: $biz->id, submissionId: 7741, formDefinitionId: 3, personId: 7731));
+        Event::dispatch(new FormCaptured(businessId: $biz->id, submissionId: 7741, formDefinitionId: 3, personId: 7731));
+
+        $this->assertEquals(1, Signal::where('business_id', $biz->id)->where('signal_type', 'form.submitted')->count());
+    }
+
+    public function test_two_submissions_by_one_prospect_are_two_signals(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new FormCaptured(businessId: $biz->id, submissionId: 7741, formDefinitionId: 3, personId: 7731));
+        Event::dispatch(new FormCaptured(businessId: $biz->id, submissionId: 7742, formDefinitionId: 3, personId: 7731));
+
+        $this->assertEquals(2, Signal::where('business_id', $biz->id)->where('signal_type', 'form.submitted')->count());
+    }
+
+    public function test_a_high_intent_prospect_is_fresh_not_cooling_on_the_screen(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+
+        Event::dispatch(new FormCaptured(businessId: $biz->id, submissionId: 7741, formDefinitionId: 3, personId: 7731));
+
+        Livewire::actingAs($owner)->test(CoolingView::class)
+            ->assertSee('Nobody is cooling')
+            ->assertDontSee('person:7731');
     }
 }
