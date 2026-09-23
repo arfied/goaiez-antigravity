@@ -3,13 +3,13 @@
         <h2 class="text-lg font-bold">Complaint & Bounce Dashboard</h2>
 
         <div class="flex gap-2 my-4">
-            <button wire:click="window(7)" class="px-3 py-1 rounded {{ $days === 7 ? 'bg-blue-600 text-white' : 'bg-gray-200' }}">7 Days</button>
-            <button wire:click="window(30)" class="px-3 py-1 rounded {{ $days === 30 ? 'bg-blue-600 text-white' : 'bg-gray-200' }}">30 Days</button>
-            <button wire:click="window(90)" class="px-3 py-1 rounded {{ $days === 90 ? 'bg-blue-600 text-white' : 'bg-gray-200' }}">90 Days</button>
+            <button wire:click="window(7)" class="px-3 py-1 rounded {{ $days === 7 ? 'bg-blue-600 text-paper' : 'bg-rule' }}">7 Days</button>
+            <button wire:click="window(30)" class="px-3 py-1 rounded {{ $days === 30 ? 'bg-blue-600 text-paper' : 'bg-rule' }}">30 Days</button>
+            <button wire:click="window(90)" class="px-3 py-1 rounded {{ $days === 90 ? 'bg-blue-600 text-paper' : 'bg-rule' }}">90 Days</button>
         </div>
 
         @if(count($rows) === 0)
-            <div class="p-4 bg-gray-50 rounded text-gray-500">
+            <div class="p-4 bg-paper rounded text-ink-2">
                 No mail events in the last {{ $defaultDays }} days.
             </div>
         @else
