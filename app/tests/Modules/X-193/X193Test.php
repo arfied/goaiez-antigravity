@@ -11,6 +11,7 @@ use App\Modules\X193\Events\NotificationClassified;
 use App\Modules\X193\Models\NotificationClass;
 use App\Modules\X193\Ui\QuiethourHolds;
 use App\Services\Config\DefaultsRegistry;
+use App\Support\Tenancy;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -43,7 +44,7 @@ class X193Test extends TestCase
         Event::fake([NotificationClassified::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'Quiet Hours Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        Tenancy::set($biz->id);
 
         // Seed via factory/model and READ the column behavior directly.
         NotificationClass::create([
@@ -102,7 +103,7 @@ class X193Test extends TestCase
     public function test_g10_31_alerts_never_wait(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'G10-31 Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        Tenancy::set($biz->id);
 
         $time3am = Carbon::parse('2026-08-30 03:00:00');
 
@@ -133,7 +134,7 @@ class X193Test extends TestCase
     public function test_g10_38_caller_based_decision(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'G10-38 Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        Tenancy::set($biz->id);
 
         DB::table('notification_classes')->insert([
             'business_id' => $biz->id,
@@ -167,7 +168,7 @@ class X193Test extends TestCase
     public function test_classify_writes_notification_holds_row_and_registry_drives_window(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Holds Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        Tenancy::set($biz->id);
 
         app(DefaultsRegistry::class)->set('notifications.quiet_hours.start', 22, 'test');
         app(DefaultsRegistry::class)->set('notifications.quiet_hours.end', 7, 'test');
@@ -202,7 +203,7 @@ class X193Test extends TestCase
         app(DefaultsRegistry::class)->set('notifications.quiet_hours.end', 8, 'test');
         app(DefaultsRegistry::class)->set('notifications.holds.window_days', 7, 'test');
 
-        DB::statement("SET app.business_id = '{$biz1->id}'");
+        Tenancy::set($biz1->id);
 
         // The empty state
         Livewire::test(QuiethourHolds::class, ['businessId' => $biz1->id])
@@ -224,7 +225,7 @@ class X193Test extends TestCase
         $run = new AutomationRun;
         $run->business_id = $biz1->id;
         $run->automation_key = 'job_class_hold';
-        $run->status = AutomationRunStatus::Completed;
+        $run->status = AutomationRunStatus::Succeeded;
         $run->output = ['held' => true, 'reason' => 'quiet_hours', 'window' => Carbon::now()->addHours(2)->toDateTimeString()];
         $run->started_at = Carbon::now();
         $run->finished_at = Carbon::now();
@@ -236,14 +237,14 @@ class X193Test extends TestCase
             ->assertDontSee('No holds in the last');
 
         // Other tenant invisible
-        DB::statement("SET app.business_id = '{$biz2->id}'");
+        Tenancy::set($biz2->id);
         Livewire::test(QuiethourHolds::class, ['businessId' => $biz2->id])
             ->assertSee('No holds in the last')
             ->assertDontSee('classify_hold_caller')
             ->assertDontSee('job_class_hold');
 
         // No tenant -> 403
-        DB::statement("SET app.business_id = ''");
+        Tenancy::forget();
         Livewire::test(QuiethourHolds::class, ['businessId' => 0])
             ->assertForbidden();
     }
