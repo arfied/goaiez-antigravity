@@ -18,6 +18,9 @@ use App\Services\Actuation\T3MetaUpsert as MetaUpsert;
 use App\Services\Actuation\WordPress\WordPressRestClient;
 use App\Services\Billing\PurchaseReconciliation;
 use App\Services\Gbp\ZernioSpend;
+use App\Modules\X01\Domain\UnifiedInboxManager;
+use App\Modules\X157\Actions\EdgeDeployAction;
+use App\Modules\X205\Domain\AffiliateEngine;
 use App\Services\Mail\MailDrivers;
 use App\Services\Mail\MailQuota;
 use App\Services\Mail\MailSendRate;
@@ -105,6 +108,52 @@ final class DefaultsManifest
                 'group' => 'Routing',
                 'description' => 'Number of days to look back when evaluating a staff member\'s workload.',
             ],
+            'crm.lead_score.tier_hot' => [
+                'seed' => UnifiedInboxManager::TIER_HOT,
+                'group' => 'Marketing',
+                'description' => 'Lead score hot tier.',
+            ],
+            'crm.lead_score.tier_warm' => [
+                'seed' => UnifiedInboxManager::TIER_WARM,
+                'group' => 'Marketing',
+                'description' => 'Lead score warm tier.',
+            ],
+            'crm.lead_score.tier_cool' => [
+                'seed' => UnifiedInboxManager::TIER_COOL,
+                'group' => 'Marketing',
+                'description' => 'Lead score cool tier.',
+            ],
+            'crm.lead_score.tier_cold' => [
+                'seed' => UnifiedInboxManager::TIER_COLD,
+                'group' => 'Marketing',
+                'description' => 'Lead score cold tier.',
+            ],
+            'affiliate.tier.gold_referrals' => [
+                'seed' => AffiliateEngine::GOLD_REFERRALS,
+                'group' => 'Affiliate',
+                'description' => 'Affiliate gold tier referrals count.',
+            ],
+            'affiliate.tier.silver_referrals' => [
+                'seed' => AffiliateEngine::SILVER_REFERRALS,
+                'group' => 'Affiliate',
+                'description' => 'Affiliate silver tier referrals count.',
+            ],
+            'affiliate.cookie_lifetime_days' => [
+                'seed' => AffiliateEngine::COOKIE_LIFETIME_DAYS,
+                'group' => 'Affiliate',
+                'description' => 'Affiliate cookie lifetime days.',
+            ],
+            'sites.deploy.speed_budget_ms' => [
+                'seed' => EdgeDeployAction::SPEED_BUDGET_MS,
+                'group' => 'Content',
+                'description' => 'Deploy speed budget ms.',
+            ],
+            'sites.deploy.pricebook_items_max' => [
+                'seed' => EdgeDeployAction::PRICEBOOK_ITEMS_MAX,
+                'group' => 'Content',
+                'description' => 'Deploy pricebook items max.',
+            ],
+
             /*
              * Billing shape. Not prices — those are per-plan and live in
              * entitlements() below — but the terms every plan shares.
@@ -181,6 +230,12 @@ final class DefaultsManifest
                 'seed' => 30,
                 'group' => 'Billing',
                 'description' => 'Days between charges (decision 147 — 30 days, not calendar months, which is 12.17 cycles a year). Sent to Stripe as the price\'s recurring interval when a Checkout Session is opened. ⚠️ Applies to new subscriptions only: an existing one keeps the interval it was created with.',
+            ],
+
+            'billing.risk.days_overdue_high' => [
+                'seed' => 30,
+                'group' => 'Billing',
+                'description' => 'Invoices past this number of days overdue put a customer in the High risk tier.',
             ],
 
             /*
@@ -1946,6 +2001,12 @@ final class DefaultsManifest
                 'description' => 'The only domain this platform sends email from (decision 5500), superseding 2114\'s mail.goaiez.com and decision 30\'s reports.goaiez.com. A separately registered domain rather than a subdomain, because reputation, DMARC alignment and blocklisting all work at the organizational domain, so a subdomain of goaiez.com is not separation. SPF, DKIM and DMARC are published here and nowhere else, so a from address on any other domain fails authentication at the receiving server — PlatformMailer refuses one rather than sending it. ⚠️ Never the primary domain: that half of decision 30 is unchanged and separately enforced.',
             ],
 
+            'mail.health.window_days' => [
+                'seed' => 30,
+                'group' => 'Messaging',
+                'description' => 'Window days for complaint bounce summary action.',
+            ],
+
             /*
              * ⛔ **THE 24-HOUR SENDING CEILING IS NO LONGER A KEY, IT IS A KEY
              * PER MAILER** (4603, closing 4456). See
@@ -2371,6 +2432,16 @@ final class DefaultsManifest
                 'seed' => 15,
                 'group' => 'Operations',
                 'description' => 'How old the scheduler\'s or a queue worker\'s last heartbeat may be before the operator is alerted (T176 P23). 0 disables the check. ⛔ THIS IS THE ONE ALERT THAT FIRES ON ABSENCE, and it is why the check does not run in the scheduler: a dead scheduler produces silence, not an error, and a check that only runs while the thing it checks is running cannot report that it stopped. It runs in the web process instead. ⚠️ FIFTEEN RATHER THAN TWO, because both processes are restarted on every deploy and a threshold under a deploy\'s length pages somebody every release. ⚠️ A process that has NEVER beaten is not alerted — a fresh install would otherwise page on its first request.',
+            ],
+            'fixer.ladder.start_level' => [
+                'seed' => 3,
+                'group' => 'Operations',
+                'description' => 'The level a NEW action type starts at in the Fixer ladder.',
+            ],
+            'fixer.ladder.auto_level' => [
+                'seed' => 3,
+                'group' => 'Operations',
+                'description' => 'At or above this level a command runs without a tap. Below it, the command waits in One-Tap Approval.',
             ],
 
             /*
@@ -3093,6 +3164,36 @@ final class DefaultsManifest
                 'seed' => ZernioSpend::FREE_TIER_CREDIT_CENTS,
                 'group' => 'Google Business Profile',
                 'description' => 'Free tier credit in cents for Zernio spend.',
+            ],
+            'notifications.quiet_hours.start' => [
+                'seed' => 21,
+                'group' => 'Notifications',
+                'description' => 'The hour the quiet window starts.',
+            ],
+            'notifications.quiet_hours.end' => [
+                'seed' => 8,
+                'group' => 'Notifications',
+                'description' => 'The hour the quiet window ends.',
+            ],
+            'notifications.holds.window_days' => [
+                'seed' => 7,
+                'group' => 'Notifications',
+                'description' => 'How many days of holds the screen shows.',
+            ],
+            'brand.default_accent' => [
+                'seed' => '#0284c7',
+                'group' => 'Brand',
+                'description' => 'The default accent colour for brand cards.',
+            ],
+            'brand.card.max_logo_kb' => [
+                'seed' => 512,
+                'group' => 'Brand',
+                'description' => 'Maximum allowed size for the tenant brand logo in KB.',
+            ],
+            'brand.card.badge_max_chars' => [
+                'seed' => 40,
+                'group' => 'Brand',
+                'description' => 'Maximum characters allowed in the badge text.',
             ],
         ];
 

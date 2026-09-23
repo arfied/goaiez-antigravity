@@ -6,20 +6,30 @@ namespace Tests\Modules\X199;
 
 use App\Modules\X121\Models\Person;
 use App\Modules\X198\Models\MerchantConnection;
+use App\Modules\X199\Actions\DraftInvoiceFromJobAction;
+use App\Modules\X199\Actions\GenerateShortLinkAction;
+use App\Modules\X199\Actions\GetBillingSummaryAction;
 use App\Modules\X199\Actions\InvoiceDraftAction;
 use App\Modules\X199\Actions\InvoiceIssueAction;
+use App\Modules\X199\Actions\InvoiceOverdueListAction;
+use App\Modules\X199\Actions\InvoicePaymentLinkAction;
 use App\Modules\X199\Actions\InvoiceRecordOfflineAction;
+use App\Modules\X199\Actions\SendInvoiceLinkAction;
 use App\Modules\X199\Actions\TermsSetAction;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Events\InvoiceIssued;
+use App\Modules\X199\Events\InvoiceOpened;
 use App\Modules\X199\Events\InvoiceOverdue;
 use App\Modules\X199\Events\InvoicePaid;
+use App\Modules\X199\Listeners\NotifyInvoiceOpened;
 use App\Modules\X199\Models\CreditTerm;
 use App\Modules\X199\Models\Invoice;
+use App\Modules\X199\Models\InvoiceLine;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
@@ -130,9 +140,9 @@ class X199Test extends TestCase
      */
     public function test_g1_51_gateway_agnostic(): void
     {
-        $invoice = new \App\Modules\X199\Models\Invoice(['id' => 999]);
-        $action = new \App\Modules\X199\Actions\InvoicePaymentLinkAction();
-        
+        $invoice = new Invoice(['id' => 999]);
+        $action = new InvoicePaymentLinkAction;
+
         $link = $action->handle($invoice, 'generic_gateway');
         $this->assertStringContainsString('generic_gateway', $link);
         $this->assertStringNotContainsString('stripe', $link, 'The payment link action is gateway-agnostic');
@@ -143,9 +153,9 @@ class X199Test extends TestCase
      */
     public function test_g1_60_channel_choice(): void
     {
-        $invoice = new \App\Modules\X199\Models\Invoice(['id' => 888]);
-        $action = new \App\Modules\X199\Actions\SendInvoiceLinkAction();
-        
+        $invoice = new Invoice(['id' => 888]);
+        $action = new SendInvoiceLinkAction;
+
         $res = $action->handle($invoice, 'sms');
         $this->assertEquals('sent', $res['status']);
         $this->assertEquals('sms', $res['channel']);
@@ -156,16 +166,16 @@ class X199Test extends TestCase
      */
     public function test_g13_36_invoice_alert(): void
     {
-        \Illuminate\Support\Facades\Log::shouldReceive('info')
+        Log::shouldReceive('info')
             ->once()
             ->with('Alert: Invoice opened.', \Mockery::on(function ($data) {
                 return $data['suggested_action'] === 'record_payment';
             }));
 
-        $event = new \App\Modules\X199\Events\InvoiceOpened(1, 123);
-        $listener = new \App\Modules\X199\Listeners\NotifyInvoiceOpened();
+        $event = new InvoiceOpened(1, 123);
+        $listener = new NotifyInvoiceOpened;
         $listener->handle($event);
-        
+
         $this->assertTrue(true, 'Mock assertion completes the test');
     }
 
@@ -182,7 +192,7 @@ class X199Test extends TestCase
         $lines = [['description' => 'Pipe Inspection', 'quantity' => 1, 'unit_price_cents' => 9900]];
 
         $res = $this->issueAction->handle($biz->id, $customer->id, $lines);
-        
+
         // G1-31: Even if PDF is null, the invoice is still issued and reachable via HTML
         $this->assertNull($res['invoice']->pdf_url);
         $this->assertEquals('issued', $res['invoice']->status);
@@ -196,16 +206,16 @@ class X199Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'AI Job', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $customer = \App\Modules\X121\Models\Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'last_name' => 'Doe']);
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'last_name' => 'Doe']);
 
-        $draftAction = new \App\Modules\X199\Actions\InvoiceDraftAction();
-        $action = new \App\Modules\X199\Actions\DraftInvoiceFromJobAction($draftAction);
+        $draftAction = new InvoiceDraftAction;
+        $action = new DraftInvoiceFromJobAction($draftAction);
 
         // Without an AI engine, it fails to one line at the total
         $invoice = $action->handle($biz->id, $customer->id, 5000, 'Fixed the sink');
         $this->assertEquals(5000, $invoice->total_cents);
-        
-        $line = \App\Modules\X199\Models\InvoiceLine::where('invoice_id', $invoice->id)->first();
+
+        $line = InvoiceLine::where('invoice_id', $invoice->id)->first();
         $this->assertStringContainsString('Work order completion', $line->description);
         $this->assertEquals(5000, $line->unit_price_cents);
     }
@@ -215,9 +225,9 @@ class X199Test extends TestCase
      */
     public function test_g1_40_short_linker(): void
     {
-        $action = new \App\Modules\X199\Actions\GenerateShortLinkAction();
+        $action = new GenerateShortLinkAction;
         $link = $action->handle('https://example.com/invoice/123');
-        
+
         $this->assertStringStartsWith('https://s.local/', $link);
         $this->assertEquals(24, strlen($link)); // 16 for host + 8 for hash
     }
@@ -227,7 +237,7 @@ class X199Test extends TestCase
      */
     public function test_g21_04_billing_screen_summary(): void
     {
-        $action = new \App\Modules\X199\Actions\GetBillingSummaryAction();
+        $action = new GetBillingSummaryAction;
         $summary = $action->handle(1);
 
         $this->assertArrayHasKey('card', $summary);
@@ -373,5 +383,58 @@ class X199Test extends TestCase
         $this->assertSame(now()->addDays(60)->toDateString(), $res['invoice']->due_date->toDateString());
 
         Carbon::setTestNow();
+    }
+
+    public function test_overdue_list_excludes_paid_and_future(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Overdue List Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'phone' => '+15551234567',
+        ]);
+
+        // Paid
+        Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-001',
+            'total_cents' => 10000,
+            'paid_cents' => 10000,
+            'status' => 'paid',
+            'due_date' => now()->subDays(10)->toDateString(),
+        ]);
+
+        // Future
+        Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-002',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->addDays(1)->toDateString(),
+        ]);
+
+        // Overdue
+        $overdue = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-003',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(40)->toDateString(),
+        ]);
+
+        $action = new InvoiceOverdueListAction;
+        $list = $action->handle($biz->id);
+
+        $this->assertCount(1, $list);
+        $this->assertEquals($overdue->id, $list[0]['invoice_id']);
+        $this->assertEquals(40, $list[0]['days_overdue']);
     }
 }

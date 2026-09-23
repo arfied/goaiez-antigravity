@@ -17,6 +17,7 @@ use App\Modules\X01\Models\TakeoverLatch;
 use App\Modules\X121\Actions\EntityReadAction;
 use App\Modules\X121\Actions\EntityWriteAction;
 use App\Modules\X121\Actions\PersonLookupAction;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Conversations\ConversationThreads;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +28,16 @@ use Illuminate\Support\Facades\Event;
  */
 final class UnifiedInboxManager
 {
+    public const TIER_HOT = 80;
+
+    public const TIER_WARM = 60;
+
+    public const TIER_COOL = 40;
+
+    public const TIER_COLD = 20;
+
+    public function __construct(private DefaultsRegistry $defaults) {}
+
     /**
      * Ingest messages from different channels (SMS, Email, Voice, Chat) into one Person thread (TEST ANCHOR).
      */
@@ -238,16 +249,16 @@ final class UnifiedInboxManager
 
     private function gradeFor(int $rating): string
     {
-        if ($rating >= 80) {
+        if ($rating >= $this->defaults->int('crm.lead_score.tier_hot')) {
             return 'A';
         }
-        if ($rating >= 60) {
+        if ($rating >= $this->defaults->int('crm.lead_score.tier_warm')) {
             return 'B';
         }
-        if ($rating >= 40) {
+        if ($rating >= $this->defaults->int('crm.lead_score.tier_cool')) {
             return 'C';
         }
-        if ($rating >= 20) {
+        if ($rating >= $this->defaults->int('crm.lead_score.tier_cold')) {
             return 'D';
         }
 
