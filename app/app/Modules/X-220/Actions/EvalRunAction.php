@@ -9,18 +9,10 @@ use App\Modules\X220\Events\EvalCompleted;
 use App\Modules\X220\Events\EvalRegressed;
 use App\Modules\X220\Models\AiPrompt;
 use App\Modules\X220\Models\GoldenSet;
-use App\Services\Agent\AgentComposer;
-use App\Services\Agent\ThreadCloseSummaries;
 use App\Services\Ai\AiRequest;
 use App\Services\Ai\AiRouter;
 use App\Services\Ai\AiSpend;
 use App\Services\Config\DefaultsRegistry;
-use App\Services\Content\ContentModerator;
-use App\Services\Knowledge\KnowledgeIngestor;
-use App\Services\Knowledge\KnowledgeRetriever;
-use App\Services\Reviews\ReplyGenerator;
-use App\Services\Reviews\ReviewAnalyzer;
-use App\Services\Reviews\ReviewModerator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -78,13 +70,13 @@ final class EvalRunAction
         $task = AiTask::tryFrom($taskValue);
         if (! $task) {
             // fallback
-            $task = match ($prompt->job_class) {
-                ReplyGenerator::class => AiTask::ReplyGeneration,
-                ReviewAnalyzer::class => AiTask::ReviewAnalysis,
-                ReviewModerator::class, ContentModerator::class => AiTask::Moderation,
-                AgentComposer::class, ThreadCloseSummaries::class => AiTask::Conversation,
-                KnowledgeIngestor::class, KnowledgeRetriever::class => AiTask::KnowledgeEmbedding,
-                default => AiTask::Conversation,
+            $jobTask = is_string($prompt->job_class) ? (AiTask::tryFrom($prompt->job_class) ?? AiTask::Conversation) : AiTask::Conversation;
+            $task = match ($jobTask) {
+                AiTask::ReplyGeneration => AiTask::ReplyGeneration,
+                AiTask::ReviewAnalysis => AiTask::ReviewAnalysis,
+                AiTask::Moderation => AiTask::Moderation,
+                AiTask::Conversation => AiTask::Conversation,
+                AiTask::KnowledgeEmbedding => AiTask::KnowledgeEmbedding,
             };
         }
 
