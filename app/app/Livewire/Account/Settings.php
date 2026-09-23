@@ -93,6 +93,8 @@ final class Settings extends Component
 
     public function mount(): void
     {
+        abort_if(Tenancy::id() === null, 403);
+
         $business = Business::find(Tenancy::id());
         $this->advancedEnabled = (bool) ($business?->hasAdvancedDashboard() ?? false);
         $location = $this->location();

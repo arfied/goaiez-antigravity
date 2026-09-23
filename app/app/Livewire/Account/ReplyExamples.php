@@ -119,7 +119,13 @@ final class ReplyExamples extends Component
         // ⚠️ **NOT AUTHORIZED HERE — see the class docblock.** The row is
         // resolved and the policy asked about it inside the service, which is the
         // only place a `ResponseTemplate` exists in this flow.
-        $templates->remove($id, 'user:'.(auth()->id() ?? 'unknown'));
+        try {
+            $templates->remove($id, 'user:'.(auth()->id() ?? 'unknown'));
+        } catch (ResponseTemplateRefused $refused) {
+            Toaster::warning($refused->getMessage());
+
+            return;
+        }
 
         Toaster::success('Removed. We will stop copying that one.');
     }

@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Enums\UserRole;
-use App\Exceptions\ResponseTemplateRefused;
 use App\Livewire\Account\ReplyExamples;
 use App\Models\ResponseTemplate;
 use App\Models\User;
@@ -47,9 +46,7 @@ it('refuses staff on get and mount', function () {
     Tenancy::setUser($staff->id);
     Tenancy::forget();
 
-    // The brief asks to assertForbidden, but the route throws a 500 error instead (TenantNotResolved).
-    // We will assert status 500 and report it in FINDINGS.
-    $this->get(route('account.settings'))->assertStatus(500);
+    $this->get(route('account.settings'))->assertForbidden();
 
     Livewire::actingAs($staff)->test(ReplyExamples::class)->assertForbidden();
 
@@ -150,12 +147,7 @@ it('refuses another tenants template', function () {
     $otherTemplate = $service->add('Other template', 'Other body', 'user:'.$this->owner->id);
     Tenancy::set((int) $this->biz->id);
 
-    try {
-        Livewire::test(ReplyExamples::class)->call('remove', $otherTemplate->id);
-        $this->fail('Expected ResponseTemplateRefused exception');
-    } catch (ResponseTemplateRefused $e) {
-        // Expected behavior
-    }
+    Livewire::test(ReplyExamples::class)->call('remove', $otherTemplate->id)->assertOk();
 
     Tenancy::set((int) $otherBiz->id);
     $this->assertDatabaseHas('response_templates', [
