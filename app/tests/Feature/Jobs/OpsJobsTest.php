@@ -3,18 +3,23 @@
 declare(strict_types=1);
 
 use App\Enums\FetchOutcome;
+use App\Enums\PlatformHealthSignal;
 use App\Enums\ReviewSource;
 use App\Enums\UserRole;
 use App\Jobs\ProbeLocationSiteJob;
 use App\Jobs\RecomputeProofNumbersJob;
 use App\Jobs\RecordQueueHeartbeat;
-use App\Models\Business;
 use App\Models\FetchAttempt;
 use App\Models\Location;
 use App\Models\ProofNumber;
 use App\Models\Review;
 use App\Models\TriageConversation;
 use App\Models\User;
+use App\Services\Actuation\SiteProbe;
+use App\Services\Ops\PlatformHealth;
+use App\Services\Proof\ProofNumbers;
+use App\Services\Tenant\TenantPause;
+use App\Services\Tenant\TenantSuspension;
 use App\Support\Tenancy;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Carbon;
@@ -49,14 +54,14 @@ it('probes location site', function () {
     Http::fake([
         '*' => Http::response('<html><head><link rel="https://api.w.org/" href="https://example.com/wp-json/" /></head></html>', 200, [
             'server' => 'cloudflare',
-            'link' => 'https://example.com/wp-json/; rel="https://api.w.org/"'
+            'link' => 'https://example.com/wp-json/; rel="https://api.w.org/"',
         ]),
     ]);
 
     (new ProbeLocationSiteJob((int) $this->biz->id, (int) $location->id))->handle(
-        app(\App\Services\Actuation\SiteProbe::class),
-        app(\App\Services\Tenant\TenantPause::class),
-        app(\App\Services\Tenant\TenantSuspension::class)
+        app(SiteProbe::class),
+        app(TenantPause::class),
+        app(TenantSuspension::class)
     );
 
     $location->refresh();
@@ -79,14 +84,14 @@ it('probes location site', function () {
     // 500 / timeout -> the recorded failure (fetch_attempts)
     Http::fake([
         'https://example2.com' => function () {
-            throw new ConnectionException();
-        }
+            throw new ConnectionException;
+        },
     ]);
 
     (new ProbeLocationSiteJob((int) $this->biz->id, (int) $location2->id))->handle(
-        app(\App\Services\Actuation\SiteProbe::class),
-        app(\App\Services\Tenant\TenantPause::class),
-        app(\App\Services\Tenant\TenantSuspension::class)
+        app(SiteProbe::class),
+        app(TenantPause::class),
+        app(TenantSuspension::class)
     );
 
     $location2->refresh();
@@ -98,9 +103,9 @@ it('probes location site', function () {
 
     // Missing location -> returns, nothing written
     (new ProbeLocationSiteJob((int) $this->biz->id, 999999))->handle(
-        app(\App\Services\Actuation\SiteProbe::class),
-        app(\App\Services\Tenant\TenantPause::class),
-        app(\App\Services\Tenant\TenantSuspension::class)
+        app(SiteProbe::class),
+        app(TenantPause::class),
+        app(TenantSuspension::class)
     );
 });
 
@@ -119,7 +124,7 @@ it('recomputes proof numbers', function () {
     ]);
 
     $job = new RecomputeProofNumbersJob((int) $this->biz->id, ['all']);
-    $job->handle(app(\App\Services\Proof\ProofNumbers::class));
+    $job->handle(app(ProofNumbers::class));
 
     $proof = ProofNumber::query()->where('period', 'all')->first();
     expect($proof)->not->toBeNull()
@@ -128,14 +133,14 @@ it('recomputes proof numbers', function () {
         ->and($proof->recovered)->toBe(1);
 
     // Idempotent
-    $job->handle(app(\App\Services\Proof\ProofNumbers::class));
+    $job->handle(app(ProofNumbers::class));
     expect(ProofNumber::query()->where('period', 'all')->count())->toBe(1);
 
     // Suspended/paused tenant -> whatever the job does (computes anyway)
     $this->biz->update([
         'paused_at' => now(),
         'paused_by' => 'tester',
-        'pause_reason' => 'test'
+        'pause_reason' => 'test',
     ]);
 
     Review::factory()->create([
@@ -143,32 +148,32 @@ it('recomputes proof numbers', function () {
         'created_at' => now(),
     ]);
 
-    $job->handle(app(\App\Services\Proof\ProofNumbers::class));
+    $job->handle(app(ProofNumbers::class));
 
     $proof->refresh();
     expect($proof->google_reviews)->toBe(2);
 });
 
 it('records queue heartbeat', function () {
-    $job = new RecordQueueHeartbeat();
-    
+    $job = new RecordQueueHeartbeat;
+
     // First run
-    $job->handle(app(\App\Services\Ops\PlatformHealth::class));
-    $lastAt = app(\App\Services\Ops\PlatformHealth::class)->lastBeat('queue');
+    $job->handle(app(PlatformHealth::class));
+    $lastAt = app(PlatformHealth::class)->lastBeat('queue');
     expect($lastAt)->not->toBeNull();
 
     // Overwrites rather than duplicates
     $count = DB::table('platform_health_windows')
-        ->where('signal', \App\Enums\PlatformHealthSignal::Heartbeat->value)
+        ->where('signal', PlatformHealthSignal::Heartbeat->value)
         ->where('source', 'queue')
         ->count();
 
     // Second run
     Carbon::setTestNow(now()->addMinutes(5));
-    $job->handle(app(\App\Services\Ops\PlatformHealth::class));
+    $job->handle(app(PlatformHealth::class));
 
     $count2 = DB::table('platform_health_windows')
-        ->where('signal', \App\Enums\PlatformHealthSignal::Heartbeat->value)
+        ->where('signal', PlatformHealthSignal::Heartbeat->value)
         ->where('source', 'queue')
         ->count();
 
