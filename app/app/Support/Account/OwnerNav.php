@@ -299,6 +299,7 @@ final class OwnerNav
             // tag is working. A screen nobody can reach would leave them guessing
             // whether we are actually collecting their data.
             OwnerNavItem::make('Is our tag working', 'x-110.install-verify', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Tag versions', 'x-110.tag-version-per', OwnerNavItem::GROUP_CATALOG),
 
             // What their pages earn (X-138). Ruled to be under More deliberately,
             // despite being potentially daily: the primary row is a design the
@@ -601,6 +602,7 @@ final class OwnerNav
             OwnerNavItem::make('Affiliate payouts', 'x-205.payout-run', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Email domain', 'c-mail.dns-card', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Domain warm-up', 'c-mail.warmup-calendars-per', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Warm-up sequence', 'c-mail.sequence-view', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Earned links', 'x-191.links-earned', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Outreach ratio', 'x-191.pitchacquire-ratio', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Dispatch board', 'x-162.dispatch-board', OwnerNavItem::GROUP_CATALOG),
@@ -667,6 +669,7 @@ final class OwnerNav
             OwnerNavItem::make('Demand by trade', 'x-130.coverage-by-trade', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('WhatsApp templates', 'c-whatsapp.template-status-card', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Template approval queue', 'c-whatsapp.template-approval-queue', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('WhatsApp conversations', 'c-whatsapp.thread', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Data coming in', 'x-156.ingest-volume-by', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Rows we could not take', 'x-156.rejectedrows-list', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Onboarding checks', 'x-118.groundcheck', OwnerNavItem::GROUP_CATALOG),

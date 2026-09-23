@@ -25,7 +25,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 function sampleStateRoutes(): array
 {
     return [
-        'x-110.tag-version-per',
     ];
 }
 
@@ -267,7 +266,7 @@ test('the reachability check states the size of its own blind spot', function ()
 
     $invisible = array_values(array_diff(array_unique($tenantRole), $admitted));
 
-    expect(count($invisible))->toBe(16, 'If it went UP, a new module route ships behind tenant.role without opting into the owner layout, so it is reachable by URL and invisible to every check in this file. That is a regression. If it went DOWN, somebody converted a screen properly. Lower the number and record it.; 2026-09-23 X-119 TeachingBox took the owner layout and dropped its banner (SITE-35); 2026-09-23 X-212 PickSource became a real screen and its prose banner was removed');
+    expect(count($invisible))->toBe(14, 'If it went UP, a new module route ships behind tenant.role without opting into the owner layout, so it is reachable by URL and invisible to every check in this file. That is a regression. If it went DOWN, somebody converted a screen properly. Lower the number and record it.; 2026-09-23 X-119 TeachingBox took the owner layout and dropped its banner (SITE-35); 2026-09-23 X-212 PickSource became a real screen and its prose banner was removed; 2026-09-23 C-Mail SequenceView became a real screen (SITE-41); 2026-09-23 C-Whatsapp Thread became a real screen (SITE-42)');
 
     $withLayout = 0;
     $withoutLayout = 0;
@@ -328,10 +327,10 @@ test('the reachability check states the size of its own blind spot', function ()
     }
 
     expect($withLayout)->toBe(3, 'If it went UP, a new module route opted into the owner layout but forgot the auth gate, or (more likely) fell back from using AdminNav to hand-authoring a layout, so it is reachable by URL but carries no nav. That is a regression. If it went DOWN, somebody converted a screen properly. Lower the number and record it.');
-    expect($withoutLayout)->toBe(13, 'If it went UP, a new module route shipped with no #[Layout] at all, falling through to the staff console. If it went DOWN, one was converted, or built out.; 2026-09-23 X-119 TeachingBox took the owner layout and dropped its banner (SITE-35); 2026-09-23 X-212 PickSource became a real screen and its prose banner was removed');
+    expect($withoutLayout)->toBe(11, 'If it went UP, a new module route shipped with no #[Layout] at all, falling through to the staff console. If it went DOWN, one was converted, or built out.; 2026-09-23 X-119 TeachingBox took the owner layout and dropped its banner (SITE-35); 2026-09-23 X-212 PickSource became a real screen and its prose banner was removed; 2026-09-23 C-Mail SequenceView became a real screen (SITE-41); 2026-09-23 C-Whatsapp Thread became a real screen (SITE-42)');
     expect($withLayout + $withoutLayout)->toBe(count($invisible));
 
-    expect($unbuilt)->toBe(5, 'If it went UP, a new unbuilt route shipped falling through to the staff console, or a screen went back to carrying the banner. If it went DOWN, an unbuilt route was built out, converted, or lost its route.; 2026-09-23 X-119 TeachingBox took the owner layout and dropped its banner (SITE-35); 2026-09-23 X-212 PickSource became a real screen and its prose banner was removed');
-    expect($built)->toBe(8, 'If it went UP, a new built route shipped falling through to the staff console, or an unbuilt route was built out. If it went DOWN, a built route was converted onto the owner layout, went back to carrying the banner, or lost its route.');
+    expect($unbuilt)->toBe(2, 'If it went UP, a new unbuilt route shipped falling through to the staff console, or a screen went back to carrying the banner. If it went DOWN, an unbuilt route was built out, converted, or lost its route.; 2026-09-23 X-119 TeachingBox took the owner layout and dropped its banner (SITE-35); 2026-09-23 X-212 PickSource became a real screen and its prose banner was removed; 2026-09-23 X-119 PriceConfirmationScreen redirects to X-163\'s Prices to confirm (SITE-39); 2026-09-23 C-Mail SequenceView became a real screen (SITE-41); 2026-09-23 C-Whatsapp Thread became a real screen (SITE-42)');
+    expect($built)->toBe(9, 'If it went UP, a new built route shipped falling through to the staff console, or an unbuilt route was built out. If it went DOWN, a built route was converted onto the owner layout, went back to carrying the banner, or lost its route.; 2026-09-23 X-119 PriceConfirmationScreen redirects to X-163\'s Prices to confirm (SITE-39)');
     expect($unresolved)->toBe(0, 'If it went UP, a new route falling through to the staff console could not resolve its view. If it went DOWN, an unresolved route was fixed or converted.');
 });

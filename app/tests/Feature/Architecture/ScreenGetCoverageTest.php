@@ -113,6 +113,6 @@ test('every owner-layout module screen is measured for a real GET test; the unco
         expect($cUncov)->toBe(0, 'If it went UP, pin the new number here. If it went DOWN, lower the number and record it.');
     }
 
-    expect($cCov)->toBe(242, 'If it went UP, pin the new number here. If it went DOWN, lower the number and record it.; 2026-09-23 X-119 TeachingBox added a real GET test; 2026-09-23 X-212 PickSource became a real screen and its prose banner was removed');
+    expect($cCov)->toBe(244, 'If it went UP, pin the new number here. If it went DOWN, lower the number and record it.; 2026-09-23 X-119 TeachingBox added a real GET test; 2026-09-23 X-212 PickSource became a real screen and its prose banner was removed; 2026-09-23 C-Mail SequenceView became a real screen (SITE-41); 2026-09-23 C-Whatsapp Thread became a real screen (SITE-42)');
     expect($cUnrou)->toBe(0, 'If it went UP, pin the new number here. If it went DOWN, lower the number and record it.');
 });
