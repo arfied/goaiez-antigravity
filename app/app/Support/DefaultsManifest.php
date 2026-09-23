@@ -75,6 +75,16 @@ final class DefaultsManifest
     public static function settings(): array
     {
         $settings = [
+            'routing.default_order' => [
+                'seed' => 'returning_caller,territory,workload,default_staff',
+                'group' => 'Routing',
+                'description' => 'Default order of lead routing rules applied to a new tenant.',
+            ],
+            'routing.workload_window_days' => [
+                'seed' => 30,
+                'group' => 'Routing',
+                'description' => 'Number of days to look back when evaluating a staff member\'s workload.',
+            ],
             /*
              * Billing shape. Not prices — those are per-plan and live in
              * entitlements() below — but the terms every plan shares.

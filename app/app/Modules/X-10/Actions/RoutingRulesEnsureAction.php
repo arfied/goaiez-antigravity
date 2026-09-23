@@ -25,7 +25,7 @@ class RoutingRulesEnsureAction
 
         foreach ($order as $type) {
             $ruleType = RoutingRuleType::from($type);
-            
+
             RoutingRule::firstOrCreate(
                 [
                     'business_id' => $businessId,

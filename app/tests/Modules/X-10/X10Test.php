@@ -6,19 +6,28 @@ namespace Tests\Modules\X10;
 
 use App\Modules\X10\Actions\LeadAssignAction;
 use App\Modules\X10\Actions\LeadReassignAction;
+use App\Modules\X10\Actions\RoutingRulesEnsureAction;
 use App\Modules\X10\Actions\TerritoryDefineAction;
 use App\Modules\X10\Actions\WidgetFallbackAction;
+use App\Modules\X10\Enums\RoutingRuleType;
 use App\Modules\X10\Events\LeadAssigned;
 use App\Modules\X10\Events\LeadReassigned;
 use App\Modules\X10\Events\TerritoryChanged;
 use App\Modules\X10\Models\Territory;
+use App\Modules\X10\Ui\RoutingRules;
+use App\Modules\X113\Models\StaffUser;
 use App\Modules\X121\Models\Person;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 class X10Test extends TestCase
 {
+    use RefreshesTenantDatabase;
+
     private TerritoryDefineAction $territoryAction;
 
     private LeadAssignAction $assignAction;
@@ -31,7 +40,8 @@ class X10Test extends TestCase
     {
         parent::setUp();
         $this->territoryAction = new TerritoryDefineAction;
-        $this->assignAction = new LeadAssignAction;
+        $ensureAction = new RoutingRulesEnsureAction(new DefaultsRegistry);
+        $this->assignAction = new LeadAssignAction($ensureAction);
         $this->reassignAction = new LeadReassignAction;
         $this->widgetAction = new WidgetFallbackAction;
     }
@@ -105,6 +115,12 @@ class X10Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Dispatch Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
+        $this->artisan('defaults:sync');
+
+        $ensureAction = new RoutingRulesEnsureAction(new DefaultsRegistry);
+        $rules = $ensureAction->handle($biz->id);
+        $this->assertCount(4, $rules);
+
         // 1. Territory polygon definition (G17-23)
         $territory = $this->territoryAction->handle(
             businessId: $biz->id,
@@ -122,7 +138,7 @@ class X10Test extends TestCase
             previousOwnerStaffId: 77
         );
         $this->assertEquals(77, $affinityAssign->assigned_staff_id);
-        $this->assertEquals('returning_caller_affinity', $affinityAssign->assignment_reason);
+        $this->assertEquals('returning_caller', $affinityAssign->assignment_reason);
 
         // 3. Zipcode / Geocode polygon routing (G2-01, G2-07, G7-22)
         $polyAssign = $this->assignAction->handle(
@@ -132,18 +148,22 @@ class X10Test extends TestCase
             zipCode: '80202'
         );
         $this->assertEquals(42, $polyAssign->assigned_staff_id);
-        $this->assertEquals('polygon_territory_match', $polyAssign->assignment_reason);
+        $this->assertEquals('territory', $polyAssign->assignment_reason);
+
+        // Disable territory rule to test fallback to workload
+        $territoryRule = $rules->where('rule_type', RoutingRuleType::TERRITORY)->first();
+        $territoryRule->update(['is_active' => false]);
 
         // 4. Open workload balancing (G15-03)
         $workloadAssign = $this->assignAction->handle(
             businessId: $biz->id,
             leadId: 503,
             previousOwnerStaffId: null,
-            zipCode: null,
+            zipCode: '80202',
             staffWorkloads: [101 => 12, 102 => 4, 103 => 8] // 102 has lowest load
         );
         $this->assertEquals(102, $workloadAssign->assigned_staff_id);
-        $this->assertEquals('workload_balanced', $workloadAssign->assignment_reason);
+        $this->assertEquals('workload', $workloadAssign->assignment_reason);
 
         // 5. SLA reassignment (G2-60, G17-25)
         $reassigned = $this->reassignAction->handle(
@@ -155,5 +175,64 @@ class X10Test extends TestCase
         $this->assertEquals(103, $reassigned->assigned_staff_id);
         $this->assertEquals('reassigned', $reassigned->status);
         Event::assertDispatched(LeadReassigned::class);
+
+        // 6. No match -> owner user
+        $defaultAssign = $this->assignAction->handle(
+            businessId: $biz->id,
+            leadId: 504,
+            previousOwnerStaffId: null,
+            zipCode: null,
+            staffWorkloads: []
+        );
+        $this->assertEquals($biz->owner_user_id, $defaultAssign->assigned_staff_id);
+        $this->assertEquals('default_staff', $defaultAssign->assignment_reason);
+
+        // Reordering changes the winner
+        $territoryRule->update(['is_active' => true, 'priority' => 3]);
+        $workloadRule = $rules->where('rule_type', RoutingRuleType::WORKLOAD)->first();
+        $workloadRule->update(['priority' => 2]);
+
+        $reorderAssign = $this->assignAction->handle(
+            businessId: $biz->id,
+            leadId: 505,
+            previousOwnerStaffId: null,
+            zipCode: '80202',
+            staffWorkloads: [101 => 12, 102 => 4, 103 => 8]
+        );
+        $this->assertEquals(102, $reorderAssign->assigned_staff_id);
+        $this->assertEquals('workload', $reorderAssign->assignment_reason);
+    }
+
+    public function test_routing_rules_screen(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Routing Screen Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->artisan('defaults:sync');
+        $ensureAction = new RoutingRulesEnsureAction(new DefaultsRegistry);
+        $ensureAction->handle($biz->id);
+
+        $staffUser = StaffUser::create([
+            'business_id' => $biz->id,
+            'name' => 'Alice Staff',
+            'email' => 'alice@example.com',
+            'is_active' => true,
+        ]);
+
+        Livewire::actingAs($biz->owner)
+            ->test(RoutingRules::class, ['businessId' => $biz->id])
+            ->assertOk()
+            ->assertSee('Lead Routing Rules')
+            ->call('toggle', 'returning_caller')
+            ->call('moveDown', 'returning_caller')
+            ->call('moveUp', 'workload')
+            ->call('setDefaultStaff', $staffUser->id)
+            ->assertOk();
+
+        $this->assertDatabaseHas('routing_rules', [
+            'business_id' => $biz->id,
+            'rule_type' => 'returning_caller',
+            'is_active' => false,
+        ]);
     }
 }
