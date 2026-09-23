@@ -2852,6 +2852,18 @@ final class DefaultsManifest
                 'description' => 'Maximum length of the drafted about text block, extracted from the inventory.',
             ],
 
+            'sites.draft.gallery_max' => [
+                'seed' => 8,
+                'group' => 'Content',
+                'description' => 'Maximum number of images included in the drafted gallery block.',
+            ],
+
+            'sites.draft.team_min' => [
+                'seed' => 1,
+                'group' => 'Sites',
+                'description' => 'Minimum number of staff users required to draft the team block.',
+            ],
+
             'sites.draft.reviews_max' => [
                 'seed' => 6,
                 'group' => 'Sites',

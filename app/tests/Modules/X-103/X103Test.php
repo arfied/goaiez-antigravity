@@ -377,6 +377,105 @@ class X103Test extends TestCase
     }
 
 
+    public function test_draft_adds_gallery_from_stored_images(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Gallery Tenant', 'currency' => 'USD']);
+        \App\Support\Tenancy::bindAs($biz->id);
+
+        $location = \App\Models\Location::factory()->create(['business_id' => $biz->id, 'website_url' => 'https://example.com']);
+
+        // 3 stored images
+        \App\Modules\X103\Models\SiteInventoryImage::create([
+            'business_id' => $biz->id, 'status' => 'stored', 'stored_path' => 'inventory/hero.jpg', 'attribution' => 'example.com'
+        ]);
+        \App\Modules\X103\Models\SiteInventoryImage::create([
+            'business_id' => $biz->id, 'status' => 'stored', 'stored_path' => 'inventory/gal1.jpg', 'attribution' => 'example.com'
+        ]);
+        \App\Modules\X103\Models\SiteInventoryImage::create([
+            'business_id' => $biz->id, 'status' => 'stored', 'stored_path' => 'inventory/gal2.jpg', 'attribution' => 'example.com'
+        ]);
+
+        $action = app(\App\Modules\X103\Actions\SiteDraftAction::class);
+        $res = $action->handle($biz->id, $location->id);
+
+        $home = \App\Modules\X103\Models\Page::where('slug', 'home')->first();
+        $this->assertNotNull($home);
+
+        $galleryBlock = collect($home->draft_blocks)->firstWhere('type', 'gallery');
+        $this->assertNotNull($galleryBlock);
+        $this->assertCount(2, $galleryBlock['items']);
+        $this->assertEquals('inventory/gal1.jpg', $galleryBlock['items'][0]['image_path']);
+        $this->assertEquals('inventory/gal2.jpg', $galleryBlock['items'][1]['image_path']);
+        $this->assertEquals('inventory', $galleryBlock['source']);
+
+        \Illuminate\Support\Facades\Http::fake();
+        $engine = app(\App\Modules\X103\Domain\SiteEngine::class);
+        $engine->publish($biz->id, $home, $home->draft_blocks);
+        
+        $deployAction = app(\App\Modules\X103\Actions\EdgeDeployAction::class);
+        $deployAction->handle($biz->id);
+
+        $html = $engine->serve($biz->id, 'home');
+        $this->assertStringContainsString('x-157.site.media', $html);
+        $this->assertEquals(2, substr_count($html, 'x-157.site.media/inventory/gal'));
+        \Illuminate\Support\Facades\Http::assertNothingSent();
+    }
+
+    public function test_draft_adds_team_from_active_staff(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Team Tenant', 'currency' => 'USD']);
+        \App\Support\Tenancy::bindAs($biz->id);
+        
+        $location = \App\Models\Location::factory()->create(['business_id' => $biz->id]);
+        
+        $role = \App\Modules\X113\Models\Role::create(['business_id' => $biz->id, 'name' => 'Tester Role']);
+        
+        $inviteAction = app(\App\Modules\X113\Actions\StaffInviteAction::class);
+        $active1 = $inviteAction->handle($biz->id, 't1@example.com', 'UniqueNameAlpha', $role->id);
+        $active2 = $inviteAction->handle($biz->id, 't2@example.com', 'UniqueNameBeta', $role->id);
+        $deactivated = $inviteAction->handle($biz->id, 't3@example.com', 'UniqueNameGamma', $role->id);
+        
+        app(\App\Modules\X113\Actions\StaffDeactivateAction::class)->handle($biz->id, $deactivated->id);
+
+        $action = app(\App\Modules\X103\Actions\SiteDraftAction::class);
+        $action->handle($biz->id, $location->id);
+
+        $about = \App\Modules\X103\Models\Page::where('slug', 'about')->first();
+        $this->assertNotNull($about);
+
+        $teamBlock = collect($about->draft_blocks)->firstWhere('type', 'team');
+        $this->assertNotNull($teamBlock);
+        $this->assertCount(2, $teamBlock['items']);
+        $this->assertEquals('Tester Role', $teamBlock['items'][0]['role']);
+        $this->assertEquals('staff', $teamBlock['source']);
+
+        $engine = app(\App\Modules\X103\Domain\SiteEngine::class);
+        $engine->publish($biz->id, $about, $about->draft_blocks);
+        $html = $engine->serve($biz->id, 'about');
+        
+        $this->assertStringContainsString('UniqueNameAlpha', $html);
+        $this->assertStringContainsString('UniqueNameBeta', $html);
+        $this->assertStringNotContainsString('UniqueNameGamma', $html);
+    }
+
+    public function test_draft_skips_team_below_minimum(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'No Team Tenant', 'currency' => 'USD']);
+        \App\Support\Tenancy::bindAs($biz->id);
+        $location = \App\Models\Location::factory()->create(['business_id' => $biz->id]);
+
+        $action = app(\App\Modules\X103\Actions\SiteDraftAction::class);
+        $action->handle($biz->id, $location->id);
+
+        $about = \App\Modules\X103\Models\Page::where('slug', 'about')->first();
+        if ($about) {
+            $teamBlock = collect($about->draft_blocks)->firstWhere('type', 'team');
+            $this->assertNull($teamBlock);
+        } else {
+            $this->assertNull($about);
+        }
+    }
+
     public function test_draft_site_action()
     {
         $biz = TestCase::provisionTenant(['name' => 'Draft Site Tenant', 'currency' => 'USD']);
