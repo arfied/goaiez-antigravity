@@ -10,6 +10,7 @@ use App\Modules\X103\Events\SitePublished;
 use App\Modules\X137\Actions\CallAttributeAction;
 use App\Modules\X155\Actions\FormCaptureAction;
 use App\Modules\X157\Actions\EdgeDeployAction;
+use App\Modules\X157\Actions\SitemapRenderAction;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
 use App\Modules\X157\Ui\EdgeStatusPer;
@@ -53,7 +54,7 @@ final class ModuleServiceProvider extends ServiceProvider
             abort_if($html === null, 404);
 
             return response($html, 200)->header('Content-Type', 'text/html');
-        })->whereNumber('business');
+        })->name('x-157.site')->whereNumber('business');
 
         Route::get('/sites/{business}/{deploy_hash}/media/{file?}', function (string $business, string $deployHash, string $file = '') {
             if ($file === '') {
@@ -121,6 +122,42 @@ final class ModuleServiceProvider extends ServiceProvider
 
             return response()->json($result, $result['status'] === 'captured' ? 201 : 422);
         })->whereNumber('business')->whereNumber('form');
+
+        Route::get('/sites/{business}/{deploy_hash}/sitemap.xml', function (string $business, string $deployHash) {
+            $businessId = (int) $business;
+            Tenancy::set($businessId);
+
+            $deployment = Deployment::where('business_id', $businessId)->where('deploy_hash', $deployHash)->firstOrFail();
+            abort_if($deployment->status !== 'deployed', 404);
+
+            $zone = $deployment->edgeZone;
+            abort_if($zone === null || ! $zone->has_valid_ssl, 404);
+
+            $xml = app(SitemapRenderAction::class)->handle($businessId);
+
+            return response($xml, 200)->header('Content-Type', 'application/xml');
+        })->whereNumber('business');
+
+        Route::get('/sites/{business}/{deploy_hash}/robots.txt', function (string $business, string $deployHash) {
+            $businessId = (int) $business;
+            Tenancy::set($businessId);
+
+            $deployment = Deployment::where('business_id', $businessId)->where('deploy_hash', $deployHash)->firstOrFail();
+            abort_if($deployment->status !== 'deployed', 404);
+
+            $zone = $deployment->edgeZone;
+            abort_if($zone === null || ! $zone->has_valid_ssl, 404);
+
+            $sitemapUrl = route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash]).'/sitemap.xml';
+
+            $txt = "User-agent: *\n";
+            $txt .= "Allow: /sites/{$businessId}/\n";
+            $txt .= "Disallow: /sites/{$businessId}/{$deployHash}/dni\n";
+            $txt .= "Disallow: /sites/{$businessId}/{$deployHash}/forms/\n";
+            $txt .= "Sitemap: {$sitemapUrl}\n";
+
+            return response($txt, 200)->header('Content-Type', 'text/plain');
+        })->whereNumber('business');
 
         Event::listen(PageUnpublished::class, function (PageUnpublished $e): void {
             Deployment::where('business_id', $e->businessId)

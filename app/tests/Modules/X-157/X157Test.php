@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X157;
 
+use App\Models\User;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
@@ -14,6 +15,7 @@ use App\Modules\X155\Models\FormSubmission;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
 use App\Modules\X157\Actions\EdgeRollbackAction;
+use App\Modules\X157\Actions\SitemapRenderAction;
 use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
 use App\Modules\X157\Models\Deployment;
@@ -2439,5 +2441,65 @@ class X157Test extends TestCase
         );
         $this->assertStringContainsString('<title id="seo-meta-x176">Fox &amp; Sons Drains</title>', $html);
         $this->assertSame(1, substr_count($html, 'name="description"'));
+    }
+
+    public function test_sitemap_lists_only_deployed_pages_newest_first(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $zone = EdgeZone::create(['business_id' => $biz->id, 'domain_name' => 'acme.com', 'zone_id' => 'z', 'has_valid_ssl' => true]);
+
+        $d1 = Deployment::create(['business_id' => $biz->id, 'edge_zone_id' => $zone->id, 'deploy_hash' => 'h1', 'status' => 'deployed', 'page_id' => 10, 'deployed_at' => now()->subDay()]);
+        $d2 = Deployment::create(['business_id' => $biz->id, 'edge_zone_id' => $zone->id, 'deploy_hash' => 'h2', 'status' => 'rolled_back', 'page_id' => 10, 'deployed_at' => now()->subHours(12)]);
+        $d3 = Deployment::create(['business_id' => $biz->id, 'edge_zone_id' => $zone->id, 'deploy_hash' => 'fox-&-hound', 'status' => 'deployed', 'page_id' => 11, 'deployed_at' => now()]);
+
+        $xml = app(SitemapRenderAction::class)->handle($biz->id);
+
+        $this->assertSame(2, substr_count($xml, '<loc>'));
+        $this->assertStringContainsString('fox-&amp;-hound', $xml);
+        $this->assertStringContainsString($d3->deployed_at->toW3cString(), $xml);
+
+        $pos3 = strpos($xml, 'fox-&amp;-hound');
+        $pos1 = strpos($xml, 'h1');
+        $this->assertTrue($pos3 < $pos1);
+    }
+
+    public function test_sitemap_and_robots_404_for_an_unknown_hash(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        $this->get("/sites/{$biz->id}/unknown_hash/sitemap.xml")->assertStatus(404);
+        $this->get("/sites/{$biz->id}/unknown_hash/robots.txt")->assertStatus(404);
+    }
+
+    public function test_robots_disallows_dni_and_forms_and_names_the_sitemap(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        $zone = EdgeZone::create(['business_id' => $biz->id, 'domain_name' => 'acme.com', 'zone_id' => 'z', 'has_valid_ssl' => true]);
+        Deployment::create(['business_id' => $biz->id, 'edge_zone_id' => $zone->id, 'deploy_hash' => 'h1', 'status' => 'deployed']);
+
+        $txt = $this->get("/sites/{$biz->id}/h1/robots.txt")->getContent();
+        $this->assertStringContainsString("Disallow: /sites/{$biz->id}/h1/dni", $txt);
+        $this->assertStringContainsString("Disallow: /sites/{$biz->id}/h1/forms/", $txt);
+        $this->assertStringContainsString('Sitemap: '.route('x-157.site', ['business' => $biz->id, 'deploy_hash' => 'h1']).'/sitemap.xml', $txt);
+    }
+
+    public function test_another_tenants_pages_never_appear(): void
+    {
+        $ownerA = User::factory()->create();
+        $bizA = TestCase::provisionTenant(['name' => 'Biz A', 'currency' => 'USD', 'owner_user_id' => $ownerA->id]);
+        $zoneA = EdgeZone::create(['business_id' => $bizA->id, 'domain_name' => 'a.com', 'zone_id' => 'z_a', 'has_valid_ssl' => true]);
+        Deployment::create(['business_id' => $bizA->id, 'edge_zone_id' => $zoneA->id, 'deploy_hash' => 'hash-a', 'status' => 'deployed', 'page_id' => 1, 'deployed_at' => now()]);
+
+        $ownerB = User::factory()->create();
+        $bizB = TestCase::provisionTenant(['name' => 'Biz B', 'currency' => 'USD', 'owner_user_id' => $ownerB->id]);
+        Tenancy::setUser($ownerB->id);
+        Tenancy::set((int) $bizB->id);
+
+        $zoneB = EdgeZone::create(['business_id' => $bizB->id, 'domain_name' => 'b.com', 'zone_id' => 'z_b', 'has_valid_ssl' => true]);
+        Deployment::create(['business_id' => $bizB->id, 'edge_zone_id' => $zoneB->id, 'deploy_hash' => 'hash-b', 'status' => 'deployed', 'page_id' => 2, 'deployed_at' => now()]);
+
+        $xml = app(SitemapRenderAction::class)->handle($bizB->id);
+        $this->assertStringContainsString('hash-b', $xml);
+        $this->assertStringNotContainsString('hash-a', $xml);
     }
 }
