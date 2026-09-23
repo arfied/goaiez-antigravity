@@ -667,6 +667,7 @@ final class OwnerNav
             OwnerNavItem::make('Cooling signals', 'x-136.cooling', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Signal volume & precision', 'x-136.signal-volume-precision', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Quality board', 'x-149.quality-board', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Manifest review queue', 'x-195.manifest-review-queue', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Marketplace', 'x-195.marketplace', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Readback screen', 'x-154.readback-screen', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Pipeline board', 'x-105.pipeline-board', OwnerNavItem::GROUP_CATALOG),
