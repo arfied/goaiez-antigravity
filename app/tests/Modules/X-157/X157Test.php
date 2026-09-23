@@ -12,12 +12,15 @@ use App\Modules\X121\Models\Asset;
 use App\Modules\X121\Models\Person;
 use App\Modules\X155\Models\FormDefinition;
 use App\Modules\X155\Models\FormSubmission;
+use App\Modules\X157\Actions\CustomDomainVerifyAction;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
 use App\Modules\X157\Actions\EdgeRollbackAction;
 use App\Modules\X157\Actions\SitemapRenderAction;
+use App\Modules\X157\Domain\DnsResolver;
 use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
+use App\Modules\X157\Models\CustomDomainRequest;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
 use App\Modules\X157\Ui\EdgeStatusPer;
@@ -44,6 +47,23 @@ class X157Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        app()->instance(DnsResolver::class, new class implements DnsResolver
+        {
+            public function cname(string $domain): ?string
+            {
+                if ($domain === 'acme-roofing.test') {
+                    return parse_url(config('app.url'), PHP_URL_HOST);
+                }
+                if ($domain === 'missing.test') {
+                    return null;
+                }
+                if ($domain === 'other.test') {
+                    return 'other.com';
+                }
+
+                return null;
+            }
+        });
         $this->provisionAction = new EdgeProvisionAction;
         $this->deployAction = new EdgeDeployAction;
         $this->rollbackAction = new EdgeRollbackAction;
@@ -2577,5 +2597,111 @@ class X157Test extends TestCase
         $submission2 = FormSubmission::where('form_definition_id', $form->id)->orderBy('id', 'desc')->first();
         $this->assertTrue($submission2->is_spam);
         $this->assertEquals('honeypot_triggered', $submission2->spam_reason);
+    }
+
+    public function test_a_domain_whose_cname_points_at_the_platform_address_is_verified(): void
+    {
+        $biz = TestCase::provisionTenant();
+        CustomDomainRequest::create([
+            'business_id' => $biz->id,
+            'domain' => 'acme-roofing.test',
+            'status' => 'requested',
+        ]);
+
+        $action = app(CustomDomainVerifyAction::class);
+        $action->handle($biz->id);
+
+        $row = CustomDomainRequest::where('business_id', $biz->id)->first();
+        $this->assertSame('verified', $row->status);
+        $this->assertNotNull($row->verified_at);
+        $this->assertNotNull($row->last_checked_at);
+        $this->assertNull($row->failure_reason);
+    }
+
+    public function test_a_domain_with_no_cname_is_unverified_with_the_reason(): void
+    {
+        $biz = TestCase::provisionTenant();
+        CustomDomainRequest::create([
+            'business_id' => $biz->id,
+            'domain' => 'missing.test',
+            'status' => 'requested',
+        ]);
+
+        $action = app(CustomDomainVerifyAction::class);
+        $action->handle($biz->id);
+
+        $row = CustomDomainRequest::where('business_id', $biz->id)->first();
+        $this->assertSame('unverified', $row->status);
+        $this->assertSame('no_cname', $row->failure_reason);
+    }
+
+    public function test_a_domain_pointing_elsewhere_names_where_it_points(): void
+    {
+        $biz = TestCase::provisionTenant();
+        CustomDomainRequest::create([
+            'business_id' => $biz->id,
+            'domain' => 'other.test',
+            'status' => 'requested',
+        ]);
+
+        $action = app(CustomDomainVerifyAction::class);
+        $action->handle($biz->id);
+
+        $row = CustomDomainRequest::where('business_id', $biz->id)->first();
+        $this->assertSame('unverified', $row->status);
+        $this->assertSame('points_elsewhere:other.com', $row->failure_reason);
+    }
+
+    public function test_the_served_site_answers_on_a_verified_custom_host(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-roofing.test', true);
+
+        DB::table('custom_domain_requests')->where('domain', 'acme-roofing.test')->delete();
+        // Use pgsql_migrate so the middleware can see it without transaction isolation issues
+        DB::table('custom_domain_requests')->insert([
+            'business_id' => $biz->id,
+            'domain' => 'acme-roofing.test',
+            'status' => 'verified',
+            'verified_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'My Verified Site',
+            'slug' => 'home',
+            'is_published' => true,
+        ]);
+
+        $commit = app(SitePublishAction::class)->handle($biz->id, $page->id, []);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commit['commit_id'],
+            businessName: $biz->name
+        );
+
+        $res2 = $this->get('http://acme-roofing.test/');
+        $res2->assertSee('<title id="seo-meta-x176">My Verified Site</title>', false);
+        DB::table('custom_domain_requests')->where('domain', 'acme-roofing.test')->delete();
+    }
+
+    public function test_the_app_host_is_never_treated_as_a_custom_domain(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+
+        $res = $this->get("http://{$appHost}/login");
+        $res->assertStatus(200); // the normal app routing
     }
 }
