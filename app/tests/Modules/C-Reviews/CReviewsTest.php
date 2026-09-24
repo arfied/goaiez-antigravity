@@ -1320,4 +1320,39 @@ class CReviewsTest extends TestCase
             ->assertViewHas('publicCount', 0)
             ->assertViewHas('internalCount', 1);
     }
+
+    public function test_escalation_reports_the_sla_the_ticket_actually_carries(): void
+    {
+        $biz = self::provisionTenant(['name' => 'Escalation SLA', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $req = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 2,
+        ]);
+
+        $res = app(QaTicketAction::class)->handle($biz->id, $req->id);
+        $this->assertSame('open_sla_48h', $res['ticket_status']);
+
+        $ticket = QaTicket::where('review_request_id', $req->id)->first();
+        $this->assertEqualsWithDelta(48.0, $ticket->arrived_at->diffInHours($ticket->sla_due_at), 0.1);
+
+        QaSetting::create([
+            'business_id' => $biz->id,
+            'sla_hours' => 12,
+        ]);
+
+        $req2 = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 2,
+        ]);
+
+        $res2 = app(QaTicketAction::class)->handle($biz->id, $req2->id);
+        $this->assertSame('open_sla_12h', $res2['ticket_status']);
+
+        $ticket2 = QaTicket::where('review_request_id', $req2->id)->first();
+        $this->assertEqualsWithDelta(12.0, $ticket2->arrived_at->diffInHours($ticket2->sla_due_at), 0.1);
+    }
 }

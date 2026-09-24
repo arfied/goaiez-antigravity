@@ -32,7 +32,7 @@ final class QaTicketAction
 
             return [
                 'review_request_id' => $req->id,
-                'ticket_status' => 'open_sla_24h',
+                'ticket_status' => 'open_sla_'.$slaHours.'h',
                 'rating' => $req->rating,
             ];
         });
