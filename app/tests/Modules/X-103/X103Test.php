@@ -15,6 +15,9 @@ use App\Models\TenantLinkRecord;
 use App\Models\User;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CSms\Events\SendRequested;
+use App\Modules\X102\Models\ChatSession;
+use App\Modules\X102\Models\ChatTurn;
+use App\Modules\X103\Actions\CustomerQuestionsAction;
 use App\Modules\X103\Actions\FaqDraftAction;
 use App\Modules\X103\Actions\FunnelBuildAction;
 use App\Modules\X103\Actions\PageCreateAction;
@@ -33,13 +36,17 @@ use App\Modules\X103\Events\SitePublished;
 use App\Modules\X103\Models\Funnel;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
+use App\Modules\X103\Models\SiteAnsweredQuestion;
 use App\Modules\X103\Models\SiteInventoryImage;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Modules\X103\Ui\Pages;
 use App\Modules\X113\Actions\StaffDeactivateAction;
 use App\Modules\X113\Actions\StaffInviteAction;
 use App\Modules\X113\Models\Role;
+use App\Modules\X121\Models\Person;
 use App\Modules\X155\Actions\FormCreateAction;
+use App\Modules\X155\Models\FormDefinition;
+use App\Modules\X155\Models\FormSubmission;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\InvoiceLine;
@@ -50,6 +57,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -1558,5 +1566,60 @@ class X103Test extends TestCase
         $this->assertArrayNotHasKey('width', $galleryBlock['items'][0]);
         $this->assertSame(800, $galleryBlock['items'][1]['width']);
         PlatformSetting::query()->where('key', 'ai.monthly_cap_per_tenant')->delete();
+    }
+
+    public function test_customer_questions_list_the_chat_and_the_form_and_drop_what_was_answered(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+        Tenancy::setUser($owner->id);
+        Tenancy::set($biz->id);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => Str::random(10),
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        $turn = ChatTurn::create([
+            'business_id' => $biz->id,
+            'chat_session_id' => $session->id,
+            'author_type' => 'visitor',
+            'message' => 'Chat question 1?',
+            'created_at' => now()->subMinutes(10),
+        ]);
+
+        $form = FormDefinition::create(['business_id' => $biz->id, 'form_name' => 'Form 1', 'slug' => 'f', 'steps' => [], 'schema' => []]);
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'A']);
+        $sub = FormSubmission::create([
+            'business_id' => $biz->id,
+            'form_definition_id' => $form->id,
+            'person_id' => $person->id,
+            'is_spam' => false,
+            'payload' => ['message' => 'Form question 1?'],
+            'created_at' => now()->subMinutes(5),
+        ]);
+
+        $action = app(CustomerQuestionsAction::class);
+        $questions = $action->handle($biz->id);
+
+        $this->assertCount(2, $questions);
+        $this->assertEquals('form', $questions[0]['source']);
+        $this->assertEquals('chat', $questions[1]['source']);
+
+        SiteAnsweredQuestion::create([
+            'business_id' => $biz->id,
+            'source_type' => 'chat',
+            'source_id' => $turn->id,
+            'question' => 'Chat question 1?',
+            'answered_at' => now(),
+        ]);
+
+        $questions2 = $action->handle($biz->id);
+        $this->assertCount(1, $questions2);
+        $this->assertEquals('form', $questions2[0]['source']);
+        $this->assertEquals($sub->id, $questions2[0]['id']);
     }
 }

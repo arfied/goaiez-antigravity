@@ -10,6 +10,8 @@ use App\Models\CompetitorSiteNote;
 use App\Models\Location;
 use App\Models\PlatformSetting;
 use App\Models\User;
+use App\Modules\X102\Models\ChatSession;
+use App\Modules\X102\Models\ChatTurn;
 use App\Modules\X103\Actions\PageCreateAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Events\PagePublished;
@@ -24,6 +26,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -1384,5 +1387,40 @@ class PagesScreenTest extends TestCase
 
         $page->refresh();
         $this->assertArrayNotHasKey('peers', $page->draft_blocks[0]);
+    }
+
+    public function test_the_questions_customers_asked_panel_lists_them_escaped(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $this->get(route('x-103.pages'))
+            ->assertOk()
+            ->assertSee('Questions customers asked (0)')
+            ->assertSee('Nothing waiting');
+
+        Tenancy::setUser($owner->id);
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => Str::random(10),
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        ChatTurn::create([
+            'business_id' => $biz->id,
+            'chat_session_id' => $session->id,
+            'author_type' => 'visitor',
+            'message' => '<b>Distinctive 4521</b>?',
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('x-103.pages'))
+            ->assertOk()
+            ->assertSee('Questions customers asked (1)')
+            ->assertSee('&lt;b&gt;Distinctive 4521&lt;/b&gt;?', false)
+            ->assertDontSee('<b>Distinctive 4521</b>', false)
+            ->assertSee('from your site chat');
     }
 }

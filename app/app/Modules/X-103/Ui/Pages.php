@@ -3,6 +3,7 @@
 namespace App\Modules\X103\Ui;
 
 use App\Enums\UserRole;
+use App\Modules\X103\Actions\CustomerQuestionsAction;
 use App\Modules\X103\Actions\FaqDraftAction;
 use App\Modules\X103\Actions\PageCreateAction;
 use App\Modules\X103\Actions\PageDeleteAction;
@@ -570,11 +571,14 @@ class Pages extends Component
             $hasVersions[$page->id] = isset($versions[$page->id]) && $versions[$page->id]->count() > 0;
         }
 
+        $questions = app(CustomerQuestionsAction::class)->handle($this->businessId);
+
         return view('x-103::pages', [
             'pages' => $pages,
             'deployments' => $deployments,
             'versions' => $versions,
             'hasVersions' => $hasVersions,
+            'questions' => $questions,
         ]);
     }
 }

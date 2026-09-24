@@ -3600,6 +3600,18 @@ final class DefaultsManifest
                 'description' => 'System prompt for generating the FAQ block.',
             ],
 
+            'sites.questions.recent_days' => [
+                'seed' => 90,
+                'group' => 'Content',
+                'description' => 'How many days back the Pages screen looks for questions customers typed into the site chat or the contact form.',
+            ],
+
+            'sites.questions.max' => [
+                'seed' => 20,
+                'group' => 'Content',
+                'description' => 'How many unanswered customer questions the Pages screen lists at once.',
+            ],
+
             'reviews.reply.max_recovery_length' => [
                 'seed' => ReplyGenerator::MAX_RECOVERY_LENGTH,
                 'group' => 'Reviews',
