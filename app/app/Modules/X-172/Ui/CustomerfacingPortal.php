@@ -9,6 +9,7 @@ use App\Modules\X172\Actions\PortalActionHandler;
 use App\Modules\X172\Actions\PortalLinkAction;
 use App\Modules\X172\Actions\PortalViewAction;
 use App\Modules\X172\Models\PortalLink;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -20,9 +21,24 @@ class CustomerfacingPortal extends Component
 
     public $refreshedToken = false;
 
+    private function ensureTenancyFromToken(): void
+    {
+        $link = PortalLink::where('token', (string) $this->token)->first();
+        if ($link === null) {
+            abort(404);
+        }
+        Tenancy::set((int) $link->business_id);
+    }
+
+    public function hydrate(): void
+    {
+        $this->ensureTenancyFromToken();
+    }
+
     public function mount($token)
     {
         $this->token = $token;
+        $this->ensureTenancyFromToken();
 
         $action = app(PortalViewAction::class);
         $result = $action->handle((string) $this->token);
