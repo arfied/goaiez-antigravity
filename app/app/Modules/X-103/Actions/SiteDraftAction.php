@@ -284,6 +284,21 @@ final class SiteDraftAction
                 $sourcesUsed[] = 'links';
             }
 
+            $firstServiceName = '';
+            if ($servicesBlock && count($servicesBlock['items']) > 0) {
+                $firstServiceName = $servicesBlock['items'][0]['name'];
+            }
+
+            $homeBlocks[] = [
+                'type' => 'booking_form',
+                'heading' => 'Request a time',
+                'label' => 'Request a time',
+                'service' => $firstServiceName,
+                'source' => 'scheduler',
+            ];
+            $blocksGenerated++;
+            $sourcesUsed[] = 'scheduler';
+
             foreach ($faqBlocks as $faqBlock) {
                 $homeBlocks[] = $faqBlock;
                 $blocksGenerated++;

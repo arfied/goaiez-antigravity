@@ -54,6 +54,7 @@ class PublicBookingRouteTest extends TestCase
                 ['type' => 'chat_widget'],
                 ['type' => 'form_capture'],
                 ['type' => 'dni_script'],
+                ['type' => 'booking_form', 'heading' => 'Distinctive booking 4471', 'service' => 'Haircut'],
             ],
             'pixel_installed' => true,
         ]);
@@ -137,5 +138,20 @@ class PublicBookingRouteTest extends TestCase
             'service' => 'Haircut',
             'preferred_date' => now()->addDays(2)->toDateString(),
         ])->assertStatus(404);
+    }
+
+    public function test_the_deployed_booking_form_posts_to_a_route_that_accepts_it(): void
+    {
+        $html = Storage::disk('local')->get("sites/{$this->deploy['deploy_hash']}.html");
+        preg_match('/action="([^"]+\/book)"/', $html, $m);
+
+        Tenancy::forgetAll();
+
+        $this->postJson($m[1], [
+            'name' => 'Distinctive Visitor 4471',
+            'phone' => '+15125567731',
+            'service' => 'Haircut',
+            'preferred_date' => now()->addDays(2)->toDateString(),
+        ])->assertStatus(201);
     }
 }
