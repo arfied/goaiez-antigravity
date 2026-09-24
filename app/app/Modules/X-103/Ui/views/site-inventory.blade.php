@@ -276,4 +276,34 @@
             </table>
         @endif
     </div>
+    <div class="mt-8 mb-4">
+        <h2>How heavy each page is</h2>
+        @if (count($draftPages) === 0)
+            <p class="text-sm text-ink-2 mt-2">Nothing to weigh yet — draft the site first.</p>
+        @else
+            <p class="text-sm text-ink-2 mt-2">What a visitor downloads before the page shows, from the draft. This is a weight, not a load time — your pixel measures real visitors' load times on the live site. Pictures are stored exactly as your site served them; a smaller original is the only way to make one lighter.</p>
+            <table class="min-w-full divide-y divide-rule mt-4">
+                <thead class="bg-paper">
+                    <tr>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-ink">Page</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Pictures</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Largest picture</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Page text</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Outside scripts</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-rule bg-paper">
+                    @foreach ($pageWeight as $row)
+                        <tr>
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-ink">{{ $row['page'] }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">{{ $row['images'] }} — {{ number_format($row['image_bytes'] / 1024, 1) }} KB</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">@if ($row['largest'] !== null){{ $row['largest'] }} ({{ number_format($row['largest_bytes'] / 1024, 1) }} KB)@else none @endif</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">{{ number_format($row['html_bytes'] / 1024, 1) }} KB</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">{{ $row['scripts'] === 1 ? 'the visitor pixel' : 'none' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    </div>
 </div>

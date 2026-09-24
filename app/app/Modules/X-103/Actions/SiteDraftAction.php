@@ -181,7 +181,7 @@ final class SiteDraftAction
                         }
                         $items[] = [
                             'name' => $entry->label,
-                            'price' => $priceText,
+                            'price_text' => $priceText,
                         ];
                     }
                 }

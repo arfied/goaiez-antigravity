@@ -9,6 +9,7 @@ use App\Modules\X103\Actions\SiteCrawlAction;
 use App\Modules\X103\Actions\SiteDraftAction;
 use App\Modules\X103\Actions\SiteImagesCopyAction;
 use App\Modules\X103\Actions\SiteMissingFactsAction;
+use App\Modules\X103\Actions\SitePageWeightAction;
 use App\Modules\X103\Actions\SiteReadabilityAction;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\SiteInventoryImage;
@@ -177,6 +178,7 @@ final class SiteInventory extends Component
         $location = $tenantId ? Location::where('business_id', $tenantId)->first() : null;
         $missing = $tenantId ? app(SiteMissingFactsAction::class)->handle((int) $tenantId, $location) : [];
         $readability = $tenantId ? app(SiteReadabilityAction::class)->handle((int) $tenantId) : [];
+        $pageWeight = $tenantId ? app(SitePageWeightAction::class)->handle((int) $tenantId) : [];
 
         return view('x-103::site-inventory', [
             'pages' => $pages,
@@ -184,6 +186,7 @@ final class SiteInventory extends Component
             'draftPages' => $draftPages,
             'missing' => $missing,
             'readability' => $readability,
+            'pageWeight' => $pageWeight,
         ]);
     }
 }
