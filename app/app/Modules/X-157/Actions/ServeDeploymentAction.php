@@ -21,6 +21,8 @@ class ServeDeploymentAction
         $html = Storage::disk('local')->get("sites/{$deployHash}.html");
         abort_if($html === null, 404);
 
+        Deployment::whereKey($deployment->id)->increment('served_count');
+
         return response($html, 200)->header('Content-Type', 'text/html');
     }
 

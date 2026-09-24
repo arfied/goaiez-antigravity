@@ -35,6 +35,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
@@ -3058,5 +3059,61 @@ class X157Test extends TestCase
         $this->get('http://acme-roofing.test/about')->assertOk()->assertSee('Distinctive about 4473');
 
         DB::table('custom_domain_requests')->where('domain', 'acme-roofing.test')->delete();
+    }
+
+    public function test_the_sitemap_and_rollback_see_only_the_control_arm(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-roofing.test', true);
+
+        DB::table('custom_domain_requests')->where('domain', 'acme-roofing.test')->delete();
+        DB::table('custom_domain_requests')->insert([
+            'business_id' => $biz->id,
+            'domain' => 'acme-roofing.test',
+            'status' => 'verified',
+            'verified_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'My Verified Site',
+            'slug' => 'home',
+            'is_published' => true,
+        ]);
+
+        $commit = app(SitePublishAction::class)->handle($biz->id, $page->id, []);
+
+        $controlDeploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commit['commit_id'],
+            businessName: $biz->name
+        );
+
+        $variantDeploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commit['commit_id'],
+            businessName: $biz->name,
+            pageVariantId: 4563
+        );
+
+        $xml = app(SitemapRenderAction::class)->handle($biz->id);
+        $this->assertStringContainsString($controlDeploy['deploy_hash'], $xml);
+        $this->assertStringNotContainsString($variantDeploy['deploy_hash'], $xml);
+
+        $this->expectException(HttpException::class);
+        app(EdgeRollbackAction::class)->handle($biz->id, $variantDeploy['deployment_id']);
     }
 }

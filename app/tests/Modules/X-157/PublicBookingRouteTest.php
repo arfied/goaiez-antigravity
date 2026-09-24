@@ -10,6 +10,8 @@ use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
+use App\Modules\X157\Actions\LatestDeploymentForPageAction;
+use App\Modules\X157\Models\Deployment;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -168,5 +170,92 @@ class PublicBookingRouteTest extends TestCase
             'service' => 'Haircut',
             'preferred_date' => now()->addDays(2)->toDateString(),
         ])->assertStatus(201);
+    }
+
+    public function test_a_variant_arm_deploys_beside_control_without_superseding_it(): void
+    {
+        $page = Page::first();
+        $commitId = 'commit_'.Str::random(16);
+        PageVersion::create([
+            'business_id' => $this->biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [
+                ['type' => 'hero', 'headline' => 'Distinctive variant headline 4561'],
+            ],
+            'pixel_installed' => true,
+        ]);
+
+        $controlDeployment = Deployment::where('deploy_hash', $this->deploy['deploy_hash'])->first();
+
+        $variantDeploy = app(EdgeDeployAction::class)->handle(
+            businessId: $this->biz->id,
+            edgeZoneId: $controlDeployment->edge_zone_id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $this->biz->name,
+            pageVariantId: 4562
+        );
+
+        $variantDeployment = Deployment::where('deploy_hash', $variantDeploy['deploy_hash'])->first();
+
+        $this->assertEquals('deployed', $controlDeployment->fresh()->status);
+        $this->assertEquals('deployed', $variantDeployment->fresh()->status);
+
+        $this->assertTrue(Storage::disk('local')->exists("sites/{$variantDeploy['deploy_hash']}.html"));
+        $variantHtml = Storage::disk('local')->get("sites/{$variantDeploy['deploy_hash']}.html");
+        $controlHtml = Storage::disk('local')->get("sites/{$this->deploy['deploy_hash']}.html");
+
+        $this->assertStringContainsString('Distinctive variant headline 4561', $variantHtml);
+        $this->assertStringNotContainsString('Distinctive variant headline 4561', $controlHtml);
+
+        $latestAction = app(LatestDeploymentForPageAction::class);
+        $latest = $latestAction->handle($this->biz->id, $page->id);
+        $this->assertEquals($this->deploy['deploy_hash'], $latest->deploy_hash);
+
+        // Third deploy supersedes only the first variant row
+        $variantDeploy2 = app(EdgeDeployAction::class)->handle(
+            businessId: $this->biz->id,
+            edgeZoneId: $controlDeployment->edge_zone_id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $this->biz->name,
+            pageVariantId: 4562
+        );
+
+        $this->assertEquals('superseded', $variantDeployment->fresh()->status);
+        $this->assertEquals('deployed', $controlDeployment->fresh()->status);
+
+        $controlDeploy2 = app(EdgeDeployAction::class)->handle(
+            businessId: $this->biz->id,
+            edgeZoneId: $controlDeployment->edge_zone_id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $this->biz->name
+        );
+        $this->assertEquals('superseded', $controlDeployment->fresh()->status);
+    }
+
+    public function test_serving_a_page_counts_it_and_a_404_does_not(): void
+    {
+        Tenancy::forgetAll();
+
+        $this->get("/sites/{$this->biz->id}/{$this->deploy['deploy_hash']}")->assertStatus(200);
+        $this->get("/sites/{$this->biz->id}/{$this->deploy['deploy_hash']}")->assertStatus(200);
+
+        Tenancy::set((int) $this->biz->id);
+        $this->assertEquals(2, Deployment::where('deploy_hash', $this->deploy['deploy_hash'])->first()->served_count);
+
+        Tenancy::forgetAll();
+        $this->get("/sites/{$this->biz->id}/bogus_hash")->assertStatus(404);
+
+        Tenancy::set((int) $this->biz->id);
+        $this->assertEquals(2, Deployment::where('deploy_hash', $this->deploy['deploy_hash'])->first()->served_count);
     }
 }

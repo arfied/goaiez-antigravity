@@ -47,11 +47,12 @@ JS;
         ?int $speedBudgetMs = null,
         ?int $pageId = null,
         ?string $commitId = null,
-        ?string $businessName = null
+        ?string $businessName = null,
+        ?int $pageVariantId = null
     ): array {
         $speedBudgetMs ??= $this->defaults->int('sites.deploy.speed_budget_ms');
 
-        return DB::transaction(function () use ($businessId, $edgeZoneId, $measuredTtfbMs, $speedBudgetMs, $commitId, $pageId, $businessName) {
+        return DB::transaction(function () use ($businessId, $edgeZoneId, $measuredTtfbMs, $speedBudgetMs, $commitId, $pageId, $businessName, $pageVariantId) {
             $zone = EdgeZone::where('business_id', $businessId)->findOrFail($edgeZoneId);
 
             if ($commitId) {
@@ -90,6 +91,7 @@ JS;
                 'business_id' => $businessId,
                 'edge_zone_id' => $zone->id,
                 'page_id' => $pageId,
+                'page_variant_id' => $pageVariantId,
                 'deploy_hash' => $deployHash,
                 'status' => 'deploying',
                 'speed_index' => ($measuredTtfbMs <= $speedBudgetMs) ? 100 : 40,
@@ -420,9 +422,11 @@ JS;
             // DeployCompleted all follow the write, because ModuleServiceProvider's route
             // serves a `deployed` row by reading that exact file. A deploy supersedes only
             // the previous deploy of the same page (R245, 2026-09-05).
+            // an arm never supersedes the other arm; the owner's stop (X-103) is what retires a variant.
             Deployment::where('business_id', $businessId)
                 ->where('edge_zone_id', $zone->id)
                 ->where('page_id', $pageId)
+                ->when($pageVariantId === null, fn ($q) => $q->whereNull('page_variant_id'), fn ($q) => $q->where('page_variant_id', $pageVariantId))
                 ->where('status', 'deployed')
                 ->where('id', '!=', $deployment->id)
                 ->update(['status' => 'superseded']);

@@ -16,6 +16,7 @@ class SitemapRenderAction
 
         $deployments = Deployment::where('business_id', $businessId)
             ->where('status', 'deployed')
+            ->whereNull('page_variant_id')
             ->latest('id')
             ->get()
             ->unique('page_id')
