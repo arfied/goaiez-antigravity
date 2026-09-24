@@ -8,6 +8,8 @@ use App\Enums\UserRole;
 use App\Livewire\Account\Facts;
 use App\Models\Business;
 use App\Models\User;
+use App\Services\Facts\BusinessFactKey;
+use App\Services\Facts\BusinessFacts;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
@@ -80,6 +82,24 @@ class FactsScreenTest extends TestCase
             ->set('facts.years_in_business', 'twelve')
             ->call('save')
             ->assertHasErrors(['facts.years_in_business']);
+    }
+
+    public function test_saves_and_validates_industry(): void
+    {
+        Livewire::actingAs($this->owner)
+            ->test(Facts::class)
+            ->set('facts.industry', 'care')
+            ->call('save');
+
+        $this->assertEquals('care', app(BusinessFacts::class)->get($this->biz->id, BusinessFactKey::INDUSTRY));
+
+        Livewire::actingAs($this->owner)
+            ->test(Facts::class)
+            ->set('facts.industry', 'plumbing')
+            ->call('save')
+            ->assertHasErrors(['facts.industry']);
+
+        $this->assertEquals('care', app(BusinessFacts::class)->get($this->biz->id, BusinessFactKey::INDUSTRY));
     }
 
     public function test_refuses_staff_with_no_tenant_on_get(): void

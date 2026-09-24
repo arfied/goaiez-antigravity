@@ -46,6 +46,15 @@
             <div class="bg-surface overflow-hidden shadow-sm sm:rounded-lg p-6 border border-line">
                 <h3 class="text-lg font-medium text-ink">2. Draft</h3>
                 <p class="mt-1 text-sm text-ink-2">Pages we drafted based on your inventory. Click to edit.</p>
+                <p class="mt-1 text-sm text-ink-2">
+                    Starting point: 
+                    @if($industry['family'] !== null)
+                        {{ $industry['family']->label() }} — {{ $industry['source'] === 'owner' ? 'you chose it' : 'from what Google says about you' }}
+                    @else 
+                        the general one — Google gave us nothing to go on; <a href="{{ route('account.facts') }}" class="underline">pick your industry</a> and the draft follows it
+                    @endif
+                    .
+                </p>
                 
                 @if($pages->isNotEmpty())
                     <ul class="mt-4 border-t border-line divide-y divide-line">

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Account;
 
+use App\Enums\IndustryFamily;
 use App\Services\Facts\BusinessFactKey;
 use App\Services\Facts\BusinessFacts;
 use App\Support\Tenancy;
@@ -33,6 +34,7 @@ final class Facts extends Component
             $rules["facts.{$key}"] = ['nullable', 'string', 'max:'.$def['max']];
         }
         $rules['facts.'.BusinessFactKey::YEARS_IN_BUSINESS] = ['nullable', 'integer', 'min:0', 'max:200'];
+        $rules['facts.'.BusinessFactKey::INDUSTRY] = ['nullable', 'in:'.implode(',', IndustryFamily::values())];
         $this->validate($rules);
 
         $biz = Tenancy::idOrFail();

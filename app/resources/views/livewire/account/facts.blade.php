@@ -31,6 +31,13 @@
                             wire:model="facts.{{ $key }}"
                             class="mt-1 w-full rounded-[--radius-control] border border-rule bg-card px-3 py-2 text-base text-ink"
                         />
+                    @elseif ($key === 'industry')
+                        <select id="{{ $key }}" wire:model="facts.{{ $key }}" class="mt-1 w-full rounded-[--radius-control] border border-rule bg-card px-3 py-2 text-base text-ink">
+                            <option value="">Use what Google says</option>
+                            @foreach (\App\Enums\IndustryFamily::cases() as $family)
+                                <option value="{{ $family->value }}">{{ $family->label() }}</option>
+                            @endforeach
+                        </select>
                     @else
                         <input
                             id="{{ $key }}"

@@ -24,6 +24,8 @@ use App\Modules\X157\Domain\DnsResolver;
 use App\Modules\X157\Models\CustomDomainRequest;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X163\Models\PriceBookItem;
+use App\Services\Facts\BusinessFactKey;
+use App\Services\Facts\BusinessFacts;
 use App\Support\Tenancy;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Http;
@@ -468,5 +470,28 @@ class SiteBuildScreenTest extends TestCase
         Livewire::actingAs($manager)->test(SiteBuild::class)
             ->call('startHeadlineTest')
             ->assertForbidden();
+    }
+
+    public function test_shows_industry_source_and_label(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = self::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+        Tenancy::set((int) $biz->id);
+
+        $this->actingAs($owner)->get(route('x-103.site-build'))
+            ->assertOk()
+            ->assertSee('the general one');
+
+        $biz->update(['industry' => 'trades']);
+        $this->actingAs($owner)->get(route('x-103.site-build'))
+            ->assertOk()
+            ->assertSee('from what Google says about you');
+
+        app(BusinessFacts::class)->set($biz->id, BusinessFactKey::INDUSTRY, 'office');
+        $this->actingAs($owner)->get(route('x-103.site-build'))
+            ->assertOk()
+            ->assertSee('you chose it')
+            ->assertSee('Local Professional');
     }
 }

@@ -24,6 +24,7 @@ use App\Modules\X157\Actions\CustomDomainVerifyAction;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
 use App\Modules\X157\Actions\PlatformSiteAddressAction;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Industry\IndustryResolver;
 use App\Services\Visibility\CompetitorSignals;
 use App\Services\Visibility\CompetitorSiteNotes;
 use App\Support\Tenancy;
@@ -291,6 +292,8 @@ class SiteBuild extends Component
             $frozen = $lastRow && $lastRow->status === 'frozen';
         }
 
+        $industry = app(IndustryResolver::class)->for($this->businessId);
+
         return view('x-103::site-build', [
             'pages' => $pages,
             'domainStatus' => $domainStatus,
@@ -301,6 +304,7 @@ class SiteBuild extends Component
             'variant' => $variant,
             'variantResult' => $variantResult,
             'frozen' => $frozen,
+            'industry' => $industry,
         ]);
     }
 }
