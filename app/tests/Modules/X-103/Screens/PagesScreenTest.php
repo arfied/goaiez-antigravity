@@ -866,6 +866,51 @@ class PagesScreenTest extends TestCase
         $this->assertEquals('Hero text', $page->draft_blocks[0]['text']);
     }
 
+    public function test_restore_original_puts_the_hero_subline_back(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Pages Test Subline Restore', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Distinctive headline 4601', 'subline' => 'Distinctive subline 4602', 'source' => 'crawl'],
+                ['type' => 'about', 'text' => 'About text'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'choices' => [
+                    ['message' => ['content' => 'Polished subline text']],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->call('polish', $page->id);
+
+        $page->refresh();
+        $this->assertEquals('Polished subline text', $page->draft_blocks[0]['subline']);
+        $this->assertEquals('Distinctive subline 4602', $page->draft_blocks[0]['original_subline']);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->call('restoreOriginal', $page->id);
+
+        $page->refresh();
+        $this->assertEquals('Distinctive subline 4602', $page->draft_blocks[0]['subline']);
+        $this->assertArrayNotHasKey('original_subline', $page->draft_blocks[0]);
+    }
+
     public function test_the_faq_buttons_are_on_the_page_and_a_refusal_says_what_to_add_first(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
@@ -1426,33 +1471,32 @@ class PagesScreenTest extends TestCase
 
     public function test_customer_question_panel_draft_answer(): void
     {
-        \App\Models\PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
-        $owner = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        \App\Modules\X163\Models\PriceBookItem::create([
+        PriceBookItem::create([
             'business_id' => $biz->id,
-            
+
             'service_name' => 'A service',
             'price_cents' => 1000,
             'is_confirmed' => true,
             'confirmed_at' => now(),
         ]);
 
-        $page = \App\Modules\X103\Models\Page::create([
+        $page = Page::create([
             'business_id' => $biz->id,
             'slug' => 'test-page-4535',
             'title' => 'Test',
-            
-            
+
         ]);
 
-        $chat = \App\Modules\X102\Models\ChatSession::create(["business_id" => $biz->id, "session_token" => \Illuminate\Support\Str::uuid()->toString()]);
-        $turn = \App\Modules\X102\Models\ChatTurn::create(["business_id" => $biz->id, "chat_session_id" => $chat->id, "author_type" => "visitor", "message" => 'Distinctive question 4535?', 'created_at' => now()]);
+        $chat = ChatSession::create(['business_id' => $biz->id, 'session_token' => Str::uuid()->toString()]);
+        $turn = ChatTurn::create(['business_id' => $biz->id, 'chat_session_id' => $chat->id, 'author_type' => 'visitor', 'message' => 'Distinctive question 4535?', 'created_at' => now()]);
 
-        \Illuminate\Support\Facades\Http::fake([
-            'api.openai.com/*' => \Illuminate\Support\Facades\Http::sequence()
+        Http::fake([
+            'api.openai.com/*' => Http::sequence()
                 ->push([
                     'id' => 'chatcmpl-mod',
                     'object' => 'chat.completion',
@@ -1465,7 +1509,7 @@ class PagesScreenTest extends TestCase
                                 'content' => json_encode(['flags' => []]),
                             ],
                             'finish_reason' => 'stop',
-                        ]
+                        ],
                     ],
                     'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
                 ])
@@ -1481,23 +1525,23 @@ class PagesScreenTest extends TestCase
                                 'content' => json_encode(['question' => 'Distinctive question 4535?', 'answer' => 'Answer']),
                             ],
                             'finish_reason' => 'stop',
-                        ]
+                        ],
                     ],
                     'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
-                ])
+                ]),
         ]);
 
-        \Livewire\Livewire::test(\App\Modules\X103\Ui\Pages::class)
+        Livewire::test(Pages::class)
             ->assertSee('Draft an answer')
             ->assertSee('Choose a page')
             ->set('answerPage.chat:'.$turn->id, $page->id)
             ->call('draftAnswer', 'chat:'.$turn->id)
             ->assertSet('success', fn ($s) => str_starts_with($s, 'Drafted an answer with'));
 
-        $manager = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Manager]);
-        \Tests\TestCase::provisionTenant(['owner_user_id' => $manager->id]);
+        $manager = User::factory()->create(['role' => UserRole::Manager]);
+        TestCase::provisionTenant(['owner_user_id' => $manager->id]);
         $this->actingAs($manager);
-        \Livewire\Livewire::test(\App\Modules\X103\Ui\Pages::class)
+        Livewire::test(Pages::class)
             ->call('draftAnswer', 'chat:'.$turn->id)
             ->assertForbidden();
     }

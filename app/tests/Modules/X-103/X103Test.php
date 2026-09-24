@@ -839,6 +839,50 @@ class X103Test extends TestCase
         Http::assertSentCount(2);
     }
 
+    public function test_polish_rewrites_a_real_hero_subline_and_leaves_the_headline_alone(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'Polish Test Hero Subline', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Distinctive headline 4601', 'subline' => 'Distinctive subline 4602', 'source' => 'crawl'],
+                ['type' => 'about', 'text' => 'About text'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'choices' => [
+                    ['message' => ['content' => 'Polished text']],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        $action = app(SiteCopyPolishAction::class);
+        $res = $action->handle($biz->id, $page->id);
+
+        $this->assertEquals(2, $res['blocks']);
+
+        $page->refresh();
+        $blocks = $page->draft_blocks;
+
+        $this->assertEquals('Distinctive headline 4601', $blocks[0]['headline']);
+        $this->assertEquals('Polished text', $blocks[0]['subline']);
+        $this->assertEquals('Distinctive subline 4602', $blocks[0]['original_subline']);
+        $this->assertEquals('ai', $blocks[0]['source']);
+
+        Http::assertSentCount(2);
+        Http::assertSent(fn ($r) => str_contains($r->body(), 'Distinctive subline 4602') && ! str_contains($r->body(), 'Distinctive headline 4601'));
+    }
+
     public function test_polish_refuses_when_the_budget_is_out(): void
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');

@@ -11,6 +11,7 @@ use App\Modules\X103\Actions\PageDuplicateAction;
 use App\Modules\X103\Actions\PageRenameAction;
 use App\Modules\X103\Actions\PageRestoreVersionAction;
 use App\Modules\X103\Actions\PageUnpublishAction;
+use App\Modules\X103\Actions\QuestionAnswerDraftAction;
 use App\Modules\X103\Actions\SeoDraftAction;
 use App\Modules\X103\Actions\SiteCopyPolishAction;
 use App\Modules\X103\Actions\SiteEditProposeAction;
@@ -18,6 +19,7 @@ use App\Modules\X103\Actions\SitePageProposeAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
+use App\Modules\X103\Models\SiteAnsweredQuestion;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
 use App\Modules\X157\Actions\PlatformSiteAddressAction;
 use App\Support\Tenancy;
@@ -345,6 +347,10 @@ class Pages extends Component
                 unset($blocks[$i]['peers']);
                 $restored++;
             }
+            if (isset($block['original_subline'])) {
+                $blocks[$i]['subline'] = $block['original_subline'];
+                unset($blocks[$i]['original_subline']);
+            }
         }
 
         if ($restored > 0) {
@@ -436,13 +442,13 @@ class Pages extends Component
         }
     }
 
-        public function draftAnswer(string $key, \App\Modules\X103\Actions\QuestionAnswerDraftAction $action): void
+    public function draftAnswer(string $key, QuestionAnswerDraftAction $action): void
     {
-        abort_unless(auth()->user()->hasRole(\App\Enums\UserRole::Owner), 403);
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
         $this->error = null;
         $this->success = null;
 
-        $questions = app(\App\Modules\X103\Actions\CustomerQuestionsAction::class)->handle($this->businessId);
+        $questions = app(CustomerQuestionsAction::class)->handle($this->businessId);
         $questionRow = null;
         foreach ($questions as $q) {
             if ($q['key'] === $key) {
@@ -458,6 +464,7 @@ class Pages extends Component
         $pageId = (int) ($this->answerPage[$key] ?? 0);
         if ($pageId === 0) {
             $this->error = 'Pick the page the answer should go on.';
+
             return;
         }
 
@@ -467,8 +474,8 @@ class Pages extends Component
                 if ($res['reason'] === 'pending_faq_exists') {
                     $this->success = 'That page already has proposed questions waiting — place or discard them first.';
                 } elseif ($res['reason'] === 'moderation_unavailable') {
-                    $this->success = ($res['detail'] ?? '') === 'phi_withheld' 
-                        ? 'Questions cannot be checked for this account, so nothing is drafted from them.' 
+                    $this->success = ($res['detail'] ?? '') === 'phi_withheld'
+                        ? 'Questions cannot be checked for this account, so nothing is drafted from them.'
                         : 'The question could not be checked right now, so nothing was drafted. Try again later.';
                 } elseif ($res['reason'] === 'moderation_refused') {
                     $this->success = 'The question could not be checked right now, so nothing was drafted. Try again later.';
@@ -482,7 +489,7 @@ class Pages extends Component
             } else {
                 $this->success = "Drafted an answer with {$res['model']} — see the page's proposed questions.";
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->error = $e->getMessage();
         }
     }
@@ -523,7 +530,7 @@ class Pages extends Component
             ];
             if (isset($meta['pending_faq']['source'])) {
                 $src = $meta['pending_faq']['source'];
-                \App\Modules\X103\Models\SiteAnsweredQuestion::query()->updateOrCreate(
+                SiteAnsweredQuestion::query()->updateOrCreate(
                     ['business_id' => $this->businessId, 'source_type' => $src['type'], 'source_id' => (int) $src['id']],
                     ['question' => $src['question'], 'page_id' => $page->id, 'answered_at' => now()]
                 );
