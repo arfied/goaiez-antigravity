@@ -68,7 +68,7 @@ class Mobile extends Component
     {
         $items = ($this->businessId > 0)
             ? ApprovalItem::where('business_id', $this->businessId)
-                ->whereIn('status', ['pending', 'escalated'])
+                ->whereIn('status', ['pending', 'escalated', 'expired'])
                 ->orderByDesc('id')
                 ->get()
             : collect();

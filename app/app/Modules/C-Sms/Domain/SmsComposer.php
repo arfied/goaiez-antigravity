@@ -71,6 +71,17 @@ final class SmsComposer
             $decision = $this->consentService->decide($businessId, $recipientPhone, 'sms', $consentState);
             if (! $decision['granted']) {
                 $reason = ($decision['reason'] === 'SUPPRESSED') ? 'STOP_SUPPRESSED' : $decision['reason'];
+                $calc = $this->calculateSegments($body);
+                SmsComposition::create([
+                    'business_id' => $businessId,
+                    'recipient_phone' => $recipientPhone,
+                    'message_class' => $messageClass,
+                    'body' => $body,
+                    'segments_count' => $calc['segments'],
+                    'encoding' => $calc['encoding'],
+                    'status' => 'halted',
+                    'scheduled_at' => null,
+                ]);
 
                 return [
                     'status' => 'halted',
