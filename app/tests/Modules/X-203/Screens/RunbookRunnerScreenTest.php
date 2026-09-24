@@ -26,7 +26,7 @@ class RunbookRunnerScreenTest extends TestCase
             ->assertSee('Your account')
             ->assertDontSee('Internal Platform Console')
             ->assertDontSee('this screen is planned in')
-            ->assertSee('No runbooks defined.');
+            ->assertSee('not built here yet');
 
         Tenancy::setUser($owner->id);
         $runbook = Runbook::create([
@@ -48,7 +48,7 @@ class RunbookRunnerScreenTest extends TestCase
             ->assertSee('Distinctive Runbook 4496')
             ->assertSee('on distinctive_event_4496 (2 steps)')
             ->assertSee('[completed]')
-            ->assertDontSee('No runbooks defined.');
+            ->assertDontSee('not built here yet');
 
         Livewire::test(RunbookRunner::class)->assertOk();
     }
