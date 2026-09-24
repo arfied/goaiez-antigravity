@@ -1092,4 +1092,97 @@ class PagesScreenTest extends TestCase
             ->call('askEdit', $page->id)
             ->assertForbidden();
     }
+
+    public function test_the_conversation_continues_on_the_proposal_not_the_draft(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Pages Test Converse', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old headline'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::sequence()
+                ->pushResponse(Http::response([
+                    'id' => 'msg_edit',
+                    'choices' => [
+                        ['message' => ['content' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471']], 'explanation' => 'Rewrote the headline.'])]],
+                    ],
+                    'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+                ]))
+                ->pushResponse(Http::response([
+                    'id' => 'msg_edit_2',
+                    'choices' => [
+                        ['message' => ['content' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive second headline 7731']], 'explanation' => 'Shortened it.'])]],
+                    ],
+                    'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+                ])),
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->set('editRequest.'.$page->id, 'make the headline stronger')
+            ->call('askEdit', $page->id);
+
+        $page->refresh();
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->set('editRequest.'.$page->id, 'shorter')
+            ->call('askEdit', $page->id);
+
+        $page->refresh();
+        $this->assertSame('Distinctive second headline 7731', $page->draft_meta['pending_edit']['blocks'][0]['headline']);
+        $this->assertCount(2, $page->draft_meta['pending_edit']['thread']);
+        $this->assertSame('Old headline', $page->draft_blocks[0]['headline']);
+
+        Http::assertSent(fn ($req) => str_contains((string) $req->body(), 'Distinctive new headline 4471'));
+    }
+
+    public function test_the_proposal_shows_side_by_side_with_the_draft(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Pages Test Side By Side', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old headline'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [
+                    ['message' => ['content' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471']], 'explanation' => 'Rewrote the headline.'])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->set('editRequest.'.$page->id, 'make the headline stronger')
+            ->call('askEdit', $page->id);
+
+        $this->actingAs($owner)->get(route('x-103.pages'))
+            ->assertSee('Old headline')
+            ->assertSee('Distinctive new headline 4471')
+            ->assertSee('Not quite?');
+    }
 }

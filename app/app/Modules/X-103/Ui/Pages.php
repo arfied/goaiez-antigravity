@@ -352,8 +352,15 @@ class Pages extends Component
         $this->error = null;
         $this->success = null;
 
+        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
+
         try {
-            $res = $action->handle($this->businessId, $pageId, trim((string) ($this->editRequest[$pageId] ?? '')));
+            $res = $action->handle(
+                businessId: $this->businessId,
+                pageId: $pageId,
+                request: trim((string) ($this->editRequest[$pageId] ?? '')),
+                continue: isset($page->draft_meta['pending_edit'])
+            );
             if ($res['status'] === 'refused') {
                 $this->success = $res['reason'];
             } else {
@@ -385,7 +392,7 @@ class Pages extends Component
         $page->draft_meta = $meta;
         $page->save();
 
-        $this->success = 'Applied to the draft. Publish when you are ready; History keeps the version before.';
+        $this->success = 'Applied to the draft. Publish when you are ready — History keeps the version before this one.';
     }
 
     public function discardEdit(int $pageId): void

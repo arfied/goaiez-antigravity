@@ -19,7 +19,7 @@ final class SiteEditProposeAction
         private readonly SiteBlockRenderer $renderer
     ) {}
 
-    public function handle(int $businessId, int $pageId, string $request): array
+    public function handle(int $businessId, int $pageId, string $request, bool $continue = false): array
     {
         $page = Page::where('business_id', $businessId)->findOrFail($pageId);
 
@@ -32,7 +32,12 @@ final class SiteEditProposeAction
 
         $systemPrompt = $this->registry->string('sites.edit.system_prompt');
 
-        $prompt = "Owner request: {$request}\n\nCurrent blocks (JSON):\n".json_encode($page->draft_blocks ?? [], JSON_UNESCAPED_SLASHES);
+        $currentBlocks = $page->draft_blocks ?? [];
+        if ($continue && isset($page->draft_meta['pending_edit'])) {
+            $currentBlocks = $page->draft_meta['pending_edit']['blocks'] ?? [];
+        }
+
+        $prompt = "Owner request: {$request}\n\nCurrent blocks (JSON):\n".json_encode($currentBlocks, JSON_UNESCAPED_SLASHES);
 
         $response = $this->router->dispatch(new AiRequest(
             task: AiTask::SiteCopy,
@@ -91,12 +96,35 @@ final class SiteEditProposeAction
         }
 
         $meta = $page->draft_meta ?? [];
+        $thread = [];
+
+        if ($continue && isset($meta['pending_edit'])) {
+            $thread = $meta['pending_edit']['thread'] ?? [];
+            if (empty($thread)) {
+                $thread[] = [
+                    'request' => $meta['pending_edit']['request'] ?? '',
+                    'explanation' => $meta['pending_edit']['explanation'] ?? '',
+                    'at' => $meta['pending_edit']['drafted_at'] ?? '',
+                ];
+            }
+        }
+
+        $explanation = (string) ($response->json['explanation'] ?? '');
+        $now = now()->toIso8601String();
+
+        $thread[] = [
+            'request' => $request,
+            'explanation' => $explanation,
+            'at' => $now,
+        ];
+
         $meta['pending_edit'] = [
             'request' => $request,
             'blocks' => $validBlocks,
-            'explanation' => (string) ($response->json['explanation'] ?? ''),
+            'explanation' => $explanation,
             'model' => $response->model->value,
-            'drafted_at' => now()->toIso8601String(),
+            'drafted_at' => $now,
+            'thread' => $thread,
         ];
         $page->draft_meta = $meta;
         $page->save();
