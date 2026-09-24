@@ -182,4 +182,19 @@ class SiteBlockRendererTest extends TestCase
         ], []);
         $this->assertStringContainsString('Monday: 08:00 - 17:00', $html);
     }
+
+    public function test_contact_block_renders_stated_facts(): void
+    {
+        $html = (new SiteBlockRenderer)->render([[
+            'type' => 'contact',
+            'facts' => ['licence_number' => 'LIC-4473', 'years_in_business' => '12'],
+        ]], []);
+        $this->assertStringContainsString('Licence number: LIC-4473', $html);
+        $this->assertStringContainsString('Years in business: 12', $html);
+
+        $htmlNoFacts = (new SiteBlockRenderer)->render([[
+            'type' => 'contact',
+        ]], []);
+        $this->assertStringNotContainsString('Licence number', $htmlNoFacts);
+    }
 }

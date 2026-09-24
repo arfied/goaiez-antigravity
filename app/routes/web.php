@@ -58,6 +58,7 @@ use App\Livewire\Account\Connections as AccountConnections;
 use App\Livewire\Account\Credit as AccountCredit;
 use App\Livewire\Account\CustomerProfile as AccountCustomerProfile;
 use App\Livewire\Account\Customers as AccountCustomers;
+use App\Livewire\Account\Facts as AccountFacts;
 use App\Livewire\Account\FollowUps as AccountFollowUps;
 use App\Livewire\Account\Home as AccountHome;
 use App\Livewire\Account\ImportCustomers;
@@ -2122,6 +2123,9 @@ Route::middleware('auth')
     ->get('/account/tracking', AccountPixelInstall::class)
     ->name('account.pixel-install');
 
+Route::middleware('auth')
+    ->get('/account/facts', AccountFacts::class)
+    ->name('account.facts');
 /*
 |--------------------------------------------------------------------------
 | Where a tenant's own texting registration has got to (5329, 5420–5439)

@@ -40,6 +40,8 @@ use App\Modules\X155\Actions\FormCreateAction;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\InvoiceLine;
+use App\Services\Facts\BusinessFactKey;
+use App\Services\Facts\BusinessFacts;
 use App\Support\Tenancy;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -1222,5 +1224,53 @@ class X103Test extends TestCase
         ]);
         $rows = $action->handle($biz->id, $location);
         $this->assertNotContains('services', array_column($rows, 'key'));
+    }
+
+    public function test_the_draft_reads_the_owners_facts_sheet(): void
+    {
+        $biz = self::provisionTenant();
+        $loc = $biz->locations->first();
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz->update(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+        Tenancy::set($biz->id);
+
+        $facts = app(BusinessFacts::class);
+        $facts->set($biz->id, BusinessFactKey::TAGLINE, 'Distinctive tagline 4471');
+        $facts->set($biz->id, BusinessFactKey::DESCRIPTION, 'Distinctive description 4472');
+        $facts->set($biz->id, BusinessFactKey::LICENCE_NUMBER, 'LIC-4473');
+
+        $action = app(SiteDraftAction::class);
+        $action->handle($biz->id, $loc->id);
+
+        $home = Page::where('business_id', $biz->id)->where('slug', 'home')->first();
+        $blocks = $home->draft_blocks;
+
+        $hero = collect($blocks)->firstWhere('type', 'hero');
+        $this->assertSame('Distinctive tagline 4471', $hero['subline']);
+        $this->assertStringContainsString('tagline: facts', $hero['source']);
+
+        $about = collect($blocks)->firstWhere('type', 'about');
+        $this->assertSame('Distinctive description 4472', $about['text']);
+        $this->assertSame('facts', $about['source']);
+
+        $contact = Page::where('business_id', $biz->id)->where('slug', 'contact')->first();
+        $contactBlock = collect($contact->draft_blocks)->firstWhere('type', 'contact');
+        $this->assertSame('LIC-4473', $contactBlock['facts']['licence_number']);
+        $this->assertStringContainsString('facts: owner', $contactBlock['source']);
+
+        // Second tenant with no facts
+        $biz2 = self::provisionTenant();
+        $loc2 = $biz2->locations->first();
+        Tenancy::set($biz2->id);
+
+        $action->handle($biz2->id, $loc2->id);
+
+        $home2 = Page::where('business_id', $biz2->id)->where('slug', 'home')->first();
+        $hero2 = collect($home2->draft_blocks)->firstWhere('type', 'hero');
+        $this->assertSame('', $hero2['subline']);
+
+        $about2 = collect($home2->draft_blocks)->firstWhere('type', 'about');
+        $this->assertNull($about2);
     }
 }
