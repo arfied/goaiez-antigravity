@@ -222,10 +222,10 @@ JS;
                         ? array_column($version->content_blocks, 'type')
                         : [];
 
+                    $business = Business::find($businessId);
+                    $pixelKey = $business === null ? '' : app(PixelKeys::class)->ensureFor($business);
                     if (in_array('pixel_script', $blockTypes, true)) {
                         $pixelSrc = route('pixel.bundle.pointer', absolute: false);
-                        $business = Business::find($businessId);
-                        $pixelKey = $business === null ? '' : app(PixelKeys::class)->ensureFor($business);
                         $html .= "<script id=\"x110-pixel\" src=\"{$pixelSrc}\" data-k=\"".e($pixelKey)."\"></script>\n";
                     }
 
@@ -260,7 +260,9 @@ JS;
                     }
 
                     if ($hasChat) {
-                        $html .= "<div class=\"chat-widget-container\"></div>\n";
+                        $chatSrc = route('chat.script', absolute: false);
+                        $html .= "<div class=\"chat-widget-container\" data-chat-mount></div>\n";
+                        $html .= "<script id=\"x102-chat\" src=\"{$chatSrc}\" data-chat data-key=\"".e($pixelKey)."\"></script>\n";
                     }
                     if ($hasForm) {
                         $definition = app(FormReadAction::class)->firstDefinitionForBusiness($businessId);

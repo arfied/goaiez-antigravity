@@ -20,6 +20,7 @@ use App\Http\Controllers\Billing\BillingController;
 use App\Http\Controllers\Billing\StripeWebhookController;
 use App\Http\Controllers\BotController;
 use App\Http\Controllers\CampaignMediaController;
+use App\Http\Controllers\ChatScriptController;
 use App\Http\Controllers\Content\HoldGrowthPageController;
 use App\Http\Controllers\FeedbackPageController;
 use App\Http\Controllers\FixThenAskCheckInController;
@@ -2039,6 +2040,9 @@ Route::middleware('auth')
 
 Route::get('/widget.js', WidgetScriptController::class)
     ->name('widget.script');
+
+Route::get('/chat.js', ChatScriptController::class)
+    ->name('chat.script');
 
 /*
 |--------------------------------------------------------------------------

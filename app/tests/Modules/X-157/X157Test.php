@@ -2898,4 +2898,54 @@ class X157Test extends TestCase
         // We will output this response code in the FINDINGS.
         $response->assertStatus(409);
     }
+
+    public function test_the_deployed_chat_widget_is_a_real_script_keyed_by_the_pixel_key(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Chat Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'chat.example.com', true);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $commitId = Str::random(12);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [
+                ['type' => 'chat_widget'],
+            ],
+            'pixel_installed' => true,
+        ]);
+
+        $deploy = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $biz->name
+        );
+
+        $html = Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
+
+        $this->assertSame(1, substr_count($html, 'chat-widget-container'));
+        $this->assertSame(1, preg_match('/<script\s+id="x102-chat"\s+src="([^"]+)"\s+data-chat\s+data-key="([^"]+)"/', $html, $m));
+
+        $this->get($m[1])->assertOk();
+
+        Tenancy::set($biz->id);
+        $this->assertSame(app(PixelKeys::class)->forBusiness($biz), $m[2]);
+        $this->assertSame(substr_count($html, '<script'), substr_count($html, '</script>'));
+
+        Tenancy::forgetAll();
+        $this->postJson("/api/chat/{$m[2]}/start")->assertStatus(201)->assertJsonStructure(['session_token']);
+    }
 }
