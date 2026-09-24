@@ -6,6 +6,8 @@ namespace Tests\Modules\X127\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X127\Actions\TenantzeroMetricAction;
+use App\Modules\X127\Actions\TenantzeroProofAction;
 use App\Modules\X127\Ui\MetricProofPanel;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -195,5 +197,28 @@ class MetricProofPanelScreenTest extends TestCase
             ->assertOk()
             ->assertSee('mrr: [PULLED] [pulled_drifted]')
             ->assertDontSee('mrr: 1000 ');
+    }
+
+    public function test_rechecking_a_pulled_claim_says_there_is_nothing_published_to_check(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $key = 'dau';
+        app(TenantzeroMetricAction::class)->handle(
+            businessId: $biz->id,
+            metricKey: $key,
+            publishedValue: '1500',
+            liveQuery: 'SELECT count(*) FROM users'
+        );
+
+        app(TenantzeroProofAction::class)->handle($biz->id, $key, 'Distinctive live 4701');
+
+        Livewire::test(MetricProofPanel::class)
+            ->set('verifyKey', $key)
+            ->set('verifyLiveValue', 'Distinctive live 4702')
+            ->call('verifyMetric')
+            ->assertSet('verifySuccess', fn ($s) => str_contains($s, 'no published claim to check') && str_contains($s, 'Distinctive live 4702') && ! str_contains($s, 'published ,'));
     }
 }
