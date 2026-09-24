@@ -23,26 +23,26 @@ use Carbon\CarbonInterface;
  */
 final class SiteDigest
 {
-    public function lines(int $businessId, CarbonInterface $since): array
+    public function lines(int $businessId, CarbonInterface $since, ?CarbonInterface $until = null): array
     {
         $lines = [];
 
-        $published = PageVersion::query()->where('business_id', $businessId)->where('created_at', '>=', $since)->count();
+        $published = PageVersion::query()->where('business_id', $businessId)->where('created_at', '>=', $since)->when($until !== null, fn ($q) => $q->where('created_at', '<', $until))->count();
         if ($published > 0) {
             $lines[] = 'Your website: '.$published.' '.($published === 1 ? 'page' : 'pages').' published';
         }
 
-        $forms = FormSubmission::query()->where('business_id', $businessId)->where('is_spam', false)->where('created_at', '>=', $since)->count();
+        $forms = FormSubmission::query()->where('business_id', $businessId)->where('is_spam', false)->where('created_at', '>=', $since)->when($until !== null, fn ($q) => $q->where('created_at', '<', $until))->count();
         if ($forms > 0) {
             $lines[] = 'Your website: '.$forms.' form '.($forms === 1 ? 'lead' : 'leads');
         }
 
-        $bookings = Waitlist::query()->where('business_id', $businessId)->where('created_at', '>=', $since)->count();
+        $bookings = Waitlist::query()->where('business_id', $businessId)->where('created_at', '>=', $since)->when($until !== null, fn ($q) => $q->where('created_at', '<', $until))->count();
         if ($bookings > 0) {
             $lines[] = 'Your website: '.$bookings.' booking '.($bookings === 1 ? 'request' : 'requests');
         }
 
-        $chats = ChatLead::query()->where('business_id', $businessId)->where('created_at', '>=', $since)->count();
+        $chats = ChatLead::query()->where('business_id', $businessId)->where('created_at', '>=', $since)->when($until !== null, fn ($q) => $q->where('created_at', '<', $until))->count();
         if ($chats > 0) {
             $lines[] = 'Your website: '.$chats.' chat '.($chats === 1 ? 'lead' : 'leads');
         }
@@ -53,5 +53,21 @@ final class SiteDigest
         }
 
         return $lines;
+    }
+
+    /** Pages published in the window, by title, newest first: list of ['title' => string, 'times' => int]. */
+    public function pagesPublished(int $businessId, CarbonInterface $since, ?CarbonInterface $until = null): array
+    {
+        return PageVersion::query()
+            ->join('pages', 'pages.id', '=', 'page_versions.page_id')
+            ->where('page_versions.business_id', $businessId)
+            ->where('page_versions.created_at', '>=', $since)
+            ->when($until !== null, fn ($q) => $q->where('page_versions.created_at', '<', $until))
+            ->selectRaw('pages.title as title, count(*) as times, max(page_versions.created_at) as last_at')
+            ->groupBy('pages.title')
+            ->orderByDesc('last_at')
+            ->get()
+            ->map(fn ($row): array => ['title' => (string) $row->title, 'times' => (int) $row->times])
+            ->all();
     }
 }

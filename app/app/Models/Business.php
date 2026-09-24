@@ -54,6 +54,7 @@ use Illuminate\Support\Facades\DB;
  * @property DataClassification $data_classification
  * @property ?CarbonInterface $suspended_at
  * @property ?CarbonInterface $owner_digest_sent_at
+ * @property ?CarbonInterface $owner_monthly_digest_sent_at
  */
 final class Business extends Model implements TenantScoped
 {
@@ -113,6 +114,7 @@ final class Business extends Model implements TenantScoped
         // should ever be able to move the date this platform thinks it last
         // told them what it did.
         'owner_digest_sent_at',
+        'owner_monthly_digest_sent_at',
     ];
 
     /**
@@ -128,6 +130,7 @@ final class Business extends Model implements TenantScoped
             'paused_at' => 'datetime',
             'suspended_at' => 'datetime',
             'owner_digest_sent_at' => 'datetime',
+            'owner_monthly_digest_sent_at' => 'datetime',
         ];
     }
 

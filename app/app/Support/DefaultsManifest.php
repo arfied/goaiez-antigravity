@@ -7,6 +7,9 @@ namespace App\Support;
 use App\Enums\AiTask;
 use App\Enums\Plan;
 use App\Enums\StoredObjectKind;
+use App\Jobs\AutopilotJob;
+use App\Jobs\PublicAuditJob;
+use App\Jobs\RunCampaignJob;
 use App\Modules\CBilling\Domain\BillingLedgerEngine;
 use App\Modules\CMail\Actions\EmailWarmupAction;
 use App\Modules\CReviews\Actions\ReviewRequestAction;
@@ -27,9 +30,6 @@ use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X202\Domain\ApprovalDeskEngine;
 use App\Modules\X205\Domain\AffiliateEngine;
 use App\Modules\X219\Actions\ProviderHealthAction;
-use App\Jobs\AutopilotJob;
-use App\Jobs\PublicAuditJob;
-use App\Jobs\RunCampaignJob;
 use App\Services\Activity\ActivityFeed;
 use App\Services\Actuation\SiteChanges;
 use App\Services\Actuation\SiteMeasurements;
@@ -77,22 +77,22 @@ use App\Services\Mail\GooglePushTokenVerifier;
 use App\Services\Mail\MailDrivers;
 use App\Services\Mail\MailQuota;
 use App\Services\Mail\MailSendRate;
+use App\Services\Mail\SnsMessageVerifier;
+use App\Services\Mail\SnsSubscriptions;
 use App\Services\Messaging\Composer\NameNormaliser;
 use App\Services\Messaging\MessageLog;
 use App\Services\Messaging\PlatformComplaintRate;
 use App\Services\Messaging\RecoveryCheckInSender;
 use App\Services\Messaging\SendingHealth;
-use App\Services\Mail\SnsMessageVerifier;
-use App\Services\Mail\SnsSubscriptions;
 use App\Services\Ops\OperatorAlerts;
 use App\Services\Ops\PlatformHealthChecks;
 use App\Services\Ops\ScheduledRunMeter;
 use App\Services\Pixel\IngestRejects;
+use App\Services\Places\GooglePlacesClient;
 use App\Services\Reviews\ReplyGenerator;
 use App\Services\Reviews\ResponseTemplates;
 use App\Services\Reviews\ReviewHubPages;
 use App\Services\Reviews\ReviewReplies;
-use App\Services\Places\GooglePlacesClient;
 use App\Services\Sms\InboundMediaFetcher;
 use App\Services\Sms\InfobipClient;
 use App\Services\Sms\InfobipWebhookVerifier;
@@ -2127,6 +2127,12 @@ final class DefaultsManifest
                 'seed' => true,
                 'group' => 'Trust',
                 'description' => 'Whether the weekly wins digest is emailed to account holders at all (automation #109, `16` §12). On by default — every send is account-holder email through PlatformMailer, needing no consent record. Turn it off to stop the whole sweep without a deploy; no week is lost, because the cursor moves only on a delivery and the next digest widens to cover the gap.',
+            ],
+
+            'owner_digest.monthly_enabled' => [
+                'seed' => true,
+                'group' => 'Trust',
+                'description' => 'Whether the monthly "what your website did" email is sent to account holders at all. On by default — account-holder email through PlatformMailer, no consent record needed. Off stops the sweep without a deploy; the cursor moves only on a delivery, so the next email widens to cover the gap.',
             ],
 
             /*

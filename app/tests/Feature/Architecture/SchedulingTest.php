@@ -127,6 +127,7 @@ function schedulingOverlapWindows(): array
         'actuation:judge-speed-fixes' => 360,
         'billing:send-renewal-reminders' => 360,
         'owners:send-weekly-digest' => 360,
+        'owners:send-monthly-site-digest' => 360,
     ];
 }
 
