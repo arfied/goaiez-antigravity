@@ -102,4 +102,48 @@ class PaymentRiskScreenTest extends TestCase
             'business_id' => $bizB->id,
         ]);
     }
+
+    public function test_the_reason_picker_binds_no_property_the_screen_lacks(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $customer = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'Wenda',
+            'last_name' => 'Okonkwo',
+        ]);
+
+        $invoice1 = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-40',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(40)->toDateString(),
+        ]);
+
+        $customer2 = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+        ]);
+
+        $invoice2 = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer2->id,
+            'invoice_number' => 'INV-5',
+            'total_cents' => 5000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(5)->toDateString(),
+        ]);
+
+        Livewire::test(PaymentRisk::class)
+            ->assertSeeHtml('<select')
+            ->assertSeeHtml('recordReason('.$invoice1->id)
+            ->assertDontSeeHtml('wire:model="reasonCode_');
+    }
 }
