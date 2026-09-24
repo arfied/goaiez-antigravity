@@ -686,3 +686,13 @@ function magicLinkTokenFromMail(): string
 {
     return basename(parse_url(magicLinkUrlFromMail(), PHP_URL_PATH) ?: '');
 }
+
+if (! function_exists('toastCarrying')) {
+    /** a Pest-style toast matcher shared by admin screen tests */
+    function toastCarrying(string $type, string $contains): callable
+    {
+        return fn (string $name, array $params): bool => ($params['type'] ?? null) === $type
+            && is_string($params['message'] ?? null)
+            && str_contains($params['message'], $contains);
+    }
+}

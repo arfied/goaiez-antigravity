@@ -9,13 +9,6 @@ use App\Models\User;
 use App\Support\Tenancy;
 use Livewire\Livewire;
 
-function toastCarrying(string $type, string $contains): callable
-{
-    return fn (string $name, array $params): bool => ($params['type'] ?? null) === $type
-        && is_string($params['message'] ?? null)
-        && str_contains($params['message'], $contains);
-}
-
 test('it renders the screen for a SuperAdmin with no tenant', function (): void {
     Tenancy::forgetAll();
     $admin = User::factory()->role(UserRole::SuperAdmin)->withSecondFactor()->create();
