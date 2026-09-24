@@ -7,6 +7,7 @@ namespace App\Modules\X103\Actions;
 use App\Models\Business;
 use App\Models\Location;
 use App\Models\Review;
+use App\Modules\X103\Domain\SectionOrder;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\SiteInventoryImage;
 use App\Modules\X103\Models\SiteInventoryPage;
@@ -69,7 +70,7 @@ final class SiteDraftAction
         $reviewsMinRating = $this->registry->int('sites.draft.reviews_min_rating');
         $galleryMax = $this->registry->int('sites.draft.gallery_max');
         $teamMin = $this->registry->int('sites.draft.team_min');
-        $order = $this->startingPoints->for($this->industry->for($businessId)['family'])['section_order'];
+        $order = $this->startingPoints->forBusiness($businessId)['section_order'];
 
         // Existing FAQs
         $allPages = Page::where('business_id', $businessId)->get();
@@ -357,7 +358,7 @@ final class SiteDraftAction
                 $homeBlocks[] = $formBlock;
             }
 
-            $homeBlocks = $this->inSectionOrder($homeBlocks, $order);
+            $homeBlocks = SectionOrder::apply($homeBlocks, $order);
 
             Page::create([
                 'business_id' => $businessId,
@@ -444,19 +445,5 @@ final class SiteDraftAction
             'sources' => array_values(array_unique($sourcesUsed)),
             'sources_without_data' => array_values(array_unique($sourcesWithoutData)),
         ];
-    }
-
-    /** Stable: listed types in the starting point's order, unlisted types after them in their current order. */
-    private function inSectionOrder(array $blocks, array $order): array
-    {
-        $rank = array_flip(array_values($order));
-        $keyed = [];
-        foreach ($blocks as $i => $block) {
-            $type = is_array($block) ? (string) ($block['type'] ?? '') : '';
-            $keyed[] = [$rank[$type] ?? PHP_INT_MAX, $i, $block];
-        }
-        usort($keyed, fn ($a, $b) => [$a[0], $a[1]] <=> [$b[0], $b[1]]);
-
-        return array_values(array_map(fn ($k) => $k[2], $keyed));
     }
 }

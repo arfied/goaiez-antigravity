@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X103\Ui;
 
 use App\Enums\UserRole;
+use App\Models\Business;
 use App\Models\Location;
 use App\Modules\X103\Actions\HeadlineProposeAction;
 use App\Modules\X103\Actions\PageReadAction;
@@ -14,7 +15,9 @@ use App\Modules\X103\Actions\PageVariantStartAction;
 use App\Modules\X103\Actions\PageVariantStopAction;
 use App\Modules\X103\Actions\SiteBuildRunAction;
 use App\Modules\X103\Actions\SiteEditProposeAction;
+use App\Modules\X103\Actions\SitePreviewAction;
 use App\Modules\X103\Actions\SitePublishAction;
+use App\Modules\X103\Domain\SectionOrder;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVariant;
 use App\Modules\X103\Models\SiteRecommendation;
@@ -25,6 +28,7 @@ use App\Modules\X157\Actions\LatestDeploymentForPageAction;
 use App\Modules\X157\Actions\PlatformSiteAddressAction;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Industry\IndustryResolver;
+use App\Services\Industry\IndustryStartingPoints;
 use App\Services\Visibility\CompetitorSignals;
 use App\Services\Visibility\CompetitorSiteNotes;
 use App\Support\Tenancy;
@@ -51,6 +55,8 @@ class SiteBuild extends Component
 
     public ?string $error = null;
 
+    public ?string $success = null;
+
     public ?string $proposed = null;
 
     public array $headlineOptions = [];
@@ -66,6 +72,31 @@ class SiteBuild extends Component
         $this->businessId = Tenancy::idOrFail();
         $location = Location::where('business_id', $this->businessId)->first();
         $this->locationId = $location ? $location->id : 0;
+    }
+
+    public function chooseLook(string $variant, IndustryStartingPoints $sp, IndustryResolver $ir, PageReadAction $pages): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if (! in_array($variant, IndustryStartingPoints::VARIANTS, true)) {
+            $this->error = 'Invalid look.';
+
+            return;
+        }
+
+        Business::query()->whereKey($this->businessId)->update(['site_variant' => $variant]);
+
+        $home = $pages->homeFor($this->businessId);
+        if ($home && is_array($home->draft_blocks)) {
+            $family = $ir->for($this->businessId)['family'];
+            $variantTokens = $sp->variant($sp->for($family), $variant);
+            $home->draft_blocks = SectionOrder::apply($home->draft_blocks, $variantTokens['section_order']);
+            $home->save();
+        }
+
+        $this->success = 'Look '.strtoupper($variant).' picked — your pages follow it from the next draft and the next publish.';
     }
 
     public function runBuild(SiteBuildRunAction $action)
@@ -305,6 +336,8 @@ class SiteBuild extends Component
             'variantResult' => $variantResult,
             'frozen' => $frozen,
             'industry' => $industry,
+            'previews' => app(SitePreviewAction::class)->handle($this->businessId),
+            'chosenVariant' => Business::query()->whereKey($this->businessId)->value('site_variant') ?? 'a',
         ]);
     }
 }

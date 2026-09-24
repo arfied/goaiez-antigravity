@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Services\Industry;
 
 use App\Enums\IndustryFamily;
+use App\Models\Business;
 use App\Models\IndustryStartingPoint;
 
 class IndustryStartingPoints
 {
+    public const VARIANTS = ['a', 'b', 'c'];
+
     /**
      * what every site was before starting points existed
      */
@@ -38,6 +41,8 @@ class IndustryStartingPoints
         'family' => null,
     ];
 
+    public function __construct(private readonly IndustryResolver $industryResolver) {}
+
     /**
      * @return array{palette: array<string,string>, type_pairing: array<string,string>, section_order: list<string>, family: ?string}
      */
@@ -53,11 +58,116 @@ class IndustryStartingPoints
             return self::DEFAULT;
         }
 
+        $palette = $row->palette;
+        if (! isset($palette['card'])) {
+            $palette['card'] = $palette['surface'];
+        }
+
         return [
-            'palette' => $row->palette,
+            'palette' => $palette,
             'type_pairing' => $row->type_pairing,
             'section_order' => $row->section_order,
             'family' => $family->value,
         ];
+    }
+
+    public function variant(array $sp, string $v): array
+    {
+        if (! in_array($v, self::VARIANTS, true)) {
+            $v = 'a';
+        }
+
+        if ($v === 'a') {
+            return $sp;
+        }
+
+        if ($v === 'b') {
+            $heading = $sp['type_pairing']['heading'];
+            $body = $sp['type_pairing']['body'];
+            $sp['type_pairing']['heading'] = $body;
+            $sp['type_pairing']['body'] = $heading;
+
+            $surface = $sp['palette']['surface'] ?? '#ffffff';
+            $card = $sp['palette']['card'] ?? $surface;
+
+            $surfaceLum = $this->luminance($surface);
+            $e0e0e0Lum = $this->luminance('#e0e0e0');
+
+            $toward = $surfaceLum > $e0e0e0Lum ? '#000000' : '#ffffff';
+
+            $sp['palette']['surface'] = $this->mix($surface, $toward, 0.35);
+            $sp['palette']['card'] = $this->mix($card, $toward, 0.35);
+
+            return $sp;
+        }
+
+        if ($v === 'c') {
+            $primary = $sp['palette']['primary'];
+            $accent = $sp['palette']['accent'];
+            $sp['palette']['primary'] = $accent;
+            $sp['palette']['accent'] = $primary;
+
+            $order = $sp['section_order'];
+            $newOrder = [];
+            $others = [];
+            $heroIdx = array_search('hero', $order, true);
+
+            foreach ($order as $idx => $type) {
+                if ($type === 'hero' || $type === 'reviews_strip' || $type === 'gallery') {
+                    continue;
+                }
+                $others[] = $type;
+            }
+
+            $newOrder[] = 'hero';
+            if (in_array('reviews_strip', $order, true)) {
+                $newOrder[] = 'reviews_strip';
+            }
+            if (in_array('gallery', $order, true)) {
+                $newOrder[] = 'gallery';
+            }
+            $newOrder = array_merge($newOrder, $others);
+            $sp['section_order'] = $newOrder;
+
+            return $sp;
+        }
+
+        return $sp;
+    }
+
+    public function forBusiness(int $businessId): array
+    {
+        $family = $this->industryResolver->for($businessId)['family'];
+        $variantLetter = Business::query()->whereKey($businessId)->value('site_variant') ?? 'a';
+
+        return $this->variant($this->for($family), $variantLetter);
+    }
+
+    private function mix(string $hex, string $toward, float $t): string
+    {
+        $r1 = hexdec(substr($hex, 1, 2));
+        $g1 = hexdec(substr($hex, 3, 2));
+        $b1 = hexdec(substr($hex, 5, 2));
+
+        $r2 = hexdec(substr($toward, 1, 2));
+        $g2 = hexdec(substr($toward, 3, 2));
+        $b2 = hexdec(substr($toward, 5, 2));
+
+        $r = (int) round($r1 * (1 - $t) + $r2 * $t);
+        $g = (int) round($g1 * (1 - $t) + $g2 * $t);
+        $b = (int) round($b1 * (1 - $t) + $b2 * $t);
+
+        return sprintf('#%02x%02x%02x', $r, $g, $b);
+    }
+
+    private function luminance(string $hex): float
+    {
+        $rgb = [];
+        foreach ([1, 3, 5] as $i) {
+            $c = hexdec(substr($hex, $i, 2)) / 255;
+            $rgb[] = $c <= 0.03928 ? $c / 12.92 : (($c + 0.055) / 1.055) ** 2.4;
+        }
+
+        return 0.2126 * $rgb[0] + 0.7152 * $rgb[1] + 0.0722 * $rgb[2];
     }
 }

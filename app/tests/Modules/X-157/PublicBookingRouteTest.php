@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X157;
 
+use App\Enums\IndustryFamily;
 use App\Enums\UserRole;
 use App\Models\Business;
+use App\Models\IndustryStartingPoint;
 use App\Models\User;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
@@ -310,5 +312,52 @@ class PublicBookingRouteTest extends TestCase
 
         $html2 = Storage::disk('local')->get("sites/{$deploy2['deploy_hash']}.html");
         $this->assertStringContainsString('#8a4b6e', $html2); // Care primary
+    }
+
+    public function test_deployed_site_uses_site_variant_palette(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = self::provisionTenant(['owner_user_id' => $owner->id]);
+        $biz->update(['industry' => \App\Enums\IndustryFamily::Trades->value, 'site_variant' => 'c']);
+
+        IndustryStartingPoint::updateOrCreate(['family' => \App\Enums\IndustryFamily::Trades->value], [
+            
+            'palette' => ['surface' => '#ffffff', 'ink' => '#000000', 'primary' => '#ff0000', 'accent' => '#0000ff'],
+            'type_pairing' => ['heading' => 'serif', 'body' => 'sans'],
+            'section_order' => ['hero', 'about', 'gallery', 'reviews_strip', 'contact'],
+        ]);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'roofing.example.com', true);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+            'is_published' => true,
+        ]);
+
+        $commitId = 'commit_'.Str::random(16);
+        $version = PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [['type' => 'hero', 'headline' => 'H']],
+            'pixel_installed' => true,
+        ]);
+        $page->update(['current_version_id' => $version->id]);
+
+        $deploy = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: 'Roofing Corp'
+        );
+
+        $response = $this->get('/sites/'.$biz->id.'/'.$deploy['deploy_hash']);
+        $response->assertStatus(200);
+        $response->assertSee('--color-accent: #ff0000', false);
     }
 }

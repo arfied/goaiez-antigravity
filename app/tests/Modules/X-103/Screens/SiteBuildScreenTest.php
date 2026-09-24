@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103\Screens;
 
+use App\Enums\IndustryFamily;
 use App\Enums\UserRole;
 use App\Models\Competitor;
 use App\Models\CompetitorSiteNote;
 use App\Models\CompetitorSnapshot;
+use App\Models\IndustryStartingPoint;
 use App\Models\Location;
 use App\Models\PlatformSetting;
 use App\Models\User;
@@ -59,7 +61,6 @@ class SiteBuildScreenTest extends TestCase
         Storage::fake('s3');
         $user = User::factory()->create(['role' => UserRole::Owner]);
         $business = $this->provisionTenant(['owner_user_id' => $user->id, 'name' => 'Acme Corp']);
-
         Tenancy::set($business->id);
         $location = Location::where('business_id', $business->id)->first();
         if (! $location) {
@@ -172,10 +173,8 @@ class SiteBuildScreenTest extends TestCase
 
         $user1 = User::factory()->create(['role' => UserRole::Owner]);
         $business1 = $this->provisionTenant(['owner_user_id' => $user1->id]);
-
         $user2 = User::factory()->create(['role' => UserRole::Owner]);
         $business2 = $this->provisionTenant(['owner_user_id' => $user2->id]);
-
         $this->actingAs($user1)->get(route('x-103.site-build'))->assertSuccessful();
     }
 
@@ -417,7 +416,7 @@ class SiteBuildScreenTest extends TestCase
 
         $this->actingAs($owner)->get(route('x-103.site-build'))
             ->assertOk()
-            ->assertSee('7. Try a headline')
+            ->assertSee('8. Try a headline')
             ->assertSee('Ask the AI for two headlines');
 
         Livewire::actingAs($owner)->test(SiteBuild::class)
@@ -493,5 +492,56 @@ class SiteBuildScreenTest extends TestCase
             ->assertOk()
             ->assertSee('you chose it')
             ->assertSee('Local Professional');
+    }
+
+    public function test_pick_a_look(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id, ]);
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        IndustryStartingPoint::updateOrCreate(['family' => \App\Enums\IndustryFamily::Trades->value], [
+            
+            'palette' => ['surface' => '#ffffff', 'ink' => '#000000', 'primary' => '#ff0000', 'accent' => '#0000ff'],
+            'type_pairing' => ['heading' => 'serif', 'body' => 'sans'],
+            'section_order' => ['hero', 'about', 'gallery', 'reviews_strip', 'contact'],
+        ]);
+
+        $this->get(route('x-103.site-build'))
+            ->assertOk()
+            ->assertSee('3. Pick a look')
+            ->assertSee('Draft the site first');
+
+        Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'H'],
+                ['type' => 'about', 'text' => 'A'],
+                ['type' => 'reviews_strip', 'items' => []],
+            ],
+            'is_published' => false,
+        ]);
+
+        $this->get(route('x-103.site-build'))
+            ->assertSee('Look A')
+            ->assertSee('Pick this');
+
+        Livewire::actingAs($owner)->test(SiteBuild::class)
+            ->call('chooseLook', 'c')
+            ->assertSet('success', fn ($s) => str_starts_with((string) $s, 'Look C picked'));
+
+        $biz->refresh();
+        $this->assertSame('c', $biz->site_variant);
+
+        $home = Page::where('business_id', $biz->id)->where('slug', 'home')->first();
+        $this->assertSame('reviews_strip', $home->draft_blocks[1]['type']);
+
+        $manager = User::factory()->create(['role' => UserRole::Manager]);
+        Livewire::actingAs($manager)->test(SiteBuild::class)
+            ->call('chooseLook', 'c')
+            ->assertForbidden();
     }
 }

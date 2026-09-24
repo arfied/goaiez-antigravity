@@ -1,0 +1,30 @@
+ goaiez doctor · build 20260829-0647
+ ok integrity 0ms clean
+ ok boundary 141ms clean
+ ok contract 33ms clean
+ ok citation 1216ms clean
+ FAIL schema 516ms 1 violation(s) — fails the MERGE
+ · role goaiez_backup: has BYPASSRLS — every row-level security policy stops applying to it
+ fix: ALTER ROLE goaiez_backup NOBYPASSRLS; then re-run. If a CLI tool needs to read across tenants, give it its OWN read-only role — never the role the application connects with. Tenant isolation is the product.
+ ok capability 28ms clean
+ FAIL anchor 356ms 3 violation(s) — fails the WAVE
+ · X-221: no runtime proof
+ fix: run the module's TEST ANCHOR against real transports and write the artifact id to evidence/
+ · X-222: no runtime proof
+ fix: run the module's TEST ANCHOR against real transports and write the artifact id to evidence/
+ · X-223: no runtime proof
+ fix: run the module's TEST ANCHOR against real transports and write the artifact id to evidence/
+ FAIL journey 0ms 1 violation(s) — fails the WAVE
+ · review-invite: passed with no external artifact id
+ fix: a journey over real transports mints a real id; without one it is a simulation
+
+5 violation(s).
+
+
+ TRIAGED as REPLACE (counted, not blocking): app/Services · app/Livewire · app/Jobs
+ These are legacy paths the owner has ruled are being replaced.
+ This total spans TWO systems:
+ boundary · citation the LEGACY tree (being replaced)
+ contract · capability · anchor the NEW 122-module design
+ journey the new design's seams, unbuilt
+ Triage a legacy file as KEEP or REPLACE before fixing it.

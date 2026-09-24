@@ -7,12 +7,12 @@ namespace Tests\Feature\Industry;
 use App\Enums\IndustryFamily;
 use App\Models\IndustryStartingPoint;
 use App\Services\Industry\IndustryStartingPoints;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 class IndustryStartingPointsTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshesTenantDatabase;
 
     public function test_migration_seeds_six_rows(): void
     {
@@ -66,5 +66,34 @@ class IndustryStartingPointsTest extends TestCase
         $service = app(IndustryStartingPoints::class);
         $result = $service->for(IndustryFamily::Food);
         $this->assertSame(IndustryStartingPoints::DEFAULT['section_order'], $result['section_order']);
+    }
+    public function test_for_and_variants(): void
+    {
+        $resolver = app(\App\Services\Industry\IndustryResolver::class);
+        $sp = app(\App\Services\Industry\IndustryStartingPoints::class);
+
+        $base = $sp->for(\App\Enums\IndustryFamily::Trades);
+        $this->assertSame($base['palette']['surface'], $base['palette']['card']);
+
+        $b = $sp->variant($base, 'b');
+        $this->assertSame($base['type_pairing']['heading'], $b['type_pairing']['body']);
+        $this->assertSame($base['type_pairing']['body'], $b['type_pairing']['heading']);
+        $this->assertNotSame($base['palette']['surface'], $b['palette']['surface']);
+
+        $c = $sp->variant($base, 'c');
+        $this->assertSame($base['palette']['primary'], $c['palette']['accent']);
+        $this->assertSame($base['palette']['accent'], $c['palette']['primary']);
+        $this->assertSame('hero', $c['section_order'][0]);
+        $this->assertSame('reviews_strip', $c['section_order'][1]);
+
+        $z = $sp->variant($base, 'z');
+        $this->assertSame($base, $z);
+
+        $biz = \Tests\TestCase::provisionTenant(['industry' => \App\Enums\IndustryFamily::Trades->value]);
+        $biz->update(['industry' => 'trades', 'site_variant' => 'c']);
+
+        $forBiz = $sp->forBusiness($biz->id);
+        $this->assertSame($c['palette']['primary'], $forBiz['palette']['primary']);
+        $this->assertSame($c['palette']['accent'], $forBiz['palette']['accent']);
     }
 }
