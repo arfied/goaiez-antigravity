@@ -101,7 +101,7 @@ class SiteImagesCopyAction
             $width = null;
             $height = null;
             $size = @getimagesizefromstring($result->body);
-            if (is_array($size) && isset($size[0], $size[1]) && (int) $size[0] > 0 && (int) $size[1] > 0) {
+            if (is_array($size) && (int) $size[0] > 0 && (int) $size[1] > 0) {
                 $width = (int) $size[0];
                 $height = (int) $size[1];
             }
