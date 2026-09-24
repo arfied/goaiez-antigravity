@@ -64,6 +64,27 @@
                                         </form>
                                     </div>
                                 </details>
+                                <details class="mb-2">
+                                    <summary class="cursor-pointer">Ask the AI to change this page</summary>
+                                    <div class="p-2 mt-2 bg-paper border border-rule">
+                                        <input type="text" wire:model="editRequest.{{ $page->id }}" placeholder="Say what to change, e.g. add a page section about emergency call-outs" class="w-full bg-paper border border-rule text-ink p-1 mb-1">
+                                        <button wire:click="askEdit({{ $page->id }})" class="bg-paper border border-rule px-2 py-1 text-ink mb-2">Ask</button>
+
+                                        @if(isset($page->draft_meta['pending_edit']))
+                                            <div class="mt-2 p-2 bg-paper border border-rule">
+                                                <strong>Proposed change</strong>
+                                                <p>{{ $page->draft_meta['pending_edit']['explanation'] }}</p>
+                                                <ul class="list-disc ml-4 my-2">
+                                                    @foreach($page->draft_meta['pending_edit']['blocks'] as $b)
+                                                        <li>{{ $b['type'] }}: {{ $b['headline'] ?? $b['text'] ?? $b['label'] ?? '' }}</li>
+                                                    @endforeach
+                                                </ul>
+                                                <button wire:click="applyEdit({{ $page->id }})" class="bg-paper border border-rule px-2 py-1 text-ink mr-2">Apply to draft</button>
+                                                <button wire:click="discardEdit({{ $page->id }})" class="bg-paper border border-rule px-2 py-1 text-ink">Discard</button>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </details>
                                 <details>
                                     <summary class="cursor-pointer">Edit content</summary>
                                     <div class="p-2 mt-2 bg-paper border border-rule">
@@ -74,6 +95,8 @@
                                                         <div><strong>FAQ:</strong> {{ $block['question'] ?? '' }} / {{ $block['answer'] ?? '' }}</div>
                                                     @elseif(($block['type'] ?? '') === 'video_embed')
                                                         <div><strong>Video:</strong> {{ $block['name'] ?? '' }} / {{ $block['contentUrl'] ?? '' }} / {{ $block['uploadDate'] ?? '' }}</div>
+                                                    @else
+                                                        <div><strong>{{ ucfirst($block['type'] ?? 'Block') }}:</strong> {{ $block['headline'] ?? $block['text'] ?? $block['label'] ?? '' }}</div>
                                                     @endif
                                                     <button wire:click="removeBlock({{ $page->id }}, {{ $idx }})" class="text-ink underline text-sm mt-1">Remove</button>
                                                 </div>

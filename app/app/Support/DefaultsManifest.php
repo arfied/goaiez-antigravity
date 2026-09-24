@@ -7,6 +7,9 @@ namespace App\Support;
 use App\Enums\AiTask;
 use App\Enums\Plan;
 use App\Enums\StoredObjectKind;
+use App\Jobs\AutopilotJob;
+use App\Jobs\PublicAuditJob;
+use App\Jobs\RunCampaignJob;
 use App\Modules\CBilling\Domain\BillingLedgerEngine;
 use App\Modules\CMail\Actions\EmailWarmupAction;
 use App\Modules\CReviews\Actions\ReviewRequestAction;
@@ -27,9 +30,6 @@ use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X202\Domain\ApprovalDeskEngine;
 use App\Modules\X205\Domain\AffiliateEngine;
 use App\Modules\X219\Actions\ProviderHealthAction;
-use App\Jobs\AutopilotJob;
-use App\Jobs\PublicAuditJob;
-use App\Jobs\RunCampaignJob;
 use App\Services\Activity\ActivityFeed;
 use App\Services\Actuation\SiteChanges;
 use App\Services\Actuation\SiteMeasurements;
@@ -77,22 +77,22 @@ use App\Services\Mail\GooglePushTokenVerifier;
 use App\Services\Mail\MailDrivers;
 use App\Services\Mail\MailQuota;
 use App\Services\Mail\MailSendRate;
+use App\Services\Mail\SnsMessageVerifier;
+use App\Services\Mail\SnsSubscriptions;
 use App\Services\Messaging\Composer\NameNormaliser;
 use App\Services\Messaging\MessageLog;
 use App\Services\Messaging\PlatformComplaintRate;
 use App\Services\Messaging\RecoveryCheckInSender;
 use App\Services\Messaging\SendingHealth;
-use App\Services\Mail\SnsMessageVerifier;
-use App\Services\Mail\SnsSubscriptions;
 use App\Services\Ops\OperatorAlerts;
 use App\Services\Ops\PlatformHealthChecks;
 use App\Services\Ops\ScheduledRunMeter;
 use App\Services\Pixel\IngestRejects;
+use App\Services\Places\GooglePlacesClient;
 use App\Services\Reviews\ReplyGenerator;
 use App\Services\Reviews\ResponseTemplates;
 use App\Services\Reviews\ReviewHubPages;
 use App\Services\Reviews\ReviewReplies;
-use App\Services\Places\GooglePlacesClient;
 use App\Services\Sms\InboundMediaFetcher;
 use App\Services\Sms\InfobipClient;
 use App\Services\Sms\InfobipWebhookVerifier;
@@ -310,6 +310,11 @@ final class DefaultsManifest
                 'seed' => 'Rewrite this text for a small local service business. Keep every fact and number, use plain words, and output at most {max_chars} characters.',
                 'group' => 'Content',
                 'description' => 'The system prompt used to polish drafted site copy.',
+            ],
+            'sites.edit.system_prompt' => [
+                'seed' => 'You edit a small business website. You receive the page as a JSON list of blocks and a request from the owner. Return ONLY JSON with two keys: "blocks" — the full new block list, same shape as the input, keeping every key you did not change — and "explanation" — two or three plain sentences saying what you changed and why. Rules: never invent a price, a year, a licence number, a review count or any claim; keep the owner\'s own wording of what they do unless the request is about wording; you may reorder, add or remove blocks only of these types: hero, about, services, reviews_strip, booking_button, contact, faq, video_embed, gallery, team, form.',
+                'group' => 'Content',
+                'description' => 'System prompt for the talk-to-your-site editor: the AI rewrites a page\'s block list from an owner\'s plain-words request and explains what it changed',
             ],
             'sites.copy.max_chars' => [
                 'seed' => 600,

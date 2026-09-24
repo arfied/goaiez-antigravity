@@ -956,4 +956,140 @@ class PagesScreenTest extends TestCase
         $page->refresh();
         $this->assertEquals('Saved Title', $page->seo_title);
     }
+
+    public function test_ask_edit_proposes_without_touching_the_draft_and_apply_puts_it_on_the_draft(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Pages Test Edit', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old headline'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [
+                    ['message' => ['content' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471'], ['type' => 'about', 'text' => 'We fix roofs.']], 'explanation' => 'Rewrote the headline and added an about block.'])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->set('editRequest.'.$page->id, 'make the headline stronger')
+            ->call('askEdit', $page->id)
+            ->assertSet('success', fn ($s) => str_starts_with((string) $s, 'Proposed 2 blocks'));
+
+        $page->refresh();
+        $this->assertSame('Old headline', $page->draft_blocks[0]['headline']);
+        $this->assertSame('Distinctive new headline 4471', $page->draft_meta['pending_edit']['blocks'][0]['headline']);
+        $this->assertSame('ai', $page->draft_meta['pending_edit']['blocks'][0]['source']);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->call('applyEdit', $page->id);
+
+        $page->refresh();
+        $this->assertSame('Distinctive new headline 4471', $page->draft_blocks[0]['headline']);
+        $this->assertArrayNotHasKey('pending_edit', $page->draft_meta ?? []);
+        $this->assertFalse((bool) $page->is_published);
+
+        $this->actingAs($owner)->get(route('x-103.pages'))->assertSee('Distinctive new headline 4471');
+    }
+
+    public function test_discard_edit_drops_the_proposal(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Pages Test Edit Discard', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old headline'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [
+                    ['message' => ['content' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471'], ['type' => 'about', 'text' => 'We fix roofs.']], 'explanation' => 'Rewrote the headline and added an about block.'])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->set('editRequest.'.$page->id, 'make the headline stronger')
+            ->call('askEdit', $page->id);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->call('discardEdit', $page->id);
+
+        $page->refresh();
+        $this->assertSame('Old headline', $page->draft_blocks[0]['headline']);
+        $this->assertArrayNotHasKey('pending_edit', $page->draft_meta ?? []);
+    }
+
+    public function test_an_invalid_block_from_the_ai_is_dropped_and_staff_cannot_ask(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Pages Test Edit Invalid', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old headline'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [
+                    ['message' => ['content' => json_encode(['blocks' => [['type' => 'hero'], ['type' => 'marquee', 'text' => 'x']], 'explanation' => 'x'])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->set('editRequest.'.$page->id, 'make the headline stronger')
+            ->call('askEdit', $page->id)
+            ->assertSet('success', 'no_valid_blocks');
+
+        $page->refresh();
+        $this->assertArrayNotHasKey('pending_edit', $page->draft_meta ?? []);
+
+        $staff = User::factory()->create(['role' => UserRole::Manager]);
+        TestCase::provisionTenant(['owner_user_id' => $staff->id]);
+        $this->actingAs($staff);
+
+        Livewire::test(Pages::class)
+            ->call('askEdit', $page->id)
+            ->assertForbidden();
+    }
 }
