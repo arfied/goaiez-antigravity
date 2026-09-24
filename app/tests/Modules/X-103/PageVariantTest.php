@@ -3,6 +3,7 @@
 namespace Tests\Modules\X103;
 
 use App\Enums\UserRole;
+use App\Enums\VitalSampleState;
 use App\Models\User;
 use App\Modules\X103\Actions\PageVariantResultAction;
 use App\Modules\X103\Actions\PageVariantStartAction;
@@ -18,12 +19,13 @@ use App\Modules\X157\Models\Deployment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Tests\TestCase;
 use Tests\Concerns\RefreshesTenantDatabase;
+use Tests\TestCase;
 
 class PageVariantTest extends TestCase
 {
     use RefreshesTenantDatabase;
+
     private $biz;
 
     private $page;
@@ -170,15 +172,15 @@ class PageVariantTest extends TestCase
         $resultAction = app(PageVariantResultAction::class);
         $result = $resultAction->handle($this->biz->id, $row->id);
 
-        $this->assertEquals('Measured', $result['control']->state->value);
-        $this->assertEquals('Measured', $result['variant']->state->value);
+        $this->assertSame(VitalSampleState::Measured, $result['control']->state);
+        $this->assertSame(VitalSampleState::Measured, $result['variant']->state);
         $this->assertEquals(intdiv(2 * 10000, 120), $result['control']->ratePerTenThousand);
         $this->assertEquals(intdiv(3 * 10000, 130), $result['variant']->ratePerTenThousand);
         $this->assertEquals('variant', $result['leader']);
 
         Deployment::where('deploy_hash', $controlHash)->update(['served_count' => 10]);
         $result2 = $resultAction->handle($this->biz->id, $row->id);
-        $this->assertEquals('InsufficientData', $result2['control']->state->value);
+        $this->assertSame(VitalSampleState::InsufficientData, $result2['control']->state);
         $this->assertNull($result2['leader']);
     }
 }
