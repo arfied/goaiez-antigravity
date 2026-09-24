@@ -321,6 +321,11 @@ final class DefaultsManifest
                 'group' => 'Content',
                 'description' => 'System prompt for "Make me a page": the AI proposes a new page (title, slug, blocks) from an owner\'s plain-words request; the page lands as an unpublished draft the owner publishes or deletes',
             ],
+            'sites.variant.system_prompt' => [
+                'seed' => 'Write exactly two alternative headlines for the top of a local service business\'s home page. Plain words, at most 70 characters each, no prices, no claims the facts do not support, no business names of any kind. Return them as a list.',
+                'group' => 'Content',
+                'description' => 'System prompt for proposing variant headlines: the AI proposes two alternative headlines for the home page.',
+            ],
             'sites.copy.max_chars' => [
                 'seed' => 600,
                 'group' => 'Content',

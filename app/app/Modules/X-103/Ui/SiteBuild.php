@@ -6,11 +6,17 @@ namespace App\Modules\X103\Ui;
 
 use App\Enums\UserRole;
 use App\Models\Location;
+use App\Modules\X103\Actions\HeadlineProposeAction;
 use App\Modules\X103\Actions\PageReadAction;
+use App\Modules\X103\Actions\PageVariantReadAction;
+use App\Modules\X103\Actions\PageVariantResultAction;
+use App\Modules\X103\Actions\PageVariantStartAction;
+use App\Modules\X103\Actions\PageVariantStopAction;
 use App\Modules\X103\Actions\SiteBuildRunAction;
 use App\Modules\X103\Actions\SiteEditProposeAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
+use App\Modules\X103\Models\PageVariant;
 use App\Modules\X103\Models\SiteRecommendation;
 use App\Modules\X157\Actions\CustomDomainRequestAction;
 use App\Modules\X157\Actions\CustomDomainStatusAction;
@@ -45,6 +51,14 @@ class SiteBuild extends Component
     public ?string $error = null;
 
     public ?string $proposed = null;
+
+    public array $headlineOptions = [];
+
+    public string $headlineChoice = '';
+
+    public string $ownHeadline = '';
+
+    public ?string $trial = null;
 
     public function mount()
     {
@@ -153,6 +167,93 @@ class SiteBuild extends Component
         }
     }
 
+    public function proposeHeadlines(HeadlineProposeAction $action): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->headlineOptions = [];
+
+        try {
+            $result = $action->handle($this->businessId);
+            if ($result['status'] === 'refused') {
+                if ($result['reason'] === 'no_hero') {
+                    $this->error = 'Draft the site first — there is no home headline to test yet.';
+                } elseif ($result['reason'] === 'no_facts_available') {
+                    $this->error = 'Confirm a price or show a review first, so the AI has something true to write from.';
+                } else {
+                    $this->error = 'The AI could not propose right now: '.$result['reason'].'.';
+                }
+            } else {
+                $this->headlineOptions = $result['headlines'];
+            }
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
+    public function startHeadlineTest(PageVariantStartAction $action, PageReadAction $pages): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+
+        $headline = trim($this->ownHeadline) !== '' ? trim($this->ownHeadline) : $this->headlineChoice;
+        if (trim($headline) === '') {
+            $this->error = 'Pick one of the two, or type your own.';
+
+            return;
+        }
+
+        $home = $pages->homeFor($this->businessId);
+        if (! $home) {
+            $this->error = 'Draft the site first — there is no home headline to test yet.';
+
+            return;
+        }
+
+        try {
+            $result = $action->handle($this->businessId, $home->id, $headline);
+            if ($result['status'] === 'refused') {
+                $reasonMap = [
+                    'variant_running' => 'A test is already running on this page — stop it first.',
+                    'not_deployed' => 'Publish the site first; a test needs a live page.',
+                    'tenant_wording' => 'This page carries your own edits, so it is never tested (your words are yours).',
+                    'same_as_control' => 'That is the headline you already have.',
+                    'brand_name' => 'Your business name is never tested.',
+                    'bad_headline' => 'Keep it under 120 characters.',
+                ];
+                $this->error = $reasonMap[$result['reason']] ?? 'Could not start: '.$result['reason'];
+            } else {
+                $this->trial = 'Running: half your visitors now see "'.$headline.'". Results appear here once each version has been seen 100 times.';
+            }
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
+    public function stopHeadlineTest(int $variantId, PageVariantStopAction $action): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        try {
+            $action->handle($this->businessId, $variantId);
+            $this->trial = 'Stopped — everyone sees your original headline again.';
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
+    public function keepMineAndFreeze(int $variantId, PageVariantStopAction $action): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        try {
+            $action->handle($this->businessId, $variantId, true);
+            $this->trial = 'Kept your headline and marked it left-alone — nothing will propose a change to it.';
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
     public function render()
     {
         $pages = Page::where('business_id', $this->businessId)->get();
@@ -174,6 +275,22 @@ class SiteBuild extends Component
         $peers = $location ? app(CompetitorSignals::class)->compare($location) : null;
         $peerTopics = app(CompetitorSiteNotes::class)->topicsFor($this->businessId);
 
+        $home = app(PageReadAction::class)->homeFor($this->businessId);
+        $variant = null;
+        $variantResult = null;
+        $frozen = false;
+        if ($home) {
+            $variant = app(PageVariantReadAction::class)->runningFor($this->businessId, $home->id);
+            if ($variant) {
+                $variantResult = app(PageVariantResultAction::class)->handle($this->businessId, $variant['id']);
+            }
+            $lastRow = PageVariant::where('business_id', $this->businessId)
+                ->where('page_id', $home->id)
+                ->latest('id')
+                ->first();
+            $frozen = $lastRow && $lastRow->status === 'frozen';
+        }
+
         return view('x-103::site-build', [
             'pages' => $pages,
             'domainStatus' => $domainStatus,
@@ -181,6 +298,9 @@ class SiteBuild extends Component
             'recommendations' => $recommendations,
             'peers' => $peers,
             'peerTopics' => $peerTopics,
+            'variant' => $variant,
+            'variantResult' => $variantResult,
+            'frozen' => $frozen,
         ]);
     }
 }

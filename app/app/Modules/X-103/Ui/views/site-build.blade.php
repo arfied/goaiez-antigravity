@@ -184,6 +184,56 @@
                 <p class="mt-3 text-xs text-ink-2">Reference only: the AI reads what nearby businesses cover to know what to cover for you. Nothing of theirs is copied — not their words, not their pictures.</p>
             </div>
 
+
+            <!-- STEP 7: Headline test -->
+            <div class="bg-surface overflow-hidden shadow-sm sm:rounded-lg p-6 border border-line">
+                <h3 class="text-lg font-medium text-ink">7. Try a headline</h3>
+                <p class="mt-1 text-sm text-ink-2">Two versions of your home page headline, shown to half your visitors each, measured on booking requests. Never a price, never your own edits, never your business name. One tap puts everything back.</p>
+                @if($trial)
+                    <p class="mt-2 text-sm text-ink">{{ $trial }}</p>
+                @endif
+                @if($frozen)
+                    <p class="mt-2 text-sm text-ink-2">You kept your headline and marked it left-alone. Nothing will propose a change to it.</p>
+                @elseif($variant)
+                    <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        @foreach(['control' => 'Yours', 'variant' => 'The other one'] as $arm => $label)
+                            <div class="rounded border border-line p-4">
+                                <p class="text-xs uppercase tracking-wide text-ink-2">{{ $label }}</p>
+                                <p class="mt-1 text-sm text-ink font-medium">{{ $arm === 'control' ? $variant['control_headline'] : $variant['variant_headline'] }}</p>
+                                <p class="mt-2 text-sm text-ink-2">
+                                    Seen {{ $variantResult[$arm]->served }} times — {{ $variantResult[$arm]->requests }} booking {{ $variantResult[$arm]->requests === 1 ? 'request' : 'requests' }}
+                                    @if($variantResult[$arm]->isMeasured())
+                                        ({{ number_format($variantResult[$arm]->ratePerTenThousand / 100, 1) }} per hundred visits)
+                                    @else
+                                        — not enough visits yet to say
+                                    @endif
+                                </p>
+                            </div>
+                        @endforeach
+                    </div>
+                    @if($variantResult['leader'] !== null)
+                        <p class="mt-3 text-sm text-ink">So far {{ $variantResult['leader'] === 'variant' ? 'the other one' : 'yours' }} is ahead.</p>
+                    @endif
+                    <div class="mt-4 flex gap-2">
+                        <button wire:click="stopHeadlineTest({{ $variant['id'] }})" class="btn btn-secondary text-sm">Stop — back to mine</button>
+                        <button wire:click="keepMineAndFreeze({{ $variant['id'] }})" class="btn btn-secondary text-sm">Keep mine and leave it alone</button>
+                    </div>
+                @else
+                    <div class="mt-4">
+                        <button wire:click="proposeHeadlines" class="btn btn-secondary text-sm">Ask the AI for two headlines</button>
+                        @if(count($headlineOptions) > 0)
+                            <div class="mt-3">
+                                @foreach($headlineOptions as $i => $h)
+                                    <label class="block text-sm text-ink mb-1"><input type="radio" wire:model="headlineChoice" value="{{ $h }}"> {{ $h }}</label>
+                                @endforeach
+                            </div>
+                        @endif
+                        <label class="block mt-3 text-sm text-ink-2" for="own-headline">Or type your own</label>
+                        <input id="own-headline" type="text" wire:model="ownHeadline" maxlength="120" class="mt-1 w-full rounded border border-line px-2 py-1 text-sm">
+                        <button wire:click="startHeadlineTest" class="btn btn-primary text-sm mt-3">Try it</button>
+                    </div>
+                @endif
+            </div>
         </div>
     </div>
 </div>

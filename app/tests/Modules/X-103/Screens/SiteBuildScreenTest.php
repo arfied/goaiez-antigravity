@@ -12,15 +12,23 @@ use App\Models\Location;
 use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Modules\X103\Models\Page;
+use App\Modules\X103\Models\PageVariant;
+use App\Modules\X103\Models\PageVersion;
 use App\Modules\X103\Models\SiteRecommendation;
 use App\Modules\X103\Ui\SiteBuild;
+use App\Modules\X108\Models\Waitlist;
+use App\Modules\X157\Actions\EdgeDeployAction;
+use App\Modules\X157\Actions\EdgeProvisionAction;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
 use App\Modules\X157\Domain\DnsResolver;
 use App\Modules\X157\Models\CustomDomainRequest;
+use App\Modules\X157\Models\Deployment;
+use App\Modules\X163\Models\PriceBookItem;
 use App\Support\Tenancy;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
@@ -346,5 +354,119 @@ class SiteBuildScreenTest extends TestCase
         $this->actingAs($owner2);
         $response2 = $this->get(route('x-103.site-build'));
         $response2->assertSee('No nearby site has been read yet');
+    }
+
+    public function test_try_a_headline_proposes_starts_shows_readings_and_stops(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id, 'name' => 'Edge Tenant', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response(
+                json_encode([
+                    'choices' => [
+                        [
+                            'message' => [
+                                'content' => json_encode(['headlines' => ['Distinctive option 4582', 'Distinctive option 4583']]),
+                            ],
+                        ],
+                    ],
+                    'model' => 'gpt-4o-mini-fake',
+                ]),
+                200
+            ),
+        ]);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'acme-hvac.com', true);
+        PriceBookItem::create(['business_id' => $biz->id, 'service_name' => 'A service', 'price_cents' => 10000, 'is_confirmed' => true, 'confirmed_at' => now()]);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+            'draft_blocks' => [['type' => 'hero', 'headline' => 'Old headline', 'subline' => 'Old subline']],
+            'is_published' => true,
+        ]);
+
+        $commitId = 'commit_'.Str::random(16);
+        $version = PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old headline', 'subline' => 'Old subline'],
+            ],
+            'pixel_installed' => true,
+        ]);
+
+        $page->update(['current_version_id' => $version->id]);
+
+        $deploy = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $biz->name
+        );
+
+        $this->actingAs($owner)->get(route('x-103.site-build'))
+            ->assertOk()
+            ->assertSee('7. Try a headline')
+            ->assertSee('Ask the AI for two headlines');
+
+        Livewire::actingAs($owner)->test(SiteBuild::class)
+            ->call('proposeHeadlines')
+            ->assertSet('error', null)->assertSet('headlineOptions', ['Distinctive option 4582', 'Distinctive option 4583'])
+            ->set('headlineChoice', 'Distinctive option 4582')
+            ->call('startHeadlineTest')
+            ->assertSet('trial', fn ($s) => str_starts_with((string) $s, 'Running:'));
+
+        $variant = PageVariant::where('business_id', $biz->id)->first();
+        $variantId = $variant->id;
+
+        $this->actingAs($owner)->get(route('x-103.site-build'))
+            ->assertSee('The other one')
+            ->assertSee('not enough visits yet')
+            ->assertDontSee('is ahead');
+
+        Deployment::where('deploy_hash', $variant->control_deploy_hash)->update(['served_count' => 150]);
+        Deployment::where('deploy_hash', $variant->variant_deploy_hash)->update(['served_count' => 150]);
+
+        Waitlist::create(['business_id' => $biz->id, 'deploy_hash' => $variant->control_deploy_hash, 'customer_name' => '1', 'customer_phone' => '1', 'service_name' => 'Haircut', 'preferred_date' => now()->addDays(2)]);
+        Waitlist::create(['business_id' => $biz->id, 'deploy_hash' => $variant->variant_deploy_hash, 'customer_name' => '2', 'customer_phone' => '2', 'service_name' => 'Haircut', 'preferred_date' => now()->addDays(2)]);
+        Waitlist::create(['business_id' => $biz->id, 'deploy_hash' => $variant->variant_deploy_hash, 'customer_name' => '3', 'customer_phone' => '3', 'service_name' => 'Haircut', 'preferred_date' => now()->addDays(2)]);
+        Waitlist::create(['business_id' => $biz->id, 'deploy_hash' => $variant->variant_deploy_hash, 'customer_name' => '4', 'customer_phone' => '4', 'service_name' => 'Haircut', 'preferred_date' => now()->addDays(2)]);
+
+        $this->actingAs($owner)->get(route('x-103.site-build'))
+            ->assertSee('per hundred visits')
+            ->assertSee('is ahead');
+
+        Livewire::actingAs($owner)->test(SiteBuild::class)
+            ->call('stopHeadlineTest', $variantId)
+            ->assertSet('trial', 'Stopped — everyone sees your original headline again.');
+
+        // Start again to freeze
+        Livewire::actingAs($owner)->test(SiteBuild::class)
+            ->set('headlineChoice', 'Distinctive option 4583')
+            ->call('startHeadlineTest');
+
+        $variant2 = PageVariant::where('business_id', $biz->id)->latest('id')->first();
+        $variantId2 = $variant2->id;
+
+        Livewire::actingAs($owner)->test(SiteBuild::class)
+            ->call('keepMineAndFreeze', $variantId2);
+
+        $this->actingAs($owner)->get(route('x-103.site-build'))
+            ->assertSee('marked it left-alone');
+
+        $manager = User::factory()->create(['role' => UserRole::Manager]);
+
+        Livewire::actingAs($manager)->test(SiteBuild::class)
+            ->call('startHeadlineTest')
+            ->assertForbidden();
     }
 }
