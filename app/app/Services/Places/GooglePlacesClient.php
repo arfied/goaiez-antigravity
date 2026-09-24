@@ -102,8 +102,9 @@ final class GooglePlacesClient implements PlacesClient
         .'regularOpeningHours,rating,userRatingCount,editorialSummary,'
         .'websiteUri,nationalPhoneNumber,reviews';
 
+    // websiteUri is Enterprise-tier like rating/userRatingCount, so the SKU is unchanged (PlacesFieldTiers).
     private const string NEARBY_MASK =
-        'places.id,places.displayName,places.rating,places.userRatingCount,places.primaryType';
+        'places.id,places.displayName,places.rating,places.userRatingCount,places.primaryType,places.websiteUri';
 
     /**
      * Every mask above with the family it is sent to, keyed by the method that

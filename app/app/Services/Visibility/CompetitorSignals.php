@@ -154,6 +154,9 @@ final class CompetitorSignals
                 }
 
                 $competitor->name = $name;
+                // Google's listed website, refreshed with the name. Null stays null:
+                // a peer with no site is a fact, not a blank to fill.
+                $competitor->website_url = $peer->websiteUri;
                 $competitor->save();
 
                 // ⛔ **`$peer->userRatingCount ?? 0` UNTIL 2026-08-26, AND THE
