@@ -20,6 +20,7 @@ use App\Modules\X103\Actions\SeoDraftAction;
 use App\Modules\X103\Actions\SiteBuildAction;
 use App\Modules\X103\Actions\SiteCopyPolishAction;
 use App\Modules\X103\Actions\SiteDraftAction;
+use App\Modules\X103\Actions\SiteMissingFactsAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Domain\SiteBlockRenderer;
 use App\Modules\X103\Domain\SiteEngine;
@@ -1166,5 +1167,44 @@ class X103Test extends TestCase
         $action->handle($biz->id, $page->id);
 
         Http::assertSent(fn ($r) => str_contains($r->body(), 'Distinctive approved review 4471') && ! str_contains($r->body(), 'Distinctive pending review 4472'));
+    }
+
+    public function test_missing_facts_follow_the_drafts_own_filters(): void
+    {
+        $biz = $this->provisionTenant();
+        $location = Location::where('business_id', $biz->id)->first();
+        Tenancy::set($biz->id);
+
+        $action = app(SiteMissingFactsAction::class);
+
+        $review = Review::factory()->fromGoogle()->create([
+            'business_id' => $biz->id,
+            'location_id' => $location->id,
+            'display_on_website' => true,
+            'rating' => 5,
+        ]);
+        $rows = $action->handle($biz->id, $location);
+        $this->assertContains('reviews', array_column($rows, 'key'));
+
+        $review->update(['status' => 'approved']);
+        $rows = $action->handle($biz->id, $location);
+        $this->assertNotContains('reviews', array_column($rows, 'key'));
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Service 1',
+            'price_cents' => 1000,
+            'is_confirmed' => false,
+            'is_sample' => false,
+        ]);
+        $rows = $action->handle($biz->id, $location);
+        $this->assertContains('services', array_column($rows, 'key'));
+
+        $item->update([
+            'is_confirmed' => true,
+            'confirmed_at' => now(),
+        ]);
+        $rows = $action->handle($biz->id, $location);
+        $this->assertNotContains('services', array_column($rows, 'key'));
     }
 }

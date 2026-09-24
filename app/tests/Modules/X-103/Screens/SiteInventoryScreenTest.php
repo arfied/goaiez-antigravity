@@ -278,3 +278,27 @@ it('saves opening hours and shows the form', function () {
         ->call('saveHours')
         ->assertDispatched('toast', message: 'Use HH:MM for Monday.');
 });
+
+it('lists what the draft cannot find and drops a row once the fact exists', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+    Tenancy::set($biz->id);
+
+    $this->actingAs($owner)
+        ->get(route('x-103.site-inventory'))
+        ->assertOk()
+        ->assertSee('What your site is still missing')
+        ->assertSee('Your opening hours')
+        ->assertSee('Your services and prices')
+        ->assertSee('A contact form');
+
+    Livewire::actingAs($owner)
+        ->test(SiteInventory::class)
+        ->set('hours.0.open', '08:00')
+        ->set('hours.0.close', '17:00')
+        ->call('saveHours');
+
+    $this->actingAs($owner)
+        ->get(route('x-103.site-inventory'))
+        ->assertDontSee('Set them below; the contact section shows them.');
+});
