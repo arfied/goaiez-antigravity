@@ -1,12 +1,32 @@
 <div>
     <div class="slot-board-view p-4">
         <h2 class="text-lg font-bold text-ink">Referral slots</h2>
+        
+        @if($success !== '')
+            <p>{{ $success }}</p>
+        @endif
+
+        <form wire:submit.prevent="openSlot">
+            <input wire:model="category" placeholder="Trade you want referrals from, e.g. roofing">
+            @error('category') <span>{{ $message }}</span> @enderror
+            <input wire:model="territoryZip" placeholder="ZIP">
+            @error('territoryZip') <span>{{ $message }}</span> @enderror
+            <button type="submit">Open slot</button>
+        </form>
+
         @if($referralSlots->isEmpty())
             <p class="text-ink-2">No referral slots yet.</p>
         @else
             <ul>
                 @foreach($referralSlots as $slot)
-                    <li>{{ $slot->category }} {{ $slot->territory_zip }} {{ $slot->status }}</li>
+                    <li>
+                        {{ $slot->category }} {{ $slot->territory_zip }} {{ $slot->status }}
+                        @if($slot->status === 'open')
+                            <input wire:model="partnerName.{{ $slot->id }}" placeholder="Company to invite">
+                            <button type="button" wire:click="proposePartner({{ $slot->id }})">Propose partner</button>
+                            @error('partnerName.'.$slot->id) <span>{{ $message }}</span> @enderror
+                        @endif
+                    </li>
                 @endforeach
             </ul>
         @endif
