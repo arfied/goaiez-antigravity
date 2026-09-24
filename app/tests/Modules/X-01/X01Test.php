@@ -120,7 +120,6 @@ class X01Test extends TestCase
 
         // 3. P18 test opens Account\Inbox.php and asserts it renders four channel types
         $inboxComponent = new AccountInbox;
-        array_pop($inboxComponent->channels);
         $this->assertCount(4, $inboxComponent->channels, 'Inbox must support exactly four channel types');
         $this->assertContains('sms', $inboxComponent->channels);
         $this->assertContains('email', $inboxComponent->channels);
