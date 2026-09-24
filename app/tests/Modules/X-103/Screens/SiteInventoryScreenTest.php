@@ -201,6 +201,8 @@ it('copies images into tenant storage', function () {
         ->and($valid->bytes)->toBe(strlen($pngBytes))
         ->and($valid->attribution)->toBe('example.com')
         ->and($valid->alt)->toBe('Distinctive alt 4472')
+        ->and($valid->width)->toBe(1)
+        ->and($valid->height)->toBe(1)
         ->and(Storage::disk('local')->exists($valid->path))->toBeTrue();
 
     $notImage = $images->firstWhere('source_url', 'https://example.com/not-image.html');
@@ -392,4 +394,53 @@ it('lists what a reader would trip on and drops the row once it is fixed', funct
         ->get(route('x-103.site-inventory'))
         ->assertOk()
         ->assertDontSee('No main heading');
+});
+
+it('records a pictures pixel size at copy time and leaves it empty for an svg', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+    $loc = Location::where('business_id', $biz->id)->first();
+    $loc->update([
+        'website_url' => 'https://example.com',
+        'website_confirmed_at' => now(),
+    ]);
+
+    Tenancy::set($biz->id);
+
+    $page = SiteInventoryPage::create([
+        'business_id' => $biz->id,
+        'location_id' => $loc->id,
+        'url' => 'https://example.com',
+        'image_urls' => [
+            'https://example.com/valid.png',
+            'https://example.com/not-image.html',
+            'https://example.com/too-big.png',
+            'https://example.com/mark.svg',
+        ],
+        'image_alts' => ['https://example.com/valid.png' => 'Distinctive alt 4472'],
+    ]);
+
+    $pngBytes = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==');
+
+    Storage::fake('local');
+    Http::fake([
+        '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
+        'https://example.com/valid.png' => Http::response($pngBytes, 200, ['Content-Type' => 'image/png']),
+        'https://example.com/not-image.html' => Http::response('<html></html>', 200, ['Content-Type' => 'text/html']),
+        'https://example.com/too-big.png' => Http::response(str_repeat('a', 2000001), 200, ['Content-Type' => 'image/png']),
+        'https://example.com/mark.svg' => Http::response('<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"></svg>', 200, ['Content-Type' => 'image/svg+xml']),
+    ]);
+
+    Livewire::actingAs($owner)
+        ->test(SiteInventory::class)
+        ->call('copyImages');
+
+    $images = SiteInventoryImage::where('business_id', $biz->id)->get();
+    expect($images)->toHaveCount(4);
+
+    $svg = $images->firstWhere('source_url', 'https://example.com/mark.svg');
+    expect($svg->status)->toBe('stored')
+        ->and($svg->width)->toBeNull()
+        ->and($svg->height)->toBeNull();
 });

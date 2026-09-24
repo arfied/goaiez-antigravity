@@ -18,6 +18,8 @@ class SiteInventoryImage extends Model implements TenantScoped
 
     protected $casts = [
         'bytes' => 'integer',
+        'width' => 'integer',
+        'height' => 'integer',
     ];
 
     public function page()

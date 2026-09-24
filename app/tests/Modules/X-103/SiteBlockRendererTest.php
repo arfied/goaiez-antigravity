@@ -216,4 +216,21 @@ class SiteBlockRendererTest extends TestCase
         $html2 = (new SiteBlockRenderer)->render([['type' => 'hero', 'headline' => 'H', 'image_path' => 'inventory/a.jpg']], ['tenant_storage_url_prefix' => '/m/']);
         $this->assertStringContainsString('alt=""', $html2);
     }
+
+    public function test_images_declare_their_size_when_known_and_the_gallery_loads_lazily(): void
+    {
+        $html1 = (new SiteBlockRenderer)->render([['type' => 'hero', 'headline' => 'H', 'image_path' => 'inventory/a.jpg', 'image_width' => 640, 'image_height' => 480]], ['tenant_storage_url_prefix' => '/m/']);
+        $this->assertStringContainsString('width="640" height="480"', $html1);
+        $this->assertStringNotContainsString('loading=', $html1);
+
+        $html2 = (new SiteBlockRenderer)->render([['type' => 'hero', 'headline' => 'H', 'image_path' => 'inventory/a.jpg']], ['tenant_storage_url_prefix' => '/m/']);
+        $this->assertStringNotContainsString('width=', $html2);
+
+        $html3 = (new SiteBlockRenderer)->render([['type' => 'gallery', 'items' => [['image_path' => 'inventory/a.jpg', 'width' => 300, 'height' => 200]]]], ['tenant_storage_url_prefix' => '/m/']);
+        $this->assertStringContainsString('width="300" height="200" loading="lazy" decoding="async"', $html3);
+
+        $html4 = (new SiteBlockRenderer)->render([['type' => 'gallery', 'items' => [['image_path' => 'inventory/a.jpg']]]], ['tenant_storage_url_prefix' => '/m/']);
+        $this->assertStringContainsString('loading="lazy"', $html4);
+        $this->assertStringNotContainsString('width=', $html4);
+    }
 }
