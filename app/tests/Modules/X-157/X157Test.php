@@ -10,6 +10,7 @@ use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X121\Models\Asset;
 use App\Modules\X121\Models\Person;
+use App\Modules\X155\Actions\FormCreateAction;
 use App\Modules\X155\Models\FormDefinition;
 use App\Modules\X155\Models\FormSubmission;
 use App\Modules\X157\Actions\CustomDomainVerifyAction;
@@ -1761,12 +1762,12 @@ class X157Test extends TestCase
 
         $html = (string) $pageResp->getContent();
         $this->assertMatchesRegularExpression(
-            '/<form class="form-capture-x155"[^>]*action="[^"]+"/',
+            '/action="[^"]+\/forms\/\\d+"/',
             $html,
             'the published form names no address'
         );
 
-        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+        preg_match('/action="[^"]*?(\/sites\/[^"]*?\/forms\/\\d+)"/', $html, $m);
         $this->assertSame(
             "/sites/{$biz->id}/{$deploy['deploy_hash']}/forms/{$form->id}",
             $m[1],
@@ -1844,7 +1845,7 @@ class X157Test extends TestCase
         $pageResp->assertStatus(200);
 
         $html = (string) $pageResp->getContent();
-        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+        preg_match('/action="[^"]*?(\/sites\/[^"]*?\/forms\/\\d+)"/', $html, $m);
 
         $post = $this->post($m[1], [
             'first_name' => 'Rae',
@@ -1917,7 +1918,7 @@ class X157Test extends TestCase
         $pageResp->assertStatus(200);
 
         $html = (string) $pageResp->getContent();
-        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+        preg_match('/action="[^"]*?(\/sites\/[^"]*?\/forms\/\\d+)"/', $html, $m);
 
         $action = preg_replace('/\/forms\/\d+$/', '/forms/'.$formB->id, $m[1]);
 
@@ -1975,7 +1976,7 @@ class X157Test extends TestCase
         $pageResp->assertStatus(200);
 
         $html = (string) $pageResp->getContent();
-        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+        preg_match('/action="[^"]*?(\/sites\/[^"]*?\/forms\/\\d+)"/', $html, $m);
 
         $post = $this->post($m[1], [
             'first_name' => 'Rae',
@@ -2037,7 +2038,7 @@ class X157Test extends TestCase
         $pageResp->assertStatus(200);
 
         $html = (string) $pageResp->getContent();
-        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+        preg_match('/action="[^"]*?(\/sites\/[^"]*?\/forms\/\\d+)"/', $html, $m);
 
         $post = $this->post($m[1], [
             'first_name' => 'Rae',
@@ -2207,7 +2208,7 @@ class X157Test extends TestCase
         $pageResp->assertStatus(200);
 
         $html = (string) $pageResp->getContent();
-        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+        preg_match('/action="[^"]*?(\/sites\/[^"]*?\/forms\/\\d+)"/', $html, $m);
 
         $post = $this->post($m[1], [
             'first_name' => 'Kid',
@@ -2270,7 +2271,7 @@ class X157Test extends TestCase
         $pageResp->assertStatus(200);
 
         $html = (string) $pageResp->getContent();
-        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+        preg_match('/action="[^"]*?(\/sites\/[^"]*?\/forms\/\\d+)"/', $html, $m);
 
         $postA = $this->post($m[1], [
             'first_name' => 'John',
@@ -2339,7 +2340,7 @@ class X157Test extends TestCase
         $pageResp->assertStatus(200);
 
         $html = (string) $pageResp->getContent();
-        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+        preg_match('/action="[^"]*?(\/sites\/[^"]*?\/forms\/\\d+)"/', $html, $m);
 
         $postB = $this->post($m[1], [
             'first_name' => 'John',
@@ -2703,5 +2704,101 @@ class X157Test extends TestCase
 
         $res = $this->get("http://{$appHost}/login");
         $res->assertStatus(200); // the normal app routing
+    }
+
+    public function test_a_deployed_form_renders_the_tenants_form_fields_and_posts_to_the_capture_route(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        app(FormCreateAction::class)->handle((int) $biz->id, 'Contact Form');
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $commitId = 'commit_'.Str::random(16);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [
+                ['type' => 'form_capture'],
+            ],
+            'pixel_installed' => true,
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $biz->name
+        );
+
+        $html = Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
+
+        $this->assertSame(1, substr_count($html, 'form-capture-x155'));
+        $this->assertStringContainsString('name="phone"', $html);
+        $this->assertStringContainsString('<textarea name="message"', $html);
+        $this->assertStringContainsString("/sites/{$biz->id}/{$deploy['deploy_hash']}/forms/", $html);
+
+        preg_match('/action="([^"]+\/forms\/\d+)"/', $html, $m);
+        $res = $this->post($m[1], ['name' => 'Distinctive Visitor 4471', 'phone' => '+15125567731', 'message' => 'hello']);
+        if ($res->status() === 419) {
+            $this->fail('419 CSRF error');
+        }
+        $res->assertStatus(201);
+
+        Tenancy::set((int) $biz->id);
+        $this->assertDatabaseHas('form_submissions', ['business_id' => $biz->id]);
+    }
+
+    public function test_a_deployed_page_with_no_form_definition_keeps_the_marker_and_no_inputs(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $commitId = 'commit_'.Str::random(16);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [
+                ['type' => 'form_capture'],
+            ],
+            'pixel_installed' => true,
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $biz->name
+        );
+
+        $html = Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
+
+        $this->assertSame(1, substr_count($html, 'form-capture-x155'));
+        $this->assertStringNotContainsString('name="phone"', $html);
     }
 }
