@@ -53,7 +53,7 @@ class SiteRecommendActionTest extends TestCase
         }
 
         for ($i = 0; $i < 4; $i++) {
-            Review::factory()->create([
+            Review::factory()->fromGoogle()->approved()->create([
                 'business_id' => $biz->id,
                 'location_id' => $location->id,
                 'display_on_website' => true,
@@ -77,5 +77,59 @@ class SiteRecommendActionTest extends TestCase
 
         $rec->refresh();
         $this->assertEquals('dismissed', $rec->status);
+    }
+
+    public function test_a_review_moderation_has_not_approved_is_not_counted_as_available(): void
+    {
+        $owner = User::factory()->create();
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $location = Location::where('business_id', $biz->id)->first();
+        if (! $location) {
+            $location = Location::factory()->create(['business_id' => $biz->id]);
+        }
+
+        for ($i = 0; $i < 2; $i++) {
+            Review::factory()->fromGoogle()->approved()->create([
+                'business_id' => $biz->id,
+                'location_id' => $location->id,
+                'display_on_website' => true,
+                'rating' => 5,
+            ]);
+        }
+
+        Review::factory()->fromGoogle()->create([
+            'business_id' => $biz->id,
+            'location_id' => $location->id,
+            'display_on_website' => true,
+            'rating' => 5,
+            'comment' => 'Distinctive pending review 4472',
+        ]);
+
+        Review::factory()->fromGoogle()->approved()->create([
+            'business_id' => $biz->id,
+            'location_id' => $location->id,
+            'display_on_website' => true,
+            'rating' => 5,
+            'source' => 'first_party', 'flagged_at' => now(),
+            'comment' => 'Distinctive flagged review 4473',
+        ]);
+
+        app(SiteRecommendAction::class)->handle($biz->id);
+
+        $this->assertTrue(SiteRecommendation::where('business_id', $biz->id)->where('code', 'reviews_stale')->doesntExist());
+
+        Review::factory()->fromGoogle()->approved()->create([
+            'business_id' => $biz->id,
+            'location_id' => $location->id,
+            'display_on_website' => true,
+            'rating' => 5,
+            'comment' => 'Distinctive approved review 4471',
+        ]);
+
+        app(SiteRecommendAction::class)->handle($biz->id);
+
+        $this->assertTrue(SiteRecommendation::where('business_id', $biz->id)->where('code', 'reviews_stale')->exists());
     }
 }

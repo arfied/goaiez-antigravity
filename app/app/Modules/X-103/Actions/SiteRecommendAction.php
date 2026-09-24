@@ -42,7 +42,8 @@ class SiteRecommendAction
         // 2. reviews_stale
         if ($locationId) {
             $minRating = $this->registry->int('sites.draft.reviews_min_rating');
-            $available = Review::where('location_id', $locationId)
+            // displayable() is the moderation gate — the same one the public widget feed applies; display fails closed.
+            $available = Review::query()->displayable()->where('location_id', $locationId)
                 ->where('display_on_website', true)
                 ->where('rating', '>=', $minRating)
                 ->count();
