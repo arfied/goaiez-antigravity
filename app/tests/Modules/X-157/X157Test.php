@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X157;
 
+use App\Models\Business;
 use App\Models\User;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
@@ -25,6 +26,7 @@ use App\Modules\X157\Models\CustomDomainRequest;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
 use App\Modules\X157\Ui\EdgeStatusPer;
+use App\Services\Pixel\PixelKeys;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -2800,5 +2802,100 @@ class X157Test extends TestCase
 
         $this->assertSame(1, substr_count($html, 'form-capture-x155'));
         $this->assertStringNotContainsString('name="phone"', $html);
+    }
+
+    public function test_the_deployed_pixel_tag_carries_the_tenants_key(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $commitId = 'commit_'.Str::random(16);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [
+                ['type' => 'pixel_script'],
+                ['type' => 'chat_widget'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni_script'],
+            ],
+            'pixel_installed' => true,
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $biz->name
+        );
+
+        $html = Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
+
+        preg_match('/<script\s+id="x110-pixel"\s+src="([^"]+)"\s+data-k="([^"]+)"/', $html, $m);
+        $this->assertSame(app(PixelKeys::class)->forBusiness(Business::findOrFail($biz->id)), $m[2]);
+        $this->assertSame(1, substr_count($html, 'x110-pixel'));
+    }
+
+    public function test_the_deployed_dni_container_carries_its_endpoint_and_one_swap_script(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $commitId = 'commit_'.Str::random(16);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [
+                ['type' => 'pixel_script'],
+                ['type' => 'chat_widget'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni_script'],
+            ],
+            'pixel_installed' => true,
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $biz->name
+        );
+
+        $html = Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
+
+        $this->assertSame(1, substr_count($html, 'dni-pool-x137'));
+        $this->assertStringContainsString('data-dni-url="/sites/'.$biz->id.'/'.$deploy['deploy_hash'].'/dni"', $html);
+        $this->assertSame(1, substr_count($html, 'id="x137-dni"'));
+        $this->assertSame(substr_count($html, '<script'), substr_count($html, '</script>'));
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}/dni?visitor_session_token=dni_distinctive4471");
+        // We will output this response code in the FINDINGS.
+        $response->assertStatus(409);
     }
 }

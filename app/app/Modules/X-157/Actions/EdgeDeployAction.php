@@ -20,6 +20,7 @@ use App\Modules\X176\Actions\LlmsTxtRenderAction;
 use App\Modules\X176\Actions\SchemaRenderAction;
 use App\Modules\X176\Actions\SeoRenderAction;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Pixel\PixelKeys;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
@@ -32,6 +33,10 @@ final class EdgeDeployAction
     public const SPEED_BUDGET_MS = 1500;
 
     public const PRICEBOOK_ITEMS_MAX = 20;
+
+    private const DNI_SCRIPT = <<<'JS'
+(function(){var c=document.querySelector('div[data-dni-url]');if(!c){return;}var u=c.getAttribute('data-dni-url');if(!u){return;}var t='';try{var s=window.localStorage.getItem('_q_s');if(s){t=String(JSON.parse(s).id||'');}}catch(e){}if(!t){t='dni_'+Math.random().toString(36).slice(2)+Date.now().toString(36);}fetch(u+'?visitor_session_token='+encodeURIComponent(t),{credentials:'omit',headers:{Accept:'application/json'}}).then(function(r){return r.ok?r.json():null;}).then(function(d){if(!d||!d.number){return;}var a=document.createElement('a');a.setAttribute('href','tel:'+String(d.number).replace(/[^+0-9]/g,''));a.appendChild(document.createTextNode(String(d.number)));while(c.firstChild){c.removeChild(c.firstChild);}c.appendChild(a);}).catch(function(){});})();
+JS;
 
     public function __construct(private DefaultsRegistry $defaults) {}
 
@@ -219,7 +224,9 @@ final class EdgeDeployAction
 
                     if (in_array('pixel_script', $blockTypes, true)) {
                         $pixelSrc = route('pixel.bundle.pointer', absolute: false);
-                        $html .= "<script id=\"x110-pixel\" src=\"{$pixelSrc}\"></script>\n";
+                        $business = Business::find($businessId);
+                        $pixelKey = $business === null ? '' : app(PixelKeys::class)->ensureFor($business);
+                        $html .= "<script id=\"x110-pixel\" src=\"{$pixelSrc}\" data-k=\"".e($pixelKey)."\"></script>\n";
                     }
 
                     $hasChat = in_array('chat_widget', $blockTypes, true);
@@ -276,7 +283,9 @@ final class EdgeDeployAction
                         }
                     }
                     if ($hasDni) {
-                        $html .= "<div class=\"dni-pool-x137\"></div>\n";
+                        $dniUrl = route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false).'/dni';
+                        $html .= '<div class="dni-pool-x137" data-dni-url="'.e($dniUrl)."\"></div>\n";
+                        $html .= '<script id="x137-dni">'.self::DNI_SCRIPT."</script>\n";
                     }
                 }
             }
