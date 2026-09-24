@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X190\Ui;
 
+use App\Modules\X190\Actions\SlotProposeAction;
 use App\Modules\X190\Models\ReferralSlot;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -15,6 +16,46 @@ class SlotBoard extends Component
 {
     #[Locked]
     public int $businessId = 0;
+
+    public string $category = '';
+
+    public string $territoryZip = '';
+
+    public array $partnerName = [];   // keyed by slot id
+
+    public string $success = '';
+
+    public function openSlot(): void
+    {
+        $this->validate([
+            'category' => ['required', 'string', 'max:80'],
+            'territoryZip' => ['required', 'regex:/^\d{5}$/'],
+        ]);
+        ReferralSlot::create([
+            'business_id' => $this->businessId,
+            'category' => trim($this->category),
+            'territory_zip' => $this->territoryZip,
+            'is_network_enabled' => true,
+            'status' => 'open',
+        ]);
+        $this->success = 'Opened a '.trim($this->category).' slot in '.$this->territoryZip.'. Propose a partner for it below.';
+        $this->category = '';
+        $this->territoryZip = '';
+    }
+
+    public function proposePartner(int $slotId, SlotProposeAction $action): void
+    {
+        $name = trim((string) ($this->partnerName[$slotId] ?? ''));
+        if ($name === '') {
+            $this->addError('partnerName.'.$slotId, 'Name the company you want to invite.');
+
+            return;
+        }
+        $slot = ReferralSlot::where('business_id', $this->businessId)->findOrFail($slotId);
+        $action->proposePartner($this->businessId, (int) $slot->id, $name, (string) $slot->category, (string) $slot->territory_zip);
+        $this->success = 'Proposed '.$name.' for the '.$slot->category.' slot in '.$slot->territory_zip.'. It is on the Partner network screen now.';
+        unset($this->partnerName[$slotId]);
+    }
 
     public function mount(int $businessId = 0): void
     {
