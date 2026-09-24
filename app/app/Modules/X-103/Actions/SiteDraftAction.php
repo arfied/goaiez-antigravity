@@ -227,6 +227,7 @@ final class SiteDraftAction
             ];
             if ($firstImage) {
                 $hero['image_path'] = $firstImage->path;
+                $hero['image_alt'] = (string) ($firstImage->alt ?? '');
             }
             $homeBlocks[] = $hero;
             $blocksGenerated++;
@@ -260,13 +261,9 @@ final class SiteDraftAction
             if ($storedImages->isNotEmpty()) {
                 $galleryItems = [];
                 foreach ($storedImages as $img) {
-                    $alt = $img->alt;
-                    if (empty($alt)) {
-                        $alt = pathinfo($img->original_filename ?? '', PATHINFO_FILENAME);
-                    }
                     $galleryItems[] = [
                         'image_path' => $img->path,
-                        'alt' => $alt,
+                        'alt' => (string) ($img->alt ?? ''),
                     ];
                 }
                 $homeBlocks[] = [

@@ -1257,4 +1257,68 @@ class X103Test extends TestCase
         $about2 = collect($home2->draft_blocks)->firstWhere('type', 'about');
         $this->assertNull($about2);
     }
+
+    public function test_the_draft_carries_each_pictures_description_and_never_invents_one(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'Gallery Tenant', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $location = Location::factory()->create(['business_id' => $biz->id, 'website_url' => 'https://example.com', 'website_confirmed_at' => now()]);
+
+        $inventoryPage = SiteInventoryPage::create([
+            'business_id' => $biz->id,
+            'location_id' => $location->id,
+            'url' => 'https://example.com',
+        ]);
+
+        SiteInventoryImage::create([
+            'business_id' => $biz->id,
+            'page_id' => $inventoryPage->id,
+            'source_url' => 'https://example.com/a-hero.jpg',
+            'path' => 'inventory/hero.jpg',
+            'mime' => 'image/jpeg',
+            'bytes' => 1234,
+            'status' => 'stored',
+            'attribution' => 'example.com',
+            'alt' => 'Distinctive alt 4474',
+        ]);
+        SiteInventoryImage::create([
+            'business_id' => $biz->id,
+            'page_id' => $inventoryPage->id,
+            'source_url' => 'https://example.com/gal1.jpg',
+            'path' => 'inventory/gal1.jpg',
+            'mime' => 'image/jpeg',
+            'bytes' => 1234,
+            'status' => 'stored',
+            'attribution' => 'example.com',
+        ]);
+        SiteInventoryImage::create([
+            'business_id' => $biz->id,
+            'page_id' => $inventoryPage->id,
+            'source_url' => 'https://example.com/gal2.jpg',
+            'path' => 'inventory/gal2.jpg',
+            'mime' => 'image/jpeg',
+            'bytes' => 1234,
+            'status' => 'stored',
+            'attribution' => 'example.com',
+            'alt' => 'Distinctive alt 4475',
+        ]);
+
+        $action = app(SiteDraftAction::class);
+        $res = $action->handle($biz->id, $location->id);
+
+        $home = Page::where('slug', 'home')->first();
+        $this->assertNotNull($home);
+
+        $heroBlock = collect($home->draft_blocks)->firstWhere('type', 'hero');
+        $this->assertSame('Distinctive alt 4474', $heroBlock['image_alt']);
+
+        $galleryBlock = collect($home->draft_blocks)->firstWhere('type', 'gallery');
+        $this->assertNotNull($galleryBlock);
+        $this->assertCount(2, $galleryBlock['items']);
+        $this->assertSame('', $galleryBlock['items'][0]['alt']);
+        $this->assertSame('Distinctive alt 4475', $galleryBlock['items'][1]['alt']);
+        PlatformSetting::query()->where('key', 'ai.monthly_cap_per_tenant')->delete();
+    }
 }

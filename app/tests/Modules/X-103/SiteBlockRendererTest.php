@@ -179,4 +179,13 @@ class SiteBlockRendererTest extends TestCase
         ]], []);
         $this->assertStringNotContainsString('Licence number', $htmlNoFacts);
     }
+
+    public function test_hero_image_renders_its_description_and_an_empty_alt_when_there_is_none(): void
+    {
+        $html1 = (new SiteBlockRenderer)->render([['type' => 'hero', 'headline' => 'H', 'image_path' => 'inventory/a.jpg', 'image_alt' => 'Distinctive alt 4476']], ['tenant_storage_url_prefix' => '/m/']);
+        $this->assertStringContainsString('alt="Distinctive alt 4476"', $html1);
+
+        $html2 = (new SiteBlockRenderer)->render([['type' => 'hero', 'headline' => 'H', 'image_path' => 'inventory/a.jpg']], ['tenant_storage_url_prefix' => '/m/']);
+        $this->assertStringContainsString('alt=""', $html2);
+    }
 }

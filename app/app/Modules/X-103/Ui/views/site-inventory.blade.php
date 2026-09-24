@@ -112,6 +112,28 @@
                 </tbody>
             </table>
         </div>
+        @php $storedImages = $images->where('status', 'stored')->sortBy('id'); @endphp
+        @if($storedImages->isNotEmpty())
+            <p class="text-sm text-ink-2 mb-2">Describe each stored picture in a few words — a screen reader says this instead of the picture, and the next draft carries it.</p>
+            <table class="min-w-full divide-y divide-rule mb-8">
+                <thead class="bg-paper">
+                    <tr>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-ink">Picture</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Description</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink"></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-rule bg-paper">
+                    @foreach($storedImages as $img)
+                        <tr wire:key="alt-{{ $img->id }}">
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-ink">{{ basename(parse_url($img->source_url, PHP_URL_PATH) ?? $img->source_url) }}</td>
+                            <td class="px-3 py-4 text-sm text-ink-2"><label class="sr-only" for="alt-{{ $img->id }}">Description for {{ basename(parse_url($img->source_url, PHP_URL_PATH) ?? $img->source_url) }}</label><input id="alt-{{ $img->id }}" type="text" maxlength="160" wire:model="alts.{{ $img->id }}" class="w-full rounded border border-rule px-2 py-1 text-sm"></td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm"><button type="button" wire:click="saveAlt({{ $img->id }})" class="btn btn-primary">Save</button></td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
     @endif
 
     <div class="mt-8 mb-4 flex items-center justify-between">

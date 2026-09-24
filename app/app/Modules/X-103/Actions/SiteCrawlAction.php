@@ -78,10 +78,16 @@ final class SiteCrawlAction
             $text = $bodyNode ? preg_replace('/\s+/', ' ', trim($bodyNode->textContent)) : null;
 
             $imageUrls = [];
+            $imageAlts = [];
             foreach ($dom->getElementsByTagName('img') as $node) {
                 $src = $node->getAttribute('src');
                 if ($src) {
-                    $imageUrls[] = $this->resolveUrl($url, $src);
+                    $resolved = $this->resolveUrl($url, $src);
+                    $imageUrls[] = $resolved;
+                    $alt = trim(preg_replace('/\s+/', ' ', $node->getAttribute('alt')) ?? '');
+                    if ($resolved && $alt !== '' && ! isset($imageAlts[$resolved])) {
+                        $imageAlts[$resolved] = mb_substr($alt, 0, 160);
+                    }
                 }
             }
             $imageUrls = array_values(array_unique(array_filter($imageUrls)));
@@ -127,6 +133,7 @@ final class SiteCrawlAction
                     'headings' => $headings,
                     'text' => $text,
                     'image_urls' => $imageUrls,
+                    'image_alts' => $imageAlts,
                     'phones' => $phones,
                     'emails' => $emails,
                     'links_out' => $linksOut,
