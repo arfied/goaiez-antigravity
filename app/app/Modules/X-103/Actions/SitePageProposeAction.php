@@ -10,6 +10,7 @@ use App\Modules\X103\Models\Page;
 use App\Services\Ai\AiRequest;
 use App\Services\Ai\AiRouter;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Visibility\CompetitorSiteNotes;
 use Illuminate\Support\Str;
 
 /**
@@ -24,7 +25,8 @@ final class SitePageProposeAction
     public function __construct(
         private readonly AiRouter $router,
         private readonly DefaultsRegistry $registry,
-        private readonly SiteBlockRenderer $renderer
+        private readonly SiteBlockRenderer $renderer,
+        private readonly CompetitorSiteNotes $peers
     ) {}
 
     /**
@@ -36,9 +38,12 @@ final class SitePageProposeAction
             return ['status' => 'refused', 'reason' => 'empty_request'];
         }
 
+        $reference = $this->peers->referenceBlock($businessId);
+        $peerCount = $reference === '' ? 0 : count($this->peers->notesFor($businessId));
+
         $response = $this->router->dispatch(new AiRequest(
             task: AiTask::SiteCopy,
-            prompt: "Owner request: {$request}",
+            prompt: "Owner request: {$request}".($reference === '' ? '' : "\n\n".$reference),
             system: $this->registry->string('sites.page.system_prompt'),
             jsonSchema: [
                 'type' => 'object',
@@ -80,6 +85,9 @@ final class SitePageProposeAction
             if (is_array($block) && in_array($type, $whitelist, true) && $this->renderer->isValidBlock($block)) {
                 $block['source'] = 'ai';
                 $block['model'] = $response->model->value;
+                if ($peerCount > 0) {
+                    $block['peers'] = $peerCount;
+                }
                 $validBlocks[] = $block;
             }
         }
@@ -95,6 +103,16 @@ final class SitePageProposeAction
             $counter++;
         }
 
+        $madeByAi = [
+            'request' => $request,
+            'explanation' => (string) ($response->json['explanation'] ?? ''),
+            'model' => $response->model->value,
+            'made_at' => now()->toIso8601String(),
+        ];
+        if ($peerCount > 0) {
+            $madeByAi['peers'] = $peerCount;
+        }
+
         $page = Page::create([
             'business_id' => $businessId,
             'slug' => $slug,
@@ -103,12 +121,7 @@ final class SitePageProposeAction
             'is_published' => false,
             'draft_blocks' => $validBlocks,
             'draft_meta' => [
-                'made_by_ai' => [
-                    'request' => $request,
-                    'explanation' => (string) ($response->json['explanation'] ?? ''),
-                    'model' => $response->model->value,
-                    'made_at' => now()->toIso8601String(),
-                ],
+                'made_by_ai' => $madeByAi,
             ],
         ]);
 

@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Tests\Modules\X103\Screens;
 
 use App\Enums\UserRole;
+use App\Models\Competitor;
+use App\Models\CompetitorSiteNote;
+use App\Models\Location;
 use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Modules\X103\Actions\PageCreateAction;
@@ -1271,5 +1274,67 @@ class PagesScreenTest extends TestCase
         Livewire::test(Pages::class)
             ->call('makePage')
             ->assertForbidden();
+    }
+
+    public function test_polish_renders_the_peer_count_on_the_page_and_restore_removes_it(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Pages Test Peer Polish', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'text' => 'Hero text'],
+            ],
+            'is_published' => false,
+        ]);
+
+        $competitor = (new Competitor)->forceFill([
+            'business_id' => $biz->id,
+            'location_id' => Location::factory()->create(['business_id' => $biz->id])->id,
+            'place_id' => 'place1',
+            'name' => 'Peer name',
+            'source' => 'auto',
+        ]);
+        $competitor->save();
+
+        (new CompetitorSiteNote)->forceFill([
+            'business_id' => $biz->id,
+            'competitor_id' => $competitor->id,
+            'status' => 'noted',
+            'url' => 'http://example.com',
+            'title' => 'Distinctive peer title 5512',
+            'headings' => ['Distinctive peer heading 5513'],
+            'fetched_at' => now(),
+        ])->save();
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'choices' => [
+                    ['message' => ['content' => 'Fresh copy 5599']],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        Livewire::actingAs($owner)->test(Pages::class)
+            ->call('polish', $page->id);
+
+        $this->actingAs($owner)->get(route('x-103.pages'))
+            ->assertSee('with 1 nearby business as reference');
+
+        Livewire::actingAs($owner)->test(Pages::class)
+            ->call('restoreOriginal', $page->id);
+
+        $this->actingAs($owner)->get(route('x-103.pages'))
+            ->assertDontSee('as reference');
+
+        $page->refresh();
+        $this->assertArrayNotHasKey('peers', $page->draft_blocks[0]);
     }
 }

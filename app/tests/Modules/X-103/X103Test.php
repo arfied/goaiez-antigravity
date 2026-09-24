@@ -6,6 +6,8 @@ namespace Tests\Modules\X103;
 
 use App\Enums\TenantLinkKind;
 use App\Enums\UserRole;
+use App\Models\Competitor;
+use App\Models\CompetitorSiteNote;
 use App\Models\Location;
 use App\Models\PlatformSetting;
 use App\Models\Review;
@@ -1076,5 +1078,96 @@ class X103Test extends TestCase
         $this->assertStringContainsString('name="website_url"', $html);
         $this->assertStringContainsString('name="phone"', $html);
         $this->assertStringContainsString('required', $html);
+    }
+
+    public function test_polish_hands_the_model_the_peer_notes_as_reference_and_writes_none_of_it_into_the_page(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'Polish Peer Test', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'text' => 'Hero text'],
+            ],
+            'is_published' => false,
+        ]);
+
+        $competitor = (new Competitor)->forceFill([
+            'business_id' => $biz->id,
+            'location_id' => Location::factory()->create(['business_id' => $biz->id])->id,
+            'place_id' => 'place1',
+            'name' => 'Peer name',
+            'source' => 'auto',
+        ]);
+        $competitor->save();
+
+        (new CompetitorSiteNote)->forceFill([
+            'business_id' => $biz->id,
+            'competitor_id' => $competitor->id,
+            'status' => 'noted',
+            'url' => 'http://example.com',
+            'title' => 'Distinctive peer title 5512',
+            'headings' => ['Distinctive peer heading 5513'],
+            'fetched_at' => now(),
+        ])->save();
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'choices' => [
+                    ['message' => ['content' => 'Fresh copy about clean gutters 5599']],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        $action = app(SiteCopyPolishAction::class);
+        $res = $action->handle($biz->id, $page->id);
+
+        Http::assertSent(fn ($req) => str_contains((string) $req->body(), 'Distinctive peer title 5512') && str_contains((string) $req->body(), 'REFERENCE ONLY'));
+
+        $page->refresh();
+        $this->assertSame('Fresh copy about clean gutters 5599', $page->draft_blocks[0]['text']);
+        $this->assertStringNotContainsString('5512', json_encode($page->draft_blocks));
+        $this->assertSame(1, $page->draft_blocks[0]['peers']);
+    }
+
+    public function test_polish_without_peer_notes_sends_no_reference_and_stamps_no_peers(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'Polish No Peer Test', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'text' => 'Hero text'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'choices' => [
+                    ['message' => ['content' => 'Fresh copy 5599']],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        $action = app(SiteCopyPolishAction::class);
+        $res = $action->handle($biz->id, $page->id);
+
+        Http::assertSent(fn ($req) => ! str_contains((string) $req->body(), 'REFERENCE ONLY'));
+
+        $page->refresh();
+        $this->assertArrayNotHasKey('peers', $page->draft_blocks[0]);
     }
 }

@@ -133,6 +133,9 @@
                                                     @else
                                                         <div><strong>{{ ucfirst($block['type'] ?? 'Block') }}:</strong> {{ $block['headline'] ?? $block['text'] ?? $block['label'] ?? '' }}</div>
                                                     @endif
+                                                    @if(($block['source'] ?? '') === 'ai')
+                                                        <span class="text-sm text-ink-2">— written by {{ $block['model'] ?? 'the AI' }} @if(!empty($block['peers'])), with {{ $block['peers'] }} nearby {{ $block['peers'] === 1 ? 'business' : 'businesses' }} as reference @endif</span>
+                                                    @endif
                                                     <button wire:click="removeBlock({{ $page->id }}, {{ $idx }})" class="text-ink underline text-sm mt-1">Remove</button>
                                                 </div>
                                             @endforeach

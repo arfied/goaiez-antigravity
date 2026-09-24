@@ -76,6 +76,47 @@ final class CompetitorSiteNotes
         return CompetitorSiteNote::query()->updateOrCreate(['competitor_id' => $peer->id], $values);
     }
 
+    /**
+     * The notes worth showing a model as reference: the newest five that were
+     * actually read, each with the peer's name. Reference only — a caller puts
+     * these in a prompt as "what businesses like this cover", never into a page.
+     *
+     * @return list<array{name: string, title: ?string, description: ?string, headings: list<string>}>
+     */
+    public function notesFor(int $businessId): array
+    {
+        return CompetitorSiteNote::query()
+            ->with('competitor')
+            ->where('business_id', $businessId)
+            ->where('status', 'noted')
+            ->orderByDesc('fetched_at')
+            ->limit(5)
+            ->get()
+            ->map(fn (CompetitorSiteNote $n): array => [
+                'name' => (string) ($n->competitor->name ?? 'A nearby business'),
+                'title' => $n->title,
+                'description' => $n->description,
+                'headings' => is_array($n->headings) ? array_values($n->headings) : [],
+            ])
+            ->all();
+    }
+
+    /** The prompt section built from notesFor(), or '' when there are none. */
+    public function referenceBlock(int $businessId): string
+    {
+        $notes = $this->notesFor($businessId);
+        if ($notes === []) {
+            return '';
+        }
+        $lines = ['What nearby businesses like this one cover on their websites — REFERENCE ONLY. Use it to know what to cover; never reuse their names, sentences or wording:'];
+        foreach ($notes as $n) {
+            $parts = array_filter([$n['title'], $n['description'], implode(' | ', $n['headings'])], fn ($p) => $p !== null && $p !== '');
+            $lines[] = '- '.$n['name'].': '.implode(' — ', $parts);
+        }
+
+        return implode("\n", $lines);
+    }
+
     /** @return array{title: ?string, description: ?string, headings: list<string>} */
     private function extract(string $html): array
     {

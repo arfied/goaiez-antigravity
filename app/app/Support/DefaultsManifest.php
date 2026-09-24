@@ -307,7 +307,7 @@ final class DefaultsManifest
                 'description' => 'The model router\'s per-task override for site_copy (seed = the same model the Conversation task seeds).',
             ],
             'sites.copy.system_prompt' => [
-                'seed' => 'Rewrite this text for a small local service business. Keep every fact and number, use plain words, and output at most {max_chars} characters.',
+                'seed' => 'Rewrite this text for a small local service business. Keep every fact and number, use plain words, and output at most {max_chars} characters. If notes about nearby businesses are included, they are reference only: cover what they cover if it fits, in this business\'s own words; never reuse a name, sentence or phrase from them.',
                 'group' => 'Content',
                 'description' => 'The system prompt used to polish drafted site copy.',
             ],
@@ -317,7 +317,7 @@ final class DefaultsManifest
                 'description' => 'System prompt for the talk-to-your-site editor: the AI rewrites a page\'s block list from an owner\'s plain-words request and explains what it changed',
             ],
             'sites.page.system_prompt' => [
-                'seed' => 'You make ONE new page for a small business website from the owner\'s plain-words request. Return ONLY JSON with four keys: "title" — the page title in the owner\'s words; "slug" — a short lowercase URL word or two with hyphens; "blocks" — a list of blocks, each an object with a "type" and the fields that type needs; "explanation" — two or three plain sentences saying what the page contains. Rules: never invent a price, a date, a year, a licence number, a review count or any claim the owner did not state; if the request names an offer, describe it only in the owner\'s terms; use only these block types: hero (headline, subline), about (text), services (items: name, description), faq (items: question, answer), booking_button (label, url), contact.',
+                'seed' => 'You make ONE new page for a small business website from the owner\'s plain-words request. Return ONLY JSON with four keys: "title" — the page title in the owner\'s words; "slug" — a short lowercase URL word or two with hyphens; "blocks" — a list of blocks, each an object with a "type" and the fields that type needs; "explanation" — two or three plain sentences saying what the page contains. Rules: never invent a price, a date, a year, a licence number, a review count or any claim the owner did not state; if the request names an offer, describe it only in the owner\'s terms; use only these block types: hero (headline, subline), about (text), services (items: name, description), faq (items: question, answer), booking_button (label, url), contact. If notes about nearby businesses are included, they are reference only: cover what they cover if it fits, in this business\'s own words; never reuse a name, sentence or phrase from them.',
                 'group' => 'Content',
                 'description' => 'System prompt for "Make me a page": the AI proposes a new page (title, slug, blocks) from an owner\'s plain-words request; the page lands as an unpublished draft the owner publishes or deletes',
             ],

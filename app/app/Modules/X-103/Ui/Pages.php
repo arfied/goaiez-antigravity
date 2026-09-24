@@ -339,6 +339,7 @@ class Pages extends Component
                 unset($blocks[$i]['original_text']);
                 unset($blocks[$i]['source']);
                 unset($blocks[$i]['model']);
+                unset($blocks[$i]['peers']);
                 $restored++;
             }
         }

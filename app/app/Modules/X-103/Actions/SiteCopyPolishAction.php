@@ -9,12 +9,14 @@ use App\Modules\X103\Models\Page;
 use App\Services\Ai\AiRequest;
 use App\Services\Ai\AiRouter;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Visibility\CompetitorSiteNotes;
 
 final class SiteCopyPolishAction
 {
     public function __construct(
         private readonly AiRouter $router,
         private readonly DefaultsRegistry $registry,
+        private readonly CompetitorSiteNotes $peers,
     ) {}
 
     public function handle(int $businessId, int $pageId): array
@@ -30,6 +32,9 @@ final class SiteCopyPolishAction
         $totalCost = 0;
         $lastModel = null;
 
+        $reference = $this->peers->referenceBlock($businessId);
+        $peerCount = $reference === '' ? 0 : count($this->peers->notesFor($businessId));
+
         foreach ($blocks as $i => $block) {
             if (! in_array($block['type'] ?? '', ['hero', 'about'])) {
                 continue;
@@ -42,7 +47,7 @@ final class SiteCopyPolishAction
 
             $response = $this->router->dispatch(new AiRequest(
                 task: AiTask::SiteCopy,
-                prompt: $text,
+                prompt: "Text to rewrite:\n{$text}".($reference === '' ? '' : "\n\n".$reference),
                 system: $systemPrompt,
             ));
 
@@ -58,6 +63,9 @@ final class SiteCopyPolishAction
             $blocks[$i]['text'] = $response->text;
             $blocks[$i]['source'] = 'ai';
             $blocks[$i]['model'] = $response->model->value;
+            if ($peerCount > 0) {
+                $blocks[$i]['peers'] = $peerCount;
+            }
 
             $lastModel = $response->model->value;
             $totalCost += $response->costInHundredthsOfCents();
@@ -74,6 +82,7 @@ final class SiteCopyPolishAction
             'blocks' => $polishedCount,
             'model' => $lastModel,
             'cost_hundredths' => $totalCost,
+            'peers' => $peerCount,
         ];
     }
 }
