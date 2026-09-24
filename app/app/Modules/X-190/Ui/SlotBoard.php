@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X190\Ui;
 
 use App\Modules\X190\Actions\SlotProposeAction;
+use App\Modules\X190\Models\ReferralListing;
 use App\Modules\X190\Models\ReferralSlot;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -22,6 +23,8 @@ class SlotBoard extends Component
     public string $territoryZip = '';
 
     public array $partnerName = [];   // keyed by slot id
+
+    public array $found = [];   // keyed by slot id → array of listings
 
     public string $success = '';
 
@@ -41,6 +44,27 @@ class SlotBoard extends Component
         $this->success = 'Opened a '.trim($this->category).' slot in '.$this->territoryZip.'. Propose a partner for it below.';
         $this->category = '';
         $this->territoryZip = '';
+    }
+
+    public function findPartners(int $slotId): void
+    {
+        $slot = ReferralSlot::where('business_id', $this->businessId)->findOrFail($slotId);
+        $this->found[$slotId] = ReferralListing::query()
+            ->where('is_listed', true)
+            ->where('category', $slot->category)
+            ->where('territory_zip', $slot->territory_zip)
+            ->where('business_id', '!=', $this->businessId)
+            ->orderBy('company_name')
+            ->limit(20)
+            ->get(['company_name', 'category', 'territory_zip'])
+            ->map(fn ($l) => ['company_name' => (string) $l->company_name])
+            ->all();
+    }
+
+    public function proposeFound(int $slotId, string $companyName, SlotProposeAction $action): void
+    {
+        $this->partnerName[$slotId] = $companyName;
+        $this->proposePartner($slotId, $action);
     }
 
     public function proposePartner(int $slotId, SlotProposeAction $action): void
