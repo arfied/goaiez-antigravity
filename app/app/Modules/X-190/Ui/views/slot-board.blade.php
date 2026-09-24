@@ -25,6 +25,24 @@
                             <input wire:model="partnerName.{{ $slot->id }}" placeholder="Company to invite">
                             <button type="button" wire:click="proposePartner({{ $slot->id }})">Propose partner</button>
                             @error('partnerName.'.$slot->id) <span>{{ $message }}</span> @enderror
+
+                            <div>
+                                <button type="button" wire:click="findPartners({{ $slot->id }})">Find partners</button>
+                                @if(isset($found[$slot->id]))
+                                    @if(empty($found[$slot->id]))
+                                        <p>No listed business matches this trade and ZIP yet.</p>
+                                    @else
+                                        <ul>
+                                            @foreach($found[$slot->id] as $listing)
+                                                <li>
+                                                    {{ $listing['company_name'] }}
+                                                    <button type="button" wire:click="proposeFound({{ $slot->id }}, '{{ $listing['company_name'] }}')">Propose</button>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                @endif
+                            </div>
                         @endif
                     </li>
                 @endforeach
