@@ -21,6 +21,7 @@ use App\Modules\X103\Actions\CustomerQuestionsAction;
 use App\Modules\X103\Actions\FaqDraftAction;
 use App\Modules\X103\Actions\FunnelBuildAction;
 use App\Modules\X103\Actions\PageCreateAction;
+use App\Modules\X103\Actions\QuestionAnswerDraftAction;
 use App\Modules\X103\Actions\SeoDraftAction;
 use App\Modules\X103\Actions\SiteBuildAction;
 use App\Modules\X103\Actions\SiteCopyPolishAction;
@@ -1625,32 +1626,31 @@ class X103Test extends TestCase
 
     public function test_a_customer_question_is_moderated_then_answered_from_facts_and_placed_as_answered(): void
     {
-        \App\Models\PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
-        $owner = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
-        \App\Modules\X163\Models\PriceBookItem::create([
+        PriceBookItem::create([
             'business_id' => $biz->id,
-            
+
             'service_name' => 'A service',
             'price_cents' => 1000,
             'is_confirmed' => true,
             'confirmed_at' => now(),
         ]);
 
-        $page = \App\Modules\X103\Models\Page::create([
+        $page = Page::create([
             'business_id' => $biz->id,
             'slug' => 'test-page-4531',
             'title' => 'Test',
-            
-            
+
         ]);
 
-        $chat = \App\Modules\X102\Models\ChatSession::create(["business_id" => $biz->id, "session_token" => \Illuminate\Support\Str::uuid()->toString()]);
-        $turn = \App\Modules\X102\Models\ChatTurn::create(["business_id" => $biz->id, "chat_session_id" => $chat->id, "author_type" => "visitor", "message" => 'Distinctive question 4531?', 'created_at' => now()]);
+        $chat = ChatSession::create(['business_id' => $biz->id, 'session_token' => Str::uuid()->toString()]);
+        $turn = ChatTurn::create(['business_id' => $biz->id, 'chat_session_id' => $chat->id, 'author_type' => 'visitor', 'message' => 'Distinctive question 4531?', 'created_at' => now()]);
 
-        \Illuminate\Support\Facades\Http::fake([
-            'api.openai.com/*' => \Illuminate\Support\Facades\Http::sequence()
+        Http::fake([
+            'api.openai.com/*' => Http::sequence()
                 ->push([
                     'id' => 'chatcmpl-mod',
                     'object' => 'chat.completion',
@@ -1663,7 +1663,7 @@ class X103Test extends TestCase
                                 'content' => json_encode(['flags' => []]),
                             ],
                             'finish_reason' => 'stop',
-                        ]
+                        ],
                     ],
                     'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
                 ])
@@ -1679,23 +1679,23 @@ class X103Test extends TestCase
                                 'content' => json_encode(['question' => 'Distinctive question 4531?', 'answer' => 'Answer']),
                             ],
                             'finish_reason' => 'stop',
-                        ]
+                        ],
                     ],
                     'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
-                ])
+                ]),
         ]);
 
-        $action = app(\App\Modules\X103\Actions\QuestionAnswerDraftAction::class);
+        $action = app(QuestionAnswerDraftAction::class);
         $res = $action->handle($biz->id, $page->id, 'chat', $turn->id, 'Distinctive question 4531?');
 
-        file_put_contents('debug.txt', json_encode($res)); $this->assertSame('drafted', $res['status']);
-        
+        $this->assertSame('drafted', $res['status']);
+
         $page->refresh();
         $this->assertSame('chat', $page->draft_meta['pending_faq']['source']['type']);
         $this->assertSame($turn->id, $page->draft_meta['pending_faq']['source']['id']);
 
-        \Livewire\Livewire::actingAs($owner)->test(\App\Modules\X103\Ui\Pages::class)
-            
+        Livewire::actingAs($owner)->test(Pages::class)
+
             ->call('placeFaq', $page->id)
             ->assertSet('success', 'FAQ placed on page.');
 
@@ -1706,29 +1706,28 @@ class X103Test extends TestCase
             'source_id' => $turn->id,
         ]);
 
-        $qs = app(\App\Modules\X103\Actions\CustomerQuestionsAction::class)->handle($biz->id);
+        $qs = app(CustomerQuestionsAction::class)->handle($biz->id);
         $this->assertEmpty($qs);
     }
 
     public function test_a_customer_question_is_flagged_and_refused(): void
     {
-        \App\Models\PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
-        $owner = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
-        $page = \App\Modules\X103\Models\Page::create([
+        $page = Page::create([
             'business_id' => $biz->id,
             'slug' => 'test-page-4532',
             'title' => 'Test',
-            
-            
+
         ]);
 
-        $chat = \App\Modules\X102\Models\ChatSession::create(["business_id" => $biz->id, "session_token" => \Illuminate\Support\Str::uuid()->toString()]);
-        $turn = \App\Modules\X102\Models\ChatTurn::create(["business_id" => $biz->id, "chat_session_id" => $chat->id, "author_type" => "visitor", "message" => 'Bad question?', 'created_at' => now()]);
+        $chat = ChatSession::create(['business_id' => $biz->id, 'session_token' => Str::uuid()->toString()]);
+        $turn = ChatTurn::create(['business_id' => $biz->id, 'chat_session_id' => $chat->id, 'author_type' => 'visitor', 'message' => 'Bad question?', 'created_at' => now()]);
 
-        \Illuminate\Support\Facades\Http::fake([
-            'api.openai.com/*' => \Illuminate\Support\Facades\Http::sequence()
+        Http::fake([
+            'api.openai.com/*' => Http::sequence()
                 ->push([
                     'id' => 'chatcmpl-mod',
                     'object' => 'chat.completion',
@@ -1741,68 +1740,66 @@ class X103Test extends TestCase
                                 'content' => json_encode(['flags' => ['personal_data']]),
                             ],
                             'finish_reason' => 'stop',
-                        ]
+                        ],
                     ],
                     'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
-                ])
+                ]),
         ]);
 
-        $action = app(\App\Modules\X103\Actions\QuestionAnswerDraftAction::class);
+        $action = app(QuestionAnswerDraftAction::class);
         $res = $action->handle($biz->id, $page->id, 'chat', $turn->id, 'Bad question?');
 
         $this->assertSame('refused', $res['status']);
         $this->assertSame('flagged', $res['reason']);
         $page->refresh();
         $this->assertNull($page->draft_meta);
-        \Illuminate\Support\Facades\Http::assertSentCount(1);
+        Http::assertSentCount(1);
     }
 
     public function test_a_customer_question_is_refused_if_pending_faq_exists(): void
     {
-        \App\Models\PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
-        $owner = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
-        $page = \App\Modules\X103\Models\Page::create([
+        $page = Page::create([
             'business_id' => $biz->id,
             'slug' => 'test-page-4533',
             'title' => 'Test',
-            
-            
+
             'draft_meta' => ['pending_faq' => []],
         ]);
 
-        $chat = \App\Modules\X102\Models\ChatSession::create(["business_id" => $biz->id, "session_token" => \Illuminate\Support\Str::uuid()->toString()]);
-        $turn = \App\Modules\X102\Models\ChatTurn::create(["business_id" => $biz->id, "chat_session_id" => $chat->id, "author_type" => "visitor", "message" => 'Q?', 'created_at' => now()]);
+        $chat = ChatSession::create(['business_id' => $biz->id, 'session_token' => Str::uuid()->toString()]);
+        $turn = ChatTurn::create(['business_id' => $biz->id, 'chat_session_id' => $chat->id, 'author_type' => 'visitor', 'message' => 'Q?', 'created_at' => now()]);
 
-        \Illuminate\Support\Facades\Http::fake();
+        Http::fake();
 
-        $action = app(\App\Modules\X103\Actions\QuestionAnswerDraftAction::class);
+        $action = app(QuestionAnswerDraftAction::class);
         $res = $action->handle($biz->id, $page->id, 'chat', $turn->id, 'Q?');
 
         $this->assertSame('refused', $res['status']);
         $this->assertSame('pending_faq_exists', $res['reason']);
-        \Illuminate\Support\Facades\Http::assertNothingSent();
+        Http::assertNothingSent();
     }
 
     public function test_a_customer_question_is_refused_if_moderation_unavailable_budget_zero(): void
     {
-        \App\Models\PlatformSetting::write('ai.monthly_cap_per_tenant', 0, 'test');
-        $owner = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 0, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
-        $page = \App\Modules\X103\Models\Page::create([
+        $page = Page::create([
             'business_id' => $biz->id,
             'slug' => 'test-page-4534',
             'title' => 'Test',
-            
-            
+
         ]);
 
-        $chat = \App\Modules\X102\Models\ChatSession::create(["business_id" => $biz->id, "session_token" => \Illuminate\Support\Str::uuid()->toString()]);
-        $turn = \App\Modules\X102\Models\ChatTurn::create(["business_id" => $biz->id, "chat_session_id" => $chat->id, "author_type" => "visitor", "message" => 'Q?', 'created_at' => now()]);
+        $chat = ChatSession::create(['business_id' => $biz->id, 'session_token' => Str::uuid()->toString()]);
+        $turn = ChatTurn::create(['business_id' => $biz->id, 'chat_session_id' => $chat->id, 'author_type' => 'visitor', 'message' => 'Q?', 'created_at' => now()]);
 
-        $action = app(\App\Modules\X103\Actions\QuestionAnswerDraftAction::class);
+        $action = app(QuestionAnswerDraftAction::class);
         $res = $action->handle($biz->id, $page->id, 'chat', $turn->id, 'Q?');
 
         $this->assertSame('refused', $res['status']);
