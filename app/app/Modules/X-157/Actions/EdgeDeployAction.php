@@ -250,15 +250,15 @@ JS;
                             ];
                         }
                         if (($block['type'] ?? '') === 'faq') {
-                            if (! is_scalar($block['question'] ?? '') || ! is_scalar($block['answer'] ?? '')
-                                || trim((string) ($block['question'] ?? '')) === '' || trim((string) ($block['answer'] ?? '')) === '') {
-                                continue;
-                            }
                             // FAQPage schema injected on publish (TEST ANCHOR, G8-16, ruling 41)
-                            $faqs[] = [
-                                'question' => $block['question'],
-                                'answer' => $block['answer'],
-                            ];
+                            $pairs = isset($block['items']) && is_array($block['items']) ? $block['items'] : [$block];
+                            foreach ($pairs as $pair) {
+                                if (! is_array($pair) || ! is_scalar($pair['question'] ?? '') || ! is_scalar($pair['answer'] ?? '')
+                                    || trim((string) ($pair['question'] ?? '')) === '' || trim((string) ($pair['answer'] ?? '')) === '') {
+                                    continue;
+                                }
+                                $faqs[] = ['question' => $pair['question'], 'answer' => $pair['answer']];
+                            }
                         }
                     }
 

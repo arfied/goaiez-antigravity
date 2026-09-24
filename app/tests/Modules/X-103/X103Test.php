@@ -1128,6 +1128,100 @@ class X103Test extends TestCase
         Http::assertSentCount(1);
     }
 
+    public function test_seo_draft_hands_the_model_the_headline_and_the_price_list(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        PlatformSetting::write('sites.seo.title_max_chars', 60, 'test');
+        PlatformSetting::write('sites.seo.description_max_chars', 155, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'SEO Tenant 2']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Distinctive headline 4615', 'subline' => 'Distinctive subline 4616', 'source' => 'crawl'],
+                ['type' => 'about', 'text' => 'Distinctive about 4617', 'source' => 'facts'],
+                ['type' => 'services', 'items' => [['name' => 'Distinctive service 4618', 'price_text' => '$99']], 'source' => 'pricebook'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_seo',
+                'choices' => [
+                    ['message' => ['content' => json_encode(['title' => 'Title', 'description' => 'Desc'])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10],
+            ]),
+        ]);
+
+        $action = app(SeoDraftAction::class);
+        $res = $action->handle($biz->id, $page->id);
+
+        $this->assertEquals('drafted', $res['status']);
+
+        Http::assertSent(fn ($r) => str_contains($r->body(), 'Distinctive headline 4615') && str_contains($r->body(), 'Distinctive subline 4616') && str_contains($r->body(), 'Distinctive about 4617') && str_contains($r->body(), 'Distinctive service 4618'));
+    }
+
+    public function test_an_applied_edit_keeps_the_booking_form(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Pages Test Edit Booking', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old headline'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [
+                    ['message' => ['content' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471'], ['type' => 'booking_form', 'heading' => 'Distinctive booking 4619', 'label' => 'Request a time', 'service' => '']], 'explanation' => 'Rewrote the headline and added a booking form.'])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->set('editRequest.'.$page->id, 'make the headline stronger')
+            ->call('askEdit', $page->id)
+            ->assertSet('success', fn ($s) => str_starts_with((string) $s, 'Proposed 2 blocks'));
+
+        $page->refresh();
+        $this->assertSame('Old headline', $page->draft_blocks[0]['headline']);
+        $this->assertSame('Distinctive new headline 4471', $page->draft_meta['pending_edit']['blocks'][0]['headline']);
+        $this->assertSame('Distinctive booking 4619', $page->draft_meta['pending_edit']['blocks'][1]['heading']);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->call('applyEdit', $page->id);
+
+        $page->refresh();
+
+        $bookingBlock = null;
+        foreach ($page->draft_blocks as $block) {
+            if (($block['type'] ?? '') === 'booking_form') {
+                $bookingBlock = $block;
+                break;
+            }
+        }
+
+        $this->assertNotNull($bookingBlock);
+        $this->assertSame('Distinctive booking 4619', $bookingBlock['heading']);
+    }
+
     public function test_seo_draft_refuses_when_the_budget_is_out(): void
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 0, 'test');

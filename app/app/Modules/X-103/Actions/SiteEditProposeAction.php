@@ -76,7 +76,7 @@ final class SiteEditProposeAction
         $whitelist = [
             'hero', 'about', 'services', 'reviews_strip',
             'booking_button', 'contact', 'faq', 'video_embed',
-            'gallery', 'team', 'form',
+            'gallery', 'team', 'form', 'booking_form',
         ];
 
         foreach ($proposedBlocks as $block) {
