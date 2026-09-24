@@ -1,0 +1,141 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Modules\X157;
+
+use App\Enums\UserRole;
+use App\Models\User;
+use App\Modules\X103\Models\Page;
+use App\Modules\X103\Models\PageVersion;
+use App\Modules\X157\Actions\EdgeDeployAction;
+use App\Modules\X157\Actions\EdgeProvisionAction;
+use App\Support\Tenancy;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Tests\Concerns\RefreshesTenantDatabase;
+use Tests\TestCase;
+
+class PublicBookingRouteTest extends TestCase
+{
+    use RefreshesTenantDatabase;
+
+    private $biz;
+
+    private $deploy;
+
+    private $owner;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Storage::fake('local');
+        $this->owner = User::factory()->create(['role' => UserRole::Owner]);
+        $this->biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD', 'owner_user_id' => $this->owner->id]);
+        DB::statement("SET app.business_id = '{$this->biz->id}'");
+
+        $zone = app(EdgeProvisionAction::class)->handle($this->biz->id, 'acme-hvac.com', true);
+
+        $page = Page::create([
+            'business_id' => $this->biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $commitId = 'commit_'.Str::random(16);
+        PageVersion::create([
+            'business_id' => $this->biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [
+                ['type' => 'pixel_script'],
+                ['type' => 'chat_widget'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni_script'],
+            ],
+            'pixel_installed' => true,
+        ]);
+
+        $this->deploy = app(EdgeDeployAction::class)->handle(
+            businessId: $this->biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $this->biz->name
+        );
+    }
+
+    public function test_a_visitor_can_request_a_booking_and_the_owner_sees_it_on_the_waitlist(): void
+    {
+        Tenancy::forgetAll();
+
+        $this->postJson("/sites/{$this->biz->id}/{$this->deploy['deploy_hash']}/book", [
+            'name' => 'Distinctive Visitor 4471',
+            'phone' => '+15125567731',
+            'service' => 'Haircut',
+            'preferred_date' => now()->addDays(2)->toDateString(),
+        ])->assertStatus(201)->assertJson(['status' => 'requested']);
+
+        Tenancy::set((int) $this->biz->id);
+        $this->assertDatabaseHas('waitlists', ['business_id' => $this->biz->id, 'customer_name' => 'Distinctive Visitor 4471', 'service_name' => 'Haircut', 'status' => 'pending']);
+        $this->assertDatabaseHas('people', ['business_id' => $this->biz->id, 'phone' => '+15125567731']);
+
+        $this->actingAs($this->owner);
+        $this->get(route('x-108.waitlist'))->assertOk()->assertSee('Distinctive Visitor 4471')->assertDontSee('Nobody is waiting');
+    }
+
+    public function test_an_under_18_visitor_is_refused_before_any_write(): void
+    {
+        Tenancy::forgetAll();
+
+        $this->postJson("/sites/{$this->biz->id}/{$this->deploy['deploy_hash']}/book", [
+            'name' => 'Distinctive Visitor 4471',
+            'phone' => '+15125567731',
+            'service' => 'Haircut',
+            'preferred_date' => now()->addDays(2)->toDateString(),
+            'age' => 16,
+        ])->assertStatus(422)->assertJson(['reason' => 'under_18']);
+
+        Tenancy::set((int) $this->biz->id);
+        $this->assertDatabaseMissing('waitlists', ['customer_name' => 'Distinctive Visitor 4471']);
+        $this->assertDatabaseMissing('people', ['phone' => '+15125567731']);
+    }
+
+    public function test_a_booking_request_needs_a_future_date_and_a_phone(): void
+    {
+        Tenancy::forgetAll();
+
+        $this->postJson("/sites/{$this->biz->id}/{$this->deploy['deploy_hash']}/book", [
+            'name' => 'Distinctive Visitor 4471',
+            'service' => 'Haircut',
+            'preferred_date' => now()->addDays(2)->toDateString(),
+        ])->assertStatus(422);
+
+        $this->postJson("/sites/{$this->biz->id}/{$this->deploy['deploy_hash']}/book", [
+            'name' => 'Distinctive Visitor 4471',
+            'phone' => '+15125567731',
+            'service' => 'Haircut',
+            'preferred_date' => now()->subDay()->toDateString(),
+        ])->assertStatus(422);
+
+        Tenancy::set((int) $this->biz->id);
+        $this->assertDatabaseMissing('waitlists', ['customer_name' => 'Distinctive Visitor 4471']);
+        $this->assertDatabaseMissing('people', ['phone' => '+15125567731']);
+    }
+
+    public function test_an_unknown_deployment_is_404(): void
+    {
+        Tenancy::forgetAll();
+
+        $this->postJson("/sites/{$this->biz->id}/deploy_nosuchhash4621/book", [
+            'name' => 'Distinctive Visitor 4471',
+            'phone' => '+15125567731',
+            'service' => 'Haircut',
+            'preferred_date' => now()->addDays(2)->toDateString(),
+        ])->assertStatus(404);
+    }
+}

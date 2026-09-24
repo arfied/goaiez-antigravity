@@ -7,6 +7,8 @@ namespace App\Modules\X157;
 use App\Models\Business;
 use App\Modules\X103\Events\PageUnpublished;
 use App\Modules\X103\Events\SitePublished;
+use App\Modules\X108\Actions\WaitlistJoinAction;
+use App\Modules\X121\Actions\PersonUpsertAction;
 use App\Modules\X137\Actions\CallAttributeAction;
 use App\Modules\X155\Actions\FormCaptureAction;
 use App\Modules\X157\Actions\EdgeDeployAction;
@@ -23,6 +25,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
 
 final class ModuleServiceProvider extends ServiceProvider
@@ -114,6 +117,37 @@ final class ModuleServiceProvider extends ServiceProvider
 
             return response()->json($result, $result['status'] === 'captured' ? 201 : 422);
         })->whereNumber('business')->whereNumber('form');
+
+        Route::post('/sites/{business}/{deploy_hash}/book', function (string $business, string $deployHash, Request $request) {
+            $businessId = (int) $business;
+            Tenancy::set($businessId);
+
+            $deployment = Deployment::where('business_id', $businessId)->where('deploy_hash', $deployHash)->firstOrFail();
+            abort_if($deployment->status !== 'deployed', 404);
+            $zone = $deployment->edgeZone;
+            abort_if($zone === null || ! $zone->has_valid_ssl, 404);
+
+            $age = $request->input('age');
+            if (is_numeric($age) && (int) $age < 18) {
+                return response()->json(['status' => 'rejected', 'reason' => 'under_18'], 422);
+            }
+            try {
+                $data = $request->validate([
+                    'name' => ['required', 'string', 'max:120'],
+                    'phone' => ['required', 'string', 'max:40'],
+                    'service' => ['required', 'string', 'max:120'],
+                    'preferred_date' => ['required', 'date', 'after_or_equal:today'],
+                    'email' => ['nullable', 'email', 'max:190'],
+                ]);
+            } catch (ValidationException $e) {
+                return response()->json(['message' => $e->getMessage(), 'errors' => $e->errors()], 422);
+            }
+
+            $upsert = app(PersonUpsertAction::class)->upsertByPhone($businessId, $data['phone'], ['first_name' => $data['name'], 'email' => $data['email'] ?? null], false);
+            $waitlist = app(WaitlistJoinAction::class)->handle($businessId, $data['name'], $data['phone'], $data['service'], (string) $data['preferred_date']);
+
+            return response()->json(['status' => 'requested', 'waitlist_id' => (int) $waitlist->id, 'person_id' => (int) $upsert['id']], 201);
+        })->whereNumber('business');
 
         Route::get('/sites/{business}/{deploy_hash}/sitemap.xml', function (string $business, string $deployHash) {
             return app(ServeDeploymentAction::class)->sitemap((int) $business, $deployHash);
