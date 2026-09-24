@@ -34,4 +34,17 @@ class CustomerfacingPortalScreenTest extends TestCase
 
         $this->get(route('x-172.customerfacing-portal', ['token' => 'distinctive-no-such-token-4621']))->assertNotFound();
     }
+
+    public function test_a_failed_action_shows_the_error_panel_instead_of_crashing(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        $token = Fixtures::token($biz);
+
+        Livewire::test(CustomerfacingPortal::class, ['token' => $token])
+            ->set('errorMessage', 'Distinctive failure 4845')
+            ->assertSee("We couldn't record that")
+            ->assertSee('Distinctive failure 4845');
+    }
 }

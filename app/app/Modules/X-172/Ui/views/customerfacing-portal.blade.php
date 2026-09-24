@@ -2,7 +2,7 @@
     
     <div class="max-w-xl mx-auto px-4 py-8" wire:loading.class="opacity-50">
         @if($errorMessage)
-            <x-ui.error-panel class="mb-6">
+            <x-ui.error-panel heading="We couldn't record that" class="mb-6">
                 {{ $errorMessage }}
             </x-ui.error-panel>
         @endif
