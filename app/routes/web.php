@@ -59,7 +59,6 @@ use App\Livewire\Account\Credit as AccountCredit;
 use App\Livewire\Account\CustomerProfile as AccountCustomerProfile;
 use App\Livewire\Account\Customers as AccountCustomers;
 use App\Livewire\Account\Facts as AccountFacts;
-use App\Livewire\Account\PlacesKey as AccountPlacesKey;
 use App\Livewire\Account\FollowUps as AccountFollowUps;
 use App\Livewire\Account\Home as AccountHome;
 use App\Livewire\Account\ImportCustomers;
@@ -68,6 +67,7 @@ use App\Livewire\Account\Knowledge as AccountKnowledge;
 use App\Livewire\Account\Locations as AccountLocations;
 use App\Livewire\Account\Messages as AccountMessages;
 use App\Livewire\Account\PixelInstall as AccountPixelInstall;
+use App\Livewire\Account\PlacesKey as AccountPlacesKey;
 use App\Livewire\Account\Plan as AccountPlan;
 use App\Livewire\Account\ReplyQueue as AccountReplyQueue;
 // Aliased for the reason `Support` below is: `App\Services\Actuation\SiteChanges`
@@ -90,15 +90,16 @@ use App\Livewire\Admin\AutomationRuns;
 // three different things, and the ambiguity is only ever resolved by luck.
 use App\Livewire\Admin\Credentials as CredentialsAdmin;
 use App\Livewire\Admin\GbpGrantRevocations;
-use App\Livewire\Admin\InternalUsers;
+use App\Livewire\Admin\IndustryStartingPoints;
 // Aliased: the component and the service it calls share a name, and the two
 // appearing unqualified in one file is how the wrong one gets injected.
+use App\Livewire\Admin\InternalUsers;
 use App\Livewire\Admin\LegalDocumentIndex;
 use App\Livewire\Admin\LegalDocuments as LegalDocumentsAdmin;
-use App\Livewire\Admin\LocationSettings;
 // Named for the screen rather than for the table, and deliberately not
 // `OperatorAlerts`: the service that raises them already owns that name, and
 // the two appearing unqualified in one file is how the wrong one gets injected.
+use App\Livewire\Admin\LocationSettings;
 use App\Livewire\Admin\MailSending;
 use App\Livewire\Admin\NumberLookup;
 use App\Livewire\Admin\OperatorAlertBoard;
@@ -108,23 +109,23 @@ use App\Livewire\Admin\PhiTenants;
 use App\Livewire\Admin\PlatformSettings;
 use App\Livewire\Admin\ReviewQueue;
 use App\Livewire\Admin\SendingControls;
-use App\Livewire\Admin\StaffActivity;
 // Aliased for the same reason as LegalDocuments above: the screen and the
 // service it reads through share a name, and the two appearing unqualified in
 // one file is how the wrong one gets injected.
+use App\Livewire\Admin\StaffActivity;
 use App\Livewire\Admin\TenantLocations;
 use App\Livewire\Admin\TermsAcceptances as TermsAcceptancesAdmin;
 use App\Livewire\Advanced\BroadcastComposer;
 use App\Livewire\Advanced\Broadcasts;
 use App\Livewire\Advanced\Changes;
 use App\Livewire\Advanced\Citations;
-use App\Livewire\Advanced\Competitors;
 // Aliased for the same reason as LegalDocuments above: `Accounts` alone says
 // nothing about which console it belongs to.
-use App\Livewire\Advanced\Credits;
+use App\Livewire\Advanced\Competitors;
 // Aliased for the same reason as the two above: `Tickets` alone says nothing
 // about which desk it belongs to, and `Account\Support` is a screen with the
 // same word in its name one namespace over.
+use App\Livewire\Advanced\Credits;
 use App\Livewire\Advanced\Defense;
 use App\Livewire\Advanced\Home;
 use App\Livewire\Advanced\Integrations;
@@ -648,6 +649,9 @@ Route::middleware(['auth', 'can:'.AdminAccess::GATE])
         // AdminNav.
         Route::get('settings', PlatformSettings::class)
             ->name('platform-settings');
+
+        Route::get('industry-starting-points', IndustryStartingPoints::class)
+            ->name('industry-starting-points');
 
         // The Credentials Manager (`38` Part 1, D-149). Sits behind the same one
         // gate as everything else here — see the component for why the
