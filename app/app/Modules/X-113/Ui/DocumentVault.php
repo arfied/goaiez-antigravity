@@ -118,6 +118,7 @@ class DocumentVault extends Component
 
         return view('x-113::document-vault', [
             'staff' => $staff,
+            'hasDocuments' => isset($documents) ? $documents->isNotEmpty() : false,
         ]);
     }
 
@@ -127,6 +128,15 @@ class DocumentVault extends Component
 
         $document = StaffDocument::where('business_id', $businessId)
             ->findOrFail($documentId);
+
+        $staff = StaffUser::where('business_id', $businessId)->findOrFail($document->staff_user_id);
+
+        $hasPermission = RolePermission::where('business_id', $businessId)
+            ->where('role_id', $staff->role_id)
+            ->where('permission', 'view_employee_documents')
+            ->exists();
+
+        abort_unless($hasPermission, 403);
 
         return Storage::disk('local')->download($document->storage_path, $document->original_filename);
     }
