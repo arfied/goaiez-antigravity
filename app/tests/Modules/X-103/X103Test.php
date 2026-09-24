@@ -796,7 +796,7 @@ class X103Test extends TestCase
             'slug' => 'home',
             'title' => 'Home',
             'draft_blocks' => [
-                ['type' => 'hero', 'text' => 'Hero text'],
+                ['type' => 'hero', 'headline' => 'Hero headline', 'subline' => 'Hero text', 'source' => 'crawl'],
                 ['type' => 'about', 'text' => 'About text'],
                 ['type' => 'contact', 'text' => 'Contact text'],
             ],
@@ -823,8 +823,8 @@ class X103Test extends TestCase
         $page->refresh();
         $blocks = $page->draft_blocks;
 
-        $this->assertEquals('Polished text', $blocks[0]['text']);
-        $this->assertEquals('Hero text', $blocks[0]['original_text']);
+        $this->assertEquals('Polished text', $blocks[0]['subline']);
+        $this->assertEquals('Hero text', $blocks[0]['original_subline']);
         $this->assertEquals('ai', $blocks[0]['source']);
         $this->assertEquals('openai-4o-mini', $blocks[0]['model']);
 
@@ -896,7 +896,7 @@ class X103Test extends TestCase
             'slug' => 'home',
             'title' => 'Home',
             'draft_blocks' => [
-                ['type' => 'hero', 'text' => 'Hero text'],
+                ['type' => 'hero', 'headline' => 'Hero headline', 'subline' => 'Hero text', 'source' => 'crawl'],
             ],
             'is_published' => false,
         ]);
@@ -911,8 +911,8 @@ class X103Test extends TestCase
 
         $page->refresh();
         $blocks = $page->draft_blocks;
-        $this->assertEquals('Hero text', $blocks[0]['text']);
-        $this->assertArrayNotHasKey('original_text', $blocks[0]);
+        $this->assertEquals('Hero text', $blocks[0]['subline']);
+        $this->assertArrayNotHasKey('original_subline', $blocks[0]);
 
         Http::assertNothingSent();
         PlatformSetting::query()->where('key', 'ai.monthly_cap_per_tenant')->delete();
@@ -932,8 +932,9 @@ class X103Test extends TestCase
             'draft_blocks' => [
                 [
                     'type' => 'hero',
-                    'text' => 'Polished hero',
-                    'original_text' => 'Original hero',
+                    'headline' => 'Hero headline',
+                    'subline' => 'Polished hero',
+                    'original_subline' => 'Original hero',
                     'source' => 'ai',
                     'model' => 'openai-4o-mini',
                 ],
@@ -948,8 +949,8 @@ class X103Test extends TestCase
         $page->refresh();
         $blocks = $page->draft_blocks;
 
-        $this->assertEquals('Original hero', $blocks[0]['text']);
-        $this->assertArrayNotHasKey('original_text', $blocks[0]);
+        $this->assertEquals('Original hero', $blocks[0]['subline']);
+        $this->assertArrayNotHasKey('original_subline', $blocks[0]);
         $this->assertArrayNotHasKey('source', $blocks[0]);
         $this->assertArrayNotHasKey('model', $blocks[0]);
     }
@@ -1099,7 +1100,7 @@ class X103Test extends TestCase
             'slug' => 'home',
             'title' => 'Home',
             'draft_blocks' => [
-                ['type' => 'hero', 'text' => 'Hero text'],
+                ['type' => 'hero', 'headline' => 'Hero headline', 'subline' => 'Hero text', 'source' => 'crawl'],
             ],
             'is_published' => false,
         ]);
@@ -1522,7 +1523,7 @@ class X103Test extends TestCase
             'slug' => 'home',
             'title' => 'Home',
             'draft_blocks' => [
-                ['type' => 'hero', 'text' => 'Hero text'],
+                ['type' => 'hero', 'headline' => 'Hero headline', 'subline' => 'Hero text', 'source' => 'crawl'],
             ],
             'is_published' => false,
         ]);
@@ -1562,7 +1563,7 @@ class X103Test extends TestCase
         Http::assertSent(fn ($req) => str_contains((string) $req->body(), 'Distinctive peer title 5512') && str_contains((string) $req->body(), 'REFERENCE ONLY'));
 
         $page->refresh();
-        $this->assertSame('Fresh copy about clean gutters 5599', $page->draft_blocks[0]['text']);
+        $this->assertSame('Fresh copy about clean gutters 5599', $page->draft_blocks[0]['subline']);
         $this->assertStringNotContainsString('5512', json_encode($page->draft_blocks));
         $this->assertSame(1, $page->draft_blocks[0]['peers']);
     }
@@ -1578,7 +1579,7 @@ class X103Test extends TestCase
             'slug' => 'home',
             'title' => 'Home',
             'draft_blocks' => [
-                ['type' => 'hero', 'text' => 'Hero text'],
+                ['type' => 'hero', 'headline' => 'Hero headline', 'subline' => 'Hero text', 'source' => 'crawl'],
             ],
             'is_published' => false,
         ]);

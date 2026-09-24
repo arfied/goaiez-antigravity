@@ -836,7 +836,7 @@ class PagesScreenTest extends TestCase
             'slug' => 'home',
             'title' => 'Home',
             'draft_blocks' => [
-                ['type' => 'hero', 'text' => 'Hero text'],
+                ['type' => 'hero', 'headline' => 'Hero headline', 'subline' => 'Hero text', 'source' => 'crawl'],
             ],
             'is_published' => false,
         ]);
@@ -856,14 +856,14 @@ class PagesScreenTest extends TestCase
             ->call('polish', $page->id)->assertSet('success', 'Polished 1 blocks with openai-4o-mini');
 
         $page->refresh();
-        $this->assertEquals('Polished UI text', $page->draft_blocks[0]['text']);
+        $this->assertEquals('Polished UI text', $page->draft_blocks[0]['subline']);
 
         Livewire::actingAs($owner)
             ->test(Pages::class)
             ->call('restoreOriginal', $page->id);
 
         $page->refresh();
-        $this->assertEquals('Hero text', $page->draft_blocks[0]['text']);
+        $this->assertEquals('Hero text', $page->draft_blocks[0]['subline']);
     }
 
     public function test_restore_original_puts_the_hero_subline_back(): void
@@ -1384,7 +1384,7 @@ class PagesScreenTest extends TestCase
             'slug' => 'home',
             'title' => 'Home',
             'draft_blocks' => [
-                ['type' => 'hero', 'text' => 'Hero text'],
+                ['type' => 'hero', 'headline' => 'Hero headline', 'subline' => 'Hero text', 'source' => 'crawl'],
             ],
             'is_published' => false,
         ]);
