@@ -86,6 +86,12 @@ body { background: var(--color-canvas); color: var(--color-ink); font-family: sa
         }
         if ($type === 'faq') {
             if (isset($block['items']) && is_array($block['items']) && count($block['items']) > 0) {
+                foreach ($block['items'] as $item) {
+                    if (! is_array($item) || ! $this->hasScalar($item, 'question') || ! $this->hasScalar($item, 'answer')) {
+                        return false;
+                    }
+                }
+
                 return true;
             }
 

@@ -120,6 +120,29 @@
                                         @endif
                                     </div>
                                 </details>
+                                <details class="mb-2">
+                                    <summary class="cursor-pointer">Ask the AI for questions and answers</summary>
+                                    <div class="p-2 mt-2 bg-paper border border-rule">
+                                        @if(!isset($page->draft_meta['pending_faq']))
+                                            <p class="text-sm text-ink-2 mb-1">It writes plain questions a customer would ask, using only your confirmed prices and the reviews you show — nothing it cannot back up. You place them or discard them.</p>
+                                            <button wire:click="draftFaq({{ $page->id }})" class="bg-paper border border-rule px-2 py-1 text-ink mb-2">Ask</button>
+                                        @else
+                                            <div class="mt-2 p-2 bg-paper border border-rule">
+                                                <strong>Proposed questions</strong>
+                                                <ul class="list-disc pl-5 my-2">
+                                                    @foreach($page->draft_meta['pending_faq']['items'] ?? [] as $item)
+                                                        <li><span class="font-medium">{{ $item['question'] ?? '' }}</span> — {{ $item['answer'] ?? '' }}</li>
+                                                    @endforeach
+                                                </ul>
+                                                <span class="text-sm text-ink-2">written by {{ $page->draft_meta['pending_faq']['model'] ?? 'the AI' }}</span>
+                                                <div class="mt-2">
+                                                    <button wire:click="placeFaq({{ $page->id }})" class="bg-paper border border-rule px-2 py-1 text-ink mr-2">Place on this page</button>
+                                                    <button wire:click="discardFaq({{ $page->id }})" class="bg-paper border border-rule px-2 py-1 text-ink">Discard</button>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </details>
                                 <details>
                                     <summary class="cursor-pointer">Edit content</summary>
                                     <div class="p-2 mt-2 bg-paper border border-rule">
@@ -127,7 +150,11 @@
                                             @foreach($page->draft_blocks as $idx => $block)
                                                 <div class="mb-2 border-b border-rule pb-2">
                                                     @if(($block['type'] ?? '') === 'faq')
-                                                        <div><strong>FAQ:</strong> {{ $block['question'] ?? '' }} / {{ $block['answer'] ?? '' }}</div>
+                                                        @if(isset($block['items']) && is_array($block['items']))
+                                                            <div><strong>FAQ:</strong> {{ count($block['items']) }} {{ count($block['items']) === 1 ? 'question' : 'questions' }} — {{ $block['items'][0]['question'] ?? '' }}@if(count($block['items']) > 1) …@endif</div>
+                                                        @else
+                                                            <div><strong>FAQ:</strong> {{ $block['question'] ?? '' }} / {{ $block['answer'] ?? '' }}</div>
+                                                        @endif
                                                     @elseif(($block['type'] ?? '') === 'video_embed')
                                                         <div><strong>Video:</strong> {{ $block['name'] ?? '' }} / {{ $block['contentUrl'] ?? '' }} / {{ $block['uploadDate'] ?? '' }}</div>
                                                     @else

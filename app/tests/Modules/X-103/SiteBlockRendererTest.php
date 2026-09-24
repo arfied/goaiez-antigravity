@@ -197,4 +197,14 @@ class SiteBlockRendererTest extends TestCase
         ]], []);
         $this->assertStringNotContainsString('Licence number', $htmlNoFacts);
     }
+
+    public function test_a_faq_item_without_an_answer_is_dropped_and_a_complete_list_renders(): void
+    {
+        $renderer = new SiteBlockRenderer;
+        $htmlBad = $renderer->render([['type' => 'faq', 'items' => [['question' => 'Distinctive q 4493', 'answer' => '']]]], []);
+        $this->assertStringNotContainsString('faq-item', $htmlBad);
+
+        $htmlGood = $renderer->render([['type' => 'faq', 'items' => [['question' => 'Distinctive q 4494', 'answer' => 'Distinctive a 4495']]]], []);
+        $this->assertStringContainsString('Distinctive q 4494 - Distinctive a 4495', $htmlGood);
+    }
 }

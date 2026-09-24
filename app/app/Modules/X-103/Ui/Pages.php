@@ -442,7 +442,7 @@ class Pages extends Component
         try {
             $res = $action->handle($this->businessId, $pageId);
             if ($res['status'] === 'refused') {
-                $this->success = $res['reason'];
+                $this->success = $res['reason'] === 'no_facts_available' ? 'Nothing to write from yet — confirm a price or show a review on the website first.' : $res['reason'];
             } else {
                 $this->success = "Drafted {$res['items']} questions with {$res['model']}";
             }

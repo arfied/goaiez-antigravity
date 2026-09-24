@@ -863,6 +863,54 @@ class PagesScreenTest extends TestCase
         $this->assertEquals('Hero text', $page->draft_blocks[0]['text']);
     }
 
+    public function test_the_faq_buttons_are_on_the_page_and_a_refusal_says_what_to_add_first(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'Faq Controls Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'faq-controls',
+            'title' => 'FAQ',
+            'draft_blocks' => [],
+            'is_published' => false,
+        ]);
+
+        $this->actingAs($owner)->get(route('x-103.pages'))
+            ->assertOk()
+            ->assertSee('Ask the AI for questions and answers');
+
+        Livewire::actingAs($owner)->test(Pages::class)
+            ->call('draftFaq', $page->id)
+            ->assertSet('success', 'Nothing to write from yet — confirm a price or show a review on the website first.');
+
+        Http::assertNothingSent();
+
+        $page->update(['draft_meta' => ['pending_faq' => ['items' => [['question' => 'Distinctive question 4491?', 'answer' => 'Distinctive answer 4492.']], 'model' => 'openai-4o-mini']]]);
+
+        $this->actingAs($owner)->get(route('x-103.pages'))
+            ->assertSee('Proposed questions')
+            ->assertSee('Distinctive question 4491?')
+            ->assertSee('Place on this page');
+
+        Livewire::actingAs($owner)->test(Pages::class)
+            ->call('placeFaq', $page->id);
+
+        $this->actingAs($owner)->get(route('x-103.pages'))
+            ->assertDontSee('Proposed questions')
+            ->assertSee('1 question — Distinctive question 4491?');
+
+        $staff = User::factory()->create(['role' => UserRole::Manager]);
+        TestCase::provisionTenant(['owner_user_id' => $staff->id]);
+        $this->actingAs($staff);
+
+        Livewire::test(Pages::class)
+            ->call('draftFaq', $page->id)
+            ->assertForbidden();
+    }
+
     public function test_faq_controls(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
