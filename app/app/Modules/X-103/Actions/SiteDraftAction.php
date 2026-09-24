@@ -254,7 +254,8 @@ final class SiteDraftAction
                 $homeBlocks[] = $servicesBlock;
             }
 
-            $reviews = Review::where('location_id', $locationId)
+            // displayable() is the moderation gate — the same one the public widget feed applies; display fails closed.
+            $reviews = Review::query()->displayable()->where('location_id', $locationId)
                 ->where('display_on_website', true)
                 ->where('rating', '>=', $reviewsMinRating)
                 ->take($reviewsMax)

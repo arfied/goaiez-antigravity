@@ -598,7 +598,7 @@ class X103Test extends TestCase
             'confirmed_at' => now(),
         ]);
 
-        Review::factory()->create([
+        Review::factory()->fromGoogle()->approved()->create([
             'location_id' => $location->id,
             'display_on_website' => true,
             'rating' => 5,
@@ -606,7 +606,7 @@ class X103Test extends TestCase
             'reviewer_name' => 'Alice',
         ]);
 
-        Review::factory()->create([
+        Review::factory()->fromGoogle()->approved()->create([
             'location_id' => $location->id,
             'display_on_website' => true,
             'rating' => 2,
@@ -1109,5 +1109,62 @@ class X103Test extends TestCase
         $home = Page::where('slug', 'home')->first();
         $contactBlock = collect($home->draft_blocks)->firstWhere('type', 'contact');
         $this->assertArrayNotHasKey('hours', $contactBlock);
+    }
+
+    public function test_a_review_the_owner_ticked_but_moderation_has_not_approved_does_not_reach_the_draft(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Site Review Filter Tenant']);
+        Tenancy::set((int) $biz->id);
+        $location = Location::factory()->create(['business_id' => $biz->id]);
+
+        Review::factory()->fromGoogle()->approved()->create(['location_id' => $location->id, 'display_on_website' => true, 'rating' => 5, 'comment' => 'Distinctive approved review 4471', 'reviewer_name' => 'Alice']);
+        Review::factory()->fromGoogle()->create(['location_id' => $location->id, 'display_on_website' => true, 'rating' => 5, 'comment' => 'Distinctive pending review 4472']);
+        Review::factory()->approved()->create(['location_id' => $location->id, 'display_on_website' => true, 'rating' => 5, 'flagged_at' => now(), 'comment' => 'Distinctive flagged review 4473']);
+        Review::factory()->approved()->create(['location_id' => $location->id, 'display_on_website' => true, 'rating' => 5, 'comment' => 'Distinctive unmoderated first-party review 4474']);
+
+        app(SiteDraftAction::class)->handle($biz->id, $location->id);
+
+        $home = Page::where('slug', 'home')->first();
+        $strip = collect($home->draft_blocks)->firstWhere('type', 'reviews_strip');
+        $this->assertNotNull($strip);
+        $texts = array_column($strip['items'], 'text');
+        $this->assertSame(['Distinctive approved review 4471'], $texts);
+    }
+
+    public function test_faq_drafting_reads_only_moderated_reviews(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'FAQ Review Filter Tenant']);
+        Tenancy::set((int) $biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'faq',
+            'title' => 'FAQ',
+            'draft_blocks' => [],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_faq',
+                'choices' => [
+                    ['message' => ['content' => json_encode(['items' => [
+                        ['question' => 'Q1', 'answer' => 'A1'],
+                    ]])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        Review::factory()->fromGoogle()->approved()->create(['business_id' => $biz->id, 'display_on_website' => true, 'rating' => 5, 'comment' => 'Distinctive approved review 4471', 'reviewer_name' => 'Alice']);
+        Review::factory()->fromGoogle()->create(['business_id' => $biz->id, 'display_on_website' => true, 'rating' => 5, 'comment' => 'Distinctive pending review 4472']);
+        Review::factory()->approved()->create(['business_id' => $biz->id, 'display_on_website' => true, 'rating' => 5, 'flagged_at' => now(), 'comment' => 'Distinctive flagged review 4473']);
+        Review::factory()->approved()->create(['business_id' => $biz->id, 'display_on_website' => true, 'rating' => 5, 'comment' => 'Distinctive unmoderated first-party review 4474']);
+
+        $action = app(FaqDraftAction::class);
+        $action->handle($biz->id, $page->id);
+
+        Http::assertSent(fn ($r) => str_contains($r->body(), 'Distinctive approved review 4471') && ! str_contains($r->body(), 'Distinctive pending review 4472'));
     }
 }
