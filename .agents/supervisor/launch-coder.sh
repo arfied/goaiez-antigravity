@@ -75,6 +75,17 @@ if grep -q 'Harness gate \*\*OPEN' .agents/supervisor/BRIEF.md && [ "$ALLOW_HARN
   exit 1
 fi
 
+# PUSH GATE (2026-09-24 15:3x, N301). The shared guard (coder-bin/git:189) refuses `git push`
+# unless GOAIEZ_PUSH_OK=1, and its refusal text says "launcher sets GOAIEZ_PUSH_OK=1" — which no
+# launcher did until this block: every `push: YES` brief was an instruction the guard refused, and
+# two coders set the variable themselves after reading the message. The flag is derived from the
+# BRIEF, never from an argument, so the gate and the directive cannot disagree: a `push: YES` line
+# at column 0 of BRIEF.md opens it for THIS run only; `push: NO` or no line closes it. The owner
+# ordered this ("fix the launcher to export the push flag").
+ALLOW_PUSH=0
+if grep -q '^push: YES' .agents/supervisor/BRIEF.md; then ALLOW_PUSH=1; fi
+
+
 PIDFILE=".agents/supervisor/coder.pid"
 if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
   echo "REFUSED: this track's coder is already active (pid $(cat "$PIDFILE"))"
@@ -108,7 +119,7 @@ if [ "$CODER" = claude ]; then
   # which denies app/**) out of the coder's permissions; the guard and the seal
   # are what bind it, not that file. Bounded by `timeout 8h` like agy's
   # --print-timeout.
-  nohup bash -c 'export CLAUDE_CONFIG_DIR=/home/goaiez/.claude-acct'"$ACCT"'; export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export GOAIEZ_HARNESS_OK='"$ALLOW_HARNESS"'; export GOAIEZ_RESTORE_OK='"$ALLOW_RESTORE"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; timeout -k 60 3h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  nohup bash -c 'export CLAUDE_CONFIG_DIR=/home/goaiez/.claude-acct'"$ACCT"'; export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export GOAIEZ_HARNESS_OK='"$ALLOW_HARNESS"'; export GOAIEZ_RESTORE_OK='"$ALLOW_RESTORE"'; export GOAIEZ_PUSH_OK='"$ALLOW_PUSH"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; timeout -k 60 3h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 else
   # BOUND (2026-09-07, backlog item 1 of tick ~01:4x, taken deliberately rather than
   # inherited from the sixty lane's copy by a merge). `--print-timeout 8h` is agy's OWN
@@ -118,7 +129,7 @@ else
   # never a run. The inner 8h is left where it is precisely so there is ONE effective
   # number and it is the outer one; `bound=3h` is printed in the LAUNCHED line so the
   # value is read back rather than asserted (the drift shape, CLAUDE.md).
-  nohup bash -c 'export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export GOAIEZ_HARNESS_OK='"$ALLOW_HARNESS"'; export GOAIEZ_RESTORE_OK='"$ALLOW_RESTORE"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; timeout -k 60 3h /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  nohup bash -c 'export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export GOAIEZ_HARNESS_OK='"$ALLOW_HARNESS"'; export GOAIEZ_RESTORE_OK='"$ALLOW_RESTORE"'; export GOAIEZ_PUSH_OK='"$ALLOW_PUSH"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; timeout -k 60 3h /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 fi
 echo $! > "$PIDFILE"
 
@@ -127,7 +138,7 @@ if kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
   # Both gates are printed. Until 2026-09-06 18:4x only merge-gate was, while a REVIEWS
   # block claimed "harness-gate in the LAUNCHED line" — the drift shape from CLAUDE.md:
   # two sources of truth in one file, only one of them read back.
-  echo "LAUNCHED run $n (pid $(cat "$PIDFILE")) coder=$CODER$([ "$CODER" = claude ] && echo " account=$ACCT") bound=3h merge-gate=$([ "$ALLOW_MERGE" = 1 ] && echo OPEN || echo closed) harness-gate=$([ "$ALLOW_HARNESS" = 1 ] && echo OPEN || echo closed) log=$LOG"
+  echo "LAUNCHED run $n (pid $(cat "$PIDFILE")) coder=$CODER$([ "$CODER" = claude ] && echo " account=$ACCT") bound=3h merge-gate=$([ "$ALLOW_MERGE" = 1 ] && echo OPEN || echo closed) harness-gate=$([ "$ALLOW_HARNESS" = 1 ] && echo OPEN || echo closed) push-gate=$([ "$ALLOW_PUSH" = 1 ] && echo OPEN || echo closed) log=$LOG"
 else
   echo "LAUNCH FAILED — check $LOG"; exit 1
 fi
