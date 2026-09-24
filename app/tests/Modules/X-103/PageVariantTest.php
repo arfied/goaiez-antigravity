@@ -2,13 +2,15 @@
 
 namespace Tests\Modules\X103;
 
-use App\Modules\User\Models\User;
-use App\Modules\User\Models\UserRole;
+use App\Enums\UserRole;
+use App\Models\User;
+use App\Modules\X103\Actions\PageVariantResultAction;
 use App\Modules\X103\Actions\PageVariantStartAction;
 use App\Modules\X103\Actions\PageVariantStopAction;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVariant;
 use App\Modules\X103\Models\PageVersion;
+use App\Modules\X108\Models\Waitlist;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
@@ -17,15 +19,17 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\TestCase;
-use Tests\Traits\RefreshesTenantDatabase;
+use Tests\Concerns\RefreshesTenantDatabase;
 
 class PageVariantTest extends TestCase
 {
     use RefreshesTenantDatabase;
-
     private $biz;
+
     private $page;
+
     private $zone;
+
     private $deploy;
 
     protected function setUp(): void
@@ -79,14 +83,14 @@ class PageVariantTest extends TestCase
 
         $row = PageVariant::find($res['variant_id']);
         $this->assertEquals('running', $row->status);
-        
+
         $this->assertEquals(2, Deployment::where('page_id', $this->page->id)->where('status', 'deployed')->count());
 
-        $controlFile = Storage::disk('local')->get("edge_deployments/{$this->deploy['deploy_hash']}.html");
+        $controlFile = Storage::disk('local')->get("sites/{$this->deploy['deploy_hash']}.html");
         $this->assertStringContainsString('4571', $controlFile);
         $this->assertStringNotContainsString('4572', $controlFile);
 
-        $variantFile = Storage::disk('local')->get("edge_deployments/{$res['variant_hash']}.html");
+        $variantFile = Storage::disk('local')->get("sites/{$res['variant_hash']}.html");
         $this->assertStringContainsString('4572', $variantFile);
         $this->assertStringNotContainsString('4571', $variantFile);
 
@@ -142,26 +146,28 @@ class PageVariantTest extends TestCase
         Deployment::where('deploy_hash', $variantHash)->update(['served_count' => 130]);
 
         for ($i = 0; $i < 2; $i++) {
-            \App\Modules\X108\Models\Waitlist::create([
+            Waitlist::create([
                 'business_id' => $this->biz->id,
                 'deploy_hash' => $controlHash,
-                'name' => 'Test',
-                'email' => 'test@example.com',
-                'phone' => '1234567890',
+                'customer_name' => 'Test',
+                'customer_phone' => '+15125567731',
+                'service_name' => 'Haircut',
+                'preferred_date' => now()->addDays(2)->toDateString(),
             ]);
         }
 
         for ($i = 0; $i < 3; $i++) {
-            \App\Modules\X108\Models\Waitlist::create([
+            Waitlist::create([
                 'business_id' => $this->biz->id,
                 'deploy_hash' => $variantHash,
-                'name' => 'Test',
-                'email' => 'test@example.com',
-                'phone' => '1234567890',
+                'customer_name' => 'Test',
+                'customer_phone' => '+15125567731',
+                'service_name' => 'Haircut',
+                'preferred_date' => now()->addDays(2)->toDateString(),
             ]);
         }
 
-        $resultAction = app(\App\Modules\X103\Actions\PageVariantResultAction::class);
+        $resultAction = app(PageVariantResultAction::class);
         $result = $resultAction->handle($this->biz->id, $row->id);
 
         $this->assertEquals('Measured', $result['control']->state->value);

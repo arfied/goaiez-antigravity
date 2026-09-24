@@ -34,10 +34,12 @@ class PageVariantResultAction
 
             if ($served >= SiteVitals::MINIMUM_SAMPLES) {
                 $rate = intdiv($requests * 10_000, $served);
+
                 return new PageVariantReading($armName, VitalSampleState::Measured, $served, $requests, $rate);
             }
 
             $state = $served === 0 ? VitalSampleState::NoMeasurements : VitalSampleState::InsufficientData;
+
             return new PageVariantReading($armName, $state, $served, $requests, 0);
         };
 

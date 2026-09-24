@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X157\Actions;
 
 use App\Modules\X157\Models\Deployment;
+use Illuminate\Support\Facades\DB;
 
 class DeploymentArmReadAction
 {
@@ -42,7 +43,7 @@ class DeploymentArmReadAction
         // Let's re-read: "the middleware asks X-103 through a NEW action App\Modules\X103\Actions\PageVariantReadAction::runningFor". This applies to middleware.
         // What about `DeploymentArmReadAction::forVariant`?
         // Let me just look up the row using DB::table('page_variants').
-        $row = \Illuminate\Support\Facades\DB::table('page_variants')
+        $row = DB::table('page_variants')
             ->where('id', $pageVariantId)
             ->where('business_id', $businessId)
             ->first();

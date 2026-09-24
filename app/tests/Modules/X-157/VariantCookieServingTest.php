@@ -2,28 +2,28 @@
 
 namespace Tests\Modules\X157;
 
-use App\Modules\User\Models\User;
-use App\Modules\User\Models\UserRole;
+use App\Enums\UserRole;
+use App\Models\User;
 use App\Modules\X103\Actions\PageVariantStartAction;
 use App\Modules\X103\Actions\PageVariantStopAction;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
-use App\Modules\X157\Contracts\DnsResolver;
-use App\Modules\X157\Models\CustomDomainRequest;
+use App\Modules\X157\Domain\DnsResolver;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\TestCase;
-use Tests\Traits\RefreshesTenantDatabase;
+use Tests\Concerns\RefreshesTenantDatabase;
 
 class VariantCookieServingTest extends TestCase
 {
     use RefreshesTenantDatabase;
-
     private $biz;
+
     private $page;
+
     private $variantId;
 
     protected function setUp(): void
@@ -36,6 +36,7 @@ class VariantCookieServingTest extends TestCase
                 if ($domain === 'acme-roofing.test') {
                     return parse_url(config('app.url'), PHP_URL_HOST);
                 }
+
                 return null;
             }
         });
@@ -91,8 +92,9 @@ class VariantCookieServingTest extends TestCase
 
     public function test_variant_cookies(): void
     {
+        \App\Support\Tenancy::forgetAll();
         $id = $this->variantId;
-        
+
         $resVariant = $this->withCookie('gz_arm_'.$id, 'variant')->get('http://acme-roofing.test/');
         $resVariant->assertSee('4572')->assertDontSee('4571');
 
@@ -103,10 +105,21 @@ class VariantCookieServingTest extends TestCase
         $resGpc->assertSee('4571')->assertDontSee('4572');
         $resGpc->assertCookieMissing('gz_arm_'.$id);
 
+        unset($this->defaultHeaders['Sec-GPC']);
+        if (method_exists($this, 'withoutHeader')) {
+            $this->withoutHeader('Sec-GPC');
+        }
+        unset($this->defaultCookies['gz_arm_'.$id]);
         $resNoCookie = $this->get('http://acme-roofing.test/');
         $resNoCookie->assertCookie('gz_arm_'.$id);
-        
-        $chosen = $resNoCookie->headers->getCookies()[0]->getValue();
+
+        try {
+            $resNoCookie->assertCookie('gz_arm_'.$id, 'control');
+            $chosen = 'control';
+        } catch (\PHPUnit\Framework\ExpectationFailedException $e) {
+            $resNoCookie->assertCookie('gz_arm_'.$id, 'variant');
+            $chosen = 'variant';
+        }
         $this->assertTrue(in_array($chosen, ['control', 'variant'], true));
         if ($chosen === 'control') {
             $resNoCookie->assertSee('4571')->assertDontSee('4572');

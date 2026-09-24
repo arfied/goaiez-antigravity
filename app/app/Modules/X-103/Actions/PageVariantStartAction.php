@@ -9,13 +9,13 @@ use App\Modules\X103\Models\PageVariant;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class PageVariantStartAction
 {
     public function __construct(
         private EdgeDeployAction $edgeDeployAction,
-        private PageVersionAction $pageVersionAction,
         private LatestDeploymentForPageAction $latestDeploymentForPageAction
     ) {}
 
@@ -68,7 +68,7 @@ class PageVariantStartAction
             return ['status' => 'refused', 'reason' => 'same_as_control'];
         }
 
-        $businessName = \Illuminate\Support\Facades\DB::table('businesses')->where('id', $businessId)->value('name');
+        $businessName = DB::table('businesses')->where('id', $businessId)->value('name');
         if ($variantHeadline === $businessName) {
             return ['status' => 'refused', 'reason' => 'brand_name'];
         }
@@ -122,6 +122,7 @@ class PageVariantStartAction
 
         if (($deployResult['status'] ?? '') !== 'deployed') {
             PageVariant::where('id', $variantId)->update(['status' => 'stopped']);
+
             // If it is just a refusal and didn't throw, we can either return refusal or throw.
             // The spec says "on a deploy exception, mark the row stopped and rethrow", not sure if it means result or Exception.
             // But we should return a failed start if it wasn't deployed.
