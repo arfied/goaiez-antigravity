@@ -1120,7 +1120,7 @@ class X103Test extends TestCase
 
         Review::factory()->fromGoogle()->approved()->create(['location_id' => $location->id, 'display_on_website' => true, 'rating' => 5, 'comment' => 'Distinctive approved review 4471', 'reviewer_name' => 'Alice']);
         Review::factory()->fromGoogle()->create(['location_id' => $location->id, 'display_on_website' => true, 'rating' => 5, 'comment' => 'Distinctive pending review 4472']);
-        Review::factory()->fromGoogle()->approved()->create(['location_id' => $location->id, 'display_on_website' => true, 'rating' => 5, 'flagged_at' => now(), 'comment' => 'Distinctive flagged review 4473']);
+        Review::factory()->approved()->create(['location_id' => $location->id, 'display_on_website' => true, 'rating' => 5, 'moderation_flags' => ['reviewed' => true], 'flagged_at' => now(), 'comment' => 'Distinctive flagged review 4473']);
         Review::factory()->approved()->create(['location_id' => $location->id, 'display_on_website' => true, 'rating' => 5, 'comment' => 'Distinctive unmoderated first-party review 4474']);
 
         app(SiteDraftAction::class)->handle($biz->id, $location->id);
@@ -1160,7 +1160,7 @@ class X103Test extends TestCase
 
         Review::factory()->fromGoogle()->approved()->create(['business_id' => $biz->id, 'display_on_website' => true, 'rating' => 5, 'comment' => 'Distinctive approved review 4471', 'reviewer_name' => 'Alice']);
         Review::factory()->fromGoogle()->create(['business_id' => $biz->id, 'display_on_website' => true, 'rating' => 5, 'comment' => 'Distinctive pending review 4472']);
-        Review::factory()->fromGoogle()->approved()->create(['business_id' => $biz->id, 'display_on_website' => true, 'rating' => 5, 'flagged_at' => now(), 'comment' => 'Distinctive flagged review 4473']);
+        Review::factory()->approved()->create(['business_id' => $biz->id, 'display_on_website' => true, 'rating' => 5, 'moderation_flags' => ['reviewed' => true], 'flagged_at' => now(), 'comment' => 'Distinctive flagged review 4473']);
         Review::factory()->approved()->create(['business_id' => $biz->id, 'display_on_website' => true, 'rating' => 5, 'comment' => 'Distinctive unmoderated first-party review 4474']);
 
         $action = app(FaqDraftAction::class);
