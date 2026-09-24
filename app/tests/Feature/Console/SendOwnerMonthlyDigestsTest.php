@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Console;
 
 use App\Enums\UserRole;
+use App\Models\Business;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Modules\X103\Models\Page;
@@ -52,6 +53,9 @@ class SendOwnerMonthlyDigestsTest extends TestCase
             'owner_monthly_digest_sent_at' => null,
         ]);
         Subscription::where('business_id', $biz->id)->delete();
+        // provisionTenant() persists neither created_at nor the cursor (tests/TestCase.php:177-200),
+        // and the command re-reads the row, so the age must be in the database, not on the model.
+        Business::query()->whereKey($biz->id)->update(['created_at' => now()->subDays(60)]);
 
         $page = Page::create(['business_id' => $biz->id, 'slug' => 'test-1', 'title' => 'Distinctive page 4471']);
         PageVersion::create([
@@ -120,6 +124,9 @@ class SendOwnerMonthlyDigestsTest extends TestCase
             'owner_monthly_digest_sent_at' => null,
         ]);
         Subscription::where('business_id', $biz->id)->delete();
+        // provisionTenant() persists neither created_at nor the cursor (tests/TestCase.php:177-200),
+        // and the command re-reads the row, so the age must be in the database, not on the model.
+        Business::query()->whereKey($biz->id)->update(['created_at' => now()->subDays(60)]);
 
         $page1 = Page::create(['business_id' => $biz->id, 'slug' => 'test-1', 'title' => 'Distinctive page 4471']);
         $page2 = Page::create(['business_id' => $biz->id, 'slug' => 'test-2', 'title' => 'Distinctive page 4721']);
