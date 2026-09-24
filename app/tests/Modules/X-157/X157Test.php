@@ -18,6 +18,7 @@ use App\Modules\X157\Actions\CustomDomainVerifyAction;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
 use App\Modules\X157\Actions\EdgeRollbackAction;
+use App\Modules\X157\Actions\PlatformSiteAddressAction;
 use App\Modules\X157\Actions\SitemapRenderAction;
 use App\Modules\X157\Domain\DnsResolver;
 use App\Modules\X157\Events\DeployCompleted;
@@ -2537,6 +2538,7 @@ class X157Test extends TestCase
         $form = FormDefinition::create([
             'business_id' => $biz->id,
             'form_name' => 'Lead Form',
+            'form_name' => 'Lead Form',
             'slug' => 'lead',
             'steps' => [['required' => ['name', 'phone']]],
             'schema' => [],
@@ -3115,5 +3117,150 @@ class X157Test extends TestCase
 
         $this->expectException(HttpException::class);
         app(EdgeRollbackAction::class)->handle($biz->id, $variantDeploy['deployment_id']);
+    }
+
+    public function test_on_a_verified_custom_domain_the_deployed_forms_post_to_the_same_host_and_the_post_reaches_the_capture_route(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-roofing.test', true);
+
+        DB::table('custom_domain_requests')->where('domain', 'acme-roofing.test')->delete();
+        DB::table('custom_domain_requests')->insert([
+            'business_id' => $biz->id,
+            'domain' => 'acme-roofing.test',
+            'status' => 'verified',
+            'verified_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Lead Form',
+            'slug' => 'lead',
+            'steps' => [['required' => ['name']]],
+            'schema' => [],
+            'honeypot_field' => 'website_url',
+        ]);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $commit = app(SitePublishAction::class)->handle($biz->id, $page->id, [
+            ['type' => 'form_capture'],
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commit['commit_id'],
+            businessName: $biz->name
+        );
+
+        $html = Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
+        $this->assertStringContainsString('action="/sites/', $html);
+        $this->assertStringNotContainsString('action="http', $html);
+
+        $res = $this->post('http://acme-roofing.test/sites/'.$biz->id.'/'.$deploy['deploy_hash'].'/forms/'.$form->id, [
+            'name' => 'Distinctive lead 4621',
+        ]);
+        $res->assertStatus(201);
+        $this->assertSame('captured', $res->json('status'));
+
+        $res2 = $this->get('http://acme-roofing.test/');
+        $res2->assertOk();
+
+        DB::table('custom_domain_requests')->where('domain', 'acme-roofing.test')->delete();
+    }
+
+    public function test_a_verified_custom_domain_is_the_canonical_host_of_every_deployed_page(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-roofing.test', true);
+
+        DB::table('custom_domain_requests')->where('domain', 'acme-roofing.test')->delete();
+        DB::table('custom_domain_requests')->insert([
+            'business_id' => $biz->id,
+            'domain' => 'acme-roofing.test',
+            'status' => 'verified',
+            'verified_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Lead Form',
+            'slug' => 'lead',
+            'steps' => [['required' => ['name']]],
+            'schema' => [],
+            'honeypot_field' => 'website_url',
+        ]);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $commit = app(SitePublishAction::class)->handle($biz->id, $page->id, [
+            ['type' => 'form_capture'],
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commit['commit_id'],
+            businessName: $biz->name
+        );
+
+        $html = Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
+        $this->assertStringContainsString('<link rel="canonical" href="https://acme-roofing.test/', $html);
+        $this->assertStringContainsString('"url":"https:\/\/acme-roofing.test\/', $html);
+
+        DB::table('custom_domain_requests')->where('domain', 'acme-roofing.test')->delete();
+
+        $biz2 = TestCase::provisionTenant(['name' => 'Second Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz2->id}'");
+        $zone2 = app(PlatformSiteAddressAction::class)->handle($biz2->id);
+
+        $page2 = Page::create([
+            'business_id' => $biz2->id,
+            'title' => 'Home 2',
+            'slug' => 'home',
+        ]);
+
+        $commit2 = app(SitePublishAction::class)->handle($biz2->id, $page2->id, [
+            ['type' => 'form_capture'],
+        ]);
+
+        $deploy2 = $this->deployAction->handle(
+            businessId: $biz2->id,
+            edgeZoneId: $zone2->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page2->id,
+            commitId: $commit2['commit_id'],
+            businessName: $biz2->name
+        );
+
+        $appHost = parse_url(config('app.url'), PHP_URL_HOST) ?? 'localhost';
+        $html2 = Storage::disk('local')->get("sites/{$deploy2['deploy_hash']}.html");
+        $this->assertStringContainsString('<link rel="canonical" href="https://'.$appHost.'/', $html2);
     }
 }

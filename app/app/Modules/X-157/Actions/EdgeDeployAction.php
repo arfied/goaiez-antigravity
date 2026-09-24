@@ -12,6 +12,7 @@ use App\Modules\X108\Actions\AppointmentListAction;
 use App\Modules\X155\Actions\FormReadAction;
 use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
+use App\Modules\X157\Models\CustomDomainRequest;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
 use App\Modules\X163\Actions\QuotablePriceAction;
@@ -273,7 +274,7 @@ JS;
                             // No form defined yet: the marker stays so the site law can see the slot, but nothing pretends to be a form.
                             $html .= "<div class=\"form-capture-x155\"></div>\n";
                         } else {
-                            $formActionBase = route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: true);
+                            $formActionBase = route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false);
                             $html .= "<div class=\"form-capture-x155\">\n";
                             $html .= View::make('x-103::site.blocks.form', [
                                 'block' => [
@@ -294,6 +295,8 @@ JS;
                     }
                 }
             }
+            $verified = CustomDomainRequest::withoutGlobalScopes()->where('business_id', $businessId)->where('status', 'verified')->orderByDesc('id')->value('domain');
+            $canonicalHost = $verified !== null && $verified !== '' ? strtolower($verified) : $zone->domain_name;
 
             if ($x176Usable) {
                 $seoResult = app(SeoRenderAction::class)->handle(
@@ -301,7 +304,7 @@ JS;
                     $pageId,
                     $businessName,
                     $commitId,
-                    $zone->domain_name
+                    $canonicalHost
                 );
 
                 $escapedTitle = e($seoResult['title']);
@@ -323,7 +326,7 @@ JS;
                     $pageId,
                     $businessName,
                     $commitId,
-                    $zone->domain_name,
+                    $canonicalHost,
                     productOffers: $productOffers ?: null,
                     videos: $videos ?: null,
                     events: $events ?: null,
@@ -353,7 +356,7 @@ JS;
                         'businessName' => $businessName,
                         'deployHash' => $deployHash,
                         'tenant_storage_url_prefix' => route('x-157.site.media', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false).'/',
-                        'form_action_base' => route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: true),
+                        'form_action_base' => route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false),
                         'tokens' => app(IndustryStartingPoints::class)->forBusiness($businessId),
                     ];
                     $html .= app(SiteBlockRenderer::class)->render($contentBlocks, $context);
@@ -441,7 +444,7 @@ JS;
             Event::dispatch(new DeployCompleted(
                 businessId: $businessId,
                 deploymentId: $deployment->id,
-                domainName: $zone->domain_name,
+                domainName: $canonicalHost,
                 deployHash: $deployHash
             ));
 

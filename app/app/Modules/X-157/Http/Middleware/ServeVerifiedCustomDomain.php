@@ -32,6 +32,10 @@ class ServeVerifiedCustomDomain
 
         Tenancy::set($row->business_id);
 
+        if (! $request->isMethod('GET') && ! $request->isMethod('HEAD')) {
+            return $next($request); // a form or booking POST on the custom host reaches the platform routes, which are host-agnostic
+        }
+
         $action = app(ServeDeploymentAction::class);
         $path = trim($request->path(), '/');
 
