@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\X103\Ui;
 
+use App\Enums\UserRole;
 use App\Models\Location;
+use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X103\Actions\SiteBuildRunAction;
+use App\Modules\X103\Actions\SiteEditProposeAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\SiteRecommendation;
@@ -38,6 +41,8 @@ class SiteBuild extends Component
     public ?string $dnsStatus = null;
 
     public ?string $error = null;
+
+    public ?string $proposed = null;
 
     public function mount()
     {
@@ -108,6 +113,42 @@ class SiteBuild extends Component
         SiteRecommendation::where('business_id', $this->businessId)
             ->whereKey($id)
             ->update(['status' => 'dismissed']);
+    }
+
+    public function askRecommendation(int $id, SiteEditProposeAction $action, PageReadAction $pages): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->proposed = null;
+
+        $recommendation = SiteRecommendation::where('business_id', $this->businessId)->whereKey($id)->first();
+        if ($recommendation === null) {
+            return;
+        }
+
+        $home = $pages->homeFor($this->businessId) ?? Page::where('business_id', $this->businessId)->orderBy('id')->first();
+        if ($home === null) {
+            $this->error = 'No page drafted yet. Run the build first, then ask again.';
+
+            return;
+        }
+
+        try {
+            $res = $action->handle(
+                businessId: $this->businessId,
+                pageId: (int) $home->id,
+                request: (string) $recommendation->text,
+                continue: isset($home->draft_meta['pending_edit'])
+            );
+            if ($res['status'] === 'refused') {
+                $this->error = 'The AI did not propose anything for this ('.$res['reason'].').';
+
+                return;
+            }
+            $this->proposed = "Proposed on your {$home->title} page — {$res['blocks']} blocks with {$res['model']}. Review it on Pages, then Apply or Discard.";
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
     }
 
     public function render()

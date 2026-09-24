@@ -141,6 +141,9 @@
             <!-- STEP 5: This week's suggestions -->
             <div class="bg-surface overflow-hidden shadow-sm sm:rounded-lg p-6 border border-line">
                 <h3 class="text-lg font-medium text-ink">5. This week's suggestions</h3>
+                @if($proposed)
+                    <p class="mt-2 text-sm text-ink">{{ $proposed }} <a href="{{ route('x-103.pages') }}" class="underline">Open Pages</a></p>
+                @endif
                 @if($recommendations->isEmpty())
                     <p class="mt-1 text-sm text-ink-2">Nothing to suggest this week — the site is reading what the platform measures.</p>
                 @else
@@ -148,9 +151,10 @@
                         @foreach($recommendations as $r)
                             <li class="py-4 flex items-center justify-between">
                                 <p class="text-sm text-ink">{{ $r->text }}</p>
-                                <button wire:click="dismissRecommendation({{ $r->id }})" class="btn btn-secondary text-sm">
-                                    Dismiss
-                                </button>
+                                <div class="flex gap-2">
+                                    <button wire:click="askRecommendation({{ $r->id }})" class="btn btn-primary text-sm">Ask the AI to do it</button>
+                                    <button wire:click="dismissRecommendation({{ $r->id }})" class="btn btn-secondary text-sm">Dismiss</button>
+                                </div>
                             </li>
                         @endforeach
                     </ul>

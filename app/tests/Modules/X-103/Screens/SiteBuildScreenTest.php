@@ -217,4 +217,79 @@ class SiteBuildScreenTest extends TestCase
             ->assertOk()
             ->assertDontSee('Distinctive suggestion 4471');
     }
+
+    public function test_ask_the_ai_to_do_it_proposes_on_the_home_page_and_points_at_pages(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response(
+                json_encode([
+                    'choices' => [
+                        [
+                            'message' => [
+                                'content' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive proposed headline 4472']], 'explanation' => 'Did it.']),
+                            ],
+                        ],
+                    ],
+                    'model' => 'gpt-4o-mini-fake',
+                ]),
+                200
+            ),
+        ]);
+
+        $page = Page::create(['business_id' => $biz->id, 'slug' => 'home', 'title' => 'Home', 'draft_blocks' => [['type' => 'hero', 'headline' => 'Old headline']], 'is_published' => false]);
+        $rec = SiteRecommendation::create([
+            'business_id' => $biz->id,
+            'code' => 'hours_missing',
+            'text' => 'Distinctive suggestion 4471',
+            'status' => 'pending',
+            'computed_at' => now(),
+        ]);
+
+        Livewire::actingAs($owner)->test(SiteBuild::class)
+            ->call('askRecommendation', $rec->id)
+            ->assertSet('proposed', fn ($s) => str_starts_with((string) $s, 'Proposed on your Home page'));
+
+        Http::assertSent(fn ($req) => str_contains((string) $req->body(), 'Distinctive suggestion 4471'));
+
+        $page->refresh();
+        $this->assertSame('Old headline', $page->draft_blocks[0]['headline']);
+        $this->assertSame('Distinctive proposed headline 4472', $page->draft_meta['pending_edit']['blocks'][0]['headline']);
+
+        $this->actingAs($owner)->get(route('x-103.pages'))->assertSee('Distinctive proposed headline 4472');
+    }
+
+    public function test_ask_the_ai_with_no_page_says_so_and_a_manager_cannot_ask(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $rec = SiteRecommendation::create([
+            'business_id' => $biz->id,
+            'code' => 'hours_missing',
+            'text' => 'Distinctive suggestion 4471',
+            'status' => 'pending',
+            'computed_at' => now(),
+        ]);
+
+        Http::fake();
+
+        Livewire::actingAs($owner)->test(SiteBuild::class)
+            ->call('askRecommendation', $rec->id)
+            ->assertSet('error', 'No page drafted yet. Run the build first, then ask again.');
+
+        Http::assertNothingSent();
+
+        $manager = User::factory()->create(['role' => UserRole::Manager]);
+
+        Livewire::actingAs($manager)->test(SiteBuild::class)
+            ->call('askRecommendation', $rec->id)
+            ->assertForbidden();
+    }
 }
