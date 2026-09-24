@@ -10,6 +10,7 @@ use App\Enums\PlacesSkuFamily;
 use App\Exceptions\PlacesBudgetExhausted;
 use App\Exceptions\PlacesFieldNotPriced;
 use App\Exceptions\PlacesRequestFailed;
+use App\Modules\X206\Actions\CredentialFetchAction;
 use App\Services\Config\DefaultsRegistry;
 use App\Support\PlacesFieldTiers;
 use App\Support\PlatformCredentials;
@@ -38,10 +39,7 @@ use Illuminate\Support\Facades\Http;
  *
  * WHY THIS DOES NOT EXTEND ProviderClient. That base class exists to guarantee
  * every provider call carries a tenant's OAuth token from the vault, and takes a
- * Business to do it. Places has no tenant and no OAuth: one platform API key, on
- * a path that runs before signup. Inheriting it would mean inventing a Business
- * to satisfy a constructor, which is how a tenant-less path acquires a fake
- * tenant.
+ * Business to do it. Since 2026-09-23 a tenant may store their own key (X-206 google_places); it is preferred under tenancy, the platform key remains the default.
  *
  * WHAT IT KEEPS FROM ProviderClient, deliberately: Laravel's HTTP client so
  * Http::fake() and preventStrayRequests() work; VendorLog so the call shape is
@@ -61,6 +59,8 @@ final class GooglePlacesClient implements PlacesClient
      * from the one that is read is worse than no guard: it reads as considered.
      */
     private const string CREDENTIAL = 'google_places_key';
+
+    public const string TENANT_SERVICE = 'google_places';
 
     /**
      * `29` §6.2: "cache by place_id 24h (repeat lookups free)".
@@ -445,7 +445,7 @@ final class GooglePlacesClient implements PlacesClient
      */
     private function isConfigured(string $method): bool
     {
-        if (PlatformCredentials::has(self::CREDENTIAL)) {
+        if ($this->keyInUse() === 'tenant' || PlatformCredentials::has(self::CREDENTIAL)) {
             return true;
         }
 
@@ -532,6 +532,32 @@ final class GooglePlacesClient implements PlacesClient
         return $response;
     }
 
+    public function keyInUse(): string
+    {
+        $businessId = Tenancy::id();
+        if ($businessId !== null) {
+            $own = app(CredentialFetchAction::class)->handle((int) $businessId, self::TENANT_SERVICE);
+            if (is_string($own) && trim($own) !== '') {
+                return 'tenant';
+            }
+        }
+
+        return 'platform';
+    }
+
+    private function apiKey(): string
+    {
+        $businessId = Tenancy::id();
+        if ($businessId !== null) {
+            $own = app(CredentialFetchAction::class)->handle((int) $businessId, self::TENANT_SERVICE);
+            if (is_string($own) && trim($own) !== '') {
+                return $own;
+            }
+        }
+
+        return PlatformCredentials::get(self::CREDENTIAL);
+    }
+
     /**
      * The key never reaches a call site — PlatformCredentials is the seam CFG1
      * replaces the inside of (doc 38 D-149, BUILD-PLAN §4.4).
@@ -545,7 +571,7 @@ final class GooglePlacesClient implements PlacesClient
     private function request(string $fieldMask): PendingRequest
     {
         return Http::withHeaders([
-            'X-Goog-Api-Key' => PlatformCredentials::get(self::CREDENTIAL),
+            'X-Goog-Api-Key' => $this->apiKey(),
             'X-Goog-FieldMask' => $fieldMask,
         ])
             ->timeout((int) config('places.timeout', 8))

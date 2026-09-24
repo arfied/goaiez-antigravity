@@ -65,6 +65,7 @@ use App\Livewire\Account\Knowledge as AccountKnowledge;
 use App\Livewire\Account\Locations as AccountLocations;
 use App\Livewire\Account\Messages as AccountMessages;
 use App\Livewire\Account\PixelInstall as AccountPixelInstall;
+use App\Livewire\Account\PlacesKey as AccountPlacesKey;
 use App\Livewire\Account\Plan as AccountPlan;
 use App\Livewire\Account\ReplyQueue as AccountReplyQueue;
 // Aliased for the reason `Support` below is: `App\Services\Actuation\SiteChanges`
@@ -2117,6 +2118,10 @@ Route::get('/s/{key}.js', [T3InjectionController::class, 'module'])
 Route::middleware('auth')
     ->get('/account/tracking', AccountPixelInstall::class)
     ->name('account.pixel-install');
+
+Route::middleware('auth')
+    ->get('/account/maps-key', AccountPlacesKey::class)
+    ->name('account.places-key');
 
 /*
 |--------------------------------------------------------------------------
