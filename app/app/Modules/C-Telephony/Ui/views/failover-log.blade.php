@@ -8,7 +8,8 @@
                 @foreach($receipts as $r)
                     <li class="py-2">
                         <span class="font-mono text-sm">{{ $r->carrier_name }}</span>
-                        <span class="text-xs text-gray-500">#{{ $r->message_id }}</span>
+                        <span class="text-xs text-gray-500">#{{ $r->id }}</span>
+                        <span class="text-xs">[{{ $r->status }}]</span>
                     </li>
                 @endforeach
             </ul>

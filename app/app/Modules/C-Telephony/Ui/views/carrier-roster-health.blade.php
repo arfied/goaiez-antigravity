@@ -13,7 +13,9 @@
             <input type="text" wire:model="carrierName" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Carrier Name">
             <select wire:model="status" class="border rounded p-2 text-ink flex-1 bg-surface">
                 <option value="healthy">healthy</option>
-                <option value="unhealthy">unhealthy</option>
+                <option value="cold">cold</option>
+                <option value="degraded">degraded</option>
+                <option value="down">down</option>
             </select>
             <button type="submit" class="bg-surface text-ink border rounded p-2">Submit</button>
         </form>
