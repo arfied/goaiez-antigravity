@@ -6,6 +6,7 @@ namespace App\Services\Industry;
 
 use App\Enums\IndustryFamily;
 use App\Models\Business;
+use App\Models\BusinessFact;
 use App\Services\Facts\BusinessFactKey;
 use App\Services\Facts\BusinessFacts;
 
@@ -20,11 +21,12 @@ use App\Services\Facts\BusinessFacts;
  */
 final class IndustryResolver
 {
-    public function __construct(private readonly BusinessFacts $facts) {}
+
 
     public function for(int $businessId): array
     {
-        $owner = IndustryFamily::tryFrom((string) ($this->facts->get($businessId, BusinessFactKey::INDUSTRY) ?? ''));
+        $ownerRaw = BusinessFact::where('business_id', $businessId)->whereNull('location_id')->where('key', BusinessFactKey::INDUSTRY)->value('value');
+        $owner = IndustryFamily::tryFrom((string) ($ownerRaw ?? ''));
         if ($owner !== null) {
             return ['family' => $owner, 'source' => 'owner'];
         }

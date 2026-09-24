@@ -55,7 +55,12 @@
                 <p class="mt-1 text-sm text-ink-2">
                     Starting point: 
                     @if($industry['family'] !== null)
-                        {{ $industry['family']->label() }} — {{ $industry['source'] === 'owner' ? 'you chose it' : 'from what Google says about you' }} · @if($unansweredQuestions > 0){{ $unansweredQuestions }} industry {{ $unansweredQuestions === 1 ? 'question' : 'questions' }} still unanswered — <a href="{{ route('account.facts') }}" class="underline">answer them</a> and the next draft uses them@else every industry question answered@endif
+                        {{ $industry['family']->label() }} — {{ $industry['source'] === 'owner' ? 'you chose it' : 'from what Google says about you' }} · 
+                        @if($unansweredQuestions > 0)
+                            {{ $unansweredQuestions }} industry {{ $unansweredQuestions === 1 ? 'question' : 'questions' }} still unanswered — <a href="{{ route('account.facts') }}" class="underline">answer them</a> and the next draft uses them
+                        @else
+                            every industry question answered
+                        @endif
                     @else 
                         the general one — Google gave us nothing to go on; <a href="{{ route('account.facts') }}" class="underline">pick your industry</a> and the draft follows it
                     @endif

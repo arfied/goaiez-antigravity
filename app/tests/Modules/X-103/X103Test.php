@@ -2062,7 +2062,8 @@ class X103Test extends TestCase
         }
         $this->assertTrue($hasParking);
 
-        $html = \App\Modules\X103\Ui\SiteBlockRenderer::render($contactBlock, 'a');
+        $renderer = new SiteBlockRenderer;
+        $html = $renderer->render([$contactBlock], []);
         $this->assertStringContainsString('Parking: Distinctive parking 4593', $html);
     }
 
@@ -2085,12 +2086,14 @@ class X103Test extends TestCase
         ]);
 
         Http::fake([
-            'api.anthropic.com/v1/messages' => Http::response([
+            '*' => Http::response([
                 'id' => 'msg_123',
                 'role' => 'assistant',
                 'content' => [['type' => 'text', 'text' => 'A beautifully rewritten text.']],
-                'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                'usage' => ['input_tokens' => 10, 'output_tokens' => 10, 'prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
                 'model' => 'claude-3-haiku',
+                'object' => 'chat.completion',
+                'choices' => [['message' => ['content' => 'A beautifully rewritten text.']]],
             ], 200),
         ]);
 

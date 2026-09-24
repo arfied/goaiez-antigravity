@@ -109,7 +109,7 @@ class FactsScreenTest extends TestCase
             ->set('facts.industry', 'trades')
             ->call('save')
             ->assertSeeHtml('industry.emergency_callouts')
-            ->set('facts.industry.emergency_callouts', 'Distinctive 24/7 4591')
+            ->set('facts', ['industry' => 'trades', 'industry.emergency_callouts' => 'Distinctive 24/7 4591'])
             ->call('save');
 
         $this->assertDatabaseHas('business_facts', [
