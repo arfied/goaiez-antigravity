@@ -2139,6 +2139,12 @@ final class DefaultsManifest
                 'description' => 'Whether the weekly wins digest is emailed to account holders at all (automation #109, `16` §12). On by default — every send is account-holder email through PlatformMailer, needing no consent record. Turn it off to stop the whole sweep without a deploy; no week is lost, because the cursor moves only on a delivery and the next digest widens to cover the gap.',
             ],
 
+            'owner_digest.monthly_enabled' => [
+                'seed' => true,
+                'group' => 'Trust',
+                'description' => 'Whether the monthly "what your website did" email is sent to account holders at all. On by default — account-holder email through PlatformMailer, no consent record needed. Off stops the sweep without a deploy; the cursor moves only on a delivery, so the next email widens to cover the gap.',
+            ],
+
             /*
              * The domain every platform email is sent from (5500).
              *

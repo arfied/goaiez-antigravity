@@ -311,3 +311,8 @@ Schedule::command('owners:send-weekly-digest')
     ->dailyAt('06:00')
     ->withoutOverlapping(360)
     ->runInBackground();
+
+Schedule::command('owners:send-monthly-site-digest')
+    ->dailyAt('06:20')
+    ->withoutOverlapping(360)
+    ->runInBackground();
