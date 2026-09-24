@@ -1077,4 +1077,20 @@ class X103Test extends TestCase
         $this->assertStringContainsString('name="phone"', $html);
         $this->assertStringContainsString('required', $html);
     }
+
+    public function test_the_draft_always_carries_a_booking_form(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Draft Form Tenant']);
+        Tenancy::set((int) $biz->id);
+        $location = Location::factory()->create(['business_id' => $biz->id]);
+
+        $action = app(SiteDraftAction::class);
+        $action->handle($biz->id, $location->id);
+
+        $home = Page::where('slug', 'home')->first();
+
+        $bookingForm = collect($home->draft_blocks)->firstWhere('type', 'booking_form');
+        $this->assertNotNull($bookingForm);
+        $this->assertEquals('Request a time', $bookingForm['heading']);
+    }
 }

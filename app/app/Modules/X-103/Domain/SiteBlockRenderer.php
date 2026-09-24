@@ -26,7 +26,7 @@ body { background: var(--color-canvas); color: var(--color-ink); font-family: sa
             $type = $block['type'] ?? '';
             if (! in_array($type, [
                 'hero', 'about', 'services', 'reviews_strip',
-                'booking_button', 'contact', 'faq', 'video_embed',
+                'booking_button', 'booking_form', 'contact', 'faq', 'video_embed',
                 'gallery', 'team', 'form',
             ], true)) {
                 continue;
@@ -97,6 +97,9 @@ body { background: var(--color-canvas); color: var(--color-ink); font-family: sa
         }
         if ($type === 'form') {
             return isset($block['fields']) && is_array($block['fields']);
+        }
+        if ($type === 'booking_form') {
+            return $this->hasScalar($block, 'heading');
         }
 
         return false;

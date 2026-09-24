@@ -155,4 +155,22 @@ class SiteBlockRendererTest extends TestCase
 
         Http::assertNothingSent();
     }
+
+    public function test_booking_form_block_renders_a_form_posting_to_the_sites_book_route(): void
+    {
+        $renderer = new SiteBlockRenderer;
+        $html = $renderer->render(
+            [['type' => 'booking_form', 'heading' => 'Distinctive booking 4471', 'service' => 'Haircut']],
+            ['form_action_base' => 'https://site.example/sites/9/deploy_x']
+        );
+
+        $this->assertStringContainsString('action="https://site.example/sites/9/deploy_x/book"', $html);
+        $this->assertStringContainsString('name="preferred_date"', $html);
+        $this->assertStringContainsString('name="phone"', $html);
+        $this->assertStringContainsString('value="Haircut"', $html);
+        $this->assertStringContainsString('Distinctive booking 4471', $html);
+
+        $htmlBad = $renderer->render([['type' => 'booking_form']], []);
+        $this->assertStringNotContainsString('site-block-booking', $htmlBad);
+    }
 }
