@@ -12,6 +12,8 @@ use App\Modules\X103\Actions\PageRestoreVersionAction;
 use App\Modules\X103\Actions\PageUnpublishAction;
 use App\Modules\X103\Actions\SeoDraftAction;
 use App\Modules\X103\Actions\SiteCopyPolishAction;
+use App\Modules\X103\Actions\SiteEditProposeAction;
+use App\Modules\X103\Actions\SitePageProposeAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
@@ -38,6 +40,10 @@ class Pages extends Component
     public ?string $success = null;
 
     public array $renameSlug = [];
+
+    public array $editRequest = [];
+
+    public string $pageRequest = '';
 
     public array $renameTitle = [];
 
@@ -333,6 +339,7 @@ class Pages extends Component
                 unset($blocks[$i]['original_text']);
                 unset($blocks[$i]['source']);
                 unset($blocks[$i]['model']);
+                unset($blocks[$i]['peers']);
                 $restored++;
             }
         }
@@ -341,6 +348,89 @@ class Pages extends Component
             $page->update(['draft_blocks' => $blocks]);
         }
         $this->success = "Restored {$restored} blocks.";
+    }
+
+    public function askEdit(int $pageId, SiteEditProposeAction $action): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
+
+        try {
+            $res = $action->handle(
+                businessId: $this->businessId,
+                pageId: $pageId,
+                request: trim((string) ($this->editRequest[$pageId] ?? '')),
+                continue: isset($page->draft_meta['pending_edit'])
+            );
+            if ($res['status'] === 'refused') {
+                $this->success = $res['reason'];
+            } else {
+                $this->success = "Proposed {$res['blocks']} blocks with {$res['model']} — review it below, then Apply or Discard.";
+                unset($this->editRequest[$pageId]);
+            }
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
+    public function applyEdit(int $pageId): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
+        $pending = $page->draft_meta['pending_edit'] ?? null;
+        if (! $pending) {
+            $this->error = 'Nothing proposed.';
+
+            return;
+        }
+
+        $page->draft_blocks = $pending['blocks'];
+        $meta = $page->draft_meta;
+        unset($meta['pending_edit']);
+        $page->draft_meta = $meta;
+        $page->save();
+
+        $this->success = 'Applied to the draft. Publish when you are ready — History keeps the version before this one.';
+    }
+
+    public function discardEdit(int $pageId): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
+        $meta = $page->draft_meta ?? [];
+        if (isset($meta['pending_edit'])) {
+            unset($meta['pending_edit']);
+            $page->update(['draft_meta' => $meta]);
+            $this->success = 'Discarded.';
+        }
+    }
+
+    public function makePage(SitePageProposeAction $action): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        try {
+            $res = $action->handle($this->businessId, trim($this->pageRequest));
+            if ($res['status'] === 'refused') {
+                $this->success = $res['reason'];
+            } else {
+                $this->success = "Made a draft page \"{$res['title']}\" at /{$res['slug']} with {$res['blocks']} blocks using {$res['model']} — it is in the list above, unpublished. Publish it when you are happy, or delete it.";
+                $this->pageRequest = '';
+            }
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
     }
 
     public function draftFaq(int $pageId, FaqDraftAction $action): void

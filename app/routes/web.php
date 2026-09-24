@@ -59,6 +59,7 @@ use App\Livewire\Account\Credit as AccountCredit;
 use App\Livewire\Account\CustomerProfile as AccountCustomerProfile;
 use App\Livewire\Account\Customers as AccountCustomers;
 use App\Livewire\Account\Facts as AccountFacts;
+use App\Livewire\Account\PlacesKey as AccountPlacesKey;
 use App\Livewire\Account\FollowUps as AccountFollowUps;
 use App\Livewire\Account\Home as AccountHome;
 use App\Livewire\Account\ImportCustomers;
@@ -2126,6 +2127,10 @@ Route::middleware('auth')
 Route::middleware('auth')
     ->get('/account/facts', AccountFacts::class)
     ->name('account.facts');
+
+Route::middleware('auth')
+    ->get('/account/maps-key', AccountPlacesKey::class)
+    ->name('account.places-key');
 /*
 |--------------------------------------------------------------------------
 | Where a tenant's own texting registration has got to (5329, 5420–5439)

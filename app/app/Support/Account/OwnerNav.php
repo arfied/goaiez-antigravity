@@ -159,6 +159,7 @@ final class OwnerNav
             // mint a key for a tenant who predates the collector.
             OwnerNavItem::make('Let us see your website', 'account.pixel-install', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
             OwnerNavItem::make('Your business facts', 'account.facts', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
+            OwnerNavItem::make('Use your own Google Maps key', 'account.places-key', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
 
             // Under More on the same distinction, and the label is the outcome
             // rather than the mechanism (`22`): an owner is not managing a

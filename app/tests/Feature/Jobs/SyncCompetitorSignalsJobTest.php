@@ -1,9 +1,11 @@
 <?php
 
+use App\Enums\PlacesSku;
 use App\Enums\UserRole;
 use App\Jobs\Visibility\SyncCompetitorSignalsJob;
 use App\Models\Competitor;
 use App\Models\Location;
+use App\Models\PlacesApiCall;
 use App\Models\User;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Http;
@@ -77,4 +79,43 @@ it('tests SyncCompetitorSignalsJob is dispatched', function () {
     $this->artisan('visibility:sync-competitors')->assertSuccessful();
 
     Queue::assertPushed(SyncCompetitorSignalsJob::class);
+});
+
+it('stores each nearby peer\'s website and asks Google for it in the nearby mask', function () {
+    Http::fake([
+        'places.googleapis.com/v1/places:searchNearby' => Http::response([
+            'places' => [
+                ['id' => 'place-4471', 'displayName' => ['text' => 'Distinctive Peer 4471'], 'rating' => 4.6, 'userRatingCount' => 88, 'websiteUri' => 'https://peer-4471.example/'],
+                ['id' => 'place-4472', 'displayName' => ['text' => 'Distinctive Peer 4472'], 'rating' => 4.1],
+            ],
+        ]),
+        'places.googleapis.com/v1/places/*' => Http::response([
+            'id' => 'self-place-1',
+            'displayName' => ['text' => 'My Shop'],
+            'location' => ['latitude' => 34.0, 'longitude' => -118.0],
+            'primaryType' => 'store',
+        ]),
+    ]);
+
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+    /** @var TestCase $this */
+    $this->actingAs($owner);
+    Tenancy::setUser($owner->id);
+    Tenancy::set((int) $biz->id);
+
+    // Need places api key
+    config(['credentials.google_places_key' => 'test-key']);
+
+    $location = Location::factory()->create(['business_id' => $biz->id, 'google_place_id' => 'self-place-1']);
+
+    $job = new SyncCompetitorSignalsJob((int) $biz->id, (int) $location->id);
+    $job->handle();
+
+    expect(Competitor::where('location_id', $location->id)->where('place_id', 'place-4471')->value('website_url'))->toBe('https://peer-4471.example/');
+    expect(Competitor::where('location_id', $location->id)->where('place_id', 'place-4472')->value('website_url'))->toBeNull();
+
+    Http::assertSent(fn ($r) => str_contains($r->url(), 'places:searchNearby') && str_contains($r->header('X-Goog-FieldMask')[0], 'places.websiteUri'));
+
+    expect(PlacesApiCall::where('sku', PlacesSku::NearbySearchEnterprise)->count())->toBe(1);
 });

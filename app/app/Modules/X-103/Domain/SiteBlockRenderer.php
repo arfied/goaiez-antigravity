@@ -49,6 +49,11 @@ body { background: var(--color-canvas); color: var(--color-ink); font-family: sa
         return $html;
     }
 
+    public function isValidBlock(array $block): bool
+    {
+        return $this->validateBlock($block);
+    }
+
     private function validateBlock(array $block): bool
     {
         $type = $block['type'];
