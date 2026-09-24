@@ -44,6 +44,8 @@ use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\InvoiceLine;
 use App\Services\Facts\BusinessFactKey;
 use App\Services\Facts\BusinessFacts;
+use App\Support\Money;
+use App\Support\PlanPricing;
 use App\Support\Tenancy;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -686,6 +688,38 @@ class X103Test extends TestCase
         $this->assertStringContainsString(htmlspecialchars('Welcome to Draft Site Tenant H1', ENT_QUOTES, 'UTF-8'), $html);
         Http::assertNothingSent();
         PlatformSetting::query()->where('key', 'ai.monthly_cap_per_tenant')->delete();
+    }
+
+    public function test_the_drafted_services_block_carries_the_price_the_blade_renders(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'Price Block Tenant']);
+        $location = Location::factory()->create(['business_id' => $biz->id]);
+        Tenancy::set($biz->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Distinctive service 4541',
+            'price_cents' => 12345,
+            'is_confirmed' => true,
+            'confirmed_at' => now(),
+        ]);
+
+        $action = app(SiteDraftAction::class);
+        $action->handle($biz->id, $location->id);
+
+        $home = Page::where('slug', 'home')->first();
+        $this->assertNotNull($home);
+
+        $services = collect($home->draft_blocks)->firstWhere('type', 'services');
+        $this->assertNotNull($services);
+        $this->assertCount(1, $services['items']);
+
+        $expectedPriceText = PlanPricing::format(Money::of(12345, $biz->currency ?? 'USD'));
+        $this->assertEquals($expectedPriceText, $services['items'][0]['price_text']);
+
+        $html = (new SiteBlockRenderer)->render([$services], []);
+        $this->assertStringContainsString($services['items'][0]['price_text'], $html);
     }
 
     public function test_polish_rewrites_hero_and_about_and_records_the_model(): void
