@@ -37,6 +37,15 @@
                         @if($est->status === 'expired')
                             <button type="button" wire:click="refreshEstimate({{ $est->id }})" class="bg-surface text-ink border rounded px-2 py-1 ml-2">Refresh</button>
                         @endif
+                        @if($est->status !== 'draft')
+                            <button type="button" wire:click="portalLink({{ $est->id }})" class="bg-surface text-ink border rounded px-2 py-1 ml-2">Copy portal link</button>
+                        @endif
+                        @if(isset($portalUrl[$est->id]))
+                            <div class="mt-2">
+                                <input type="text" readonly value="{{ $portalUrl[$est->id] }}" onclick="this.select()" class="border rounded p-1 text-ink bg-surface w-full">
+                                <span class="text-sm">Send this link to your customer. It works for {{ $portalTtlHours }} hours without a login.</span>
+                            </div>
+                        @endif
                     </li>
                 @endforeach
             </ul>
