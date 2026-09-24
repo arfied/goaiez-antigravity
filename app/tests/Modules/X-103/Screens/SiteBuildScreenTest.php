@@ -9,6 +9,7 @@ use App\Models\Location;
 use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Modules\X103\Models\Page;
+use App\Modules\X103\Models\SiteRecommendation;
 use App\Modules\X103\Ui\SiteBuild;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
 use App\Modules\X157\Domain\DnsResolver;
@@ -185,5 +186,35 @@ class SiteBuildScreenTest extends TestCase
             ->test(SiteBuild::class)
             ->call('verifyDomain')
             ->assertSee('no CNAME found');
+    }
+
+    public function test_suggestions_show_on_build_my_site_and_dismiss_hides_one(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        $rec = SiteRecommendation::create([
+            'business_id' => $biz->id,
+            'code' => 'hours_missing',
+            'text' => 'Distinctive suggestion 4471',
+            'status' => 'pending',
+            'computed_at' => now(),
+        ]);
+
+        $this->get(route('x-103.site-build'))
+            ->assertOk()
+            ->assertSee('This week')
+            ->assertSee('Distinctive suggestion 4471');
+
+        Livewire::actingAs($owner)
+            ->test(SiteBuild::class)
+            ->call('dismissRecommendation', $rec->id);
+
+        $this->get(route('x-103.site-build'))
+            ->assertOk()
+            ->assertDontSee('Distinctive suggestion 4471');
     }
 }

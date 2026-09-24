@@ -8,6 +8,7 @@ use App\Models\Location;
 use App\Modules\X103\Actions\SiteBuildRunAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
+use App\Modules\X103\Models\SiteRecommendation;
 use App\Modules\X157\Actions\CustomDomainRequestAction;
 use App\Modules\X157\Actions\CustomDomainStatusAction;
 use App\Modules\X157\Actions\CustomDomainVerifyAction;
@@ -102,6 +103,13 @@ class SiteBuild extends Component
         }
     }
 
+    public function dismissRecommendation(int $id): void
+    {
+        SiteRecommendation::where('business_id', $this->businessId)
+            ->whereKey($id)
+            ->update(['status' => 'dismissed']);
+    }
+
     public function render()
     {
         $pages = Page::where('business_id', $this->businessId)->get();
@@ -114,10 +122,16 @@ class SiteBuild extends Component
         }
         $deployments = collect($deployments)->filter();
 
+        $recommendations = SiteRecommendation::where('business_id', $this->businessId)
+            ->where('status', 'pending')
+            ->orderBy('code')
+            ->get();
+
         return view('x-103::site-build', [
             'pages' => $pages,
             'domainStatus' => $domainStatus,
             'deployments' => $deployments,
+            'recommendations' => $recommendations,
         ]);
     }
 }
