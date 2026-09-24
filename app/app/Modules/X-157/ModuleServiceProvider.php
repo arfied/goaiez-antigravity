@@ -144,7 +144,7 @@ final class ModuleServiceProvider extends ServiceProvider
             }
 
             $upsert = app(PersonUpsertAction::class)->upsertByPhone($businessId, $data['phone'], ['first_name' => $data['name'], 'email' => $data['email'] ?? null], false);
-            $waitlist = app(WaitlistJoinAction::class)->handle($businessId, $data['name'], $data['phone'], $data['service'], (string) $data['preferred_date']);
+            $waitlist = app(WaitlistJoinAction::class)->handle($businessId, $data['name'], $data['phone'], $data['service'], (string) $data['preferred_date'], false, $deployHash);
 
             return response()->json(['status' => 'requested', 'waitlist_id' => (int) $waitlist->id, 'person_id' => (int) $upsert['id']], 201);
         })->whereNumber('business');

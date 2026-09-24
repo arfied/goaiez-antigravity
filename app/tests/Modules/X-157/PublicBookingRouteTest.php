@@ -89,6 +89,21 @@ class PublicBookingRouteTest extends TestCase
         $this->get(route('x-108.waitlist'))->assertOk()->assertSee('Distinctive Visitor 4471')->assertDontSee('Nobody is waiting');
     }
 
+    public function test_a_booking_request_remembers_the_deployed_page_it_came_from(): void
+    {
+        Tenancy::forgetAll();
+
+        $this->postJson("/sites/{$this->biz->id}/{$this->deploy['deploy_hash']}/book", [
+            'name' => 'Distinctive Visitor 4551',
+            'phone' => '+15125567731',
+            'service' => 'Haircut',
+            'preferred_date' => now()->addDays(2)->toDateString(),
+        ])->assertStatus(201)->assertJson(['status' => 'requested']);
+
+        Tenancy::set((int) $this->biz->id);
+        $this->assertDatabaseHas('waitlists', ['customer_name' => 'Distinctive Visitor 4551', 'deploy_hash' => $this->deploy['deploy_hash']]);
+    }
+
     public function test_an_under_18_visitor_is_refused_before_any_write(): void
     {
         Tenancy::forgetAll();
