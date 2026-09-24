@@ -89,8 +89,22 @@
                                 } else {
                                     $reasonText = 'The origin\'s robots.txt could not be obtained or parsed, so no rule of theirs was read at all.';
                                 }
-                            } elseif ($first->status === 'failed') {
-                                $reasonText = 'Failed: ' . $first->refusal_reason;
+                            } else {
+                                if ($first->refusal_reason === 'oversize') {
+                                    $reasonText = 'Too large to copy — the source served more than the size limit.';
+                                } elseif ($first->refusal_reason === 'non_image') {
+                                    $reasonText = 'Not an image — the source answered with something else.';
+                                } elseif ($first->refusal_reason === 'blocked') {
+                                    $reasonText = 'The source blocked the fetch.';
+                                } elseif ($first->refusal_reason === 'challenge') {
+                                    $reasonText = 'The source asked for a human check (a challenge page).';
+                                } elseif ($first->refusal_reason === 'empty') {
+                                    $reasonText = 'The source answered with an empty body.';
+                                } elseif ($first->refusal_reason === 'store_failed') {
+                                    $reasonText = 'Failed: the copy could not be stored.';
+                                } else {
+                                    $reasonText = 'Failed: ' . $first->refusal_reason;
+                                }
                             }
                         @endphp
                         <tr>

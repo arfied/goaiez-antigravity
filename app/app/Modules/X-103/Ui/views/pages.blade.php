@@ -12,7 +12,7 @@
             @if (count($questions) === 0)
                 <p class="text-sm text-ink-2">Nothing waiting — every question typed into your site chat or your contact form in the last while has been answered on a page, or none has been asked yet.</p>
             @else
-                <p class="text-sm text-ink-2 mb-2">Typed by visitors into your site chat or your contact form. Shown to you only — nothing here is on a page until you answer it and place the answer. Answering arrives in the next update; for now this is the list.</p>
+                <p class="text-sm text-ink-2 mb-2">Typed by visitors into your site chat or your contact form. Shown to you only — nothing here is on a page until you answer it and place the answer.</p>
                 <ul class="list-disc pl-5">
                     @foreach ($questions as $q)
                         <li class="mb-1"><span class="font-medium">{{ $q['question'] }}</span> <span class="text-sm text-ink-2">— from your {{ $q['source'] === 'chat' ? 'site chat' : 'contact form' }}</span>

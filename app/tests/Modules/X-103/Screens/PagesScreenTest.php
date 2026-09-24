@@ -1545,4 +1545,34 @@ class PagesScreenTest extends TestCase
             ->call('draftAnswer', 'chat:'.$turn->id)
             ->assertForbidden();
     }
+
+    public function test_the_questions_list_does_not_deny_the_draft_button(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+        Tenancy::setUser($owner->id);
+        Tenancy::set($biz->id);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => Str::random(10),
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        ChatTurn::create([
+            'business_id' => $biz->id,
+            'chat_session_id' => $session->id,
+            'author_type' => 'visitor',
+            'message' => 'Chat question 1?',
+            'created_at' => now()->subMinutes(10),
+        ]);
+
+        $this->actingAs($owner);
+
+        Livewire::test(Pages::class)
+            ->assertSee('Draft an answer')
+            ->assertDontSee('arrives in the next update');
+    }
 }

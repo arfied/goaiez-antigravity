@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\FetchRefusalReason;
 use App\Enums\UserRole;
 use App\Exceptions\TenantNotResolved;
 use App\Models\Location;
@@ -513,4 +514,61 @@ it('weighs each drafted page and says it is a weight not a load time', function 
         ->assertSee('w3.jpg (43.0 KB)')
         ->assertSee('the visitor pixel')
         ->assertDontSee('Nothing to weigh yet');
+});
+
+it('rejected pictures explain themselves in words', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+    Tenancy::set($biz->id);
+
+    $page = SiteInventoryPage::create([
+        'business_id' => $biz->id,
+        'location_id' => Location::factory()->create(['business_id' => $biz->id])->id,
+        'url' => 'https://example.com',
+    ]);
+
+    SiteInventoryImage::updateOrCreate(
+        ['business_id' => $biz->id, 'source_url' => 'https://example.com/oversize.png'],
+        [
+            'page_id' => $page->id,
+            'path' => null,
+            'mime' => null,
+            'bytes' => null,
+            'status' => 'refused',
+            'refusal_reason' => 'oversize',
+            'attribution' => 'example.com',
+        ]
+    );
+
+    SiteInventoryImage::updateOrCreate(
+        ['business_id' => $biz->id, 'source_url' => 'https://example.com/nonimage.png'],
+        [
+            'page_id' => $page->id,
+            'path' => null,
+            'mime' => null,
+            'bytes' => null,
+            'status' => 'refused',
+            'refusal_reason' => 'non_image',
+            'attribution' => 'example.com',
+        ]
+    );
+
+    SiteInventoryImage::updateOrCreate(
+        ['business_id' => $biz->id, 'source_url' => 'https://example.com/robots.png'],
+        [
+            'page_id' => $page->id,
+            'path' => null,
+            'mime' => null,
+            'bytes' => null,
+            'status' => 'refused',
+            'refusal_reason' => FetchRefusalReason::RobotsDisallow->value,
+            'attribution' => 'example.com',
+        ]
+    );
+
+    $this->actingAs($owner)->get(route('x-103.site-inventory'))
+        ->assertSee('Too large to copy')
+        ->assertSee('Not an image')
+        ->assertDontSee('>oversize<', false)
+        ->assertSee('robots.txt');
 });

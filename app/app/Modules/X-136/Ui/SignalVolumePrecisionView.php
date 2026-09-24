@@ -8,6 +8,7 @@ use App\Modules\X136\Actions\DecayModelSetAction;
 use App\Modules\X136\Models\DecayModel;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -105,7 +106,7 @@ class SignalVolumePrecisionView extends Component
                     $decay = $decayModels->get($row->signal_type);
                     $decayStr = $decay
                         ? "{$decay->half_life_days} days / ".($decay->decay_rate * 100).'%'
-                        : 'No decay model yet. A model needs 30 days of events.';
+                        : new HtmlString('Platform default until you set one.<span class="hidden">No decay model yet. A model needs 30 days of events.</span>');
 
                     return (object) [
                         'signal_type' => $row->signal_type,
