@@ -94,4 +94,29 @@ class PernumberComplaintMonitoringScreenTest extends TestCase
             ->assertSee('+15125554682')
             ->assertSee('0 sent · 1 halted');
     }
+
+    public function test_a_text_held_for_quiet_hours_is_counted_on_its_number(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::setUser($owner->id);
+
+        SmsComposition::create([
+            'business_id' => $biz->id,
+            'recipient_phone' => '+15125554618',
+            'message_class' => 'marketing',
+            'body' => 'Distinctive text 4618 held',
+            'segments_count' => 1,
+            'encoding' => 'gsm7',
+            'status' => 'scheduled',
+            'scheduled_at' => now()->addHours(11),
+        ]);
+
+        $this->get(route('c-sms.pernumber-complaint-monitoring'))
+            ->assertOk()
+            ->assertSee('+15125554618')
+            ->assertSee('0 sent · 0 halted · 1 waiting for quiet hours to end')
+            ->assertDontSee('No texts sent yet.');
+    }
 }
