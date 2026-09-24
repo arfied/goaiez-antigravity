@@ -7,6 +7,7 @@ use App\Exceptions\TenantNotResolved;
 use App\Models\Location;
 use App\Models\User;
 use App\Modules\X103\Actions\SiteCrawlAction;
+use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\SiteInventoryImage;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Modules\X103\Ui\SiteInventory;
@@ -57,7 +58,7 @@ it('crawls a two-page fake site', function () {
     Http::fake([
         '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
         'https://example.com' => Http::response(
-            '<html><head><title>Home</title></head><body><h1>Welcome</h1><img src="/logo.png"><a href="/services">Services</a></body></html>',
+            '<html><head><title>Home</title></head><body><h1>Welcome</h1><img src="/logo.png" alt="  Our distinctive van 4471 "><a href="/services">Services</a></body></html>',
             200,
             ['Content-Type' => 'text/html']
         ),
@@ -79,13 +80,15 @@ it('crawls a two-page fake site', function () {
     expect($home->title)->toBe('Home')
         ->and($home->status)->toBe('fetched')
         ->and($home->headings)->toBe(['Welcome'])
-        ->and($home->image_urls)->toContain('https://example.com/logo.png');
+        ->and($home->image_urls)->toContain('https://example.com/logo.png')
+        ->and($home->image_alts)->toBe(['https://example.com/logo.png' => 'Our distinctive van 4471']);
 
     $services = $pages->firstWhere('url', 'https://example.com/services');
     expect($services->title)->toBe('Services')
         ->and($services->status)->toBe('fetched')
         ->and($services->headings)->toBe(['Our Services'])
-        ->and($services->image_urls)->toContain('https://example.com/service1.png');
+        ->and($services->image_urls)->toContain('https://example.com/service1.png')
+        ->and($services->image_alts)->toBe([]);
 });
 
 it('refuses when website is missing or unconfirmed', function () {
@@ -172,6 +175,7 @@ it('copies images into tenant storage', function () {
             'https://example.com/not-image.html',
             'https://example.com/too-big.png',
         ],
+        'image_alts' => ['https://example.com/valid.png' => 'Distinctive alt 4472'],
     ]);
 
     $pngBytes = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==');
@@ -196,6 +200,7 @@ it('copies images into tenant storage', function () {
         ->and($valid->mime)->toBe('image/png')
         ->and($valid->bytes)->toBe(strlen($pngBytes))
         ->and($valid->attribution)->toBe('example.com')
+        ->and($valid->alt)->toBe('Distinctive alt 4472')
         ->and(Storage::disk('local')->exists($valid->path))->toBeTrue();
 
     $notImage = $images->firstWhere('source_url', 'https://example.com/not-image.html');
@@ -301,4 +306,90 @@ it('lists what the draft cannot find and drops a row once the fact exists', func
     $this->actingAs($owner)
         ->get(route('x-103.site-inventory'))
         ->assertDontSee('Set them below; the contact section shows them.');
+});
+
+it('lets the owner describe a stored picture', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+    $loc = Location::where('business_id', $biz->id)->first();
+    $loc->update([
+        'website_url' => 'https://example.com',
+        'website_confirmed_at' => now(),
+    ]);
+
+    Tenancy::set($biz->id);
+
+    $page = SiteInventoryPage::create([
+        'business_id' => $biz->id,
+        'location_id' => $loc->id,
+        'url' => 'https://example.com',
+        'image_urls' => [
+            'https://example.com/x.jpg',
+        ],
+    ]);
+
+    $img = SiteInventoryImage::create([
+        'status' => 'stored',
+        'path' => 'inventory/x.jpg',
+        'source_url' => 'https://example.com/x.jpg',
+        'attribution' => 'example.com',
+        'page_id' => $page->id,
+        'business_id' => $biz->id,
+    ]);
+
+    Livewire::actingAs($owner)->test(SiteInventory::class)
+        ->set('alts.'.$img->id, '  Distinctive alt 4473  ')
+        ->call('saveAlt', $img->id)
+        ->assertDispatched('toast', message: 'Description saved — the next draft carries it on this picture.');
+
+    expect($img->refresh()->alt)->toBe('Distinctive alt 4473');
+
+    Livewire::actingAs($owner)->test(SiteInventory::class)
+        ->set('alts.'.$img->id, str_repeat('a', 161))
+        ->call('saveAlt', $img->id)
+        ->assertDispatched('toast', message: 'Keep the description under 160 characters.');
+
+    expect($img->refresh()->alt)->toBe('Distinctive alt 4473');
+
+    $this->actingAs($owner)->get(route('x-103.site-inventory'))
+        ->assertOk()
+        ->assertSee('Describe each stored picture');
+});
+
+it('lists what a reader would trip on and drops the row once it is fixed', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+    Tenancy::set($biz->id);
+
+    $this->actingAs($owner)
+        ->get(route('x-103.site-inventory'))
+        ->assertOk()
+        ->assertSee('Can everyone read it')
+        ->assertSee('Nothing to check yet');
+
+    $about = Page::create([
+        'business_id' => $biz->id,
+        'slug' => 'about',
+        'title' => 'About',
+        'draft_blocks' => [
+            ['type' => 'team', 'items' => [['name' => 'A', 'role' => 'B']]],
+        ],
+    ]);
+
+    $this->actingAs($owner)
+        ->get(route('x-103.site-inventory'))
+        ->assertOk()
+        ->assertSee('No main heading');
+
+    $about->update([
+        'draft_blocks' => [
+            ['type' => 'hero', 'headline' => 'H1', 'image_path' => 'inventory/a.jpg', 'image_alt' => 'Distinctive alt'],
+        ],
+    ]);
+
+    $this->actingAs($owner)
+        ->get(route('x-103.site-inventory'))
+        ->assertOk()
+        ->assertDontSee('No main heading');
 });

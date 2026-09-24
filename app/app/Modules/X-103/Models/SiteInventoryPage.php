@@ -19,6 +19,7 @@ class SiteInventoryPage extends Model implements TenantScoped
     protected $casts = [
         'headings' => 'array',
         'image_urls' => 'array',
+        'image_alts' => 'array',
         'phones' => 'array',
         'emails' => 'array',
         'links_out' => 'array',

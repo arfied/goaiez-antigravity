@@ -131,6 +131,7 @@ class SiteImagesCopyAction
                     'status' => 'stored',
                     'refusal_reason' => null,
                     'attribution' => $attribution,
+                    'alt' => $existing?->alt ?: (($page->image_alts[$url] ?? null) ?: null),
                 ]
             );
             $counts['stored']++;

@@ -112,6 +112,28 @@
                 </tbody>
             </table>
         </div>
+        @php $storedImages = $images->where('status', 'stored')->sortBy('id'); @endphp
+        @if($storedImages->isNotEmpty())
+            <p class="text-sm text-ink-2 mb-2">Describe each stored picture in a few words — a screen reader says this instead of the picture, and the next draft carries it.</p>
+            <table class="min-w-full divide-y divide-rule mb-8">
+                <thead class="bg-paper">
+                    <tr>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-ink">Picture</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Description</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink"></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-rule bg-paper">
+                    @foreach($storedImages as $img)
+                        <tr wire:key="alt-{{ $img->id }}">
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-ink">{{ basename(parse_url($img->source_url, PHP_URL_PATH) ?? $img->source_url) }}</td>
+                            <td class="px-3 py-4 text-sm text-ink-2"><label class="sr-only" for="alt-{{ $img->id }}">Description for {{ basename(parse_url($img->source_url, PHP_URL_PATH) ?? $img->source_url) }}</label><input id="alt-{{ $img->id }}" type="text" maxlength="160" wire:model="alts.{{ $img->id }}" class="w-full rounded border border-rule px-2 py-1 text-sm"></td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm"><button type="button" wire:click="saveAlt({{ $img->id }})" class="btn btn-primary">Save</button></td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
     @endif
 
     <div class="mt-8 mb-4 flex items-center justify-between">
@@ -203,6 +225,43 @@
                     @foreach ($missing as $row)
                         <tr>
                             <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-ink">{{ $row['label'] }}</td>
+                            <td class="px-3 py-4 text-sm text-ink-2">{{ $row['hint'] }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">
+                                @if ($row['route'] !== null)
+                                    <a href="{{ route($row['route']) }}" class="text-indigo-600 hover:text-indigo-900">Open</a>
+                                @else
+                                    On this page
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    </div>
+
+    <div class="mt-8 mb-4">
+        <h2>Can everyone read it</h2>
+        @if (count($draftPages) === 0)
+            <p class="text-sm text-ink-2 mt-2">Nothing to check yet — draft the site first.</p>
+        @elseif (count($readability) === 0)
+            <p class="text-sm text-ink-2 mt-2">Every drafted page passed: each picture has a description, every form field has a label, every page has a main heading, and the copy reads at grade {{ \App\Modules\X103\Actions\SiteReadabilityAction::MAX_READING_GRADE }} or below.</p>
+        @else
+            <p class="text-sm text-ink-2 mt-2">Checked against the draft, not the live site. Fix these and draft again.</p>
+            <table class="min-w-full divide-y divide-rule mt-4">
+                <thead class="bg-paper">
+                    <tr>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-ink">Page</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Problem</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Why it matters</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Where to fix it</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-rule bg-paper">
+                    @foreach ($readability as $row)
+                        <tr>
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-ink">{{ $row['page'] }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink">{{ $row['label'] }}</td>
                             <td class="px-3 py-4 text-sm text-ink-2">{{ $row['hint'] }}</td>
                             <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">
                                 @if ($row['route'] !== null)
