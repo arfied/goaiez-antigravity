@@ -6,6 +6,7 @@ namespace App\Modules\X16\Ui;
 
 use App\Modules\X16\Models\PlacesRecord;
 use App\Modules\X16\Models\ServicePolygon;
+use App\Services\Places\GooglePlacesClient;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -113,6 +114,7 @@ class HarvestCoverageBy extends Component
             'placesTotal' => $placesTotal,
             'territoriesTotal' => $territoriesTotal,
             'hasPlaces' => $hasPlaces,
+            'keyInUse' => app(GooglePlacesClient::class)->keyInUse(),
         ]);
     }
 }
