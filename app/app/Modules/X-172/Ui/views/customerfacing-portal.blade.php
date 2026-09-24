@@ -1,5 +1,4 @@
 <div>
-    <livewire:x-124.chat-dock-every />
     
     <div class="max-w-xl mx-auto px-4 py-8" wire:loading.class="opacity-50">
         @if($errorMessage)

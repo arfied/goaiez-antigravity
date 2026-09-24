@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X172;
 
 use App\Modules\X172\Ui\CustomerfacingPortal;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -25,5 +26,9 @@ final class ModuleServiceProvider extends ServiceProvider
         if (class_exists(Livewire::class)) {
             Livewire::component('x-172.customerfacing-portal', CustomerfacingPortal::class);
         }
+
+        Route::middleware('web')
+            ->get('/portal/{token}', CustomerfacingPortal::class)
+            ->name('x-172.portal');
     }
 }
