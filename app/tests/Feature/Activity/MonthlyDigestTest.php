@@ -98,6 +98,29 @@ class MonthlyDigestTest extends TestCase
         }
     }
 
+    public function test_one_published_page_is_listed_by_title_and_not_counted_twice(): void
+    {
+        $lastMonthStart = now()->subMonthNoOverflow()->startOfMonth();
+
+        $page = Page::create(['business_id' => $this->biz->id, 'slug' => 'test-4483', 'title' => 'Distinctive page 4483']);
+
+        PageVersion::create(['business_id' => $this->biz->id, 'page_id' => $page->id, 'commit_id' => 'abc', 'content_blocks' => '[]', 'created_at' => $lastMonthStart->copy()->addDays(3)]);
+
+        Carbon::setTestNow($lastMonthStart->copy()->addDays(5));
+        app(WaitlistJoinAction::class)->handle($this->biz->id, 'John Doe', '1234567890', 'Service', now()->addDay()->format('Y-m-d'), false);
+        Carbon::setTestNow();
+
+        $out = app(MonthlyDigest::class)->compose($this->biz);
+
+        $this->assertSame([['title' => 'Distinctive page 4483', 'times' => 1]], $out['pages']);
+
+        foreach ($out['lines'] as $l) {
+            $this->assertStringEndsNotWith(' published', $l);
+        }
+
+        $this->assertContains('Your website: 1 booking request', $out['lines']);
+    }
+
     public function test_nothing_in_window_returns_null(): void
     {
         $this->assertNull(app(MonthlyDigest::class)->compose($this->biz));
