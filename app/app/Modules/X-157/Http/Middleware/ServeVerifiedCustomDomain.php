@@ -63,6 +63,22 @@ class ServeVerifiedCustomDomain
             return $next($request);
         }
 
+        $arm = $page ? app(\App\Modules\X103\Actions\PageVariantReadAction::class)->runningFor($row->business_id, (int) $page->id) : null;
+        if ($arm !== null && $deployment->deploy_hash === $arm['control_hash']) {
+            $gpc = (string) $request->headers->get('Sec-GPC', '') === '1';
+            $cookieName = 'gz_arm_'.$arm['id'];
+            $chosen = $gpc ? 'control' : (string) $request->cookie($cookieName, '');
+            if (! in_array($chosen, ['control', 'variant'], true)) {
+                $chosen = random_int(0, 1) === 1 ? 'variant' : 'control';
+            }
+            $hash = $chosen === 'variant' ? $arm['variant_hash'] : $arm['control_hash'];
+            $response = $action->page($row->business_id, $hash);
+            if (! $gpc && $request->cookie($cookieName) !== $chosen) {
+                $response->withCookie(cookie($cookieName, $chosen, 60 * 24 * 90, '/', null, true, true, false, 'lax'));
+            }
+            return $response;
+        }
+
         return $action->page($row->business_id, $deployment->deploy_hash);
     }
 
@@ -72,6 +88,7 @@ class ServeVerifiedCustomDomain
         return Deployment::where('business_id', $businessId)
             ->where('status', 'deployed')
             ->when($pageId !== null, fn ($q) => $q->where('page_id', $pageId))
+            ->whereNull('page_variant_id')
             ->whereHas('edgeZone', function ($q) {
                 $q->where('has_valid_ssl', true);
             })
