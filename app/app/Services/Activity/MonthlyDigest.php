@@ -82,7 +82,7 @@ final class MonthlyDigest
 
         $lines = [];
         foreach ($allLines as $line) {
-            if (! str_contains($line, "page' published") && ! str_contains($line, 'pages published')) {
+            if (! (str_starts_with($line, 'Your website: ') && str_ends_with($line, ' published'))) {
                 $lines[] = $line;
             }
         }
