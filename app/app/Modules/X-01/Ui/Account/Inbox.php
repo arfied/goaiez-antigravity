@@ -8,7 +8,7 @@ use Livewire\Component;
 
 class Inbox extends Component
 {
-    public array $channels = ['sms', 'email', 'voice', 'chat'];
+    public array $channels = ['sms', 'email', 'voice', 'chat', 'form'];
 
     public function render()
     {
