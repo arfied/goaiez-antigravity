@@ -7,6 +7,7 @@ namespace Tests\Modules\X157;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X157\Actions\CustomDomainRequestAction;
+use App\Modules\X157\Actions\CustomDomainStatusAction;
 use App\Modules\X157\Models\CustomDomainRequest;
 use App\Support\Tenancy;
 use InvalidArgumentException;
@@ -70,5 +71,22 @@ class CustomDomainRequestTest extends TestCase
 
         $this->assertEquals(0, CustomDomainRequest::count());
         $this->assertDatabaseMissing('custom_domain_requests', ['domain' => 'example-a.com']);
+    }
+
+    public function test_the_domain_panel_and_the_check_follow_the_latest_request(): void
+    {
+        $business = $this->provisionTenant([]);
+        Tenancy::set($business->id);
+
+        $action = new CustomDomainRequestAction;
+        $action->handle($business->id, 'exmaple-4653.com');
+        $action->handle($business->id, 'example-4653.com');
+
+        $status = app(CustomDomainStatusAction::class)->handle($business->id);
+
+        $this->assertEquals('example-4653.com', $status['requested_domain']);
+        $this->assertEquals('requested', $status['status']);
+        $this->assertArrayNotHasKey('zone_domain', $status);
+        $this->assertArrayNotHasKey('has_valid_ssl', $status);
     }
 }
