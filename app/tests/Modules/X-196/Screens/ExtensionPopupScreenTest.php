@@ -11,7 +11,6 @@ use App\Modules\X196\Models\ExtensionSession;
 use App\Modules\X196\Ui\ExtensionPopup;
 use App\Services\Pixel\PixelKeys;
 use App\Support\Tenancy;
-use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -79,6 +78,5 @@ class ExtensionPopupScreenTest extends TestCase
         $this->postJson("/api/extension/{$key}/session")->assertStatus(201);
 
         $this->get(route('x-196.extension-popup'))->assertOk()->assertSee('Session #')->assertSee('Active');
-        DB::table('extension_sessions')->delete();
     }
 }
