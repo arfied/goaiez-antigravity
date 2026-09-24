@@ -233,4 +233,40 @@ class SiteBlockRendererTest extends TestCase
         $this->assertStringContainsString('loading="lazy"', $html4);
         $this->assertStringNotContainsString('width=', $html4);
     }
+
+    public function test_the_style_block_takes_tokens_and_keeps_todays_values_without_them(): void
+    {
+        $renderer = new SiteBlockRenderer;
+        $html1 = $renderer->render([], []);
+        $this->assertStringContainsString('#16191c', $html1);
+        $this->assertStringContainsString('#f2f2f0', $html1);
+        $this->assertStringContainsString('sans-serif', $html1);
+
+        $html2 = $renderer->render([], [
+            'tokens' => [
+                'palette' => [
+                    'surface' => '#abcdef',
+                    'ink' => '#123456',
+                    'primary' => '#0f5f9c',
+                    'accent' => '#e07a1f',
+                ],
+                'type_pairing' => [
+                    'heading' => 'Georgia, serif',
+                    'body' => 'Arial, sans-serif',
+                ],
+            ],
+        ]);
+        $this->assertStringContainsString('--color-canvas: #abcdef', $html2);
+        $this->assertStringContainsString('--color-accent: #e07a1f', $html2);
+        $this->assertStringContainsString('Georgia, serif', $html2);
+
+        $html3 = $renderer->render([], [
+            'tokens' => [
+                'palette' => [
+                    'surface' => '<script>',
+                ],
+            ],
+        ]);
+        $this->assertStringContainsString('&lt;script&gt;', $html3);
+    }
 }

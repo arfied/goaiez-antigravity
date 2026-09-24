@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X157;
 
 use App\Enums\UserRole;
+use App\Models\Business;
 use App\Models\User;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
@@ -257,5 +258,57 @@ class PublicBookingRouteTest extends TestCase
 
         Tenancy::set((int) $this->biz->id);
         $this->assertEquals(2, Deployment::where('deploy_hash', $this->deploy['deploy_hash'])->first()->served_count);
+    }
+
+    public function test_the_deployed_page_wears_industry_colours_when_set(): void
+    {
+        $biz2 = TestCase::provisionTenant(['name' => 'Edge Tenant 2', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz2->id}'");
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz2->id, 'acme-hvac2.com', true);
+
+        $page = Page::create([
+            'business_id' => $biz2->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $commitId = 'commit_'.Str::random(16);
+        PageVersion::create([
+            'business_id' => $biz2->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [],
+            'pixel_installed' => true,
+        ]);
+
+        $deploy1 = app(EdgeDeployAction::class)->handle(
+            businessId: $biz2->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $biz2->name
+        );
+
+        $html1 = Storage::disk('local')->get("sites/{$deploy1['deploy_hash']}.html");
+        $this->assertStringContainsString('#16191c', $html1); // Default canvas
+
+        // Now set industry to care and deploy again
+        Business::whereKey($biz2->id)->update(['industry' => 'care']);
+
+        $deploy2 = app(EdgeDeployAction::class)->handle(
+            businessId: $biz2->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $biz2->name
+        );
+
+        $html2 = Storage::disk('local')->get("sites/{$deploy2['deploy_hash']}.html");
+        $this->assertStringContainsString('#8a4b6e', $html2); // Care primary
     }
 }

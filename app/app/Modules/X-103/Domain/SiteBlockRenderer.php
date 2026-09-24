@@ -10,14 +10,30 @@ final class SiteBlockRenderer
 {
     public function render(array $contentBlocks, array $context): string
     {
+        $p = $context['tokens']['palette'] ?? [];
+        $t = $context['tokens']['type_pairing'] ?? [];
+        $surface = e($p['surface'] ?? '#16191c');
+        $card = e($p['card'] ?? '#1d2125');
+        $ink = e($p['ink'] ?? '#f2f2f0');
+        $primary = e($p['primary'] ?? '#f2f2f0');
+        $accent = e($p['accent'] ?? '#f2f2f0');
+        $fontHeading = e($t['heading'] ?? 'sans-serif');
+        $fontBody = e($t['body'] ?? 'sans-serif');
+
         $html = '<style>
 :root {
-    --color-paper: #16191c;
-    --color-canvas: #16191c;
-    --color-card: #1d2125;
-    --color-ink: #f2f2f0;
+    --color-paper: '.$surface.';
+    --color-canvas: '.$surface.';
+    --color-card: '.$card.';
+    --color-ink: '.$ink.';
+    --color-primary: '.$primary.';
+    --color-accent: '.$accent.';
+    --font-heading: '.$fontHeading.';
+    --font-body: '.$fontBody.';
 }
-body { background: var(--color-canvas); color: var(--color-ink); font-family: sans-serif; }
+body { background: var(--color-canvas); color: var(--color-ink); font-family: var(--font-body); }
+h1, h2, h3 { font-family: var(--font-heading); }
+.site-block.booking a { color: var(--color-accent); }
 .site-block { margin-bottom: 2rem; }
 </style>
 ';

@@ -6,6 +6,7 @@ namespace Tests\Modules\X103;
 
 use App\Enums\TenantLinkKind;
 use App\Enums\UserRole;
+use App\Models\Business;
 use App\Models\Competitor;
 use App\Models\CompetitorSiteNote;
 use App\Models\Location;
@@ -27,6 +28,7 @@ use App\Modules\X103\Actions\SiteBuildAction;
 use App\Modules\X103\Actions\SiteCopyPolishAction;
 use App\Modules\X103\Actions\SiteDraftAction;
 use App\Modules\X103\Actions\SiteMissingFactsAction;
+use App\Modules\X103\Actions\SitePageWeightAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Actions\SiteReadabilityAction;
 use App\Modules\X103\Domain\SiteBlockRenderer;
@@ -53,10 +55,9 @@ use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\InvoiceLine;
 use App\Services\Facts\BusinessFactKey;
 use App\Services\Facts\BusinessFacts;
-use App\Support\Tenancy;
-use App\Modules\X103\Actions\SitePageWeightAction;
 use App\Support\Money;
 use App\Support\PlanPricing;
+use App\Support\Tenancy;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -699,6 +700,89 @@ class X103Test extends TestCase
         $this->assertStringContainsString(htmlspecialchars('Welcome to Draft Site Tenant H1', ENT_QUOTES, 'UTF-8'), $html);
         Http::assertNothingSent();
         PlatformSetting::query()->where('key', 'ai.monthly_cap_per_tenant')->delete();
+    }
+
+    public function test_the_home_page_follows_the_industry_starting_point_order(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Order Test', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+        $location = Location::where('business_id', $biz->id)->first();
+
+        $invPage = SiteInventoryPage::create([
+            'business_id' => $biz->id,
+            'location_id' => $location->id,
+            'url' => 'https://example.com',
+            'title' => 'Home Page',
+            'headings' => ['Welcome'],
+            'text' => 'Intro',
+            'status' => 'fetched',
+            'fetched_at' => now(),
+        ]);
+
+        SiteInventoryImage::create([
+            'business_id' => $biz->id,
+            'page_id' => $invPage->id,
+            'source_url' => 'https://example.com/img1.jpg',
+            'path' => 'inventory/img1.jpg',
+            'mime' => 'image/jpeg',
+            'bytes' => 1234,
+            'status' => 'stored',
+            'attribution' => 'example.com',
+        ]);
+
+        SiteInventoryImage::create([
+            'business_id' => $biz->id,
+            'page_id' => $invPage->id,
+            'source_url' => 'https://example.com/img2.jpg',
+            'path' => 'inventory/img2.jpg',
+            'mime' => 'image/jpeg',
+            'bytes' => 1234,
+            'status' => 'stored',
+            'attribution' => 'example.com',
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Service 1',
+            'price_cents' => 10000,
+            'is_confirmed' => true,
+            'confirmed_at' => now(),
+        ]);
+
+        (new TenantLinkRecord)->forceFill([
+            'business_id' => $biz->id,
+            'kind' => TenantLinkKind::Booking,
+            'label' => 'Booking Link',
+            'destination' => 'https://booking.com',
+        ])->save();
+
+        $action = app(SiteDraftAction::class);
+        $action->handle($biz->id, $location->id);
+
+        $home = Page::where('slug', 'home')->first();
+        $types = array_column($home->draft_blocks, 'type');
+
+        // Assert the default order
+        $this->assertEquals('hero', $types[0]);
+        $galleryIdx = array_search('gallery', $types);
+        $servicesIdx = array_search('services', $types);
+        $bookingBtnIdx = array_search('booking_button', $types);
+        $this->assertLessThan($servicesIdx, $galleryIdx);
+        $this->assertLessThan($bookingBtnIdx, $servicesIdx);
+
+        // Now change industry and redraft
+        Page::where('business_id', $biz->id)->delete();
+        Business::whereKey($biz->id)->update(['industry' => 'trades']);
+
+        $action->handle($biz->id, $location->id);
+
+        $home2 = Page::where('slug', 'home')->first();
+        $types2 = array_column($home2->draft_blocks, 'type');
+
+        $this->assertEquals('hero', $types2[0]);
+        $bookingBtnIdx2 = array_search('booking_button', $types2);
+        $galleryIdx2 = array_search('gallery', $types2);
+        $this->assertLessThan($galleryIdx2, $bookingBtnIdx2);
     }
 
     public function test_polish_rewrites_hero_and_about_and_records_the_model(): void

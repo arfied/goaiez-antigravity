@@ -16,6 +16,8 @@ use App\Services\Assistant\PriceBook;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Facts\BusinessFactKey;
 use App\Services\Facts\BusinessFacts;
+use App\Services\Industry\IndustryResolver;
+use App\Services\Industry\IndustryStartingPoints;
 use App\Services\Links\TenantLinks;
 use App\Support\PlanPricing;
 use Illuminate\Support\Str;
@@ -26,7 +28,9 @@ final class SiteDraftAction
         private readonly PriceBook $priceBook,
         private readonly TenantLinks $tenantLinks,
         private readonly DefaultsRegistry $registry,
-        private readonly BusinessFacts $facts
+        private readonly BusinessFacts $facts,
+        private readonly IndustryResolver $industry,
+        private readonly IndustryStartingPoints $startingPoints
     ) {}
 
     public function handle(int $businessId, int $locationId): array
@@ -65,6 +69,7 @@ final class SiteDraftAction
         $reviewsMinRating = $this->registry->int('sites.draft.reviews_min_rating');
         $galleryMax = $this->registry->int('sites.draft.gallery_max');
         $teamMin = $this->registry->int('sites.draft.team_min');
+        $order = $this->startingPoints->for($this->industry->for($businessId)['family'])['section_order'];
 
         // Existing FAQs
         $allPages = Page::where('business_id', $businessId)->get();
@@ -352,6 +357,8 @@ final class SiteDraftAction
                 $homeBlocks[] = $formBlock;
             }
 
+            $homeBlocks = $this->inSectionOrder($homeBlocks, $order);
+
             Page::create([
                 'business_id' => $businessId,
                 'slug' => 'home',
@@ -437,5 +444,19 @@ final class SiteDraftAction
             'sources' => array_values(array_unique($sourcesUsed)),
             'sources_without_data' => array_values(array_unique($sourcesWithoutData)),
         ];
+    }
+
+    /** Stable: listed types in the starting point's order, unlisted types after them in their current order. */
+    private function inSectionOrder(array $blocks, array $order): array
+    {
+        $rank = array_flip(array_values($order));
+        $keyed = [];
+        foreach ($blocks as $i => $block) {
+            $type = is_array($block) ? (string) ($block['type'] ?? '') : '';
+            $keyed[] = [$rank[$type] ?? PHP_INT_MAX, $i, $block];
+        }
+        usort($keyed, fn ($a, $b) => [$a[0], $a[1]] <=> [$b[0], $b[1]]);
+
+        return array_values(array_map(fn ($k) => $k[2], $keyed));
     }
 }

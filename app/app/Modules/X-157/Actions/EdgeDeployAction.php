@@ -20,6 +20,8 @@ use App\Modules\X176\Actions\LlmsTxtRenderAction;
 use App\Modules\X176\Actions\SchemaRenderAction;
 use App\Modules\X176\Actions\SeoRenderAction;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Industry\IndustryResolver;
+use App\Services\Industry\IndustryStartingPoints;
 use App\Services\Pixel\PixelKeys;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -353,6 +355,7 @@ JS;
                         'deployHash' => $deployHash,
                         'tenant_storage_url_prefix' => route('x-157.site.media', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false).'/',
                         'form_action_base' => route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: true),
+                        'tokens' => app(IndustryStartingPoints::class)->for(app(IndustryResolver::class)->for($businessId)['family']),
                     ];
                     $html .= app(SiteBlockRenderer::class)->render($contentBlocks, $context);
                 }
