@@ -542,4 +542,36 @@ class EstimatesListScreenTest extends TestCase
         $this->expectException(ModelNotFoundException::class);
         Livewire::test(EstimatesList::class)->set('refreshedUnitPriceCents', '491820')->call('refreshEstimate', $estB->id);
     }
+
+    public function test_copy_portal_link_mints_a_link_the_customer_can_open_without_logging_in(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::set((int) $biz->id);
+        $estimate = app(EstimateDraftAction::class)->handle((int) $biz->id, null, [
+            ['service_name' => 'Gutter cleaning', 'quantity' => 3, 'unit_price_cents' => 4175],
+        ]);
+        $estimate->update(['status' => 'sent']);
+
+        $component = Livewire::test(EstimatesList::class)
+            ->call('portalLink', $estimate->id)
+            ->assertHasNoErrors()
+            ->assertSet('portalUrl.'.$estimate->id, fn ($v) => is_string($v) && str_contains($v, '/portal/'));
+
+        $this->assertDatabaseHas('portal_links', [
+            'business_id' => $biz->id,
+            'resource_type' => 'estimate',
+            'resource_id' => $estimate->id,
+            'is_active' => true,
+        ]);
+
+        $url = $component->get('portalUrl')[$estimate->id];
+
+        Tenancy::forgetAll();
+        auth()->logout();
+
+        $this->get($url)->assertOk();
+    }
 }
