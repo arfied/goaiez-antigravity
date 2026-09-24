@@ -14,6 +14,8 @@ use App\Modules\X113\Actions\StaffRosterAction;
 use App\Modules\X155\Actions\FormReadAction;
 use App\Services\Assistant\PriceBook;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Facts\BusinessFactKey;
+use App\Services\Facts\BusinessFacts;
 use App\Services\Links\TenantLinks;
 use App\Support\PlanPricing;
 use Illuminate\Support\Str;
@@ -23,13 +25,15 @@ final class SiteDraftAction
     public function __construct(
         private readonly PriceBook $priceBook,
         private readonly TenantLinks $tenantLinks,
-        private readonly DefaultsRegistry $registry
+        private readonly DefaultsRegistry $registry,
+        private readonly BusinessFacts $facts
     ) {}
 
     public function handle(int $businessId, int $locationId): array
     {
         $business = Business::find($businessId);
         $location = Location::find($locationId);
+        $stated = $this->facts->all($businessId);
 
         $pagesCreated = 0;
         $blocksGenerated = 0;
@@ -100,7 +104,7 @@ final class SiteDraftAction
             $contactPhoneSource = 'business';
         }
 
-        $buildContactBlock = function () use ($location, $address, $contactPhone, $contactPhoneSource, $contactEmail, $contactEmailSource, &$blocksGenerated, &$sourcesUsed) {
+        $buildContactBlock = function () use ($location, $address, $contactPhone, $contactPhoneSource, $contactEmail, $contactEmailSource, &$blocksGenerated, &$sourcesUsed, $stated) {
             $contactSource = 'location';
             if ($contactPhone) {
                 $contactSource .= ", phone: {$contactPhoneSource}";
@@ -125,6 +129,18 @@ final class SiteDraftAction
             if ($location !== null && is_array($location->opening_hours) && $location->opening_hours !== []) {
                 $block['hours'] = $location->opening_hours;
                 $contactSource .= ', hours: location';
+                $block['source'] = $contactSource;
+            }
+
+            $contactFacts = [];
+            foreach ([BusinessFactKey::LICENCE_NUMBER, BusinessFactKey::INSURANCE, BusinessFactKey::SERVICE_AREA, BusinessFactKey::YEARS_IN_BUSINESS] as $fKey) {
+                if (($stated[$fKey] ?? '') !== '') {
+                    $contactFacts[$fKey] = $stated[$fKey];
+                }
+            }
+            if ($contactFacts !== []) {
+                $block['facts'] = $contactFacts;
+                $contactSource .= ', facts: owner';
                 $block['source'] = $contactSource;
             }
             $blocksGenerated++;
@@ -198,11 +214,16 @@ final class SiteDraftAction
             if ($homeInventoryPage && $homeInventoryPage->text) {
                 $subline = Str::limit($homeInventoryPage->text, 160, '');
             }
+            $heroSource = 'inventory';
+            if ($subline === '' && ($stated[BusinessFactKey::TAGLINE] ?? '') !== '') {
+                $subline = $stated[BusinessFactKey::TAGLINE];
+                $heroSource = 'inventory, tagline: facts';
+            }
             $hero = [
                 'type' => 'hero',
                 'headline' => $headline,
                 'subline' => $subline,
-                'source' => 'inventory',
+                'source' => $heroSource,
             ];
             if ($firstImage) {
                 $hero['image_path'] = $firstImage->path;
@@ -211,7 +232,15 @@ final class SiteDraftAction
             $blocksGenerated++;
             $sourcesUsed[] = 'inventory';
 
-            if ($longestInventoryPage && $longestInventoryPage->text) {
+            if (($stated[BusinessFactKey::DESCRIPTION] ?? '') !== '') {
+                $homeBlocks[] = [
+                    'type' => 'about',
+                    'text' => Str::limit($stated[BusinessFactKey::DESCRIPTION], $aboutMaxChars, ''),
+                    'source' => 'facts',
+                ];
+                $blocksGenerated++;
+                $sourcesUsed[] = 'facts';
+            } elseif ($longestInventoryPage && $longestInventoryPage->text) {
                 $homeBlocks[] = [
                     'type' => 'about',
                     'text' => Str::limit($longestInventoryPage->text, $aboutMaxChars, ''),

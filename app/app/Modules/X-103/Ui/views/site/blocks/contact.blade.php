@@ -17,4 +17,14 @@
         @endforeach
         </ul>
     @endif
+    @if(isset($block['facts']) && is_array($block['facts']))
+        @php $factLabels = \App\Services\Facts\BusinessFactKey::all(); @endphp
+        <ul>
+        @foreach($block['facts'] as $k => $v)
+            @if(is_scalar($v) && trim((string)$v) !== '')
+                <li>{{ $factLabels[$k]['label'] ?? $k }}: {{ $v }}</li>
+            @endif
+        @endforeach
+        </ul>
+    @endif
 </div>
