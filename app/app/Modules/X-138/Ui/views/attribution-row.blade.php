@@ -1,4 +1,23 @@
 <div>
+    @if ($earnings !== null)
+        <div class="mb-8">
+            <p class="text-ink-2">What each page of your site did over the last {{ $earnings['days'] }} days, counted from the pixel on the page.</p>
+            @if (count($earnings['pages']) === 0)
+                <p class="mt-2 text-ink-2">No page is published yet.</p>
+            @elseif (! $earnings['measured'])
+                <p class="mt-2 text-ink-2">Not measured yet — the pixel on your pages has not sent us a visit.</p>
+            @else
+                <x-ui.row-list>
+                    @foreach ($earnings['pages'] as $p)
+                        <x-ui.row class="p-4 flex items-center justify-between">
+                            <div class="flex-1"><p class="font-medium text-ink">{{ $p['title'] }}</p><p class="text-sm text-ink-2">{{ $p['path'] }}</p></div>
+                            <div class="ml-4 text-right text-sm text-ink-2">{{ $p['pageviews'] }} views · {{ $p['conversions'] }} conversions</div>
+                        </x-ui.row>
+                    @endforeach
+                </x-ui.row-list>
+            @endif
+        </div>
+    @endif
     
     @if ($queries->isEmpty() && $snapshots->isEmpty())
         <x-ui.empty-state icon="💰" heading="No attribution data yet">
