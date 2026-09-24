@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Modules\X10;
 
 use App\Modules\X01\Events\ContactCreated;
+use App\Modules\X10\Events\LeadAssigned;
 use App\Modules\X10\Listeners\AssignNewContactListener;
+use App\Modules\X10\Listeners\LeadAssignedListener;
 use App\Modules\X10\Ui\RoutingRules;
 use App\Modules\X10\Ui\TerritoryMap;
 use App\Modules\X10\Ui\UnassignedCount;
@@ -27,6 +29,11 @@ final class ModuleServiceProvider extends ServiceProvider
         Event::listen(
             ContactCreated::class,
             AssignNewContactListener::class
+        );
+
+        Event::listen(
+            LeadAssigned::class,
+            LeadAssignedListener::class
         );
 
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
