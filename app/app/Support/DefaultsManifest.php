@@ -316,6 +316,11 @@ final class DefaultsManifest
                 'group' => 'Content',
                 'description' => 'System prompt for the talk-to-your-site editor: the AI rewrites a page\'s block list from an owner\'s plain-words request and explains what it changed',
             ],
+            'sites.page.system_prompt' => [
+                'seed' => 'You make ONE new page for a small business website from the owner\'s plain-words request. Return ONLY JSON with four keys: "title" — the page title in the owner\'s words; "slug" — a short lowercase URL word or two with hyphens; "blocks" — a list of blocks, each an object with a "type" and the fields that type needs; "explanation" — two or three plain sentences saying what the page contains. Rules: never invent a price, a date, a year, a licence number, a review count or any claim the owner did not state; if the request names an offer, describe it only in the owner\'s terms; use only these block types: hero (headline, subline), about (text), services (items: name, description), faq (items: question, answer), booking_button (label, url), contact.',
+                'group' => 'Content',
+                'description' => 'System prompt for "Make me a page": the AI proposes a new page (title, slug, blocks) from an owner\'s plain-words request; the page lands as an unpublished draft the owner publishes or deletes',
+            ],
             'sites.copy.max_chars' => [
                 'seed' => 600,
                 'group' => 'Content',

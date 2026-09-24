@@ -187,6 +187,15 @@
         @endif
     </div>
 
+    <div class="bg-paper border border-rule p-4 mb-4">
+        <form wire:submit="makePage">
+            <label class="block text-ink mb-1">Make me a page</label>
+            <p class="text-ink-2 mb-2">Say what the page is for, in your own words. It lands as an unpublished draft you can publish or delete.</p>
+            <input type="text" wire:model="pageRequest" placeholder="e.g. a page about our emergency call-out service" class="w-full bg-paper border border-rule text-ink p-2 mb-2">
+            <button type="submit" class="bg-paper border border-rule text-ink px-4 py-2">Make it</button>
+        </form>
+    </div>
+
     <div class="bg-paper border border-rule p-4">
         <form wire:submit="addPage">
             <div class="mb-4">

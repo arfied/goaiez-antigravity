@@ -1185,4 +1185,91 @@ class PagesScreenTest extends TestCase
             ->assertSee('Distinctive new headline 4471')
             ->assertSee('Not quite?');
     }
+
+    public function test_make_me_a_page_lands_an_unpublished_draft_page_the_owner_can_see(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Pages Test Edit', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [
+                    ['message' => ['content' => json_encode(['title' => 'Distinctive spring offer 4471', 'slug' => 'Spring Offer!', 'blocks' => [['type' => 'hero', 'headline' => 'Distinctive headline 4472', 'subline' => 'Book before the rain.'], ['type' => 'faq', 'items' => [['question' => 'When?', 'answer' => 'All spring.']]], ['type' => 'marquee', 'text' => 'x']], 'explanation' => 'A page for the spring offer.'])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        Livewire::actingAs($owner)->test(Pages::class)->set('pageRequest', 'make a page for our spring gutter offer')->call('makePage')->assertSet('success', fn ($s) => str_starts_with((string) $s, 'Made a draft page "Distinctive spring offer 4471" at /spring-offer with 2 blocks'));
+
+        $page = Page::where('business_id', $biz->id)->where('slug', 'spring-offer')->first();
+        $this->assertNotNull($page);
+        $this->assertFalse((bool) $page->is_published);
+        $this->assertCount(2, $page->draft_blocks);
+        $this->assertSame('ai', $page->draft_blocks[0]['source']);
+        $this->assertSame('make a page for our spring gutter offer', $page->draft_meta['made_by_ai']['request']);
+
+        $this->actingAs($owner)->get(route('x-103.pages'))->assertSee('Distinctive spring offer 4471')->assertSee('Make me a page');
+    }
+
+    public function test_make_me_a_page_never_overwrites_an_existing_slug(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Pages Test Edit', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        Page::create(['business_id' => $biz->id, 'slug' => 'spring-offer', 'title' => 'Existing', 'is_published' => false]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [
+                    ['message' => ['content' => json_encode(['title' => 'Distinctive spring offer 4471', 'slug' => 'Spring Offer!', 'blocks' => [['type' => 'hero', 'headline' => 'Distinctive headline 4472', 'subline' => 'Book before the rain.'], ['type' => 'faq', 'items' => [['question' => 'When?', 'answer' => 'All spring.']]], ['type' => 'marquee', 'text' => 'x']], 'explanation' => 'A page for the spring offer.'])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        Livewire::actingAs($owner)->test(Pages::class)->set('pageRequest', 'make a page for our spring gutter offer')->call('makePage')->assertSet('success', fn ($s) => str_starts_with((string) $s, 'Made a draft page "Distinctive spring offer 4471" at /spring-offer-2 with 2 blocks'));
+
+        $newPage = Page::where('business_id', $biz->id)->where('slug', 'spring-offer-2')->first();
+        $this->assertNotNull($newPage);
+        $this->assertSame('Distinctive spring offer 4471', $newPage->title);
+
+        $existing = Page::where('business_id', $biz->id)->where('slug', 'spring-offer')->first();
+        $this->assertSame('Existing', $existing->title);
+    }
+
+    public function test_make_me_a_page_refuses_when_nothing_valid_comes_back_and_staff_cannot_ask(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Pages Test Edit', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [
+                    ['message' => ['content' => json_encode(['title' => 'x', 'slug' => 'x', 'blocks' => [['type' => 'hero'], ['type' => 'marquee', 'text' => 'x']], 'explanation' => 'x'])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        Livewire::actingAs($owner)->test(Pages::class)->set('pageRequest', 'make a page')->call('makePage')->assertSet('success', 'no_valid_blocks');
+        $this->assertSame(0, Page::where('business_id', $biz->id)->count());
+
+        $staff = User::factory()->create(['role' => UserRole::Manager]);
+        TestCase::provisionTenant(['owner_user_id' => $staff->id]);
+        $this->actingAs($staff);
+
+        Livewire::test(Pages::class)
+            ->call('makePage')
+            ->assertForbidden();
+    }
 }

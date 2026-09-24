@@ -13,6 +13,7 @@ use App\Modules\X103\Actions\PageUnpublishAction;
 use App\Modules\X103\Actions\SeoDraftAction;
 use App\Modules\X103\Actions\SiteCopyPolishAction;
 use App\Modules\X103\Actions\SiteEditProposeAction;
+use App\Modules\X103\Actions\SitePageProposeAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
@@ -41,6 +42,8 @@ class Pages extends Component
     public array $renameSlug = [];
 
     public array $editRequest = [];
+
+    public string $pageRequest = '';
 
     public array $renameTitle = [];
 
@@ -407,6 +410,25 @@ class Pages extends Component
             unset($meta['pending_edit']);
             $page->update(['draft_meta' => $meta]);
             $this->success = 'Discarded.';
+        }
+    }
+
+    public function makePage(SitePageProposeAction $action): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        try {
+            $res = $action->handle($this->businessId, trim($this->pageRequest));
+            if ($res['status'] === 'refused') {
+                $this->success = $res['reason'];
+            } else {
+                $this->success = "Made a draft page \"{$res['title']}\" at /{$res['slug']} with {$res['blocks']} blocks using {$res['model']} — it is in the list above, unpublished. Publish it when you are happy, or delete it.";
+                $this->pageRequest = '';
+            }
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
         }
     }
 
