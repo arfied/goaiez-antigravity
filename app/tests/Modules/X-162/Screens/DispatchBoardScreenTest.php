@@ -46,4 +46,16 @@ class DispatchBoardScreenTest extends TestCase
 
         Livewire::test(DispatchBoard::class)->assertOk();
     }
+
+    public function test_a_failed_action_shows_the_error_panel_instead_of_crashing(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Livewire::test(DispatchBoard::class)
+            ->set('errorMessage', 'Distinctive failure 4842')
+            ->assertSee("We couldn't update that job")
+            ->assertSee('Distinctive failure 4842');
+    }
 }

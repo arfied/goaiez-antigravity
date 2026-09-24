@@ -4,7 +4,7 @@
     
     <div class="max-w-7xl mx-auto px-4 py-8" wire:loading.class="opacity-50">
         @if($errorMessage)
-            <x-ui.error-panel class="mb-8">
+            <x-ui.error-panel heading="We couldn't update that job" class="mb-8">
                 {{ $errorMessage }}
             </x-ui.error-panel>
         @endif
