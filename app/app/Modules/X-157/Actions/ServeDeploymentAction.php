@@ -24,7 +24,7 @@ class ServeDeploymentAction
         return response($html, 200)->header('Content-Type', 'text/html');
     }
 
-    public function sitemap(int $businessId, string $deployHash)
+    public function sitemap(int $businessId, string $deployHash, ?string $customHost = null)
     {
         Tenancy::set($businessId);
 
@@ -34,7 +34,7 @@ class ServeDeploymentAction
         $zone = $deployment->edgeZone;
         abort_if($zone === null || ! $zone->has_valid_ssl, 404);
 
-        $xml = app(SitemapRenderAction::class)->handle($businessId);
+        $xml = app(SitemapRenderAction::class)->handle($businessId, $customHost);
 
         return response($xml, 200)->header('Content-Type', 'application/xml');
     }

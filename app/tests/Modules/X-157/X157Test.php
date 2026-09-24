@@ -28,6 +28,7 @@ use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
@@ -2703,5 +2704,115 @@ class X157Test extends TestCase
 
         $res = $this->get("http://{$appHost}/login");
         $res->assertStatus(200); // the normal app routing
+    }
+
+    public function test_a_custom_domain_serves_each_published_page_by_its_slug(): void
+    {
+        Storage::fake('local');
+        Route::fallback(function () {
+            return abort(404);
+        })->middleware('web');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        DB::table('pages')->where('business_id', $biz->id)->delete();
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-roofing.test', true);
+
+        DB::table('custom_domain_requests')->where('domain', 'acme-roofing.test')->delete();
+        DB::table('custom_domain_requests')->insert([
+            'business_id' => $biz->id,
+            'domain' => 'acme-roofing.test',
+            'status' => 'verified',
+            'verified_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $page1 = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Distinctive home 4471',
+            'slug' => 'home',
+            'is_published' => true,
+        ]);
+        $commit1 = app(SitePublishAction::class)->handle($biz->id, $page1->id, []);
+        $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page1->id,
+            commitId: $commit1['commit_id'],
+            businessName: $biz->name
+        );
+
+        $page2 = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Distinctive services 4472',
+            'slug' => 'services',
+            'is_published' => true,
+        ]);
+        $commit2 = app(SitePublishAction::class)->handle($biz->id, $page2->id, []);
+        $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page2->id,
+            commitId: $commit2['commit_id'],
+            businessName: $biz->name
+        );
+
+        $this->get('http://acme-roofing.test/')->assertOk()->assertSee('Distinctive home 4471')->assertDontSee('Distinctive services 4472');
+        $this->get('http://acme-roofing.test/services')->assertOk()->assertSee('Distinctive services 4472');
+        $this->get('http://acme-roofing.test/services/')->assertOk()->assertSee('Distinctive services 4472');
+        $this->get('http://acme-roofing.test/nope')->assertNotFound();
+        $this->get('http://acme-roofing.test/sitemap.xml')->assertOk()->assertSee('https://acme-roofing.test/services', false)->assertDontSee('/sites/', false);
+
+        DB::table('custom_domain_requests')->where('domain', 'acme-roofing.test')->delete();
+    }
+
+    public function test_a_custom_domain_with_no_home_page_still_answers_at_the_root(): void
+    {
+        Storage::fake('local');
+        Route::fallback(function () {
+            return abort(404);
+        })->middleware('web');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        DB::table('pages')->where('business_id', $biz->id)->delete();
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-roofing.test', true);
+
+        DB::table('custom_domain_requests')->where('domain', 'acme-roofing.test')->delete();
+        DB::table('custom_domain_requests')->insert([
+            'business_id' => $biz->id,
+            'domain' => 'acme-roofing.test',
+            'status' => 'verified',
+            'verified_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Distinctive about 4473',
+            'slug' => 'about',
+            'is_published' => true,
+        ]);
+        $commit = app(SitePublishAction::class)->handle($biz->id, $page->id, []);
+        $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commit['commit_id'],
+            businessName: $biz->name
+        );
+
+        $this->get('http://acme-roofing.test/')->assertOk()->assertSee('Distinctive about 4473');
+        $this->get('http://acme-roofing.test/about')->assertOk()->assertSee('Distinctive about 4473');
+
+        DB::table('custom_domain_requests')->where('domain', 'acme-roofing.test')->delete();
     }
 }
