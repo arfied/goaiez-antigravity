@@ -213,7 +213,7 @@ class X136ScreensTest extends TestCase
 
         Livewire::test(SignalVolumePrecisionView::class, ['businessId' => $this->businessId])
             ->assertSee('hiring')
-            ->assertSee('No decay model yet. A model needs 30 days of events.');
+            ->assertSee('Platform default until you set one.');
     }
 
     public function test_signal_volume_precision_get_route(): void
