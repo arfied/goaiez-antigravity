@@ -1423,4 +1423,82 @@ class PagesScreenTest extends TestCase
             ->assertDontSee('<b>Distinctive 4521</b>', false)
             ->assertSee('from your site chat');
     }
+
+    public function test_customer_question_panel_draft_answer(): void
+    {
+        \App\Models\PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        \App\Modules\X163\Models\PriceBookItem::create([
+            'business_id' => $biz->id,
+            
+            'service_name' => 'A service',
+            'price_cents' => 1000,
+            'is_confirmed' => true,
+            'confirmed_at' => now(),
+        ]);
+
+        $page = \App\Modules\X103\Models\Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'test-page-4535',
+            'title' => 'Test',
+            
+            
+        ]);
+
+        $chat = \App\Modules\X102\Models\ChatSession::create(["business_id" => $biz->id, "session_token" => \Illuminate\Support\Str::uuid()->toString()]);
+        $turn = \App\Modules\X102\Models\ChatTurn::create(["business_id" => $biz->id, "chat_session_id" => $chat->id, "author_type" => "visitor", "message" => 'Distinctive question 4535?', 'created_at' => now()]);
+
+        \Illuminate\Support\Facades\Http::fake([
+            'api.openai.com/*' => \Illuminate\Support\Facades\Http::sequence()
+                ->push([
+                    'id' => 'chatcmpl-mod',
+                    'object' => 'chat.completion',
+                    'created' => 12345,
+                    'model' => 'gpt-4o-mini',
+                    'choices' => [
+                        [
+                            'message' => [
+                                'role' => 'assistant',
+                                'content' => json_encode(['flags' => []]),
+                            ],
+                            'finish_reason' => 'stop',
+                        ]
+                    ],
+                    'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+                ])
+                ->push([
+                    'id' => 'chatcmpl-1',
+                    'object' => 'chat.completion',
+                    'created' => 12345,
+                    'model' => 'gpt-4o-mini',
+                    'choices' => [
+                        [
+                            'message' => [
+                                'role' => 'assistant',
+                                'content' => json_encode(['question' => 'Distinctive question 4535?', 'answer' => 'Answer']),
+                            ],
+                            'finish_reason' => 'stop',
+                        ]
+                    ],
+                    'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+                ])
+        ]);
+
+        \Livewire\Livewire::test(\App\Modules\X103\Ui\Pages::class)
+            ->assertSee('Draft an answer')
+            ->assertSee('Choose a page')
+            ->set('answerPage.chat:'.$turn->id, $page->id)
+            ->call('draftAnswer', 'chat:'.$turn->id)
+            ->assertSet('success', fn ($s) => str_starts_with($s, 'Drafted an answer with'));
+
+        $manager = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Manager]);
+        \Tests\TestCase::provisionTenant(['owner_user_id' => $manager->id]);
+        $this->actingAs($manager);
+        \Livewire\Livewire::test(\App\Modules\X103\Ui\Pages::class)
+            ->call('draftAnswer', 'chat:'.$turn->id)
+            ->assertForbidden();
+    }
 }

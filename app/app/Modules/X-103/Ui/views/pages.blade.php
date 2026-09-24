@@ -15,7 +15,17 @@
                 <p class="text-sm text-ink-2 mb-2">Typed by visitors into your site chat or your contact form. Shown to you only — nothing here is on a page until you answer it and place the answer. Answering arrives in the next update; for now this is the list.</p>
                 <ul class="list-disc pl-5">
                     @foreach ($questions as $q)
-                        <li class="mb-1"><span class="font-medium">{{ $q['question'] }}</span> <span class="text-sm text-ink-2">— from your {{ $q['source'] === 'chat' ? 'site chat' : 'contact form' }}</span></li>
+                        <li class="mb-1"><span class="font-medium">{{ $q['question'] }}</span> <span class="text-sm text-ink-2">— from your {{ $q['source'] === 'chat' ? 'site chat' : 'contact form' }}</span>
+    <div class="mt-1">
+        <select wire:model="answerPage.{{ $q['key'] }}" class="px-2 py-1 border border-rule">
+            <option value="">Choose a page</option>
+            @foreach($pages as $p)
+                <option value="{{ $p->id }}">{{ $p->slug }}</option>
+            @endforeach
+        </select>
+        <button wire:click="draftAnswer('{{ $q['key'] }}')" class="px-2 py-1 bg-surface-2 border border-rule hover:bg-surface-3">Draft an answer</button>
+    </div>
+</li>
                     @endforeach
                 </ul>
             @endif

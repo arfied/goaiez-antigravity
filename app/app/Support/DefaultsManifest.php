@@ -3612,6 +3612,12 @@ final class DefaultsManifest
                 'description' => 'How many unanswered customer questions the Pages screen lists at once.',
             ],
 
+            'sites.questions.answer_system_prompt' => [
+                'seed' => "Answer ONE customer question in plain language for a local service business. Use ONLY the facts given, include no prices not present, make no promises, and keep the customer's question as asked, tidied for spelling only. Return the question and the answer.",
+                'group' => 'Content',
+                'description' => 'System prompt for answering customer questions on Pages.',
+            ],
+
             'reviews.reply.max_recovery_length' => [
                 'seed' => ReplyGenerator::MAX_RECOVERY_LENGTH,
                 'group' => 'Reviews',

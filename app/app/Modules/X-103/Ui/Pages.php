@@ -83,6 +83,8 @@ class Pages extends Component
 
     public string $faqAnswer = '';
 
+    public array $answerPage = [];
+
     public string $videoName = '';
 
     public string $videoUrl = '';
@@ -434,6 +436,57 @@ class Pages extends Component
         }
     }
 
+        public function draftAnswer(string $key, \App\Modules\X103\Actions\QuestionAnswerDraftAction $action): void
+    {
+        abort_unless(auth()->user()->hasRole(\App\Enums\UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $questions = app(\App\Modules\X103\Actions\CustomerQuestionsAction::class)->handle($this->businessId);
+        $questionRow = null;
+        foreach ($questions as $q) {
+            if ($q['key'] === $key) {
+                $questionRow = $q;
+                break;
+            }
+        }
+
+        if (! $questionRow) {
+            return;
+        }
+
+        $pageId = (int) ($this->answerPage[$key] ?? 0);
+        if ($pageId === 0) {
+            $this->error = 'Pick the page the answer should go on.';
+            return;
+        }
+
+        try {
+            $res = $action->handle($this->businessId, $pageId, $questionRow['source'], $questionRow['id'], $questionRow['question']);
+            if ($res['status'] === 'refused') {
+                if ($res['reason'] === 'pending_faq_exists') {
+                    $this->success = 'That page already has proposed questions waiting — place or discard them first.';
+                } elseif ($res['reason'] === 'moderation_unavailable') {
+                    $this->success = ($res['detail'] ?? '') === 'phi_withheld' 
+                        ? 'Questions cannot be checked for this account, so nothing is drafted from them.' 
+                        : 'The question could not be checked right now, so nothing was drafted. Try again later.';
+                } elseif ($res['reason'] === 'moderation_refused') {
+                    $this->success = 'The question could not be checked right now, so nothing was drafted. Try again later.';
+                } elseif ($res['reason'] === 'flagged') {
+                    $this->success = 'This question cannot be published as written ('.implode(', ', $res['flags']).').';
+                } elseif ($res['reason'] === 'no_facts_available') {
+                    $this->success = 'Nothing to write from yet — confirm a price or show a review on the website first.';
+                } else {
+                    $this->success = $res['reason'];
+                }
+            } else {
+                $this->success = "Drafted an answer with {$res['model']} — see the page's proposed questions.";
+            }
+        } catch (\Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
     public function draftFaq(int $pageId, FaqDraftAction $action): void
     {
         abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
@@ -468,6 +521,13 @@ class Pages extends Component
                 'source' => 'ai',
                 'model' => $meta['pending_faq']['model'] ?? 'unknown',
             ];
+            if (isset($meta['pending_faq']['source'])) {
+                $src = $meta['pending_faq']['source'];
+                \App\Modules\X103\Models\SiteAnsweredQuestion::query()->updateOrCreate(
+                    ['business_id' => $this->businessId, 'source_type' => $src['type'], 'source_id' => (int) $src['id']],
+                    ['question' => $src['question'], 'page_id' => $page->id, 'answered_at' => now()]
+                );
+            }
             unset($meta['pending_faq']);
             $page->update([
                 'draft_blocks' => $blocks,
