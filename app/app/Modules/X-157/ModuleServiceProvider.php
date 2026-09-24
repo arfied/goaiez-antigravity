@@ -157,6 +157,8 @@ final class ModuleServiceProvider extends ServiceProvider
             return app(ServeDeploymentAction::class)->robots((int) $business, $deployHash);
         })->whereNumber('business');
 
+        Route::get('/sites/{business}/{deploy_hash}/llms.txt', fn (string $business, string $deployHash) => app(ServeDeploymentAction::class)->llms((int) $business, $deployHash))->whereNumber('business');
+
         Event::listen(PageUnpublished::class, function (PageUnpublished $e): void {
             Deployment::where('business_id', $e->businessId)
                 ->where('page_id', $e->pageId)

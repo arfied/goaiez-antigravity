@@ -61,4 +61,20 @@ class ServeDeploymentAction
 
         return response($txt, 200)->header('Content-Type', 'text/plain');
     }
+
+    public function llms(int $businessId, string $deployHash)
+    {
+        Tenancy::set($businessId);
+
+        $deployment = Deployment::where('business_id', $businessId)->where('deploy_hash', $deployHash)->firstOrFail();
+        abort_if($deployment->status !== 'deployed', 404);
+
+        $zone = $deployment->edgeZone;
+        abort_if($zone === null || ! $zone->has_valid_ssl, 404);
+
+        $txt = Storage::disk('local')->get("sites/{$deployHash}.llms.txt");
+        abort_if($txt === null, 404);
+
+        return response($txt, 200)->header('Content-Type', 'text/plain');
+    }
 }

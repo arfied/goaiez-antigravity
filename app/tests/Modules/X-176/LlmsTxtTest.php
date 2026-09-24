@@ -348,4 +348,51 @@ final class LlmsTxtTest extends TestCase
         $this->assertStringContainsString('20% off winter service', $content);
         $this->assertStringNotContainsString('nested', $content);
     }
+
+    public function test_llms_txt_carries_the_headline_services_faq_and_contact_of_a_real_page(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant([
+            'name' => 'Local Tenant Real Page',
+        ]);
+        Tenancy::set((int) $biz->id);
+
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Services', 'slug' => 'services']);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => 'commit_llms_real',
+            'content_blocks' => [
+                ['type' => 'hero', 'headline' => 'Distinctive headline 4631', 'subline' => 'Distinctive subline 4632'],
+                ['type' => 'about', 'text' => 'Distinctive about 4633'],
+                ['type' => 'services', 'items' => [['name' => 'Distinctive service 4634', 'price_text' => '$149']]],
+                ['type' => 'faq', 'items' => [['question' => 'Distinctive question 4635?', 'answer' => 'Distinctive answer 4636']]],
+                ['type' => 'contact', 'phone' => '+1 512 555 4637', 'industry_facts' => [['label' => 'Parking', 'value' => 'Distinctive parking 4638']]],
+                ['type' => 'script', 'content' => 'pixel_script'],
+            ],
+        ]);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'llms-real.example.com', true);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $page->id,
+            commitId: 'commit_llms_real',
+            businessName: 'Local Biz Real Page'
+        );
+
+        $this->assertEquals('deployed', $res['status']);
+
+        $txt = Storage::disk('local')->get("sites/{$res['deploy_hash']}.llms.txt");
+        $this->assertStringContainsString('Distinctive headline 4631', $txt);
+        $this->assertStringContainsString('Distinctive subline 4632', $txt);
+        $this->assertStringContainsString('Distinctive about 4633', $txt);
+        $this->assertStringContainsString('- Distinctive service 4634 — $149', $txt);
+        $this->assertStringContainsString('Q: Distinctive question 4635?', $txt);
+        $this->assertStringContainsString('A: Distinctive answer 4636', $txt);
+        $this->assertStringContainsString('Phone: +1 512 555 4637', $txt);
+        $this->assertStringContainsString('Parking: Distinctive parking 4638', $txt);
+        $this->assertStringNotContainsString('pixel_script', $txt);
+    }
 }
