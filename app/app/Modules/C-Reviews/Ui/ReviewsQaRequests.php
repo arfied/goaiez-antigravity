@@ -142,6 +142,14 @@ class ReviewsQaRequests extends Component
 
         $action = app(ReviewRequestAction::class);
         $res = $action->handle($this->businessId, $req->customer_id, $this->promptTemplate, $req->platform, csatScore: null, jobAgeDays: (int) $req->created_at->diffInDays(now()));
+
+        if (($res['status'] ?? null) === 'suppressed') {
+            $this->noticeType = 'warning';
+            $this->actionNotice = '🛡️ Not sent: an open QA ticket for this customer suppresses review asks (P-205). Resolve the ticket first.';
+
+            return;
+        }
+
         if ($res['status'] === 'refused') {
             $this->noticeType = 'error';
             $this->actionNotice = "🚫 REFUSAL [{$res['refusal_code']}]: ".($res['message'] ?? '');
