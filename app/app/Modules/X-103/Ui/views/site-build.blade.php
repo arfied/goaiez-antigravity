@@ -138,6 +138,25 @@
                 @endif
             </div>
 
+            <!-- STEP 5: This week's suggestions -->
+            <div class="bg-surface overflow-hidden shadow-sm sm:rounded-lg p-6 border border-line">
+                <h3 class="text-lg font-medium text-ink">5. This week's suggestions</h3>
+                @if($recommendations->isEmpty())
+                    <p class="mt-1 text-sm text-ink-2">Nothing to suggest this week — the site is reading what the platform measures.</p>
+                @else
+                    <ul class="mt-4 border-t border-line divide-y divide-line">
+                        @foreach($recommendations as $r)
+                            <li class="py-4 flex items-center justify-between">
+                                <p class="text-sm text-ink">{{ $r->text }}</p>
+                                <button wire:click="dismissRecommendation({{ $r->id }})" class="btn btn-secondary text-sm">
+                                    Dismiss
+                                </button>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </div>
+
         </div>
     </div>
 </div>

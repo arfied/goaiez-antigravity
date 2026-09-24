@@ -114,6 +114,7 @@ function schedulingOverlapWindows(): array
         'review-loss:prune-snapshots' => 180,
         'owner-channel:prune' => 180,
         'x211:detect-overdue' => 180,
+        'x103:recommend-sites' => 180,
         'x199:mark-due' => 180,
         'x136:decay-signals' => 180,
 
