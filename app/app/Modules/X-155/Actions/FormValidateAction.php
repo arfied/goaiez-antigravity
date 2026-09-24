@@ -48,7 +48,7 @@ final class FormValidateAction
         //    a step the answers do not reach is never enforced.
         $steps = (new FormAdaptiveStepsAction)->handle($form, $payload);
 
-        foreach ($steps as $step) {
+        foreach ($steps as $index => $step) {
             $required = $step['required'] ?? [];
 
             if (! is_array($required) || $required === []) {
@@ -73,7 +73,7 @@ final class FormValidateAction
                     'is_valid' => false,
                     'is_spam' => false,
                     'reason' => 'incomplete_step',
-                    'step' => $step['step'] ?? null,
+                    'step' => $step['step'] ?? $index + 1,
                     'missing' => $missing,
                 ];
             }

@@ -1697,4 +1697,23 @@ class X155Test extends TestCase
         $this->assertEquals(['first_name'], $shape['required']);
         $this->assertEquals('bot_trap', $shape['honeypot']);
     }
+
+    public function test_an_incomplete_step_names_its_real_position_for_a_form_the_owner_created(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'X155 Test 4651']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = app(FormCreateAction::class)->handle($biz->id, 'Distinctive form 4651');
+
+        $res = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: ['name' => 'Distinctive 4652']
+        );
+
+        $this->assertEquals('rejected', $res['status'] ?? null);
+        $this->assertEquals('incomplete_step', $res['reason']);
+        $this->assertEquals(1, $res['step']);
+        $this->assertEquals(['phone'], $res['missing']);
+    }
 }
