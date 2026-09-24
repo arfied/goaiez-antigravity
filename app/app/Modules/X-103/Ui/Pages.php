@@ -350,6 +350,10 @@ class Pages extends Component
             if (isset($block['original_subline'])) {
                 $blocks[$i]['subline'] = $block['original_subline'];
                 unset($blocks[$i]['original_subline']);
+                unset($blocks[$i]['source']);
+                unset($blocks[$i]['model']);
+                unset($blocks[$i]['peers']);
+                $restored++;
             }
         }
 
