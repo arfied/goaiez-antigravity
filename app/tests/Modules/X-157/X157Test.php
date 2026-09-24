@@ -3233,6 +3233,7 @@ class X157Test extends TestCase
         $this->assertSame('captured', $res->json('status'));
 
         $res2 = $this->get('http://acme-roofing.test/');
+        $res2->assertOk();
 
         DB::table('custom_domain_requests')->where('domain', 'acme-roofing.test')->delete();
     }
