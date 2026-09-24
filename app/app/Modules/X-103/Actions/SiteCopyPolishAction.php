@@ -9,6 +9,8 @@ use App\Modules\X103\Models\Page;
 use App\Services\Ai\AiRequest;
 use App\Services\Ai\AiRouter;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Facts\BusinessFacts;
+use App\Services\Industry\IndustryQuestions;
 use App\Services\Visibility\CompetitorSiteNotes;
 
 final class SiteCopyPolishAction
@@ -17,6 +19,8 @@ final class SiteCopyPolishAction
         private readonly AiRouter $router,
         private readonly DefaultsRegistry $registry,
         private readonly CompetitorSiteNotes $peers,
+        private readonly BusinessFacts $facts,
+        private readonly IndustryQuestions $questions
     ) {}
 
     public function handle(int $businessId, int $pageId): array
@@ -35,6 +39,15 @@ final class SiteCopyPolishAction
         $reference = $this->peers->referenceBlock($businessId);
         $peerCount = $reference === '' ? 0 : count($this->peers->notesFor($businessId));
 
+        $stated = $this->facts->all($businessId);
+        $industryQuestions = $this->questions->forBusiness($businessId);
+        $ownerFacts = [];
+        foreach ($industryQuestions as $key => $def) {
+            if (($stated[$key] ?? '') !== '') {
+                $ownerFacts[] = "{$def['label']}: {$stated[$key]}";
+            }
+        }
+
         foreach ($blocks as $i => $block) {
             if (! in_array($block['type'] ?? '', ['hero', 'about'])) {
                 continue;
@@ -45,9 +58,14 @@ final class SiteCopyPolishAction
                 continue;
             }
 
+            $prompt = "Text to rewrite:\n{$text}".($reference === '' ? '' : "\n\n".$reference);
+            if ($ownerFacts !== []) {
+                $prompt .= "\n\nFacts the owner stated (use only these; do not add any):\n".implode("\n", $ownerFacts);
+            }
+
             $response = $this->router->dispatch(new AiRequest(
                 task: AiTask::SiteCopy,
-                prompt: "Text to rewrite:\n{$text}".($reference === '' ? '' : "\n\n".$reference),
+                prompt: $prompt,
                 system: $systemPrompt,
             ));
 

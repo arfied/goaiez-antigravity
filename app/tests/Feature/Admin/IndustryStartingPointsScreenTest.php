@@ -79,6 +79,53 @@ test('it refuses invalid section order', function (): void {
         );
 });
 
+test('it saves valid questions', function (): void {
+    Tenancy::forgetAll();
+    $admin = User::factory()->role(UserRole::SuperAdmin)->withSecondFactor()->create();
+
+    Livewire::actingAs($admin)
+        ->test(IndustryStartingPoints::class)
+        ->call('edit', 'trades')
+        ->set('palette.ink', '#000000')
+        ->set('palette.accent', '#000000')
+        ->set('palette.surface', '#ffffff')
+        ->set('questions', 'q_one | A label | a hint | 120 | hero')
+        ->call('save')
+        ->assertHasNoErrors()
+        ->assertDispatched(
+            'toaster:received',
+            toastCarrying('success', 'Starting point saved')
+        );
+
+    $row = IndustryStartingPoint::where('family', 'trades')->first();
+    expect($row->questions)->toHaveCount(1);
+    expect($row->questions[0]['key'])->toBe('q_one');
+});
+
+test('it refuses malformed question key', function (): void {
+    Tenancy::forgetAll();
+    $admin = User::factory()->role(UserRole::SuperAdmin)->withSecondFactor()->create();
+
+    $rowBefore = IndustryStartingPoint::where('family', 'trades')->first();
+
+    Livewire::actingAs($admin)
+        ->test(IndustryStartingPoints::class)
+        ->call('edit', 'trades')
+        ->set('palette.ink', '#000000')
+        ->set('palette.accent', '#000000')
+        ->set('palette.surface', '#ffffff')
+        ->set('questions', 'BAD KEY | x | | 100')
+        ->call('save')
+        ->assertHasNoErrors()
+        ->assertDispatched(
+            'toaster:received',
+            toastCarrying('error', 'is not a key')
+        );
+
+    $rowAfter = IndustryStartingPoint::where('family', 'trades')->first();
+    expect($rowAfter->questions)->toBe($rowBefore->questions);
+});
+
 test('it forbids non-admin users', function (): void {
     Tenancy::forgetAll();
 

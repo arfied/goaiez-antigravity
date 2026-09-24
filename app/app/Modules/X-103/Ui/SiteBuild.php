@@ -27,6 +27,8 @@ use App\Modules\X157\Actions\CustomDomainVerifyAction;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
 use App\Modules\X157\Actions\PlatformSiteAddressAction;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Facts\BusinessFacts;
+use App\Services\Industry\IndustryQuestions;
 use App\Services\Industry\IndustryResolver;
 use App\Services\Industry\IndustryStartingPoints;
 use App\Services\Visibility\CompetitorSignals;
@@ -325,6 +327,17 @@ class SiteBuild extends Component
 
         $industry = app(IndustryResolver::class)->for($this->businessId);
 
+        $unansweredQuestions = 0;
+        if ($industry['family'] !== null) {
+            $questions = app(IndustryQuestions::class)->forBusiness($this->businessId);
+            $facts = app(BusinessFacts::class)->all($this->businessId);
+            foreach (array_keys($questions) as $key) {
+                if (! array_key_exists($key, $facts) || trim((string) ($facts[$key] ?? '')) === '') {
+                    $unansweredQuestions++;
+                }
+            }
+        }
+
         return view('x-103::site-build', [
             'pages' => $pages,
             'domainStatus' => $domainStatus,
@@ -338,6 +351,7 @@ class SiteBuild extends Component
             'industry' => $industry,
             'previews' => app(SitePreviewAction::class)->handle($this->businessId),
             'chosenVariant' => Business::query()->whereKey($this->businessId)->value('site_variant') ?? 'a',
+            'unansweredQuestions' => $unansweredQuestions,
         ]);
     }
 }

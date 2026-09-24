@@ -2027,4 +2027,79 @@ class X103Test extends TestCase
         $this->assertGreaterThan(0, $res[2]['html_bytes']);
         $this->assertSame(0, $res[2]['scripts']);
     }
+
+    public function test_drafts_industry_facts_into_hero_and_contact(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Care Place']);
+        $store = app(BusinessFacts::class);
+        $store->set($biz->id, 'industry', 'care');
+        $store->set($biz->id, 'industry.walk_ins', 'Distinctive walk-ins 4592');
+        $store->set($biz->id, 'industry.parking', 'Distinctive parking 4593');
+
+        $result = app(SiteDraftAction::class)->handle($biz->id, 0);
+
+        $home = Page::where('business_id', $biz->id)->where('slug', 'home')->first();
+        $hero = $home->draft_blocks[0];
+        $this->assertEquals('hero', $hero['type']);
+        $this->assertEquals('Distinctive walk-ins 4592', $hero['subline']);
+        $this->assertStringContainsString('industry fact', $hero['source']);
+
+        $contactPage = Page::where('business_id', $biz->id)->where('slug', 'contact')->first();
+        $contactBlock = null;
+        foreach ($contactPage->draft_blocks as $b) {
+            if ($b['type'] === 'contact') {
+                $contactBlock = $b;
+            }
+        }
+
+        $this->assertNotNull($contactBlock['industry_facts'] ?? null);
+
+        $hasParking = false;
+        foreach ($contactBlock['industry_facts'] as $f) {
+            if ($f['value'] === 'Distinctive parking 4593' && $f['label'] === 'Parking') {
+                $hasParking = true;
+            }
+        }
+        $this->assertTrue($hasParking);
+
+        $html = \App\Modules\X103\Ui\SiteBlockRenderer::render($contactBlock, 'a');
+        $this->assertStringContainsString('Parking: Distinctive parking 4593', $html);
+    }
+
+    public function test_polish_prompt_includes_industry_facts(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Care Place']);
+        $store = app(BusinessFacts::class);
+        $store->set($biz->id, 'industry', 'care');
+        $store->set($biz->id, 'industry.parking', 'Distinctive parking 4593');
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'is_tenant_edited' => false,
+            'is_published' => false,
+            'draft_blocks' => [
+                ['type' => 'about', 'text' => 'We are a nice care place.'],
+            ],
+        ]);
+
+        Http::fake([
+            'api.anthropic.com/v1/messages' => Http::response([
+                'id' => 'msg_123',
+                'role' => 'assistant',
+                'content' => [['type' => 'text', 'text' => 'A beautifully rewritten text.']],
+                'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                'model' => 'claude-3-haiku',
+            ], 200),
+        ]);
+
+        app(SiteCopyPolishAction::class)->handle($biz->id, $page->id);
+
+        Http::assertSent(function ($request) {
+            $body = $request->body();
+
+            return str_contains($body, 'Facts the owner stated') && str_contains($body, 'Distinctive parking 4593');
+        });
+    }
 }

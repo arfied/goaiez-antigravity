@@ -27,4 +27,13 @@
         @endforeach
         </ul>
     @endif
+    @if(isset($block['industry_facts']) && is_array($block['industry_facts']))
+        <ul>
+        @foreach($block['industry_facts'] as $f)
+            @if(isset($f['label'], $f['value']) && is_scalar($f['value']) && trim((string)$f['value']) !== '')
+                <li>{{ $f['label'] }}: {{ $f['value'] }}</li>
+            @endif
+        @endforeach
+        </ul>
+    @endif
 </div>

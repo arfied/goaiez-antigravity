@@ -18,5 +18,6 @@ class IndustryStartingPoint extends Model
         'palette' => 'array',
         'type_pairing' => 'array',
         'section_order' => 'array',
+        'questions' => 'array',
     ];
 }

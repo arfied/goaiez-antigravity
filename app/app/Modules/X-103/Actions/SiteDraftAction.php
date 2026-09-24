@@ -17,6 +17,7 @@ use App\Services\Assistant\PriceBook;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Facts\BusinessFactKey;
 use App\Services\Facts\BusinessFacts;
+use App\Services\Industry\IndustryQuestions;
 use App\Services\Industry\IndustryStartingPoints;
 use App\Services\Links\TenantLinks;
 use App\Support\PlanPricing;
@@ -29,7 +30,8 @@ final class SiteDraftAction
         private readonly TenantLinks $tenantLinks,
         private readonly DefaultsRegistry $registry,
         private readonly BusinessFacts $facts,
-        private readonly IndustryStartingPoints $startingPoints
+        private readonly IndustryStartingPoints $startingPoints,
+        private readonly IndustryQuestions $questions
     ) {}
 
     public function handle(int $businessId, int $locationId): array
@@ -108,7 +110,7 @@ final class SiteDraftAction
             $contactPhoneSource = 'business';
         }
 
-        $buildContactBlock = function () use ($location, $address, $contactPhone, $contactPhoneSource, $contactEmail, $contactEmailSource, &$blocksGenerated, &$sourcesUsed, $stated) {
+        $buildContactBlock = function () use ($businessId, $location, $address, $contactPhone, $contactPhoneSource, $contactEmail, $contactEmailSource, &$blocksGenerated, &$sourcesUsed, $stated) {
             $contactSource = 'location';
             if ($contactPhone) {
                 $contactSource .= ", phone: {$contactPhoneSource}";
@@ -147,6 +149,18 @@ final class SiteDraftAction
                 $contactSource .= ', facts: owner';
                 $block['source'] = $contactSource;
             }
+
+            $industryQuestions = $this->questions->forBusiness($businessId);
+            $industryFactsBlock = [];
+            foreach ($industryQuestions as $key => $def) {
+                if (($stated[$key] ?? '') !== '') {
+                    $industryFactsBlock[] = ['label' => $def['label'], 'value' => $stated[$key]];
+                }
+            }
+            if ($industryFactsBlock !== []) {
+                $block['industry_facts'] = $industryFactsBlock;
+            }
+
             $blocksGenerated++;
             $sourcesUsed[] = $contactSource;
 
@@ -222,6 +236,13 @@ final class SiteDraftAction
             if ($subline === '' && ($stated[BusinessFactKey::TAGLINE] ?? '') !== '') {
                 $subline = $stated[BusinessFactKey::TAGLINE];
                 $heroSource = 'inventory, tagline: facts';
+            }
+            if ($subline === '') {
+                $heroKey = $this->questions->heroKeyFor($businessId);
+                if ($heroKey !== null && ($stated[$heroKey] ?? '') !== '') {
+                    $subline = $stated[$heroKey];
+                    $heroSource = 'inventory, subline: industry fact';
+                }
             }
             $hero = [
                 'type' => 'hero',

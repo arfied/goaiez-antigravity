@@ -6,6 +6,7 @@ namespace App\Livewire\Admin;
 
 use App\Enums\IndustryFamily;
 use App\Models\IndustryStartingPoint;
+use App\Services\Facts\BusinessFactKey;
 use App\Support\Admin\AdminAccess;
 use App\Support\Contrast;
 use Illuminate\Contracts\View\View;
@@ -31,6 +32,8 @@ final class IndustryStartingPoints extends Component
     ];
 
     public string $sectionOrder = '';
+
+    public string $questions = '';
 
     private const BLOCKS = [
         'hero', 'about', 'gallery', 'services', 'reviews_strip',
@@ -58,6 +61,16 @@ final class IndustryStartingPoints extends Component
         $this->palette = $row->palette;
         $this->typePairing = $row->type_pairing;
         $this->sectionOrder = implode("\n", $row->section_order);
+
+        $qLines = [];
+        foreach ($row->questions ?? [] as $q) {
+            $line = "{$q['key']} | {$q['label']} | {$q['hint']} | {$q['max']}";
+            if ($q['hero'] ?? false) {
+                $line .= ' | hero';
+            }
+            $qLines[] = $line;
+        }
+        $this->questions = implode("\n", $qLines);
     }
 
     public function cancel(): void
@@ -66,6 +79,7 @@ final class IndustryStartingPoints extends Component
         $this->palette = ['surface' => '', 'ink' => '', 'primary' => '', 'accent' => ''];
         $this->typePairing = ['heading' => '', 'body' => ''];
         $this->sectionOrder = '';
+        $this->questions = '';
     }
 
     public function save(): void
@@ -134,10 +148,81 @@ final class IndustryStartingPoints extends Component
             return;
         }
 
+        $qLines = array_values(array_filter(array_map('trim', explode("\n", $this->questions)), fn (string $line) => $line !== ''));
+        if (count($qLines) > 6) {
+            Toaster::error('Six questions is the most one industry asks.');
+
+            return;
+        }
+
+        $parsedQuestions = [];
+        $seenKeys = [];
+        $heroCount = 0;
+        $systemKeys = array_keys(BusinessFactKey::all());
+
+        foreach ($qLines as $line) {
+            $parts = array_map('trim', explode('|', $line));
+            $key = $parts[0] ?? '';
+            $label = $parts[1] ?? '';
+            $hint = $parts[2] ?? '';
+            $max = (int) ($parts[3] ?? 0);
+            $isHero = ($parts[4] ?? '') === 'hero';
+
+            if (! preg_match('/^[a-z][a-z0-9_]{1,40}$/', $key)) {
+                Toaster::error("'{$key}' is not a key. Use lowercase letters, numbers and underscores.");
+
+                return;
+            }
+
+            if ($label === '') {
+                Toaster::error('Every question needs a label the owner reads.');
+
+                return;
+            }
+
+            if ($max < 1 || $max > 1200) {
+                Toaster::error('max must be between 1 and 1200.');
+
+                return;
+            }
+
+            if (in_array($key, $seenKeys, true)) {
+                Toaster::error("Duplicate key: {$key}");
+
+                return;
+            }
+            $seenKeys[] = $key;
+
+            if (in_array(BusinessFactKey::INDUSTRY_PREFIX.$key, $systemKeys, true) || in_array($key, $systemKeys, true)) {
+                Toaster::error("Key collides with system facts: {$key}");
+
+                return;
+            }
+
+            if ($isHero) {
+                $heroCount++;
+            }
+
+            $parsedQuestions[] = [
+                'key' => $key,
+                'label' => $label,
+                'hint' => $hint,
+                'max' => $max,
+                'hero' => $isHero,
+            ];
+        }
+
+        if ($heroCount > 1) {
+            Toaster::error('Only one question can be the hero.');
+
+            return;
+        }
+
         IndustryStartingPoint::where('family', $this->editing)->update([
             'palette' => $this->palette,
             'type_pairing' => $this->typePairing,
             'section_order' => $lines,
+            'questions' => $parsedQuestions,
         ]);
 
         Toaster::success('Starting point saved — the next draft in this industry follows it.');

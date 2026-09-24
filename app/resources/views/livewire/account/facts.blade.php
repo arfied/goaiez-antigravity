@@ -53,6 +53,32 @@
                 </div>
             @endforeach
 
+            @if ($industryDefs !== [])
+                <h3 class="mt-8 text-base font-medium text-ink">Your industry asks</h3>
+                <p class="text-sm text-ink-2">{{ $industryLabel }} — a few things people ask before they call. Leave any empty; we never invent an answer.</p>
+                @foreach ($industryDefs as $key => $def)
+                    <div>
+                        <label for="{{ $key }}" class="block text-base text-ink">
+                            {{ $def['label'] }}
+                        </label>
+                        @if ($def['hint'])
+                            <p class="text-sm text-ink-2">{{ $def['hint'] }}</p>
+                        @endif
+
+                        <input
+                            id="{{ $key }}"
+                            type="text"
+                            wire:model="facts.{{ $key }}"
+                            class="mt-1 w-full rounded-[--radius-control] border border-rule bg-card px-3 py-2 text-base text-ink"
+                        />
+
+                        @error('facts.' . $key)
+                            <p class="mt-1 text-base text-alert" role="alert">{{ $message }}</p>
+                        @enderror
+                    </div>
+                @endforeach
+            @endif
+
             <div class="mt-4">
                 <x-ui.submit size="default" target="save" busy="Saving…">Save</x-ui.submit>
             </div>

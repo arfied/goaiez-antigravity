@@ -102,6 +102,41 @@ class FactsScreenTest extends TestCase
         $this->assertEquals('care', app(BusinessFacts::class)->get($this->biz->id, BusinessFactKey::INDUSTRY));
     }
 
+    public function test_industry_questions_appear_and_save(): void
+    {
+        Livewire::actingAs($this->owner)
+            ->test(Facts::class)
+            ->set('facts.industry', 'trades')
+            ->call('save')
+            ->assertSeeHtml('industry.emergency_callouts')
+            ->set('facts.industry.emergency_callouts', 'Distinctive 24/7 4591')
+            ->call('save');
+
+        $this->assertDatabaseHas('business_facts', [
+            'business_id' => $this->biz->id,
+            'key' => 'industry.emergency_callouts',
+            'value' => 'Distinctive 24/7 4591',
+            'verified_by_owner' => true,
+        ]);
+
+        $this->assertEquals('Distinctive 24/7 4591', app(BusinessFacts::class)->get($this->biz->id, 'industry.emergency_callouts'));
+
+        Livewire::actingAs($this->owner)
+            ->test(Facts::class)
+            ->set('facts.industry', 'food')
+            ->call('save');
+
+        $this->assertDatabaseHas('business_facts', [
+            'business_id' => $this->biz->id,
+            'key' => 'industry.emergency_callouts',
+            'value' => 'Distinctive 24/7 4591',
+        ]);
+        $this->assertNull(app(BusinessFacts::class)->get($this->biz->id, 'industry.emergency_callouts'));
+
+        $this->expectException(\InvalidArgumentException::class);
+        app(BusinessFacts::class)->set($this->biz->id, 'industry.nope', 'x');
+    }
+
     public function test_refuses_staff_with_no_tenant_on_get(): void
     {
         $staff = User::factory()->create(['role' => UserRole::Staff]);

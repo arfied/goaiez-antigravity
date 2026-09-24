@@ -55,6 +55,11 @@
                             <textarea id="section_order" wire:model="sectionOrder" rows="11" class="mt-1 w-full rounded-[--radius-field] border border-rule bg-paper px-3 py-2 text-ink font-mono text-sm"></textarea>
                         </div>
 
+                        <div>
+                            <label for="questions" class="block text-sm font-medium text-ink">Questions (one per line: key | label | hint | max | hero)</label>
+                            <textarea id="questions" wire:model="questions" rows="6" class="mt-1 w-full rounded-[--radius-field] border border-rule bg-paper px-3 py-2 text-ink font-mono text-sm"></textarea>
+                        </div>
+
                         <div class="flex gap-3">
                             <button wire:click="save" type="button" class="rounded-[--radius-field] bg-ink px-4 py-2 text-paper text-sm">
                                 Save
@@ -99,6 +104,14 @@
                                 @endforeach
                             </ol>
                         </div>
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="text-sm font-medium text-ink-2 mb-2">Questions</h3>
+                        <ol class="list-decimal pl-4 space-y-1 text-sm text-ink font-mono">
+                            @foreach ($row->questions ?? [] as $q)
+                                <li>{{ $q['key'] }} | {{ $q['label'] }} | {{ $q['hint'] }} | {{ $q['max'] }}{{ ($q['hero'] ?? false) ? ' | hero' : '' }}</li>
+                            @endforeach
+                        </ol>
                     </div>
                 @endif
             </section>
