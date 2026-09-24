@@ -13,6 +13,8 @@ use App\Modules\X102\Http\Controllers\ChatCaptureController;
 use App\Modules\X102\Http\Controllers\ChatStartController;
 use App\Modules\X102\Http\Controllers\ChatTurnController;
 use App\Modules\X156\Http\Controllers\IngestWebhookController;
+use App\Modules\X196\Http\Controllers\ExtensionScanController;
+use App\Modules\X196\Http\Controllers\ExtensionSessionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -241,3 +243,11 @@ Route::get('/site/{key}', [T3InjectionController::class, 'payload'])
 Route::post('/ingest/{business}/{source}', IngestWebhookController::class)
     ->middleware('throttle:60,1')
     ->name('api.ingest.webhook');
+
+Route::post('/extension/{key}/session', ExtensionSessionController::class)
+    ->middleware('throttle:60,1')
+    ->name('api.extension.session');
+
+Route::post('/extension/{key}/scan', ExtensionScanController::class)
+    ->middleware('throttle:60,1')
+    ->name('api.extension.scan');
