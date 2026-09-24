@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 
 final class EdgeDeployAction
@@ -255,11 +256,24 @@ final class EdgeDeployAction
                         $html .= "<div class=\"chat-widget-container\"></div>\n";
                     }
                     if ($hasForm) {
-                        $formId = app(FormReadAction::class)->firstIdForBusiness($businessId);
-                        $action = $formId === null
-                            ? ''
-                            : " method=\"post\" action=\"/sites/{$businessId}/{$deployHash}/forms/{$formId}\"";
-                        $html .= "<form class=\"form-capture-x155\"{$action}></form>\n";
+                        $definition = app(FormReadAction::class)->firstDefinitionForBusiness($businessId);
+                        if ($definition === null) {
+                            // No form defined yet: the marker stays so the site law can see the slot, but nothing pretends to be a form.
+                            $html .= "<div class=\"form-capture-x155\"></div>\n";
+                        } else {
+                            $formActionBase = route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: true);
+                            $html .= "<div class=\"form-capture-x155\">\n";
+                            $html .= View::make('x-103::site.blocks.form', [
+                                'block' => [
+                                    'definition_id' => (int) $definition['id'],
+                                    'fields' => $definition['fields'],
+                                    'required' => $definition['required'],
+                                    'honeypot' => $definition['honeypot'],
+                                ],
+                                'context' => ['form_action_base' => $formActionBase],
+                            ])->render();
+                            $html .= "</div>\n";
+                        }
                     }
                     if ($hasDni) {
                         $html .= "<div class=\"dni-pool-x137\"></div>\n";
