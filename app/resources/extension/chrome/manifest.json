@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "GoAiEz Prospect Scanner",
+  "version": "0.1.0",
+  "description": "Scan the page you are on and record it against your GoAiEz account.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://*/*",
+    "http://*/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "GoAiEz"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
