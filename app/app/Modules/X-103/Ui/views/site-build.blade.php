@@ -91,7 +91,7 @@
                     <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
                         @foreach(['a' => 'Look A', 'b' => 'Look B', 'c' => 'Look C'] as $k => $label)
                             <div class="rounded border {{ $chosenVariant === $k ? 'border-ink' : 'border-line' }} p-2" wire:key="look-{{ $k }}">
-                                <iframe title="{{ $label }} preview" srcdoc="{{ $previews[$k] }}" sandbox="" loading="lazy" class="w-full h-64 bg-white border border-line"></iframe>
+                                <iframe title="{{ $label }} preview" srcdoc="{{ $previews[$k] }}" sandbox="" loading="lazy" class="w-full h-64 bg-surface border border-line"></iframe>
                                 <div class="mt-2 flex items-center justify-between">
                                     <span class="text-sm text-ink">{{ $label }}@if($chosenVariant === $k) — yours @endif</span>
                                     <button wire:click="chooseLook('{{ $k }}')" class="btn btn-secondary text-sm">Pick this</button>

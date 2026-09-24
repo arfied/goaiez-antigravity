@@ -101,36 +101,31 @@ class IndustryStartingPoints
             return $sp;
         }
 
-        if ($v === 'c') {
-            $primary = $sp['palette']['primary'];
-            $accent = $sp['palette']['accent'];
-            $sp['palette']['primary'] = $accent;
-            $sp['palette']['accent'] = $primary;
+        $primary = $sp['palette']['primary'];
+        $accent = $sp['palette']['accent'];
+        $sp['palette']['primary'] = $accent;
+        $sp['palette']['accent'] = $primary;
 
-            $order = $sp['section_order'];
-            $newOrder = [];
-            $others = [];
-            $heroIdx = array_search('hero', $order, true);
+        $order = $sp['section_order'];
+        $newOrder = [];
+        $others = [];
 
-            foreach ($order as $idx => $type) {
-                if ($type === 'hero' || $type === 'reviews_strip' || $type === 'gallery') {
-                    continue;
-                }
-                $others[] = $type;
+        foreach ($order as $type) {
+            if ($type === 'hero' || $type === 'reviews_strip' || $type === 'gallery') {
+                continue;
             }
-
-            $newOrder[] = 'hero';
-            if (in_array('reviews_strip', $order, true)) {
-                $newOrder[] = 'reviews_strip';
-            }
-            if (in_array('gallery', $order, true)) {
-                $newOrder[] = 'gallery';
-            }
-            $newOrder = array_merge($newOrder, $others);
-            $sp['section_order'] = $newOrder;
-
-            return $sp;
+            $others[] = $type;
         }
+
+        $newOrder[] = 'hero';
+        if (in_array('reviews_strip', $order, true)) {
+            $newOrder[] = 'reviews_strip';
+        }
+        if (in_array('gallery', $order, true)) {
+            $newOrder[] = 'gallery';
+        }
+        $newOrder = array_merge($newOrder, $others);
+        $sp['section_order'] = $newOrder;
 
         return $sp;
     }

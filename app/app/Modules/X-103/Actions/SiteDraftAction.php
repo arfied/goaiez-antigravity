@@ -17,7 +17,6 @@ use App\Services\Assistant\PriceBook;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Facts\BusinessFactKey;
 use App\Services\Facts\BusinessFacts;
-use App\Services\Industry\IndustryResolver;
 use App\Services\Industry\IndustryStartingPoints;
 use App\Services\Links\TenantLinks;
 use App\Support\PlanPricing;
@@ -30,7 +29,6 @@ final class SiteDraftAction
         private readonly TenantLinks $tenantLinks,
         private readonly DefaultsRegistry $registry,
         private readonly BusinessFacts $facts,
-        private readonly IndustryResolver $industry,
         private readonly IndustryStartingPoints $startingPoints
     ) {}
 
