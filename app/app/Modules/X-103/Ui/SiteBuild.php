@@ -18,6 +18,8 @@ use App\Modules\X157\Actions\CustomDomainVerifyAction;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
 use App\Modules\X157\Actions\PlatformSiteAddressAction;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Visibility\CompetitorSignals;
+use App\Services\Visibility\CompetitorSiteNotes;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -168,11 +170,17 @@ class SiteBuild extends Component
             ->orderBy('code')
             ->get();
 
+        $location = Location::where('business_id', $this->businessId)->first();
+        $peers = $location ? app(CompetitorSignals::class)->compare($location) : null;
+        $peerTopics = app(CompetitorSiteNotes::class)->topicsFor($this->businessId);
+
         return view('x-103::site-build', [
             'pages' => $pages,
             'domainStatus' => $domainStatus,
             'deployments' => $deployments,
             'recommendations' => $recommendations,
+            'peers' => $peers,
+            'peerTopics' => $peerTopics,
         ]);
     }
 }

@@ -161,6 +161,29 @@
                 @endif
             </div>
 
+            <!-- STEP 6: Learn from the top 5 nearby -->
+            <div class="bg-surface overflow-hidden shadow-sm sm:rounded-lg p-6 border border-line">
+                <h3 class="text-lg font-medium text-ink">6. Learn from the top 5 nearby</h3>
+                <p class="mt-1 text-sm text-ink-2">
+                    @if($peers !== null && $peers->isMeasured())
+                        {{ $peers->sentence() }}
+                    @else
+                        {{ $peers?->absenceSentence() ?? 'Not measured yet — nearby businesses are found on the nightly schedule once your Google listing is connected.' }}
+                    @endif
+                </p>
+                @if($peerTopics['read'] > 0)
+                    <p class="mt-2 text-sm text-ink">{{ $peerTopics['read'] }} nearby {{ $peerTopics['read'] === 1 ? 'site was' : 'sites were' }} read as reference. What they cover:</p>
+                    <ul class="mt-2 flex flex-wrap gap-2">
+                        @foreach($peerTopics['topics'] as $topic)
+                            <li class="text-xs px-2 py-1 rounded bg-paper border border-line text-ink-2">{{ $topic }}</li>
+                        @endforeach
+                    </ul>
+                @else
+                    <p class="mt-2 text-sm text-ink-2">No nearby site has been read yet.</p>
+                @endif
+                <p class="mt-3 text-xs text-ink-2">Reference only: the AI reads what nearby businesses cover to know what to cover for you. Nothing of theirs is copied — not their words, not their pictures.</p>
+            </div>
+
         </div>
     </div>
 </div>

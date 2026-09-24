@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Tests\Modules\X103\Screens;
 
 use App\Enums\UserRole;
+use App\Models\Competitor;
+use App\Models\CompetitorSiteNote;
+use App\Models\CompetitorSnapshot;
 use App\Models\Location;
 use App\Models\PlatformSetting;
 use App\Models\User;
@@ -291,5 +294,57 @@ class SiteBuildScreenTest extends TestCase
         Livewire::actingAs($manager)->test(SiteBuild::class)
             ->call('askRecommendation', $rec->id)
             ->assertForbidden();
+    }
+
+    public function test_learn_from_the_top_5_names_no_peer()
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        $location = Location::factory()->create(['business_id' => $biz->id]);
+
+        $competitor = Competitor::forceCreate([
+            'business_id' => $biz->id,
+            'location_id' => $location->id,
+            'place_id' => 'place-4471',
+            'name' => 'Distinctive Peer 4471',
+            'source' => 'auto',
+        ]);
+
+        CompetitorSnapshot::forceCreate([
+            'competitor_id' => $competitor->id,
+            'review_count' => 88,
+            'rating' => 4.6,
+            'captured_at' => now(),
+        ]);
+
+        CompetitorSiteNote::forceCreate([
+            'competitor_id' => $competitor->id,
+            'business_id' => $biz->id,
+            'url' => 'https://peer-4471.example/',
+            'status' => 'noted',
+            'headings' => ['Distinctive heading 4473'],
+            'fetched_at' => now(),
+            'title' => null,
+            'description' => null,
+            'refusal_reason' => null,
+        ]);
+
+        Tenancy::set((int) $biz->id);
+
+        $this->actingAs($owner);
+        $response = $this->get(route('x-103.site-build'));
+
+        $response->assertSee('Learn from the top 5 nearby');
+        $response->assertSee('Distinctive heading 4473');
+        $response->assertDontSee('Distinctive Peer 4471');
+        $response->assertDontSee('peer-4471.example');
+
+        // Fresh tenant
+        $owner2 = User::factory()->create(['role' => UserRole::Owner]);
+        $biz2 = TestCase::provisionTenant(['owner_user_id' => $owner2->id]);
+        Tenancy::set((int) $biz2->id);
+        $this->actingAs($owner2);
+        $response2 = $this->get(route('x-103.site-build'));
+        $response2->assertSee('No nearby site has been read yet');
     }
 }
