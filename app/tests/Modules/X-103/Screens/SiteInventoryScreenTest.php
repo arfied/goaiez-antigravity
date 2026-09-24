@@ -7,6 +7,7 @@ use App\Exceptions\TenantNotResolved;
 use App\Models\Location;
 use App\Models\User;
 use App\Modules\X103\Actions\SiteCrawlAction;
+use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\SiteInventoryImage;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Modules\X103\Ui\SiteInventory;
@@ -354,4 +355,41 @@ it('lets the owner describe a stored picture', function () {
     $this->actingAs($owner)->get(route('x-103.site-inventory'))
         ->assertOk()
         ->assertSee('Describe each stored picture');
+});
+
+it('lists what a reader would trip on and drops the row once it is fixed', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+    Tenancy::set($biz->id);
+
+    $this->actingAs($owner)
+        ->get(route('x-103.site-inventory'))
+        ->assertOk()
+        ->assertSee('Can everyone read it')
+        ->assertSee('Nothing to check yet');
+
+    $about = Page::create([
+        'business_id' => $biz->id,
+        'slug' => 'about',
+        'title' => 'About',
+        'draft_blocks' => [
+            ['type' => 'team', 'items' => [['name' => 'A', 'role' => 'B']]],
+        ],
+    ]);
+
+    $this->actingAs($owner)
+        ->get(route('x-103.site-inventory'))
+        ->assertOk()
+        ->assertSee('No main heading');
+
+    $about->update([
+        'draft_blocks' => [
+            ['type' => 'hero', 'headline' => 'H1', 'image_path' => 'inventory/a.jpg', 'image_alt' => 'Distinctive alt'],
+        ],
+    ]);
+
+    $this->actingAs($owner)
+        ->get(route('x-103.site-inventory'))
+        ->assertOk()
+        ->assertDontSee('No main heading');
 });

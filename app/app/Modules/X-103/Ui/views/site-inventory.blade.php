@@ -239,4 +239,41 @@
             </table>
         @endif
     </div>
+
+    <div class="mt-8 mb-4">
+        <h2>Can everyone read it</h2>
+        @if (count($draftPages) === 0)
+            <p class="text-sm text-ink-2 mt-2">Nothing to check yet — draft the site first.</p>
+        @elseif (count($readability) === 0)
+            <p class="text-sm text-ink-2 mt-2">Every drafted page passed: each picture has a description, every form field has a label, every page has a main heading, and the copy reads at grade {{ \App\Modules\X103\Actions\SiteReadabilityAction::MAX_READING_GRADE }} or below.</p>
+        @else
+            <p class="text-sm text-ink-2 mt-2">Checked against the draft, not the live site. Fix these and draft again.</p>
+            <table class="min-w-full divide-y divide-rule mt-4">
+                <thead class="bg-paper">
+                    <tr>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-ink">Page</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Problem</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Why it matters</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Where to fix it</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-rule bg-paper">
+                    @foreach ($readability as $row)
+                        <tr>
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-ink">{{ $row['page'] }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink">{{ $row['label'] }}</td>
+                            <td class="px-3 py-4 text-sm text-ink-2">{{ $row['hint'] }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">
+                                @if ($row['route'] !== null)
+                                    <a href="{{ route($row['route']) }}" class="text-indigo-600 hover:text-indigo-900">Open</a>
+                                @else
+                                    On this page
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    </div>
 </div>

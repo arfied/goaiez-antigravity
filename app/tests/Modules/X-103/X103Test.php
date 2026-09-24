@@ -22,6 +22,7 @@ use App\Modules\X103\Actions\SiteCopyPolishAction;
 use App\Modules\X103\Actions\SiteDraftAction;
 use App\Modules\X103\Actions\SiteMissingFactsAction;
 use App\Modules\X103\Actions\SitePublishAction;
+use App\Modules\X103\Actions\SiteReadabilityAction;
 use App\Modules\X103\Domain\SiteBlockRenderer;
 use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Events\ApprovalRequested;
@@ -1208,6 +1209,67 @@ class X103Test extends TestCase
         ]);
         $rows = $action->handle($biz->id, $location);
         $this->assertNotContains('services', array_column($rows, 'key'));
+    }
+
+    public function test_the_readability_check_reads_the_draft_and_clears_when_the_fact_is_fixed(): void
+    {
+        $biz = $this->provisionTenant();
+        Tenancy::set($biz->id);
+
+        $home = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'H1', 'image_path' => 'inventory/a.jpg', 'image_alt' => '   '],
+                ['type' => 'gallery', 'items' => [['image_path' => 'inventory/b.jpg', 'alt' => 'Distinctive alt 4481'], ['image_path' => 'inventory/c.jpg', 'alt' => '']]],
+                ['type' => 'form', 'fields' => [['name' => 'email', 'label' => 'Email', 'type' => 'email'], ['name' => 'phone', 'label' => '', 'type' => 'text']], 'honeypot' => 'website_url'],
+                ['type' => 'about', 'text' => 'Conceptualization compartmentalization interoperability standardization characterization implementation representation documentation initialization authentication configuration synchronization administration optimization authentication specification interpretation diversification differentiation classification qualification justification multiplication identification communication experimentation.'],
+            ],
+        ]);
+
+        $about = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'about',
+            'title' => 'About',
+            'draft_blocks' => [
+                ['type' => 'team', 'items' => [['name' => 'A', 'role' => 'B']]],
+            ],
+        ]);
+
+        $action = app(SiteReadabilityAction::class);
+        $rows = $action->handle($biz->id);
+
+        $homeKeys = array_values(array_column(array_filter($rows, fn ($r) => $r['page'] === 'home'), 'key'));
+        $this->assertContains('picture_description', $homeKeys);
+        $this->assertContains('form_label', $homeKeys);
+        $this->assertContains('reading_grade', $homeKeys);
+        $this->assertNotContains('no_heading', $homeKeys);
+
+        $homePicRow = array_values(array_filter($rows, fn ($r) => $r['page'] === 'home' && $r['key'] === 'picture_description'))[0] ?? null;
+        $this->assertSame('2 pictures have no description', $homePicRow['label']);
+
+        $homeFormRow = array_values(array_filter($rows, fn ($r) => $r['page'] === 'home' && $r['key'] === 'form_label'))[0] ?? null;
+        $this->assertSame('1 form field has no label', $homeFormRow['label']);
+
+        $aboutKeys = array_values(array_column(array_filter($rows, fn ($r) => $r['page'] === 'about'), 'key'));
+        $this->assertContains('no_heading', $aboutKeys);
+        $this->assertNotContains('picture_description', $aboutKeys);
+        $this->assertNotContains('form_label', $aboutKeys);
+        $this->assertNotContains('reading_grade', $aboutKeys);
+
+        $home->update([
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'H1', 'image_path' => 'inventory/a.jpg', 'image_alt' => 'Distinctive alt 4482'],
+                ['type' => 'gallery', 'items' => [['image_path' => 'inventory/b.jpg', 'alt' => 'Distinctive alt 4481'], ['image_path' => 'inventory/c.jpg', 'alt' => 'Distinctive alt 4482']]],
+                ['type' => 'form', 'fields' => [['name' => 'email', 'label' => 'Email', 'type' => 'email'], ['name' => 'phone', 'label' => 'Phone', 'type' => 'text']], 'honeypot' => 'website_url'],
+                ['type' => 'about', 'text' => 'It is good.'],
+            ],
+        ]);
+
+        $rows2 = $action->handle($biz->id);
+        $homeKeys2 = array_values(array_column(array_filter($rows2, fn ($r) => $r['page'] === 'home'), 'key'));
+        $this->assertEmpty($homeKeys2);
     }
 
     public function test_the_draft_reads_the_owners_facts_sheet(): void
