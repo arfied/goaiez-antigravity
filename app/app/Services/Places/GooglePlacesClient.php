@@ -184,12 +184,16 @@ final class GooglePlacesClient implements PlacesClient
      * free audit is an unauthenticated endpoint that runs before signup and
      * therefore has no tenant *by construction*, and anything running inside a
      * tenant session is that tenant's work being done on their behalf. A new
-     * tenant-facing caller is attributed correctly without having to know this
+     * tenant-facing caller is attributed correctly (to the tenant's own key if configured, or the platform budget) without having to know this
      * class exists, which is the property the container binding did not have.
      */
     private function purpose(): string
     {
-        return Tenancy::id() !== null ? PlacesSpend::TENANT_PURPOSE : $this->purpose;
+        if (Tenancy::id() !== null) {
+            return $this->keyInUse() === 'tenant' ? PlacesSpend::OWN_KEY_PURPOSE : PlacesSpend::TENANT_PURPOSE;
+        }
+
+        return $this->purpose;
     }
 
     public function autocomplete(string $query, ?string $regionCode = null): array

@@ -113,6 +113,6 @@ test('every owner-layout module screen is measured for a real GET test; the unco
         expect($cUncov)->toBe(0, 'If it went UP, pin the new number here. If it went DOWN, lower the number and record it.');
     }
 
-    expect($cCov)->toBe(240, 'If it went UP, pin the new number here. If it went DOWN, lower the number and record it. ; 2026-09-23 PlacesKey');
+    expect($cCov)->toBe(240, 'If it went UP, pin the new number here. If it went DOWN, lower the number and record it.');
     expect($cUnrou)->toBe(0, 'If it went UP, pin the new number here. If it went DOWN, lower the number and record it.');
 });
