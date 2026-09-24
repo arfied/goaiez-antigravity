@@ -444,3 +444,73 @@ it('records a pictures pixel size at copy time and leaves it empty for an svg', 
         ->and($svg->width)->toBeNull()
         ->and($svg->height)->toBeNull();
 });
+
+it('weighs each drafted page and says it is a weight not a load time', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+    Tenancy::set($biz->id);
+
+    $this->actingAs($owner)
+        ->get(route('x-103.site-inventory'))
+        ->assertOk()
+        ->assertSee('How heavy each page is')
+        ->assertSee('Nothing to weigh yet');
+
+    $location = Location::factory()->create(['business_id' => $biz->id]);
+    $inventoryPage = SiteInventoryPage::create([
+        'business_id' => $biz->id,
+        'location_id' => $location->id,
+        'url' => 'https://example.com',
+    ]);
+
+    SiteInventoryImage::create([
+        'business_id' => $biz->id,
+        'page_id' => $inventoryPage->id,
+        'source_url' => 'https://example.com/w1.jpg',
+        'path' => 'inventory/w1.jpg',
+        'mime' => 'image/jpeg',
+        'bytes' => 11264,
+        'status' => 'stored',
+        'attribution' => 'example.com',
+    ]);
+    SiteInventoryImage::create([
+        'business_id' => $biz->id,
+        'page_id' => $inventoryPage->id,
+        'source_url' => 'https://example.com/w2.jpg',
+        'path' => 'inventory/w2.jpg',
+        'mime' => 'image/jpeg',
+        'bytes' => 22528,
+        'status' => 'stored',
+        'attribution' => 'example.com',
+    ]);
+    SiteInventoryImage::create([
+        'business_id' => $biz->id,
+        'page_id' => $inventoryPage->id,
+        'source_url' => 'https://example.com/w3.jpg',
+        'path' => 'inventory/w3.jpg',
+        'mime' => 'image/jpeg',
+        'bytes' => 44032,
+        'status' => 'stored',
+        'attribution' => 'example.com',
+    ]);
+
+    Page::create([
+        'business_id' => $biz->id,
+        'slug' => 'home',
+        'title' => 'Home',
+        'draft_blocks' => [
+            ['type' => 'hero', 'headline' => 'Headline', 'image_path' => 'inventory/w1.jpg'],
+            ['type' => 'gallery', 'items' => [['image_path' => 'inventory/w2.jpg'], ['image_path' => 'inventory/w3.jpg']]],
+            ['type' => 'pixel_script'],
+        ],
+        'is_published' => false,
+    ]);
+
+    $this->actingAs($owner)
+        ->get(route('x-103.site-inventory'))
+        ->assertOk()
+        ->assertSee('76.0 KB')
+        ->assertSee('w3.jpg (43.0 KB)')
+        ->assertSee('the visitor pixel')
+        ->assertDontSee('Nothing to weigh yet');
+});

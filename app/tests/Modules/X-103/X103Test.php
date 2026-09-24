@@ -21,6 +21,7 @@ use App\Modules\X103\Actions\SiteBuildAction;
 use App\Modules\X103\Actions\SiteCopyPolishAction;
 use App\Modules\X103\Actions\SiteDraftAction;
 use App\Modules\X103\Actions\SiteMissingFactsAction;
+use App\Modules\X103\Actions\SitePageWeightAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Actions\SiteReadabilityAction;
 use App\Modules\X103\Domain\SiteBlockRenderer;
@@ -1449,5 +1450,108 @@ class X103Test extends TestCase
         $this->assertArrayNotHasKey('width', $galleryBlock['items'][0]);
         $this->assertSame(800, $galleryBlock['items'][1]['width']);
         PlatformSetting::query()->where('key', 'ai.monthly_cap_per_tenant')->delete();
+    }
+
+    public function test_the_page_weight_reads_the_stored_pictures_and_the_rendered_text(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Weight Tenant', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $location = Location::factory()->create(['business_id' => $biz->id]);
+        $inventoryPage = SiteInventoryPage::create([
+            'business_id' => $biz->id,
+            'location_id' => $location->id,
+            'url' => 'https://example.com',
+        ]);
+
+        SiteInventoryImage::create([
+            'business_id' => $biz->id,
+            'page_id' => $inventoryPage->id,
+            'source_url' => 'https://example.com/w1.jpg',
+            'path' => 'inventory/w1.jpg',
+            'mime' => 'image/jpeg',
+            'bytes' => 11264,
+            'status' => 'stored',
+            'attribution' => 'example.com',
+        ]);
+        SiteInventoryImage::create([
+            'business_id' => $biz->id,
+            'page_id' => $inventoryPage->id,
+            'source_url' => 'https://example.com/w2.jpg',
+            'path' => 'inventory/w2.jpg',
+            'mime' => 'image/jpeg',
+            'bytes' => 22528,
+            'status' => 'stored',
+            'attribution' => 'example.com',
+        ]);
+        SiteInventoryImage::create([
+            'business_id' => $biz->id,
+            'page_id' => $inventoryPage->id,
+            'source_url' => 'https://example.com/w3.jpg',
+            'path' => 'inventory/w3.jpg',
+            'mime' => 'image/jpeg',
+            'bytes' => 44032,
+            'status' => 'stored',
+            'attribution' => 'example.com',
+        ]);
+
+        Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Headline', 'image_path' => 'inventory/w1.jpg'],
+                ['type' => 'gallery', 'items' => [['image_path' => 'inventory/w2.jpg'], ['image_path' => 'inventory/w3.jpg']]],
+                ['type' => 'pixel_script'],
+            ],
+            'is_published' => false,
+        ]);
+        Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'plain',
+            'title' => 'Plain',
+            'draft_blocks' => [
+                ['type' => 'about', 'text' => 'About text'],
+            ],
+            'is_published' => false,
+        ]);
+        Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'missing-img',
+            'title' => 'Missing Img',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Headline', 'image_path' => 'inventory/missing.jpg'],
+            ],
+            'is_published' => false,
+        ]);
+
+        $action = app(SitePageWeightAction::class);
+        $res = $action->handle($biz->id);
+
+        $this->assertCount(3, $res);
+
+        $this->assertSame('home', $res[0]['page']);
+        $this->assertSame(3, $res[0]['images']);
+        $this->assertSame(77824, $res[0]['image_bytes']);
+        $this->assertSame('w3.jpg', $res[0]['largest']);
+        $this->assertSame(44032, $res[0]['largest_bytes']);
+        $this->assertGreaterThan(0, $res[0]['html_bytes']);
+        $this->assertSame(1, $res[0]['scripts']);
+
+        $this->assertSame('plain', $res[1]['page']);
+        $this->assertSame(0, $res[1]['images']);
+        $this->assertSame(0, $res[1]['image_bytes']);
+        $this->assertNull($res[1]['largest']);
+        $this->assertSame(0, $res[1]['largest_bytes']);
+        $this->assertGreaterThan(0, $res[1]['html_bytes']);
+        $this->assertSame(0, $res[1]['scripts']);
+
+        $this->assertSame('missing-img', $res[2]['page']);
+        $this->assertSame(1, $res[2]['images']);
+        $this->assertSame(0, $res[2]['image_bytes']);
+        $this->assertNull($res[2]['largest']);
+        $this->assertSame(0, $res[2]['largest_bytes']);
+        $this->assertGreaterThan(0, $res[2]['html_bytes']);
+        $this->assertSame(0, $res[2]['scripts']);
     }
 }
