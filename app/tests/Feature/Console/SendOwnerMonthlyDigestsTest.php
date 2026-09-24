@@ -109,10 +109,7 @@ class SendOwnerMonthlyDigestsTest extends TestCase
 
     public function test_the_cursor_lands_on_the_window_end_so_no_days_are_lost(): void
     {
-        $mailer = app(PlatformMailer::class);
-        if (! $mailer->canDeliver()) {
-            $this->markTestSkipped('Mailer cannot deliver');
-        }
+        mailerCanDeliver();
 
         Notification::fake();
 
