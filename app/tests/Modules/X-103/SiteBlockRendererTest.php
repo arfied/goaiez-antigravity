@@ -155,4 +155,13 @@ class SiteBlockRendererTest extends TestCase
 
         Http::assertNothingSent();
     }
+
+    public function test_renders_opening_hours_in_contact_block(): void
+    {
+        $renderer = new SiteBlockRenderer;
+        $html = $renderer->render([
+            ['type' => 'contact', 'hours' => [['day' => 'Monday', 'open' => '08:00', 'close' => '17:00']]],
+        ], []);
+        $this->assertStringContainsString('Monday: 08:00 - 17:00', $html);
+    }
 }

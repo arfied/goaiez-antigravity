@@ -155,5 +155,34 @@
                 </tbody>
             </table>
         </div>
+        </div>
     @endif
+
+    <div class="mt-8 mb-4">
+        <h2>Your opening hours</h2>
+        <table class="min-w-full divide-y divide-rule mt-4">
+            <thead class="bg-paper">
+                <tr>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-ink">Day</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Open</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Close</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Closed</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-rule bg-paper">
+                @foreach($hours as $i => $row)
+                    <tr>
+                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-ink">{{ $row['day'] }}</td>
+                        <td class="whitespace-nowrap px-3 py-4"><input type="time" wire:model="hours.{{ $i }}.open"></td>
+                        <td class="whitespace-nowrap px-3 py-4"><input type="time" wire:model="hours.{{ $i }}.close"></td>
+                        <td class="whitespace-nowrap px-3 py-4"><input type="checkbox" wire:model="hours.{{ $i }}.closed"></td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+        <div class="mt-4">
+            <button wire:click="saveHours" class="btn btn-primary">Save hours</button>
+            <p class="text-sm text-ink-2 mt-2">Shown in the contact section of every drafted page.</p>
+        </div>
+    </div>
 </div>

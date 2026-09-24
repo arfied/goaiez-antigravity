@@ -1077,4 +1077,37 @@ class X103Test extends TestCase
         $this->assertStringContainsString('name="phone"', $html);
         $this->assertStringContainsString('required', $html);
     }
+
+    public function test_the_drafted_contact_block_carries_the_locations_opening_hours(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'Hours Draft Test', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $location = Location::factory()->create([
+            'business_id' => $biz->id,
+            'opening_hours' => [['day' => 'Monday', 'open' => '08:00', 'close' => '17:00']],
+        ]);
+
+        $action = app(SiteDraftAction::class);
+        $action->handle($biz->id, $location->id);
+
+        $home = Page::where('slug', 'home')->first();
+        $contactBlock = collect($home->draft_blocks)->firstWhere('type', 'contact');
+
+        $this->assertNotNull($contactBlock);
+        $this->assertArrayHasKey('hours', $contactBlock);
+        $this->assertEquals('Monday', $contactBlock['hours'][0]['day']);
+        $this->assertStringContainsString('hours: location', $contactBlock['source']);
+
+        Page::query()->delete();
+        $location->opening_hours = null;
+        $location->save();
+        $location->refresh();
+        $action->handle($biz->id, $location->id);
+
+        $home = Page::where('slug', 'home')->first();
+        $contactBlock = collect($home->draft_blocks)->firstWhere('type', 'contact');
+        $this->assertArrayNotHasKey('hours', $contactBlock);
+    }
 }

@@ -255,3 +255,26 @@ it('caps copied images at max_per_site', function () {
     expect($images)->toHaveCount(1);
     expect($images->first()->source_url)->toBe('https://example.com/img1.png');
 });
+
+it('saves opening hours and shows the form', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+    Tenancy::set($biz->id);
+
+    Livewire::actingAs($owner)->test(SiteInventory::class)
+        ->set('hours.0.open', '08:00')
+        ->set('hours.0.close', '17:00')
+        ->set('hours.6.closed', true)
+        ->call('saveHours')
+        ->assertDispatched('toast', message: 'Hours saved — the next draft shows them in the contact section.');
+
+    expect(Location::where('business_id', $biz->id)->first()->refresh()->opening_hours)
+        ->toBe([['day' => 'Monday', 'open' => '08:00', 'close' => '17:00'], ['day' => 'Sunday', 'open' => 'Closed', 'close' => '']]);
+
+    $this->actingAs($owner)->get(route('x-103.site-inventory'))->assertSee('Your opening hours');
+
+    Livewire::actingAs($owner)->test(SiteInventory::class)
+        ->set('hours.0.open', '8am')
+        ->call('saveHours')
+        ->assertDispatched('toast', message: 'Use HH:MM for Monday.');
+});
