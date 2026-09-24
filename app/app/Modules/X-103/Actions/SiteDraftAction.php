@@ -100,7 +100,7 @@ final class SiteDraftAction
             $contactPhoneSource = 'business';
         }
 
-        $buildContactBlock = function () use ($address, $contactPhone, $contactPhoneSource, $contactEmail, $contactEmailSource, &$blocksGenerated, &$sourcesUsed) {
+        $buildContactBlock = function () use ($location, $address, $contactPhone, $contactPhoneSource, $contactEmail, $contactEmailSource, &$blocksGenerated, &$sourcesUsed) {
             $contactSource = 'location';
             if ($contactPhone) {
                 $contactSource .= ", phone: {$contactPhoneSource}";
@@ -121,6 +121,11 @@ final class SiteDraftAction
             }
             if ($contactEmail) {
                 $block['email'] = $contactEmail;
+            }
+            if ($location !== null && is_array($location->opening_hours) && $location->opening_hours !== []) {
+                $block['hours'] = $location->opening_hours;
+                $contactSource .= ', hours: location';
+                $block['source'] = $contactSource;
             }
             $blocksGenerated++;
             $sourcesUsed[] = $contactSource;
