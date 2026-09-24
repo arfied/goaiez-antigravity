@@ -11,15 +11,18 @@ use App\Modules\X103\Models\PageVersion;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
 use App\Modules\X157\Domain\DnsResolver;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Tests\TestCase;
+use PHPUnit\Framework\ExpectationFailedException;
 use Tests\Concerns\RefreshesTenantDatabase;
+use Tests\TestCase;
 
 class VariantCookieServingTest extends TestCase
 {
     use RefreshesTenantDatabase;
+
     private $biz;
 
     private $page;
@@ -92,7 +95,7 @@ class VariantCookieServingTest extends TestCase
 
     public function test_variant_cookies(): void
     {
-        \App\Support\Tenancy::forgetAll();
+        Tenancy::forgetAll();
         $id = $this->variantId;
 
         $resVariant = $this->withCookie('gz_arm_'.$id, 'variant')->get('http://acme-roofing.test/');
@@ -116,7 +119,7 @@ class VariantCookieServingTest extends TestCase
         try {
             $resNoCookie->assertCookie('gz_arm_'.$id, 'control');
             $chosen = 'control';
-        } catch (\PHPUnit\Framework\ExpectationFailedException $e) {
+        } catch (ExpectationFailedException $e) {
             $resNoCookie->assertCookie('gz_arm_'.$id, 'variant');
             $chosen = 'variant';
         }

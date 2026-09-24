@@ -3,6 +3,7 @@
 namespace App\Modules\X157\Http\Middleware;
 
 use App\Modules\X103\Actions\PageReadAction;
+use App\Modules\X103\Actions\PageVariantReadAction;
 use App\Modules\X157\Actions\ServeDeploymentAction;
 use App\Modules\X157\Models\CustomDomainRequest;
 use App\Modules\X157\Models\Deployment;
@@ -63,7 +64,7 @@ class ServeVerifiedCustomDomain
             return $next($request);
         }
 
-        $arm = $page ? app(\App\Modules\X103\Actions\PageVariantReadAction::class)->runningFor($row->business_id, (int) $page->id) : null;
+        $arm = $page ? app(PageVariantReadAction::class)->runningFor($row->business_id, (int) $page->id) : null;
         if ($arm !== null && $deployment->deploy_hash === $arm['control_hash']) {
             $gpc = (string) $request->headers->get('Sec-GPC', '') === '1';
             $cookieName = 'gz_arm_'.$arm['id'];
@@ -76,6 +77,7 @@ class ServeVerifiedCustomDomain
             if (! $gpc && $request->cookie($cookieName) !== $chosen) {
                 $response->withCookie(cookie($cookieName, $chosen, 60 * 24 * 90, '/', null, true, true, false, 'lax'));
             }
+
             return $response;
         }
 
