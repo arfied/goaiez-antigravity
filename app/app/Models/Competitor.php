@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string $place_id
  * @property string $name
  * @property string $source
+ * @property ?string $website_url
  * @property bool $confirmed
  */
 class Competitor extends Model implements TenantScoped
@@ -61,5 +62,13 @@ class Competitor extends Model implements TenantScoped
     public function latestSnapshot(): HasOne
     {
         return $this->hasOne(CompetitorSnapshot::class)->latestOfMany('captured_at');
+    }
+
+    /**
+     * @return HasOne<CompetitorSiteNote, $this>
+     */
+    public function siteNote(): HasOne
+    {
+        return $this->hasOne(CompetitorSiteNote::class);
     }
 }
