@@ -198,10 +198,11 @@ class X135ScreensTest extends TestCase
 
     public function test_research_dossier_never_starts_research(): void
     {
-        Livewire::test(ResearchDossierPer::class, ['businessId' => $this->businessId])
-            ->assertSee('Research fires only on distress')
-            ->assertDontSeeHtml('wire:click="runResearch"')
-            ->assertDontSeeHtml('wire:click="research"')
+        $component = Livewire::test(ResearchDossierPer::class, ['businessId' => $this->businessId]);
+        $component->assertSee('Research fires only on distress');
+        preg_match_all('/wire:click="([A-Za-z]+)/', $component->html(), $clicks);
+        $this->assertSame([], array_values(array_diff(array_unique($clicks[1]), ['toggleSample'])), 'the only click on this screen toggles the sample; nothing starts research');
+        $component
             ->call('toggleSample')
             ->call('select', 9901)
             ->call('toggleSample');
