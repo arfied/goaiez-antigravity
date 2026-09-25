@@ -26,6 +26,7 @@ final class SiteBuildRunAction
 
         $hasRecentInventory = SiteInventoryPage::where('business_id', $businessId)
             ->where('location_id', $locationId)
+            ->where('status', 'fetched')
             ->where('fetched_at', '>=', $cutoff)
             ->exists();
 
@@ -42,7 +43,7 @@ final class SiteBuildRunAction
         } else {
             $crawlResult = [
                 'status' => 'reused',
-                'pages' => SiteInventoryPage::where('business_id', $businessId)->where('location_id', $locationId)->count(),
+                'pages' => SiteInventoryPage::where('business_id', $businessId)->where('location_id', $locationId)->where('status', 'fetched')->count(),
                 'refused' => 0,
             ];
         }

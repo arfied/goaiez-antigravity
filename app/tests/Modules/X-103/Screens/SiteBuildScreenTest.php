@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVariant;
 use App\Modules\X103\Models\PageVersion;
+use App\Modules\X103\Models\SiteInventoryPage;
 use App\Modules\X103\Models\SiteRecommendation;
 use App\Modules\X103\Ui\SiteBuild;
 use App\Modules\X108\Models\Waitlist;
@@ -33,6 +34,7 @@ use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 use Livewire\Livewire;
 use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
@@ -557,6 +559,7 @@ class SiteBuildScreenTest extends TestCase
             ->assertSeeHtml('wire:click="runBuild"')
             ->assertDontSeeHtml('class="btn');
     }
+
     public function test_the_tenant_id_cannot_be_overwritten_from_the_browser(): void
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
@@ -564,7 +567,52 @@ class SiteBuildScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->expectException(\Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException::class);
+        $this->expectException(CannotUpdateLockedPropertyException::class);
         Livewire::test(SiteBuild::class)->set('businessId', 999999);
+    }
+
+    public function test_a_failed_crawl_does_not_block_the_next_build_for_a_day(): void
+    {
+        Storage::fake('s3');
+        $user = User::factory()->create(['role' => UserRole::Owner]);
+        $business = $this->provisionTenant(['owner_user_id' => $user->id, 'name' => 'Acme Corp']);
+        Tenancy::set($business->id);
+        $location = Location::where('business_id', $business->id)->first();
+        if (! $location) {
+            $location = Location::factory()->create(['business_id' => $business->id]);
+        }
+        $location->website_url = 'https://example.com';
+        $location->website_confirmed_at = now();
+        $location->save();
+
+        Http::fake([
+            'https://example.com' => Http::response(
+                '<html><head><title>Home</title></head><body><h1>Welcome</h1><img src="logo.png"><a href="/about">About</a></body></html>', 200
+            ),
+            'https://example.com/about' => Http::response(
+                '<html><head><title>About</title></head><body><h1>About Us</h1></body></html>', 200
+            ),
+            'https://example.com/logo.png' => Http::response('fake-image-content', 200),
+            '*' => Http::response('', 404),
+        ]);
+
+        SiteInventoryPage::create([
+            'business_id' => $business->id,
+            'location_id' => $location->id,
+            'url' => 'https://example.com',
+            'status' => 'failed',
+            'refusal_reason' => 'unknown',
+            'fetched_at' => now()->subMinutes(5),
+        ]);
+
+        Tenancy::set($business->id);
+        $user->refresh();
+        Livewire::actingAs($user)
+            ->test(SiteBuild::class)
+            ->call('runBuild')
+            ->assertSet('buildStatus', 'completed');
+
+        $this->assertSame('fetched', SiteInventoryPage::where('business_id', $business->id)->where('url', 'https://example.com')->value('status'));
+        Http::assertSent(fn ($request) => $request->url() === 'https://example.com');
     }
 }
