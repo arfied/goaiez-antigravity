@@ -1,9 +1,9 @@
 <div>
     <div class="mb-4 flex items-center justify-between">
         <p class="text-sm text-ink-2">Your current website inventory.</p>
-        <button wire:click="crawl" class="btn btn-primary">
+        <x-ui.button wire:click="crawl" size="default">
             Crawl Website
-        </button>
+        </x-ui.button>
     </div>
 
     @if($pages->isEmpty())
@@ -48,9 +48,9 @@
 
     <div class="mt-8 mb-4 flex items-center justify-between">
         <p class="text-sm text-ink-2">Images found on your website.</p>
-        <button wire:click="copyImages" class="btn btn-primary">
+        <x-ui.button wire:click="copyImages" size="default">
             Copy Images
-        </button>
+        </x-ui.button>
     </div>
 
     @if($images->isEmpty())
@@ -142,7 +142,7 @@
                         <tr wire:key="alt-{{ $img->id }}">
                             <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-ink">{{ basename(parse_url($img->source_url, PHP_URL_PATH) ?? $img->source_url) }}</td>
                             <td class="px-3 py-4 text-sm text-ink-2"><label class="sr-only" for="alt-{{ $img->id }}">Description for {{ basename(parse_url($img->source_url, PHP_URL_PATH) ?? $img->source_url) }}</label><input id="alt-{{ $img->id }}" type="text" maxlength="160" wire:model="alts.{{ $img->id }}" class="w-full rounded border border-rule px-2 py-1 text-sm"></td>
-                            <td class="whitespace-nowrap px-3 py-4 text-sm"><button type="button" wire:click="saveAlt({{ $img->id }})" class="btn btn-primary">Save</button></td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm"><x-ui.button type="button" wire:click="saveAlt({{ $img->id }})" size="default">Save</x-ui.button></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -152,9 +152,9 @@
 
     <div class="mt-8 mb-4 flex items-center justify-between">
         <p class="text-sm text-ink-2">Your draft pages.</p>
-        <button wire:click="draftSite" class="btn btn-primary">
+        <x-ui.button wire:click="draftSite" size="default">
             Draft Site
-        </button>
+        </x-ui.button>
     </div>
 
     @if($draftPages->isEmpty())
@@ -216,7 +216,7 @@
             </tbody>
         </table>
         <div class="mt-4">
-            <button wire:click="saveHours" class="btn btn-primary">Save hours</button>
+            <x-ui.button wire:click="saveHours" size="default">Save hours</x-ui.button>
             <p class="text-sm text-ink-2 mt-2">Shown in the contact section of every drafted page.</p>
         </div>
     </div>

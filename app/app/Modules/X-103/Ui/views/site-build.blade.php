@@ -26,9 +26,9 @@
                 <p class="mt-1 text-sm text-ink-2">We analyze your current website to copy structure, text, and images.</p>
                 
                 <div class="mt-4">
-                    <button wire:click="runBuild" class="btn btn-primary">
+                    <x-ui.button wire:click="runBuild" size="default">
                         Run Build Pipeline
-                    </button>
+                    </x-ui.button>
                 </div>
 
                 @if($buildStatus)
@@ -99,7 +99,7 @@
                                 <iframe title="{{ $label }} preview" srcdoc="{{ $previews[$k] }}" sandbox="" loading="lazy" class="w-full h-64 bg-surface border border-line"></iframe>
                                 <div class="mt-2 flex items-center justify-between">
                                     <span class="text-sm text-ink">{{ $label }}@if($chosenVariant === $k) — yours @endif</span>
-                                    <button wire:click="chooseLook('{{ $k }}')" class="btn btn-secondary text-sm">Pick this</button>
+                                    <x-ui.button wire:click="chooseLook('{{ $k }}')" size="default" variant="secondary">Pick this</x-ui.button>
                                 </div>
                             </div>
                         @endforeach
@@ -113,9 +113,9 @@
                 <p class="mt-1 text-sm text-ink-2">Publish all drafted pages to the platform address.</p>
                 
                 <div class="mt-4">
-                    <button wire:click="publishAll" class="btn btn-primary">
+                    <x-ui.button wire:click="publishAll" size="default">
                         Publish All Pages
-                    </button>
+                    </x-ui.button>
                 </div>
                 
                 @if($pages->isNotEmpty())
@@ -141,9 +141,9 @@
                 
                 <div class="mt-4 flex space-x-4">
                     <input type="text" wire:model.defer="domainName" placeholder="e.g. example.com" class="shadow-sm block w-full sm:text-sm border-line rounded-md text-ink">
-                    <button wire:click="useDomain" class="btn btn-primary">
+                    <x-ui.button wire:click="useDomain" size="default">
                         Use Domain
-                    </button>
+                    </x-ui.button>
                 </div>
                 
                 @if($domainStatus['requested_domain'])
@@ -166,9 +166,9 @@
                                     {{ $domainStatus['status'] }}
                                 @endif
                             </span>
-                            <button wire:click="verifyDomain" class="btn btn-secondary text-sm">
+                            <x-ui.button wire:click="verifyDomain" size="default" variant="secondary">
                                 Check
-                            </button>
+                            </x-ui.button>
                         </div>
                         @if($domainStatus['status'] === 'verified' && count($deployments) > 0)
                             <p class="text-sm text-green-600 mt-2">
@@ -193,8 +193,8 @@
                             <li class="py-4 flex items-center justify-between">
                                 <p class="text-sm text-ink">{{ $r->text }}</p>
                                 <div class="flex gap-2">
-                                    <button wire:click="askRecommendation({{ $r->id }})" class="btn btn-primary text-sm">Ask the AI to do it</button>
-                                    <button wire:click="dismissRecommendation({{ $r->id }})" class="btn btn-secondary text-sm">Dismiss</button>
+                                    <x-ui.button wire:click="askRecommendation({{ $r->id }})" size="default">Ask the AI to do it</x-ui.button>
+                                    <x-ui.button wire:click="dismissRecommendation({{ $r->id }})" size="default" variant="secondary">Dismiss</x-ui.button>
                                 </div>
                             </li>
                         @endforeach
@@ -256,12 +256,12 @@
                         <p class="mt-3 text-sm text-ink">So far {{ $variantResult['leader'] === 'variant' ? 'the other one' : 'yours' }} is ahead.</p>
                     @endif
                     <div class="mt-4 flex gap-2">
-                        <button wire:click="stopHeadlineTest({{ $variant['id'] }})" class="btn btn-secondary text-sm">Stop — back to mine</button>
-                        <button wire:click="keepMineAndFreeze({{ $variant['id'] }})" class="btn btn-secondary text-sm">Keep mine and leave it alone</button>
+                        <x-ui.button wire:click="stopHeadlineTest({{ $variant['id'] }})" size="default" variant="secondary">Stop — back to mine</x-ui.button>
+                        <x-ui.button wire:click="keepMineAndFreeze({{ $variant['id'] }})" size="default" variant="secondary">Keep mine and leave it alone</x-ui.button>
                     </div>
                 @else
                     <div class="mt-4">
-                        <button wire:click="proposeHeadlines" class="btn btn-secondary text-sm">Ask the AI for two headlines</button>
+                        <x-ui.button wire:click="proposeHeadlines" size="default" variant="secondary">Ask the AI for two headlines</x-ui.button>
                         @if(count($headlineOptions) > 0)
                             <div class="mt-3">
                                 @foreach($headlineOptions as $i => $h)
@@ -271,7 +271,9 @@
                         @endif
                         <label class="block mt-3 text-sm text-ink-2" for="own-headline">Or type your own</label>
                         <input id="own-headline" type="text" wire:model="ownHeadline" maxlength="120" class="mt-1 w-full rounded border border-line px-2 py-1 text-sm">
-                        <button wire:click="startHeadlineTest" class="btn btn-primary text-sm mt-3">Try it</button>
+                        <div class="mt-3">
+                            <x-ui.button wire:click="startHeadlineTest" size="default">Try it</x-ui.button>
+                        </div>
                     </div>
                 @endif
             </div>

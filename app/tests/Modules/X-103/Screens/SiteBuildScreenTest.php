@@ -497,12 +497,12 @@ class SiteBuildScreenTest extends TestCase
     public function test_pick_a_look(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $biz = $this->provisionTenant(['owner_user_id' => $owner->id, ]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set($biz->id);
 
-        IndustryStartingPoint::updateOrCreate(['family' => \App\Enums\IndustryFamily::Trades->value], [
-            
+        IndustryStartingPoint::updateOrCreate(['family' => IndustryFamily::Trades->value], [
+
             'palette' => ['surface' => '#ffffff', 'ink' => '#000000', 'primary' => '#ff0000', 'accent' => '#0000ff'],
             'type_pairing' => ['heading' => 'serif', 'body' => 'sans'],
             'section_order' => ['hero', 'about', 'gallery', 'reviews_strip', 'contact'],
@@ -543,5 +543,17 @@ class SiteBuildScreenTest extends TestCase
         Livewire::actingAs($manager)->test(SiteBuild::class)
             ->call('chooseLook', 'c')
             ->assertForbidden();
+    }
+
+    public function test_the_build_screen_uses_the_house_button(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Livewire::test(SiteBuild::class)
+            ->assertSeeHtml('wire:click="runBuild"')
+            ->assertDontSeeHtml('class="btn');
     }
 }

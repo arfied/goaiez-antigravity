@@ -572,3 +572,13 @@ it('rejected pictures explain themselves in words', function () {
         ->assertDontSee('>oversize<', false)
         ->assertSee('robots.txt');
 });
+
+it('test_the_inventory_screen_uses_the_house_button', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+    $this->actingAs($owner);
+
+    Livewire::test(SiteInventory::class)
+        ->assertSeeHtml('wire:click="crawl"')
+        ->assertDontSeeHtml('class="btn');
+});
