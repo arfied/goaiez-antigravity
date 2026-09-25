@@ -53,6 +53,8 @@
                                         Not fetched — this platform held back ({{ $page->refusal_reason }}); nothing about your website was consulted.
                                     @elseif($pageReason)
                                         Not fetched — your website's robots.txt could not be read, so no rule of yours was consulted.
+                                    @elseif($page->refusal_reason === 'blocked_by_site')
+                                        Not fetched — your website's security service blocked our request (a firewall or bot protection such as Cloudflare). Ask whoever looks after your site to allow the user agent <code>{{ \App\Services\Fetch\RobotsPolicy::userAgentToken() }}</code> — in Cloudflare: Security, WAF, Custom rules, then a rule that skips bot protection when the user agent contains <code>{{ \App\Services\Fetch\RobotsPolicy::userAgentToken() }}</code> — then press Crawl again.
                                     @else
                                         Not fetched — the request failed ({{ $page->refusal_reason ?? 'unknown' }}).
                                     @endif

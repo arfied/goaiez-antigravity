@@ -603,3 +603,51 @@ it('shows why a page was not fetched', function () {
         ->assertSee('distinctive-4861.example')
         ->assertSee("your website's own robots.txt refuses this page", false);
 });
+
+it('records a block by the site as blocked_by_site', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+    Location::where('business_id', $biz->id)->update([
+        'website_url' => 'https://example.com',
+        'website_confirmed_at' => now(),
+    ]);
+
+    $this->actingAs($owner);
+    Tenancy::set($biz->id);
+
+    Http::fake([
+        '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
+        'https://example.com' => Http::response('<html><title>Attention Required! | Cloudflare</title></html>', 403, ['Content-Type' => 'text/html']),
+    ]);
+
+    $result = app(SiteCrawlAction::class)->handle($biz->id, Location::where('business_id', $biz->id)->first()->id);
+    expect($result['refused'])->toBe(1);
+
+    $row = SiteInventoryPage::where('business_id', $biz->id)->where('url', 'https://example.com')->first();
+    expect($row->status)->toBe('failed')
+        ->and($row->refusal_reason)->toBe('blocked_by_site');
+});
+
+it('tells the owner what to allow when the site blocked us', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+    $loc = Location::where('business_id', $biz->id)->first() ?? Location::factory()->create(['business_id' => $biz->id]);
+
+    SiteInventoryPage::create([
+        'business_id' => $biz->id,
+        'location_id' => $loc->id,
+        'url' => 'https://distinctive-4891.example/',
+        'status' => 'failed',
+        'refusal_reason' => 'blocked_by_site',
+        'fetched_at' => now(),
+    ]);
+
+    $this->actingAs($owner)
+        ->get(route('x-103.site-inventory'))
+        ->assertOk()
+        ->assertSee('distinctive-4891.example')
+        ->assertSee('security service blocked our request')
+        ->assertSee('GoAiEzBot')
+        ->assertSee('Custom rules');
+});

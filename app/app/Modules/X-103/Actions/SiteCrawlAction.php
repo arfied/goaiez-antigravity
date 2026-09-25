@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X103\Actions;
 
 use App\Contracts\FetchGateway;
+use App\Enums\FetchOutcome;
 use App\Models\Location;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Services\Config\DefaultsRegistry;
@@ -47,7 +48,11 @@ final class SiteCrawlAction
                     [
                         'location_id' => $locationId,
                         'status' => $result->wasRefused() ? 'refused' : 'failed',
-                        'refusal_reason' => $result->refusalReason ? $result->refusalReason->value : 'unknown',
+                        'refusal_reason' => match (true) {
+                            $result->refusalReason !== null => $result->refusalReason->value,
+                            $result->outcome === FetchOutcome::Blocked, $result->outcome === FetchOutcome::Challenge => 'blocked_by_site',
+                            default => 'unknown',
+                        },
                         'fetched_at' => now(),
                     ]
                 );
