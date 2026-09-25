@@ -12,6 +12,7 @@ use App\Enums\RobotsVerdict;
 use App\Models\FetchAttempt;
 use App\Models\FetchSource;
 use App\Services\Config\DefaultsRegistry;
+use App\Support\PlatformCredentials;
 use App\Support\VendorLog;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
@@ -108,6 +109,21 @@ final class DirectFetchGateway implements FetchGateway
         return $source->permits($tier) && $tier->isImplemented();
     }
 
+    /**
+     * Guzzle options that route a source's requests through the operator's
+     * proxy — only the tenant's own website, only when the credential is set.
+     *
+     * @return array{proxy?: string}
+     */
+    public static function proxyOptionsFor(string $sourceKey): array
+    {
+        if ($sourceKey !== 'tenant_site' || ! PlatformCredentials::has('fetch_proxy_url')) {
+            return [];
+        }
+
+        return ['proxy' => PlatformCredentials::get('fetch_proxy_url')];
+    }
+
     public function fetch(string $sourceKey, string $url, FetchTier $tier = FetchTier::F0): FetchResult
     {
         $source = $this->source($sourceKey);
@@ -172,7 +188,7 @@ final class DirectFetchGateway implements FetchGateway
                     ->timeout((int) config('fetch.timeout', 10))
                     // Redirects are followed but capped: a redirect chain is a
                     // cheap way to make one permitted fetch into many.
-                    ->withOptions(['allow_redirects' => ['max' => 3, 'strict' => true]])
+                    ->withOptions(['allow_redirects' => ['max' => 3, 'strict' => true]] + self::proxyOptionsFor($source->key))
                     ->get($url),
             );
         } catch (ConnectionException) {
