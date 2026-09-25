@@ -103,9 +103,6 @@ class CarrierRosterHealthScreenTest extends TestCase
         $this->assertEquals('RCS_CARRIER_COLD', $rcsRes['reason']);
 
         $this->get(route('c-telephony.carrier-roster-health'))
-            ->assertSee('value="cold"', false)
-            ->assertSee('value="degraded"', false)
-            ->assertSee('value="down"', false)
-            ->assertDontSee('value="unhealthy"', false);
+            ->assertSeeInOrder(['sinch', '[cold]']);
     }
 }

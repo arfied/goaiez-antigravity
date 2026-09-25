@@ -81,7 +81,7 @@ class SlotBoardScreenTest extends TestCase
         $this->get(route('x-190.slot-board'))
             ->assertOk()
             ->assertSee('electrical-4471')
-            ->assertSee('open');
+            ->assertSee('electrical-4471 75001 open');
     }
 
     public function test_owner_proposes_a_partner_and_the_slot_reads_proposed(): void
