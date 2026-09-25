@@ -11,10 +11,12 @@ use App\Modules\X172\Actions\PortalViewAction;
 use App\Modules\X172\Models\PortalLink;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class CustomerfacingPortal extends Component
 {
+    #[Locked]
     public $token;
 
     public $errorMessage = null;

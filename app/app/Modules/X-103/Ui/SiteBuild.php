@@ -35,14 +35,17 @@ use App\Services\Visibility\CompetitorSignals;
 use App\Services\Visibility\CompetitorSiteNotes;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Throwable;
 
 #[Layout('components.account.layout', ['heading' => 'Build my site'])]
 class SiteBuild extends Component
 {
+    #[Locked]
     public int $businessId;
 
+    #[Locked]
     public int $locationId;
 
     public array $ledger = [];

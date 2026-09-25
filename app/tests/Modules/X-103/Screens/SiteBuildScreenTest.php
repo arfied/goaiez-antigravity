@@ -556,4 +556,14 @@ class SiteBuildScreenTest extends TestCase
             ->assertSeeHtml('wire:click="runBuild"')
             ->assertDontSeeHtml('class="btn');
     }
+    public function test_the_tenant_id_cannot_be_overwritten_from_the_browser(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $this->expectException(\Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException::class);
+        Livewire::test(SiteBuild::class)->set('businessId', 999999);
+    }
 }

@@ -47,4 +47,14 @@ class CustomerfacingPortalScreenTest extends TestCase
             ->assertSee("We couldn't record that")
             ->assertSee('Distinctive failure 4845');
     }
+    public function test_the_portal_token_cannot_be_overwritten_from_the_browser(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        $token = Fixtures::token($biz);
+
+        $this->expectException(\Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException::class);
+        Livewire::test(CustomerfacingPortal::class, ['token' => $token])->set('token', 'forged-4851');
+    }
 }
