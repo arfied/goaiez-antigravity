@@ -34,7 +34,9 @@
                 @if($buildStatus)
                     <div class="mt-4 p-4 border border-line rounded-md">
                         <p class="font-medium text-ink">Status: {{ $buildStatus }}</p>
-                        @if($buildStatus === 'refused')
+                        @if($buildStatus === 'refused' && $buildReason === 'no_website')
+                            <p class="text-red-600 mt-2">Add and confirm your website on <a href="{{ route('account.locations') }}" class="underline">Locations</a> first — the build reads it from there.</p>
+                        @elseif($buildStatus === 'refused')
                             <p class="text-red-600 mt-2">Reason: {{ $buildReason }}</p>
                         @endif
                         

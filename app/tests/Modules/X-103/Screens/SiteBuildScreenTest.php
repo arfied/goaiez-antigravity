@@ -164,7 +164,8 @@ class SiteBuildScreenTest extends TestCase
             ->call('runBuild')
             ->assertSet('buildStatus', 'refused')
             ->assertSet('buildReason', 'no_website')
-            ->assertSee('no_website');
+            ->assertSee('Add and confirm your website on')
+            ->assertSeeHtml(route('account.locations'));
     }
 
     public function test_no_tenant_403_and_other_tenant_invisible(): void
