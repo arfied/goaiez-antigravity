@@ -151,4 +151,34 @@ class McpTokenRegistryScreenTest extends TestCase
             ->call('revokeToken')
             ->assertSet('error', 'Please select a token to revoke.');
     }
+
+    public function test_the_registry_lists_only_this_tenants_tokens(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Livewire::test(McpTokenRegistry::class)
+            ->set('tokenName', 'Distinctive token 4853')
+            ->call('issueToken');
+
+        $ownerB = User::factory()->create(['role' => UserRole::Owner]);
+        $bizB = $this->provisionTenant(['owner_user_id' => $ownerB->id]);
+        Tenancy::setUser($ownerB->id);
+        Tenancy::set((int) $bizB->id);
+        $this->actingAs($ownerB);
+        Livewire::test(McpTokenRegistry::class)
+            ->set('tokenName', 'Distinctive token 4854')
+            ->call('issueToken');
+
+        Tenancy::setUser($owner->id);
+        Tenancy::set((int) $biz->id);
+        $this->actingAs($owner);
+        Livewire::test(McpTokenRegistry::class)
+            ->assertSee('Distinctive token 4853')
+            ->assertDontSee('Distinctive token 4854');
+        Tenancy::setUser($ownerB->id);
+        Tenancy::set((int) $bizB->id);
+        $this->assertDatabaseHas('mcp_tokens', ['token_name' => 'Distinctive token 4854']);
+    }
 }
