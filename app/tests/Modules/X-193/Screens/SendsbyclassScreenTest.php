@@ -103,7 +103,7 @@ class SendsbyclassScreenTest extends TestCase
             ->assertSee('missed_call_reminder')
             ->assertSee('operational')
             ->assertSee('dunning_notice')
-            ->assertSee('account')
+            ->assertSeeHtml('<span class="text-ink-2">account</span>')
             ->assertDontSee('No notification classes yet.');
     }
 }

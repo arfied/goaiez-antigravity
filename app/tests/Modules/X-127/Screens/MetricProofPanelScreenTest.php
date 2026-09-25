@@ -50,7 +50,7 @@ class MetricProofPanelScreenTest extends TestCase
         $this->get(route('x-127.metric-proof-panel'))
             ->assertOk()
             ->assertSee('dau')
-            ->assertSee('published')
+            ->assertSee('[published]')
             ->assertDontSee('No public metrics published.');
     }
 
