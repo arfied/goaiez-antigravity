@@ -582,3 +582,24 @@ it('test_the_inventory_screen_uses_the_house_button', function () {
         ->assertSeeHtml('wire:click="crawl"')
         ->assertDontSeeHtml('class="btn');
 });
+
+it('shows why a page was not fetched', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+    $loc = Location::where('business_id', $biz->id)->first() ?? Location::factory()->create(['business_id' => $biz->id]);
+
+    SiteInventoryPage::create([
+        'business_id' => $biz->id,
+        'location_id' => $loc->id,
+        'url' => 'https://distinctive-4861.example/',
+        'status' => 'refused',
+        'refusal_reason' => FetchRefusalReason::RobotsDisallow->value,
+        'fetched_at' => now(),
+    ]);
+
+    $this->actingAs($owner)
+        ->get(route('x-103.site-inventory'))
+        ->assertOk()
+        ->assertSee('distinctive-4861.example')
+        ->assertSee("your website's own robots.txt refuses this page", false);
+});

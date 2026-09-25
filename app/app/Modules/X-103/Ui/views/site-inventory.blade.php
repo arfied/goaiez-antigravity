@@ -22,6 +22,7 @@
                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">URL</th>
                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Images</th>
                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Fetched At</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-rule bg-paper">
@@ -38,6 +39,24 @@
                             </td>
                             <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">
                                 {{ $page->fetched_at ? $page->fetched_at->diffForHumans() : 'Never' }}
+                            </td>
+                            <td class="px-3 py-4 text-sm text-ink-2">
+                                @if($page->status === 'fetched')
+                                    Fetched
+                                @else
+                                    @php
+                                        $pageReason = $page->refusal_reason ? \App\Enums\FetchRefusalReason::tryFrom($page->refusal_reason) : null;
+                                    @endphp
+                                    @if($pageReason && $pageReason->namesTheOriginsOwnRule())
+                                        Not fetched — your website's own robots.txt refuses this page.
+                                    @elseif($pageReason && $pageReason->isThisPlatformsOwnDoing())
+                                        Not fetched — this platform held back ({{ $page->refusal_reason }}); nothing about your website was consulted.
+                                    @elseif($pageReason)
+                                        Not fetched — your website's robots.txt could not be read, so no rule of yours was consulted.
+                                    @else
+                                        Not fetched — the request failed ({{ $page->refusal_reason ?? 'unknown' }}).
+                                    @endif
+                                @endif
                             </td>
                         </tr>
                     @endforeach
