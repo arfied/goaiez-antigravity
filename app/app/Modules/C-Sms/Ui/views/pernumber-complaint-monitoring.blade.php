@@ -8,7 +8,7 @@
                 @foreach($rows as $phone => $r)
                     <li class="py-2">
                         <span class="font-mono text-sm">{{ $phone }}</span>
-                        <span class="text-ink-2 tabular-nums">{{ $r['sent'] }} sent · {{ $r['halted'] }} halted</span>
+                        <span class="text-ink-2 tabular-nums">{{ $r['sent'] }} sent · {{ $r['halted'] }} halted{{ $r['scheduled'] > 0 ? ' · ' . $r['scheduled'] . ' waiting for quiet hours to end' : '' }}</span>
                         @if(in_array($phone, $stopped, true))<span class="text-sm text-ink-2">stopped</span>@endif
                     </li>
                 @endforeach

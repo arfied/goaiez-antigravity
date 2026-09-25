@@ -31,6 +31,7 @@ class PernumberComplaintMonitoring extends Component
                 ->map(fn ($g) => [
                     'sent' => $g->where('status', 'sent')->count(),
                     'halted' => $g->where('status', 'halted')->count(),
+                    'scheduled' => $g->where('status', 'scheduled')->count(),
                 ]);
             $stopped = $consentService->getSuppressions($this->businessId)
                 ->pluck('recipient_phone')
