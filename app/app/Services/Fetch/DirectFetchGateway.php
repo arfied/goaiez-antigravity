@@ -14,6 +14,7 @@ use App\Models\FetchSource;
 use App\Services\Config\DefaultsRegistry;
 use App\Support\PlatformCredentials;
 use App\Support\VendorLog;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Carbon;
@@ -153,7 +154,7 @@ final class DirectFetchGateway implements FetchGateway
             return $this->refuse($source, $url, $tier, FetchRefusalReason::AboveCeiling);
         }
 
-        if ($this->coolingDown($source)) {
+        if ($this->coolingDown($source, $url)) {
             return $this->refuse($source, $url, $tier, FetchRefusalReason::CoolingDown);
         }
 
@@ -271,12 +272,13 @@ final class DirectFetchGateway implements FetchGateway
     /**
      * Whether the source is inside a cool-down from an earlier block.
      */
-    private function coolingDown(FetchSource $source): bool
+    private function coolingDown(FetchSource $source, string $url): bool
     {
-        return FetchAttempt::query()
-            ->where('source_key', $source->key)
-            ->coolingDown()
-            ->exists();
+        return $this->scopedToHost(
+            FetchAttempt::query()->where('source_key', $source->key)->coolingDown(),
+            $source,
+            $url,
+        )->exists();
     }
 
     /**
@@ -315,6 +317,23 @@ final class DirectFetchGateway implements FetchGateway
         return FetchResult::refused($tier, $reason);
     }
 
+    /**
+     * A tenant site is a different origin per tenant, so its cool-down and its
+     * ladder are scoped to the host that blocked us; every other source keeps
+     * `40` §6.1's per-source scope.
+     */
+    private static function hostHash(string $url): string
+    {
+        return hash('sha256', strtolower((string) parse_url($url, PHP_URL_HOST)));
+    }
+
+    private function scopedToHost(Builder $query, FetchSource $source, string $url): Builder
+    {
+        return $source->key === 'tenant_site'
+            ? $query->where('host_hash', self::hostHash($url))
+            : $query;
+    }
+
     private function record(
         FetchSource $source,
         string $url,
@@ -327,11 +346,12 @@ final class DirectFetchGateway implements FetchGateway
             // Hashed, never stored: a fetched URL can carry a business name or
             // a pasted query string, and this table has no tenant.
             'url_hash' => hash('sha256', $url),
+            'host_hash' => self::hostHash($url),
             'tier' => $tier,
             'outcome' => $outcome,
             'http_status' => $status,
             'cooldown_until' => $outcome->triggersCooldown()
-                ? Carbon::now()->addHours($this->nextCooldownHours($source))
+                ? Carbon::now()->addHours($this->nextCooldownHours($source, $url))
                 : null,
             'created_at' => Carbon::now(),
         ]);
@@ -341,13 +361,9 @@ final class DirectFetchGateway implements FetchGateway
      * 6h, then 24h, then 72h — escalating with how many times this source has
      * already been cooled down recently, per `40` §6.1's seed.
      */
-    private function nextCooldownHours(FetchSource $source): int
+    private function nextCooldownHours(FetchSource $source, string $url): int
     {
-        $recent = FetchAttempt::query()
-            ->where('source_key', $source->key)
-            ->whereNotNull('cooldown_until')
-            ->where('created_at', '>=', Carbon::now()->subDays(7))
-            ->count();
+        $recent = $this->scopedToHost(FetchAttempt::query()->where('source_key', $source->key)->whereNotNull('cooldown_until')->where('created_at', '>=', Carbon::now()->subDays(7)), $source, $url)->count();
 
         return $this->cooldownHours()[min($recent, count($this->cooldownHours()) - 1)];
     }
