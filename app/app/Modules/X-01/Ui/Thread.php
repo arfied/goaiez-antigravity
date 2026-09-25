@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X01\Ui;
 
+use App\Enums\MessageSenderType;
 use App\Models\Conversation;
 use App\Models\Customer;
 use App\Modules\CAgent\Actions\AgentDraftAction;
@@ -163,7 +164,7 @@ class Thread extends Component
                 'business_id' => Tenancy::idOrFail(),
                 'conversation_id' => $conversation->id,
                 'direction' => 'outbound',
-                'sender_type' => 'operator',
+                'sender_type' => MessageSenderType::Person->value,
                 'sender_id' => (string) $operatorId,
                 'body' => $replyData['formatted_reply'],
                 'created_at' => now(),

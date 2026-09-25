@@ -11,6 +11,7 @@ use App\Models\Message;
 use App\Models\User;
 use App\Modules\X01\Domain\UnifiedInboxManager;
 use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
+use App\Modules\X01\Ui\History;
 use App\Modules\X01\Ui\Thread;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
@@ -223,6 +224,49 @@ class ThreadScreenTest extends TestCase
 
             $secondCustomer = Customer::factory()->create(['name' => 'Second Customer', 'phone' => null, 'email' => null]);
             Livewire::test(Thread::class, ['customer' => $secondCustomer])->assertDontSee('Secret message for first customer.');
+        });
+    }
+
+    public function test_the_activity_screen_still_renders_after_an_operator_reply(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Thread Tenant', 'currency' => 'USD']);
+        $user = User::factory()->create();
+        Tenancy::actingAs($biz->id, function () use ($user) {
+            Tenancy::setUser($user->id);
+            // Default and empty state
+            $customer = Customer::factory()->create(['name' => 'Jane Empty']);
+
+            Livewire::test(Thread::class, ['customer' => $customer])
+                ->assertSee('No messages yet') // empty state
+                ->assertDontSee('Human takeover');
+
+            // Default with messages
+            $conversation = Conversation::factory()->create([
+                'customer_id' => $customer->id,
+                'channel' => 'sms',
+                'status' => 'open',
+            ]);
+
+            Message::factory()->create([
+                'conversation_id' => $conversation->id,
+                'direction' => 'inbound',
+                'sender_type' => 'customer',
+                'sender_id' => (string) $customer->id,
+                'body' => 'I need a quote.',
+            ]);
+
+            Livewire::test(Thread::class, ['customer' => $customer])
+                ->set('replyText', 'Distinctive reply 4846')
+                ->call('sendReply');
+
+            $this->assertDatabaseHas('messages', [
+                'conversation_id' => $conversation->id,
+                'sender_type' => 'person',
+            ]);
+
+            Livewire::test(History::class)
+                ->assertOk()
+                ->assertSee('Distinctive reply 4846');
         });
     }
 }
