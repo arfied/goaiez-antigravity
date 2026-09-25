@@ -108,10 +108,10 @@ class X136ScreensTest extends TestCase
      */
     public function test_cooling_view_never_a_send(): void
     {
-        Livewire::test(CoolingView::class, ['businessId' => $this->businessId])
-            ->assertSee('A signal informs, it never sends')
-            ->assertDontSeeHtml('Send Message')
-            ->assertDontSeeHtml('wire:click="send"');
+        $component = Livewire::test(CoolingView::class, ['businessId' => $this->businessId])
+            ->assertSee('A signal informs, it never sends');
+        preg_match_all('/wire:click="([A-Za-z]+)/', $component->html(), $clicks);
+        $this->assertSame([], array_values(array_diff(array_unique($clicks[1]), ['toggleSample', 'markDecayed'])), 'the cooling view has no click that sends anything');
 
         $this->assertSame(0, DB::table('send_permits')->count());
         $this->assertSame(0, DB::table('outreach_messages')->count());
