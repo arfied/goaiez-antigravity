@@ -3319,4 +3319,63 @@ class X157Test extends TestCase
         $html2 = Storage::disk('local')->get("sites/{$deploy2['deploy_hash']}.html");
         $this->assertStringContainsString('<link rel="canonical" href="https://'.$appHost.'/', $html2);
     }
+
+    public function test_the_published_form_comes_from_the_oldest_definition_with_fields(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Fieldless Form',
+            'slug' => 'fieldless-4903',
+            'schema' => ['fields' => []],
+            'steps' => [['step' => 1, 'required' => []]],
+        ]);
+        FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Real Form',
+            'slug' => 'real-4904',
+            'schema' => ['fields' => [['name' => 'phone', 'label' => 'Phone', 'type' => 'tel']]],
+            'steps' => [['step' => 1, 'required' => ['phone']]],
+        ]);
+
+        $commitId = 'commit_'.Str::random(16);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [
+                ['type' => 'pixel_script'],
+                ['type' => 'chat_widget'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni_script'],
+            ],
+            'pixel_installed' => true,
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $biz->name
+        );
+
+        $html = Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
+
+        $this->assertStringContainsString('form-capture-x155', $html);
+        $this->assertStringContainsString('name="phone"', $html);
+    }
 }

@@ -1716,4 +1716,39 @@ class X155Test extends TestCase
         $this->assertEquals(1, $res['step']);
         $this->assertEquals(['phone'], $res['missing']);
     }
+
+    public function test_form_read_prefers_the_oldest_definition_with_fields(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Form Read Shape Tenant']);
+        $action = new FormReadAction;
+
+        $empty = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Empty Form',
+            'slug' => 'empty-4901',
+            'schema' => ['fields' => []],
+            'steps' => [['step' => 1, 'required' => []]],
+        ]);
+
+        $withFields = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Real Form',
+            'slug' => 'real-4902',
+            'schema' => ['fields' => [['name' => 'phone', 'label' => 'Phone', 'type' => 'tel']]],
+            'steps' => [['step' => 1, 'required' => ['phone']]],
+        ]);
+
+        $this->assertEquals($withFields->id, $action->firstDefinitionForBusiness($biz->id)['id']);
+
+        $biz2 = TestCase::provisionTenant(['name' => 'Form Read Shape Tenant 2']);
+        $empty2 = FormDefinition::create([
+            'business_id' => $biz2->id,
+            'form_name' => 'Empty Form 2',
+            'slug' => 'empty-4901-2',
+            'schema' => ['fields' => []],
+            'steps' => [['step' => 1, 'required' => []]],
+        ]);
+
+        $this->assertEquals($empty2->id, $action->firstDefinitionForBusiness($biz2->id)['id']);
+    }
 }
