@@ -47,7 +47,9 @@ final class RetrievalSearchAction
                 ->get();
 
         } catch (\Exception $e) {
-            // Fallback to text search if OpenAI is unavailable
+            // Fallback to text search if OpenAI is unavailable. The trace says so, and the
+            // screen tells the owner it was a text match, not a vector search (wave 810).
+            $trace['fallback'] = 'embedding_unavailable';
             $chunks = KnowledgeChunk::where('business_id', $businessId)
                 ->where(function ($q) use ($query): void {
                     $q->where('chunk_text', 'ilike', "%{$query}%")

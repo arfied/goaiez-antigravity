@@ -187,7 +187,12 @@ final class ModuleServiceProvider extends ServiceProvider
                     commitId: $event->commitId,
                     businessName: Business::where('id', $event->businessId)->value('name'),
                 );
-            } catch (\Throwable) {
+            } catch (\Throwable $e) {
+                // Contained (the page stays published) but never silent: the owner's
+                // Pages screen reads "published, not yet deployed" and somebody has
+                // to be able to find out why (wave 810).
+                report($e);
+
                 return;
             }
         });

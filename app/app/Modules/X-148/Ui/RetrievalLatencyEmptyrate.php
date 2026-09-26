@@ -58,7 +58,9 @@ class RetrievalLatencyEmptyrate extends Component
         }
 
         $result = $action->search(Tenancy::idOrFail(), $this->searchQuery);
-        $this->success = 'Ran retrieval search. Status: '.$result['status'].', count: '.$result['count'].'. This feeds the empty-rate lists; nothing downstream is wired to it yet.';
+        $this->success = 'Ran retrieval search. Status: '.$result['status'].', count: '.$result['count'].'.'
+            .(isset($result['trace']['fallback']) ? ' Embeddings were unavailable, so this was a text match, not a vector search.' : '')
+            .' This feeds the empty-rate lists; nothing downstream is wired to it yet.';
         $this->searchQuery = '';
     }
 
