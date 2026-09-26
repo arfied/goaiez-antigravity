@@ -426,15 +426,19 @@ final class SiteDraftAction
             if ($servicesBlock) {
                 $servicesPageBlocks[] = $servicesBlock;
             }
-            Page::create([
-                'business_id' => $businessId,
-                'slug' => 'services',
-                'title' => 'Services',
-                'is_tenant_edited' => false,
-                'is_published' => false,
-                'draft_blocks' => $servicesPageBlocks,
-            ]);
-            $pagesCreated++;
+            if ($servicesPageBlocks !== []) {
+                Page::create([
+                    'business_id' => $businessId,
+                    'slug' => 'services',
+                    'title' => 'Services',
+                    'is_tenant_edited' => false,
+                    'is_published' => false,
+                    'draft_blocks' => $servicesPageBlocks,
+                ]);
+                $pagesCreated++;
+            } else {
+                $sourcesWithoutData[] = 'pricebook';
+            }
         }
 
         // 3. CONTACT

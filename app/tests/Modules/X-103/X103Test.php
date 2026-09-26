@@ -2244,4 +2244,23 @@ class X103Test extends TestCase
             return str_contains($body, 'Facts the owner stated') && str_contains($body, 'Distinctive parking 4593');
         });
     }
+
+    public function test_the_draft_makes_no_services_page_without_a_pricebook(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'No Services Draft Tenant']);
+        $location = Location::factory()->create(['business_id' => $biz->id]);
+
+        $draftAction = app(SiteDraftAction::class);
+        $res = $draftAction->handle($biz->id, $location->id);
+
+        $this->assertTrue(Page::where('business_id', $biz->id)->where('slug', 'services')->doesntExist());
+        $this->assertContains('pricebook', $res['sources_without_data']);
+    }
+
+    public function test_the_team_block_never_renders_a_demo_person(): void
+    {
+        $html = view('x-103::site.blocks.team', ['block' => ['type' => 'team', 'items' => [['name' => 'Real Person 4912', 'role' => 'Owner'], ['name' => 'demo·Ghost 4913', 'role' => 'Tech']]], 'context' => []])->render();
+        $this->assertStringContainsString('Real Person 4912', $html);
+        $this->assertStringNotContainsString('Ghost 4913', $html);
+    }
 }

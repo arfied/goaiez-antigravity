@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X113\Actions;
 
+use App\Console\DemoFill\DemoFiller;
 use App\Modules\X113\Models\Role;
 use App\Modules\X113\Models\StaffUser;
 
@@ -21,6 +22,9 @@ final class StaffRosterAction
 
         $roster = [];
         foreach ($staff as $user) {
+            if (str_starts_with((string) $user->name, DemoFiller::MARKER)) {
+                continue;
+            }
             $roleName = 'Staff';
             if ($user->role_id && isset($roles[$user->role_id])) {
                 $roleName = $roles[$user->role_id]->name;
