@@ -102,6 +102,7 @@ final class ModuleServiceProvider extends ServiceProvider
         Route::post('/sites/{business}/{deploy_hash}/forms/{form}', function (string $business, string $deployHash, string $form, Request $request) {
             $businessId = (int) $business;
             Tenancy::set($businessId);
+            $wantsPage = str_contains((string) $request->header('Accept', ''), 'text/html');
 
             $deployment = Deployment::where('business_id', $businessId)->where('deploy_hash', $deployHash)->firstOrFail();
             abort_if($deployment->status !== 'deployed', 404);
@@ -115,12 +116,36 @@ final class ModuleServiceProvider extends ServiceProvider
                 ipAddress: $request->ip(),
             );
 
-            return response()->json($result, $result['status'] === 'captured' ? 201 : 422);
+            if (! $wantsPage) {
+                return response()->json($result, $result['status'] === 'captured' ? 201 : 422);
+            }
+            $backUrl = $request->headers->get('referer') ?: "/sites/{$businessId}/{$deployHash}";
+            $businessName = (string) Business::where('id', $businessId)->value('name');
+            if ($result['status'] === 'captured') {
+                return response()->view('x-157::form-result', [
+                    'heading' => 'Thanks — your message is in.',
+                    'body' => ($businessName !== '' ? $businessName : 'The business').' has it and can see your details.',
+                    'missing' => [],
+                    'backUrl' => $backUrl,
+                    'backLabel' => 'Back to the site',
+                ], 201);
+            }
+
+            return response()->view('x-157::form-result', [
+                'heading' => 'That didn’t send.',
+                'body' => ($result['reason'] ?? '') === 'incomplete_step'
+                    ? 'Some required fields were missing. Use your browser’s Back button to keep what you typed, then fill in:'
+                    : 'Something in the form was refused. Use your browser’s Back button to keep what you typed and try again.',
+                'missing' => array_values(array_map('strval', $result['missing'] ?? [])),
+                'backUrl' => $backUrl,
+                'backLabel' => 'Back to the site',
+            ], 422);
         })->whereNumber('business')->whereNumber('form');
 
         Route::post('/sites/{business}/{deploy_hash}/book', function (string $business, string $deployHash, Request $request) {
             $businessId = (int) $business;
             Tenancy::set($businessId);
+            $wantsPage = str_contains((string) $request->header('Accept', ''), 'text/html');
 
             $deployment = Deployment::where('business_id', $businessId)->where('deploy_hash', $deployHash)->firstOrFail();
             abort_if($deployment->status !== 'deployed', 404);
@@ -129,7 +154,17 @@ final class ModuleServiceProvider extends ServiceProvider
 
             $age = $request->input('age');
             if (is_numeric($age) && (int) $age < 18) {
-                return response()->json(['status' => 'rejected', 'reason' => 'under_18'], 422);
+                if (! $wantsPage) {
+                    return response()->json(['status' => 'rejected', 'reason' => 'under_18'], 422);
+                }
+
+                return response()->view('x-157::form-result', [
+                    'heading' => 'That didn’t send.',
+                    'body' => 'This form is for adults only.',
+                    'missing' => [],
+                    'backUrl' => $request->headers->get('referer') ?: "/sites/{$businessId}/{$deployHash}",
+                    'backLabel' => 'Back to the site',
+                ], 422);
             }
             try {
                 $data = $request->validate([
@@ -140,13 +175,34 @@ final class ModuleServiceProvider extends ServiceProvider
                     'email' => ['nullable', 'email', 'max:190'],
                 ]);
             } catch (ValidationException $e) {
-                return response()->json(['message' => $e->getMessage(), 'errors' => $e->errors()], 422);
+                if (! $wantsPage) {
+                    return response()->json(['message' => $e->getMessage(), 'errors' => $e->errors()], 422);
+                }
+
+                return response()->view('x-157::form-result', [
+                    'heading' => 'That didn’t send.',
+                    'body' => 'Use your browser’s Back button to keep what you typed, then fix:',
+                    'missing' => array_values(array_map(fn (array $m) => (string) ($m[0] ?? ''), $e->errors())),
+                    'backUrl' => $request->headers->get('referer') ?: "/sites/{$businessId}/{$deployHash}",
+                    'backLabel' => 'Back to the site',
+                ], 422);
             }
 
             $upsert = app(PersonUpsertAction::class)->upsertByPhone($businessId, $data['phone'], ['first_name' => $data['name'], 'email' => $data['email'] ?? null], false);
             $waitlist = app(WaitlistJoinAction::class)->handle($businessId, $data['name'], $data['phone'], $data['service'], (string) $data['preferred_date'], false, $deployHash);
 
-            return response()->json(['status' => 'requested', 'waitlist_id' => (int) $waitlist->id, 'person_id' => (int) $upsert['id']], 201);
+            if (! $wantsPage) {
+                return response()->json(['status' => 'requested', 'waitlist_id' => (int) $waitlist->id, 'person_id' => (int) $upsert['id']], 201);
+            }
+            $businessName = (string) Business::where('id', $businessId)->value('name');
+
+            return response()->view('x-157::form-result', [
+                'heading' => 'Thanks — your request is in.',
+                'body' => 'Nothing is booked yet. '.($businessName !== '' ? $businessName : 'The business').' has your request for '.$data['service'].' on '.$data['preferred_date'].' and your number.',
+                'missing' => [],
+                'backUrl' => $request->headers->get('referer') ?: "/sites/{$businessId}/{$deployHash}",
+                'backLabel' => 'Back to the site',
+            ], 201);
         })->whereNumber('business');
 
         Route::get('/sites/{business}/{deploy_hash}/sitemap.xml', function (string $business, string $deployHash) {

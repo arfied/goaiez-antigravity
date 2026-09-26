@@ -1852,7 +1852,7 @@ class X157Test extends TestCase
         $html = (string) $pageResp->getContent();
         preg_match('/action="[^"]*?(\/sites\/[^"]*?\/forms\/\\d+)"/', $html, $m);
 
-        $post = $this->post($m[1], [
+        $post = $this->postJson($m[1], [
             'first_name' => 'Rae',
             'website_url' => 'http://spam-link.ru',
         ]);
@@ -2215,7 +2215,7 @@ class X157Test extends TestCase
         $html = (string) $pageResp->getContent();
         preg_match('/action="[^"]*?(\/sites\/[^"]*?\/forms\/\\d+)"/', $html, $m);
 
-        $post = $this->post($m[1], [
+        $post = $this->postJson($m[1], [
             'first_name' => 'Kid',
             'phone' => '+15550008181',
             'date_of_birth' => now()->subYears(15)->toDateString(),
@@ -2278,7 +2278,7 @@ class X157Test extends TestCase
         $html = (string) $pageResp->getContent();
         preg_match('/action="[^"]*?(\/sites\/[^"]*?\/forms\/\\d+)"/', $html, $m);
 
-        $postA = $this->post($m[1], [
+        $postA = $this->postJson($m[1], [
             'first_name' => 'John',
             'phone' => '+15550008182',
             'project_type' => 'roofing',
@@ -2288,7 +2288,7 @@ class X157Test extends TestCase
         $this->assertSame('captured', $postA->json('status'));
         $this->assertSame(1, FormSubmission::where('business_id', $biz->id)->where('form_definition_id', $form->id)->count());
 
-        $postB = $this->post($m[1], [
+        $postB = $this->postJson($m[1], [
             'first_name' => 'John',
             'phone' => '+15550008182',
         ]);
@@ -2347,7 +2347,7 @@ class X157Test extends TestCase
         $html = (string) $pageResp->getContent();
         preg_match('/action="[^"]*?(\/sites\/[^"]*?\/forms\/\\d+)"/', $html, $m);
 
-        $postB = $this->post($m[1], [
+        $postB = $this->postJson($m[1], [
             'first_name' => 'John',
             'phone' => '+15550008182',
         ]);
@@ -2356,7 +2356,7 @@ class X157Test extends TestCase
         $this->assertSame(['project_type'], $postB->json('missing'));
         $this->assertSame('incomplete_step', $postB->json('reason'));
 
-        $postA = $this->post($m[1], [
+        $postA = $this->postJson($m[1], [
             'first_name' => 'John',
             'phone' => '+15550008182',
             'project_type' => 'roofing',
@@ -3226,7 +3226,7 @@ class X157Test extends TestCase
         $this->assertStringContainsString('action="/sites/', $html);
         $this->assertStringNotContainsString('action="http', $html);
 
-        $res = $this->post('http://acme-roofing.test/sites/'.$biz->id.'/'.$deploy['deploy_hash'].'/forms/'.$form->id, [
+        $res = $this->postJson('http://acme-roofing.test/sites/'.$biz->id.'/'.$deploy['deploy_hash'].'/forms/'.$form->id, [
             'name' => 'Distinctive lead 4621',
         ]);
         $res->assertStatus(201);
@@ -3377,5 +3377,112 @@ class X157Test extends TestCase
 
         $this->assertStringContainsString('form-capture-x155', $html);
         $this->assertStringContainsString('name="phone"', $html);
+    }
+
+    public function test_a_browser_submitting_the_published_form_sees_a_thank_you_page_not_json(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Contact',
+            'slug' => 'contact',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $pageResp = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $html = (string) $pageResp->getContent();
+        preg_match('/action="[^"]*?(\/sites\/[^"]*?\/forms\/\\d+)"/', $html, $m);
+
+        $post = $this->withHeaders(['Accept' => 'text/html'])->post($m[1], ['first_name' => 'Distinctive visitor 4915', 'phone' => '+15559994915']);
+        $post->assertStatus(201);
+        $post->assertSee('Thanks — your message is in.');
+        $post->assertDontSee('submission_id');
+        $post->assertDontSee('person_id');
+
+        $person = Person::where('business_id', $biz->id)->where('phone', '+15559994915')->first();
+        $this->assertNotNull($person);
+    }
+
+    public function test_a_browser_missing_a_required_field_sees_the_field_named_not_a_json_blob(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant Form', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Lead Form',
+            'slug' => 'lead',
+            'steps' => [['required' => ['email']]],
+            'schema' => [],
+            'honeypot_field' => 'website_url',
+        ]);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                [
+                    'type' => 'form',
+                    'definition_id' => $form->id,
+                    'fields' => [
+                        ['name' => 'email', 'label' => 'Email', 'type' => 'email'],
+                    ],
+                    'required' => ['email'],
+                    'honeypot' => 'website_url',
+                ],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $actionUrl = "/sites/{$biz->id}/{$deploy['deploy_hash']}/forms/{$form->id}";
+
+        $res1 = $this->withHeaders(['Accept' => 'text/html'])->post($actionUrl, []);
+        $res1->assertStatus(422);
+        $res1->assertSee('email');
+        $res1->assertDontSee('incomplete_step');
     }
 }

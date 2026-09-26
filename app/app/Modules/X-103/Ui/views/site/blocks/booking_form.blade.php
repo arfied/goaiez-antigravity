@@ -29,6 +29,6 @@
         <button type="submit" style="padding: 0.5rem 1rem; background: var(--color-ink); color: var(--color-canvas); border: none; cursor: pointer;">
             {{ $block['label'] ?? 'Request a time' }}
         </button>
-        <p style="margin-top: 0.5rem; font-size: 0.875rem;"><i>We will confirm by phone.</i></p>
+        <p style="margin-top: 0.5rem; font-size: 0.875rem;"><i>Nothing is booked until we confirm the time with you.</i></p>
     </form>
 </div>

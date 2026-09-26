@@ -318,10 +318,10 @@ class PublicBookingRouteTest extends TestCase
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = self::provisionTenant(['owner_user_id' => $owner->id]);
-        $biz->update(['industry' => \App\Enums\IndustryFamily::Trades->value, 'site_variant' => 'c']);
+        $biz->update(['industry' => IndustryFamily::Trades->value, 'site_variant' => 'c']);
 
-        IndustryStartingPoint::updateOrCreate(['family' => \App\Enums\IndustryFamily::Trades->value], [
-            
+        IndustryStartingPoint::updateOrCreate(['family' => IndustryFamily::Trades->value], [
+
             'palette' => ['surface' => '#ffffff', 'ink' => '#000000', 'primary' => '#ff0000', 'accent' => '#0000ff'],
             'type_pairing' => ['heading' => 'serif', 'body' => 'sans'],
             'section_order' => ['hero', 'about', 'gallery', 'reviews_strip', 'contact'],
@@ -359,5 +359,21 @@ class PublicBookingRouteTest extends TestCase
         $response = $this->get('/sites/'.$biz->id.'/'.$deploy['deploy_hash']);
         $response->assertStatus(200);
         $response->assertSee('--color-accent: #ff0000', false);
+    }
+
+    public function test_a_browser_booking_request_sees_a_page_that_says_nothing_is_booked_yet(): void
+    {
+        Tenancy::forgetAll();
+
+        $post = $this->withHeaders(['Accept' => 'text/html'])->post("/sites/{$this->biz->id}/{$this->deploy['deploy_hash']}/book", [
+            'name' => 'Distinctive Visitor 4471',
+            'phone' => '+15125567731',
+            'service' => 'Haircut',
+            'preferred_date' => now()->addDays(2)->toDateString(),
+        ]);
+
+        $post->assertStatus(201);
+        $post->assertSee('Nothing is booked yet');
+        $post->assertDontSee('waitlist_id');
     }
 }
