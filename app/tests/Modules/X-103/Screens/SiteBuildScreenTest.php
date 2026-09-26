@@ -96,7 +96,7 @@ class SiteBuildScreenTest extends TestCase
         // Http::assertNothingSent(); // home, about, image
 
         $pages = Page::where('business_id', $business->id)->get();
-        $this->assertCount(3, $pages); // home, services, contact
+        $this->assertCount(2, $pages); // home, contact — no Services page is drafted without a pricebook (809)
 
         foreach ($pages as $page) {
             $deployment = app(LatestDeploymentForPageAction::class)->handle($business->id, $page->id);

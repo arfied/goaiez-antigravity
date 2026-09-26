@@ -688,7 +688,7 @@ class X103Test extends TestCase
         // slug taken -> skipped; run twice -> second run skips
         $res4 = $action->handle($biz->id, $location->id);
         $this->assertContains('home', $res4['skipped']);
-        $this->assertContains('services', $res4['skipped']);
+        $this->assertContains('pricebook', $res4['sources_without_data']); // no pricebook by now, so no Services page exists to skip (809)
         $this->assertContains('contact', $res4['skipped']);
         $this->assertEquals(0, $res4['pages']);
 
