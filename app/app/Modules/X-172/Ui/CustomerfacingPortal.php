@@ -93,6 +93,7 @@ class CustomerfacingPortal extends Component
     public function render()
     {
         $link = PortalLink::where('token', $this->token)->first();
+        $jobState = null;
         $resourceTitle = null;
         $jobEtaMinutes = null;
         $isJobEnRoute = false;
@@ -112,6 +113,12 @@ class CustomerfacingPortal extends Component
                 if ($wo) {
                     $resourceTitle = $wo->title;
                 }
+                $jobState = match (true) {
+                    $wo === null => 'missing',
+                    in_array((string) ($wo->status ?? ''), ['cancelled', 'canceled'], true) => 'cancelled',
+                    in_array((string) ($wo->status ?? ''), ['completed', 'done', 'closed'], true) => 'completed',
+                    default => 'open',
+                };
 
                 $assignment = DB::table('dispatch_assignments')
                     ->where('business_id', $link->business_id)
@@ -135,6 +142,7 @@ class CustomerfacingPortal extends Component
 
         return view('x-172::customerfacing-portal', [
             'link' => $link,
+            'jobState' => $jobState,
             'resourceTitle' => $resourceTitle,
             'isJobEnRoute' => $isJobEnRoute,
             'jobEtaMinutes' => $jobEtaMinutes,

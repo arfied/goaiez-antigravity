@@ -35,7 +35,15 @@
                             @endif
                         </div>
                     @else
-                        <p class="text-ink-2 mb-6">Your job is booked and confirmed.</p>
+                        @if($jobState === 'missing')
+                            <p class="text-ink-2 mb-6">We couldn’t find this job. Please contact us directly.</p>
+                        @elseif($jobState === 'cancelled')
+                            <p class="text-ink-2 mb-6">This job was cancelled.</p>
+                        @elseif($jobState === 'completed')
+                            <p class="text-ink-2 mb-6">This job is complete.</p>
+                        @else
+                            <p class="text-ink-2 mb-6">Your job is on file. Check back here for updates.</p>
+                        @endif
                     @endif
                 @elseif(in_array($link->resource_type, ['estimate', 'invoice']))
                     @if($isDocumentPrepared)

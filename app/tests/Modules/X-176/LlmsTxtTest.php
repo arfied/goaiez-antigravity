@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X176;
 
+use App\Models\User;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
+use App\Modules\X176\Actions\LlmsTxtRenderAction;
 use App\Support\Tenancy;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -394,5 +397,24 @@ final class LlmsTxtTest extends TestCase
         $this->assertStringContainsString('Phone: +1 512 555 4637', $txt);
         $this->assertStringContainsString('Parking: Distinctive parking 4638', $txt);
         $this->assertStringNotContainsString('pixel_script', $txt);
+    }
+
+    public function test_llms_txt_carries_the_opening_hours_array(): void
+    {
+        $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $action = app(LlmsTxtRenderAction::class);
+        $output = $action->handle('Example Plumbing', 'Welcome', 'home', [
+            [
+                'type' => 'contact',
+                'hours' => [
+                    ['day' => 'Mon', 'open' => '08:00', 'close' => '17:00'],
+                    ['day' => 'Distinctive Sun 4917', 'open' => 'Closed', 'close' => ''],
+                ],
+            ],
+        ]);
+
+        $this->assertStringContainsString('Hours: Mon 08:00-17:00, Distinctive Sun 4917 Closed', $output);
     }
 }

@@ -72,6 +72,24 @@ final class LlmsTxtRenderAction
                         $added = true;
                     }
                 }
+                if (isset($block['hours']) && is_array($block['hours'])) {
+                    $parts = [];
+                    foreach ($block['hours'] as $h) {
+                        if (! is_array($h) || ! isset($h['day']) || ! is_scalar($h['day'])) {
+                            continue;
+                        }
+                        $open = trim((string) ($h['open'] ?? ''));
+                        $close = trim((string) ($h['close'] ?? ''));
+                        if ($open === '') {
+                            continue;
+                        }
+                        $parts[] = $h['day'].' '.($close === '' ? $open : $open.'-'.$close);
+                    }
+                    if ($parts !== []) {
+                        $lines[] = 'Hours: '.implode(', ', $parts);
+                        $added = true;
+                    }
+                }
                 if (isset($block['facts']) && is_array($block['facts'])) {
                     $factLabels = BusinessFactKey::all();
                     foreach ($block['facts'] as $k => $v) {

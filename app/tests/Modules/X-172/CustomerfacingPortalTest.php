@@ -372,4 +372,62 @@ class CustomerfacingPortalTest extends TestCase
             ->assertSee('Your technician is en route.')
             ->assertDontSee('minutes out');
     }
+
+    public function test_the_portal_does_not_call_a_cancelled_job_booked_and_confirmed(): void
+    {
+        $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $jobId = DB::table('work_orders')->insertGetId([
+            'business_id' => $biz->id,
+            'title' => 'Test Tech Job',
+            'status' => 'cancelled',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $token = 'valid_job_tok_'.uniqid();
+        PortalLink::create([
+            'business_id' => $biz->id,
+            'resource_type' => 'job',
+            'resource_id' => $jobId,
+            'token' => $token,
+            'expires_at' => now()->addHours(24),
+            'is_active' => true,
+        ]);
+
+        Livewire::test(CustomerfacingPortal::class, ['token' => $token])
+            ->assertOk()
+            ->assertSee('This job was cancelled.')
+            ->assertDontSee('booked and confirmed');
+    }
+
+    public function test_the_portal_says_the_job_is_on_file_when_nothing_confirms_it(): void
+    {
+        $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $jobId = DB::table('work_orders')->insertGetId([
+            'business_id' => $biz->id,
+            'title' => 'Test Tech Job',
+            'status' => 'pending',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $token = 'valid_job_tok_'.uniqid();
+        PortalLink::create([
+            'business_id' => $biz->id,
+            'resource_type' => 'job',
+            'resource_id' => $jobId,
+            'token' => $token,
+            'expires_at' => now()->addHours(24),
+            'is_active' => true,
+        ]);
+
+        Livewire::test(CustomerfacingPortal::class, ['token' => $token])
+            ->assertOk()
+            ->assertSee('Your job is on file')
+            ->assertDontSee('booked and confirmed');
+    }
 }

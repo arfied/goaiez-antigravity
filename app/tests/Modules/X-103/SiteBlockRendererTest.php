@@ -269,4 +269,15 @@ class SiteBlockRendererTest extends TestCase
         ]);
         $this->assertStringContainsString('&lt;script&gt;', $html3);
     }
+
+    public function test_a_closed_day_renders_without_a_dangling_separator(): void
+    {
+        $renderer = new SiteBlockRenderer;
+        $html = $renderer->render([
+            ['type' => 'contact', 'hours' => [['day' => 'Distinctive Sunday 4916', 'open' => 'Closed', 'close' => '']]],
+        ], []);
+
+        $this->assertStringContainsString('Distinctive Sunday 4916: Closed', $html);
+        $this->assertStringNotContainsString('Closed - ', $html);
+    }
 }

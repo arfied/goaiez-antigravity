@@ -12,7 +12,7 @@
         <ul>
         @foreach($block['hours'] as $h)
             @if(isset($h['day']) && is_scalar($h['day']))
-                <li>{{ $h['day'] }}: {{ $h['open'] ?? '' }} - {{ $h['close'] ?? '' }}</li>
+                <li>{{ $h['day'] }}: {{ trim((string) ($h['close'] ?? '')) === '' ? ($h['open'] ?? '') : (($h['open'] ?? '').' - '.($h['close'] ?? '')) }}</li>
             @endif
         @endforeach
         </ul>
