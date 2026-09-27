@@ -3534,4 +3534,169 @@ class X157Test extends TestCase
         $res1->assertSee('email');
         $res1->assertDontSee('incomplete_step');
     }
+
+    public function test_at_the_platform_address_the_nav_and_canonical_use_the_stable_page_route(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Platform Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = app(PlatformSiteAddressAction::class)->handle($biz->id);
+
+        $home = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+        $page2 = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Distinctive page 4931',
+            'slug' => 'distinctive-4931',
+        ]);
+
+        $commitHome = app(SitePublishAction::class)->handle($biz->id, $home->id, []);
+        $commit2 = app(SitePublishAction::class)->handle($biz->id, $page2->id, []);
+
+        $deployHome = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $home->id,
+            commitId: $commitHome['commit_id'],
+            businessName: $biz->name
+        );
+        $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page2->id,
+            commitId: $commit2['commit_id'],
+            businessName: $biz->name
+        );
+
+        $html = Storage::disk('local')->get("sites/{$deployHome['deploy_hash']}.html");
+
+        $this->assertStringContainsString('href="/sites/'.$biz->id.'/p/distinctive-4931"', $html);
+
+        $hostStr = parse_url(config('app.url'), PHP_URL_HOST) ?: 'localhost';
+        $this->assertStringContainsString('<link rel="canonical" href="https://'.$hostStr.'/sites/'.$biz->id.'/p/home">', $html);
+
+        $this->assertStringNotContainsString('href="/distinctive-4931"', $html);
+    }
+
+    public function test_the_stable_page_route_serves_the_latest_deployment_of_that_page(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Platform Tenant 2', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = app(PlatformSiteAddressAction::class)->handle($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Distinctive page 4931',
+            'slug' => 'distinctive-4931',
+        ]);
+
+        $commit = app(SitePublishAction::class)->handle($biz->id, $page->id, []);
+
+        $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commit['commit_id'],
+            businessName: $biz->name
+        );
+
+        $response = $this->get("/sites/{$biz->id}/p/distinctive-4931");
+        $response->assertStatus(200);
+        $html = (string) $response->getContent();
+        $this->assertStringContainsString('Distinctive page 4931', $html);
+
+        $page->update(['title' => 'Distinctive second 4932']);
+        $commitId2 = 'commit_'.Str::random(16);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId2,
+            'content_blocks' => [],
+            'pixel_installed' => false,
+        ]);
+
+        $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId2,
+            businessName: $biz->name
+        );
+
+        $response2 = $this->get("/sites/{$biz->id}/p/distinctive-4931");
+        $response2->assertStatus(200);
+        $html2 = (string) $response2->getContent();
+        $this->assertStringContainsString('Distinctive second 4932', $html2);
+
+        $response404 = $this->get("/sites/{$biz->id}/p/no-such-page-4933");
+        $response404->assertStatus(404);
+    }
+
+    public function test_on_a_verified_custom_domain_links_stay_root_relative(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Custom Domain Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-roofing.test', true);
+
+        CustomDomainRequest::create([
+            'business_id' => $biz->id,
+            'domain' => 'acme-roofing.test',
+            'status' => 'verified',
+        ]);
+
+        $home = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+        $page2 = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Distinctive page 4934',
+            'slug' => 'distinctive-4934',
+        ]);
+
+        $commitHome = app(SitePublishAction::class)->handle($biz->id, $home->id, []);
+        $commit2 = app(SitePublishAction::class)->handle($biz->id, $page2->id, []);
+
+        $deployHome = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $home->id,
+            commitId: $commitHome['commit_id'],
+            businessName: $biz->name
+        );
+        $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page2->id,
+            commitId: $commit2['commit_id'],
+            businessName: $biz->name
+        );
+
+        $html = Storage::disk('local')->get("sites/{$deployHome['deploy_hash']}.html");
+
+        $this->assertStringContainsString('href="/distinctive-4934"', $html);
+        $this->assertStringContainsString('<link rel="canonical" href="https://acme-roofing.test/home">', $html);
+        $this->assertStringNotContainsString('href="/sites/'.$biz->id.'/p/distinctive-4934"', $html);
+    }
 }

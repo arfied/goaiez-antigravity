@@ -2,12 +2,34 @@
 
 namespace App\Modules\X157\Actions;
 
+use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X157\Models\Deployment;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Storage;
 
 class ServeDeploymentAction
 {
+    /** The latest deployed control arm of the published page with this slug, at the platform address (wave 821). */
+    public function latestPage(int $businessId, string $slug)
+    {
+        Tenancy::set($businessId);
+
+        $slug = trim($slug, '/') === '' ? 'home' : trim($slug, '/');
+        $page = app(PageReadAction::class)->publishedForSlugs($businessId, [$slug])->first();
+        abort_if($page === null, 404);
+
+        $deployment = Deployment::where('business_id', $businessId)
+            ->where('status', 'deployed')
+            ->where('page_id', (int) $page->id)
+            ->whereNull('page_variant_id')
+            ->whereHas('edgeZone', fn ($q) => $q->where('has_valid_ssl', true))
+            ->latest('id')
+            ->first();
+        abort_if($deployment === null, 404);
+
+        return $this->page($businessId, (string) $deployment->deploy_hash);
+    }
+
     public function page(int $businessId, string $deployHash)
     {
         Tenancy::set($businessId);

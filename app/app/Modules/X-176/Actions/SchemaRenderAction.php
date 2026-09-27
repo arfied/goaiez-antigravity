@@ -26,7 +26,8 @@ final class SchemaRenderAction
         ?array $events = null,
         ?array $address = null,
         ?array $breadcrumbs = null,
-        ?array $faqs = null
+        ?array $faqs = null,
+        string $pathPrefix = ''
     ): array {
         if ($entityType === null) {
             $vertical = strtolower(trim((string) (Business::find($businessId)->vertical ?? '')));
@@ -44,7 +45,7 @@ final class SchemaRenderAction
         }
 
         $canonical = app(SeoRenderAction::class)
-            ->handle($businessId, $pageId, $businessName, $commitId, $domainName)['canonical'];
+            ->handle($businessId, $pageId, $businessName, $commitId, $domainName, $pathPrefix)['canonical'];
 
         // Build valid schema.org structure (G8-32)
         $jsonLd = [
@@ -140,7 +141,7 @@ final class SchemaRenderAction
                     '@type' => 'ListItem',
                     'position' => $position,
                     'name' => $crumb['name'],
-                    'item' => 'https://'.$domainName.'/'.$crumb['slug'],
+                    'item' => 'https://'.$domainName.$pathPrefix.'/'.$crumb['slug'],
                 ];
                 $position++;
             }

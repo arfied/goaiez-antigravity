@@ -47,6 +47,10 @@ final class ModuleServiceProvider extends ServiceProvider
             Livewire::component('x-157.edge-status-per', EdgeStatusPer::class);
         }
 
+        Route::get('/sites/{business}/p/{slug}', function (string $business, string $slug) {
+            return app(ServeDeploymentAction::class)->latestPage((int) $business, $slug);
+        })->name('x-157.site.page')->whereNumber('business')->where('slug', '[A-Za-z0-9._\/-]+');
+
         Route::get('/sites/{business}/{deploy_hash}', function (string $business, string $deployHash) {
             return app(ServeDeploymentAction::class)->page((int) $business, $deployHash);
         })->name('x-157.site')->whereNumber('business');

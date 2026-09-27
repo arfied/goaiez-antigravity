@@ -21,7 +21,7 @@ final class InternalLinkRenderAction
 
     public function __construct(private DefaultsRegistry $registry) {}
 
-    public function handle(int $businessId): string
+    public function handle(int $businessId, string $linkBase = ''): string
     {
         $pages = app(PageReadAction::class)->publishedFor($businessId);
 
@@ -97,7 +97,7 @@ final class InternalLinkRenderAction
         }
 
         $emittedCount = 0;
-        $renderTree = function (array $nodes) use (&$renderTree, &$emittedCount): string {
+        $renderTree = function (array $nodes) use (&$renderTree, &$emittedCount, $linkBase): string {
             if (empty($nodes) || $emittedCount >= $this->emittedMax()) {
                 return '';
             }
@@ -109,7 +109,7 @@ final class InternalLinkRenderAction
                 }
                 $emittedCount++;
                 $page = $node->page;
-                $href = '/'.ltrim((string) $page->slug, '/');
+                $href = $linkBase.'/'.ltrim((string) $page->slug, '/');
                 $itemsHtml .= '<li><a href="'.htmlspecialchars($href, ENT_QUOTES).'">'.htmlspecialchars((string) $page->title, ENT_QUOTES).'</a>';
                 $itemsHtml .= $renderTree($node->children);
                 $itemsHtml .= '</li>';

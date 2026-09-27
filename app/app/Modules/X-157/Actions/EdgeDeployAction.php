@@ -299,13 +299,19 @@ JS;
             $verified = CustomDomainRequest::withoutGlobalScopes()->where('business_id', $businessId)->where('status', 'verified')->orderByDesc('id')->value('domain');
             $canonicalHost = $verified !== null && $verified !== '' ? strtolower($verified) : $zone->domain_name;
 
+            // Where this page's siblings live. On a verified custom domain a root-relative
+            // slug is right; at the platform address it would resolve against the platform's
+            // own routes, so links go through the stable per-page route (wave 821).
+            $linkBase = ($verified !== null && $verified !== '') ? '' : "/sites/{$businessId}/p";
+
             if ($x176Usable) {
                 $seoResult = app(SeoRenderAction::class)->handle(
                     $businessId,
                     $pageId,
                     $businessName,
                     $commitId,
-                    $canonicalHost
+                    $canonicalHost,
+                    pathPrefix: $linkBase
                 );
 
                 $escapedTitle = e($seoResult['title']);
@@ -333,7 +339,8 @@ JS;
                     events: $events ?: null,
                     address: $address ?: null,
                     breadcrumbs: $breadcrumbs ?: null,
-                    faqs: $faqs ?: null
+                    faqs: $faqs ?: null,
+                    pathPrefix: $linkBase
                 );
 
                 if (isset($schemaResult['json_ld'])) {
@@ -367,7 +374,7 @@ JS;
             if (! empty($breadcrumbs)) {
                 $html .= "<nav id=\"breadcrumb-x176\">\n";
                 foreach ($breadcrumbs as $crumb) {
-                    $html .= '  <a href="/'.e($crumb['slug']).'">'.e($crumb['name'])."</a>\n";
+                    $html .= '  <a href="'.e($linkBase).'/'.e($crumb['slug']).'">'.e($crumb['name'])."</a>\n";
                 }
                 $html .= "</nav>\n";
             }
@@ -409,7 +416,7 @@ JS;
                 $html .= "</div>\n";
             }
 
-            $internalLinksHtml = app(InternalLinkRenderAction::class)->handle($businessId);
+            $internalLinksHtml = app(InternalLinkRenderAction::class)->handle($businessId, $linkBase);
             if ($internalLinksHtml !== '') {
                 $html .= $internalLinksHtml;
             }
