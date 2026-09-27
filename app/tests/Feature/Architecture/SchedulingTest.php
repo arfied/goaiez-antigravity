@@ -76,6 +76,7 @@ function schedulingOverlapWindows(): array
         'reviews:remind' => 30,
         'agent:nudge' => 30,
         'gbp:sync' => 30,
+        'facebook:sync-reviews' => 30,
         'reviews:retry-stranded-replies' => 30,
         'campaigns:run-due' => 30,
         'messaging:watch-platform-complaint-rate' => 30,
