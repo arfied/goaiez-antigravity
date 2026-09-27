@@ -184,6 +184,90 @@ class SocialQueue extends Component
         unset($this->commentReply[$commentId]);
     }
 
+    public function hideComment(int $commentId): void
+    {
+        abort_unless(auth()->user()?->role->canConfigureAutomation() === true, 403);
+
+        $comment = Comment::where('business_id', $this->businessId)->find($commentId);
+        if ($comment === null) {
+            Toaster::error('That comment is not here any more.');
+
+            return;
+        }
+
+        if ($comment->platform_comment_id === null) {
+            Toaster::error('This comment cannot be hidden from here.');
+
+            return;
+        }
+
+        $post = SocialPost::where('business_id', $this->businessId)->with('account')->find($comment->post_id);
+        if ($post === null || $post->provider_post_id === null || $post->account === null || $post->account->status !== 'connected' || $post->account->account_ref === null) {
+            Toaster::error('Connect this account through Zernio first.');
+
+            return;
+        }
+
+        if ($comment->hidden_at !== null) {
+            Toaster::info('This comment is already hidden.');
+
+            return;
+        }
+
+        try {
+            app(ZernioSocialClient::class)->hideComment($post->account->account_ref, $post->provider_post_id, $comment->platform_comment_id);
+        } catch (GbpRequestFailed $e) {
+            Toaster::error('Zernio did not hide it: '.$e->getMessage());
+
+            return;
+        }
+
+        $comment->update(['hidden_at' => now()]);
+        Toaster::success('Hidden. Only the commenter and your page can see it now.');
+    }
+
+    public function unhideComment(int $commentId): void
+    {
+        abort_unless(auth()->user()?->role->canConfigureAutomation() === true, 403);
+
+        $comment = Comment::where('business_id', $this->businessId)->find($commentId);
+        if ($comment === null) {
+            Toaster::error('That comment is not here any more.');
+
+            return;
+        }
+
+        if ($comment->platform_comment_id === null) {
+            Toaster::error('This comment cannot be hidden from here.');
+
+            return;
+        }
+
+        $post = SocialPost::where('business_id', $this->businessId)->with('account')->find($comment->post_id);
+        if ($post === null || $post->provider_post_id === null || $post->account === null || $post->account->status !== 'connected' || $post->account->account_ref === null) {
+            Toaster::error('Connect this account through Zernio first.');
+
+            return;
+        }
+
+        if ($comment->hidden_at === null) {
+            Toaster::info('This comment is not hidden.');
+
+            return;
+        }
+
+        try {
+            app(ZernioSocialClient::class)->unhideComment($post->account->account_ref, $post->provider_post_id, $comment->platform_comment_id);
+        } catch (GbpRequestFailed $e) {
+            Toaster::error('Zernio did not unhide it: '.$e->getMessage());
+
+            return;
+        }
+
+        $comment->update(['hidden_at' => null]);
+        Toaster::success('Shown again to everyone.');
+    }
+
     public function replyToDm(int $conversationId): void
     {
         abort_unless(auth()->user()?->role->canConfigureAutomation() === true, 403);

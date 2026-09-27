@@ -38,6 +38,12 @@
                                         <input type="text" wire:model="commentReply.{{ $c->id }}" maxlength="1000">
                                         <x-ui.button wire:click="replyToComment({{ $c->id }})" size="sm">Reply</x-ui.button>
                                     @endif
+                                    @if($c->hidden_at)
+                                        (hidden — only the commenter and your page see it)
+                                        <x-ui.button wire:click="unhideComment({{ $c->id }})" size="sm">Unhide</x-ui.button>
+                                    @elseif($c->platform_comment_id)
+                                        <x-ui.button wire:click="hideComment({{ $c->id }})" size="sm">Hide</x-ui.button>
+                                    @endif
                                 </li>
                             @endforeach
                         </ul>
