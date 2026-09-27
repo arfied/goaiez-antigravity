@@ -33,10 +33,9 @@
                             @if($post->platform_post_url)
                                 <a href="{{ $post->platform_post_url }}">View it</a>
                             @endif
-                        @elseif($post->publish_status === 'publishing')
-                            — Zernio is still publishing it
-                        @elseif($post->publish_status === 'unconfirmed')
-                            — sent, Zernio has not confirmed it yet
+                        @elseif(in_array($post->publish_status, ['publishing', 'unconfirmed']))
+                            — {{ $post->publish_status === 'publishing' ? 'Zernio is still publishing it' : 'sent, Zernio has not confirmed it yet' }}
+                            <x-ui.button wire:click="checkAgain({{ $post->id }})" size="sm" variant="secondary">Check again</x-ui.button>
                         @elseif($post->publish_status === 'failed')
                             — not published: {{ $post->last_error }}
                         @elseif($post->publish_status === 'duplicate')

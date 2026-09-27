@@ -58,29 +58,8 @@ final class ZernioSocialClient
         if ($status >= 200 && $status < 300) {
             $data = $response->json() ?? [];
             $post = $data['post'] ?? [];
-            $vendorStatus = $post['status'] ?? '';
-            $outcome = self::OUTCOME_FOR_STATUS[$vendorStatus] ?? 'unconfirmed';
 
-            $platforms = [];
-            foreach ($post['platforms'] ?? [] as $p) {
-                $platformName = $p['platform'] ?? 'unknown';
-                $platforms[$platformName] = new SocialPlatformResult(
-                    platform: $platformName,
-                    status: $p['status'] ?? '',
-                    platformPostId: $p['platformPostId'] ?? null,
-                    platformPostUrl: $p['platformPostUrl'] ?? null,
-                    errorMessage: $p['errorMessage'] ?? null,
-                    errorCategory: $p['errorCategory'] ?? null,
-                );
-            }
-
-            return new SocialPostReceipt(
-                outcome: $outcome,
-                providerPostId: $post['_id'] ?? null,
-                vendorStatus: $vendorStatus === '' ? null : $vendorStatus,
-                platforms: $platforms,
-                existingPostId: null,
-            );
+            return $this->receiptFrom($post);
         }
 
         if ($status === 409) {
@@ -148,6 +127,45 @@ final class ZernioSocialClient
         return new FacebookReviewPage(
             reviews: $reviews,
             nextCursor: is_string($nextCursor) && $nextCursor !== '' ? $nextCursor : null,
+        );
+    }
+
+    public function getPost(string $postId): SocialPostReceipt
+    {
+        $this->http->assertUsable('social.zernio_enabled');
+        $response = $this->http->get('posts/'.rawurlencode($postId));
+
+        if ($response->failed()) {
+            throw GbpRequestFailed::from($response, accountScoped: true);
+        }
+
+        return $this->receiptFrom($response->json('post') ?? []);
+    }
+
+    private function receiptFrom(array $post): SocialPostReceipt
+    {
+        $vendorStatus = $post['status'] ?? '';
+        $outcome = self::OUTCOME_FOR_STATUS[$vendorStatus] ?? 'unconfirmed';
+
+        $platforms = [];
+        foreach ($post['platforms'] ?? [] as $p) {
+            $platformName = $p['platform'] ?? 'unknown';
+            $platforms[$platformName] = new SocialPlatformResult(
+                platform: $platformName,
+                status: $p['status'] ?? '',
+                platformPostId: $p['platformPostId'] ?? null,
+                platformPostUrl: $p['platformPostUrl'] ?? null,
+                errorMessage: $p['errorMessage'] ?? null,
+                errorCategory: $p['errorCategory'] ?? null,
+            );
+        }
+
+        return new SocialPostReceipt(
+            outcome: $outcome,
+            providerPostId: $post['_id'] ?? null,
+            vendorStatus: $vendorStatus === '' ? null : $vendorStatus,
+            platforms: $platforms,
+            existingPostId: null,
         );
     }
 }
