@@ -11,6 +11,7 @@ final class WhatsappSessionOpened
         public readonly int $sessionId,
         public readonly string $recipientPhone,
         public readonly string $body = '',
-        public readonly string $senderName = ''
+        public readonly string $senderName = '',
+        public readonly array $attachments = []
     ) {}
 }

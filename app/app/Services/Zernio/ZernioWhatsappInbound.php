@@ -54,6 +54,27 @@ final class ZernioWhatsappInbound
                 $body = "[attachment: {$firstType}]";
             }
 
+            $attachments = [];
+            $rawAttachments = array_slice($payload['message']['attachments'] ?? [], 0, 4);
+            foreach ($rawAttachments as $a) {
+                $id = $a['payload']['id'] ?? null;
+                $type = (string) ($a['type'] ?? 'file');
+                if (is_string($id) && $id !== '') {
+                    $attachments[] = [
+                        'type' => $type,
+                        'mime' => $a['mimeType'] ?? null,
+                        'media_id' => $id,
+                        'account_ref' => $accountId,
+                        'status' => 'pending',
+                    ];
+                } else {
+                    $attachments[] = [
+                        'type' => $type,
+                        'status' => 'unavailable',
+                    ];
+                }
+            }
+
             $senderName = (string) ($payload['message']['sender']['name'] ?? '');
 
             $conversationId = (string) ($payload['conversation']['id'] ?? ($payload['message']['conversationId'] ?? ''));
@@ -68,7 +89,8 @@ final class ZernioWhatsappInbound
                 $senderName,
                 $conversationId === '' ? null : $conversationId,
                 $bsuid,
-                $wamid
+                $wamid,
+                $attachments
             );
 
             if ($phone === '') {

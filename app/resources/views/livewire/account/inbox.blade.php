@@ -178,6 +178,19 @@
                             <span class="font-normal">· {{ $entry->created_at?->diffForHumans() }}</span>
                         </p>
                         <p class="mt-1 whitespace-pre-line break-words text-base text-ink">{{ $entry->body }}</p>
+                        @foreach (($entry->attachments ?? []) as $i => $att)
+                            @if (($att['status'] ?? '') === 'stored')
+                                <x-ui.button variant="secondary" size="default" wire:click="downloadAttachment({{ $entry->id }}, {{ $i }})">Download the {{ $att['type'] }}</x-ui.button>
+                            @elseif (($att['status'] ?? '') === 'pending')
+                                Saving the {{ $att['type'] }}…
+                            @elseif (($att['status'] ?? '') === 'expired')
+                                WhatsApp deleted this {{ $att['type'] }} before it could be saved.
+                            @elseif (($att['status'] ?? '') === 'too_large')
+                                This {{ $att['type'] }} is too large to save here.
+                            @else
+                                This {{ $att['type'] }} could not be saved.
+                            @endif
+                        @endforeach
                     </li>
                 @empty
                     {{--
