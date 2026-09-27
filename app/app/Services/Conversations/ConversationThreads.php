@@ -137,6 +137,14 @@ final class ConversationThreads
             ->find($conversationId);
     }
 
+    public function findSocial(int $conversationId): ?Conversation
+    {
+        return Conversation::query()
+            ->whereIn('channel', ['facebook', 'instagram'])
+            ->with('customer')
+            ->find($conversationId);
+    }
+
     public function socialThreads(): Collection
     {
         return Conversation::query()

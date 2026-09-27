@@ -14,6 +14,7 @@ use App\Modules\X182\Models\SocialPost;
 use App\Services\Conversations\ConversationThreads;
 use App\Services\Zernio\ZernioSocialClient;
 use App\Support\Tenancy;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -33,8 +34,14 @@ class SocialQueue extends Component
 
     public array $commentReply = [];
 
+    public array $dmReply = [];
+
+    #[Locked]
+    public string $dmDraftKey = '';
+
     public function mount(int $businessId = 0): void
     {
+        $this->dmDraftKey = (string) Str::uuid();
         $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
         abort_if($this->businessId === 0, 404);
         $topic = request()->query('topic');
@@ -175,6 +182,54 @@ class SocialQueue extends Component
         app(CommentIngestAction::class)->recordOwnerReply($comment, $text, $ref);
         Toaster::success('Replied.');
         unset($this->commentReply[$commentId]);
+    }
+
+    public function replyToDm(int $conversationId): void
+    {
+        abort_unless(auth()->user()?->role->canConfigureAutomation() === true, 403);
+
+        $thread = app(ConversationThreads::class)->findSocial($conversationId);
+        if ($thread === null) {
+            Toaster::error('That conversation is not here any more.');
+
+            return;
+        }
+
+        if ($thread->provider_conversation_ref === null || $thread->provider_account_ref === null) {
+            Toaster::error('This conversation cannot be answered from here.');
+
+            return;
+        }
+
+        $text = trim((string) ($this->dmReply[$conversationId] ?? ''));
+        if ($text === '' || mb_strlen($text) > 1000) {
+            Toaster::error('Write a reply of up to 1,000 characters.');
+
+            return;
+        }
+
+        try {
+            app(ZernioSocialClient::class)->replyInConversation(
+                $thread->provider_account_ref,
+                $thread->provider_conversation_ref,
+                $text,
+                'dm-reply-'.$thread->id.'-'.$this->dmDraftKey
+            );
+        } catch (GbpRequestFailed $e) {
+            Toaster::error(ucfirst($thread->channel).' did not accept the reply: '.$e->getMessage());
+
+            return;
+        }
+
+        app(ConversationThreads::class)->recordOutboundFromPerson(
+            conversation: $thread,
+            body: $text,
+            userId: (int) auth()->id()
+        );
+
+        Toaster::success('Sent on '.ucfirst($thread->channel).'.');
+        unset($this->dmReply[$conversationId]);
+        $this->dmDraftKey = (string) Str::uuid();
     }
 
     public function render()

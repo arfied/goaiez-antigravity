@@ -189,6 +189,29 @@ final class ZernioSocialClient
         return is_string($id) && $id !== '' ? $id : null;
     }
 
+    public function replyInConversation(string $accountRef, string $conversationRef, string $message, string $idempotencyKey): ?string
+    {
+        $this->http->assertUsable('social.zernio_enabled');
+
+        $message = trim($message);
+        if ($message === '') {
+            throw GbpRequestFailed::unreadable('reply_comment_empty');
+        }
+
+        $response = $this->http->post('inbox/conversations/'.rawurlencode($conversationRef).'/messages', [
+            'accountId' => $accountRef,
+            'message' => $message,
+        ], $idempotencyKey);
+
+        if ($response->failed()) {
+            throw GbpRequestFailed::from($response, accountScoped: true);
+        }
+
+        $id = $response->json('data.messageId');
+
+        return is_string($id) && $id !== '' ? $id : null;
+    }
+
     private function receiptFrom(array $post): SocialPostReceipt
     {
         $vendorStatus = $post['status'] ?? '';

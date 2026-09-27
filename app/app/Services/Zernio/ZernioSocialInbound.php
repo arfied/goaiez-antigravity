@@ -52,11 +52,6 @@ final class ZernioSocialInbound
         }
 
         return Tenancy::actingAs($businessId, function () use ($platform, $conversationRef, $accountRef, $message): string {
-            $sender = $message['sender'] ?? [];
-            $label = $sender['name'] ?? $sender['username'] ?? null;
-
-            $thread = app(ConversationThreads::class)->socialThread($platform, $conversationRef, $accountRef, $label);
-
             $text = $message['text'] ?? null;
             $attachments = $message['attachments'] ?? [];
 
@@ -69,6 +64,11 @@ final class ZernioSocialInbound
                 return 'ignored';
             }
 
+            $sender = $message['sender'] ?? [];
+            $label = $sender['name'] ?? $sender['username'] ?? null;
+            $label = is_string($label) ? $label : null;
+
+            $thread = app(ConversationThreads::class)->socialThread($platform, $conversationRef, $accountRef, $label);
             app(ConversationThreads::class)->recordInbound($thread, $body);
 
             return 'handled';

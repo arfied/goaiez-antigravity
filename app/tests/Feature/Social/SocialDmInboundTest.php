@@ -2,12 +2,18 @@
 
 declare(strict_types=1);
 
+use App\Enums\UserRole;
+use App\Models\Conversation;
 use App\Models\GbpProfileBinding;
 use App\Models\User;
 use App\Models\ZernioAccountBinding;
 use App\Modules\X182\Models\SocialAccount;
+use App\Modules\X182\Ui\SocialQueue;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Http;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 beforeEach(function () {
@@ -15,6 +21,8 @@ beforeEach(function () {
     $this->owner = User::find($this->biz->owner_user_id);
 
     Config::set('credentials.zernio_webhook_secret', 'test_secret');
+    Config::set('credentials.zernio_api_key', 'test_key');
+    app(DefaultsRegistry::class)->set('social.zernio_enabled', true, 'test');
 
     Tenancy::set($this->biz->id);
 
@@ -370,4 +378,230 @@ test('g no DMs', function () {
     $this->get(route('x-182.social-queue'))
         ->assertOk()
         ->assertSee('No Facebook or Instagram messages yet.');
+});
+test('h owner replies to dm', function () {
+    Tenancy::forget();
+    $payload = json_encode([
+        'id' => 'evt_msg_1',
+        'event' => 'message.received',
+        'message' => [
+            'id' => 'm_7802',
+            'conversationId' => 'conv_fb_7803',
+            'platform' => 'facebook',
+            'platformMessageId' => 'mid_7804',
+            'direction' => 'incoming',
+            'text' => 'Do you open Sundays 7805',
+            'attachments' => [],
+            'sender' => ['id' => 'psid_7806', 'name' => 'Robin Asker'],
+            'sentAt' => '2026-09-27T10:00:00Z',
+        ],
+        'account' => ['accountId' => 'acct_fb_7801'],
+    ], JSON_THROW_ON_ERROR);
+    $sig = hash_hmac('sha256', $payload, 'test_secret');
+    $this->call('POST', '/webhooks/zernio', [], [], [], ['HTTP_X_ZERNIO_SIGNATURE' => $sig, 'CONTENT_TYPE' => 'application/json'], $payload);
+    Tenancy::set($this->biz->id);
+    $conv = Conversation::where('provider_conversation_ref', 'conv_fb_7803')->first();
+
+    $this->actingAs($this->owner);
+    Http::fake(['zernio.com/api/v1/inbox/conversations/conv_fb_7803/messages' => Http::response(['success' => true, 'data' => ['messageId' => 'mid_out_8201']], 200)]);
+
+    Livewire::test(SocialQueue::class)
+        ->set('dmReply.'.$conv->id, 'Yes, 9 to 5 on Sundays 8202')
+        ->call('replyToDm', $conv->id);
+
+    $this->assertDatabaseHas('messages', [
+        'conversation_id' => $conv->id,
+        'body' => 'Yes, 9 to 5 on Sundays 8202',
+        'direction' => 'outbound',
+    ]);
+
+    Http::assertSent(function ($request) {
+        return str_contains($request->url(), 'conv_fb_7803/messages')
+            && $request['accountId'] === 'acct_fb_7801'
+            && $request['message'] === 'Yes, 9 to 5 on Sundays 8202'
+            && str_starts_with($request->header('Idempotency-Key')[0] ?? '', 'dm-reply-');
+    });
+});
+
+test('i empty text', function () {
+    Tenancy::forget();
+    $payload = json_encode([
+        'id' => 'evt_msg_1',
+        'event' => 'message.received',
+        'message' => [
+            'id' => 'm_7802',
+            'conversationId' => 'conv_fb_7803',
+            'platform' => 'facebook',
+            'platformMessageId' => 'mid_7804',
+            'direction' => 'incoming',
+            'text' => 'Do you open Sundays 7805',
+            'attachments' => [],
+            'sender' => ['id' => 'psid_7806', 'name' => 'Robin Asker'],
+            'sentAt' => '2026-09-27T10:00:00Z',
+        ],
+        'account' => ['accountId' => 'acct_fb_7801'],
+    ], JSON_THROW_ON_ERROR);
+    $sig = hash_hmac('sha256', $payload, 'test_secret');
+    $this->call('POST', '/webhooks/zernio', [], [], [], ['HTTP_X_ZERNIO_SIGNATURE' => $sig, 'CONTENT_TYPE' => 'application/json'], $payload);
+    Tenancy::set($this->biz->id);
+    $conv = Conversation::where('provider_conversation_ref', 'conv_fb_7803')->first();
+
+    $this->actingAs($this->owner);
+    Http::fake();
+
+    Livewire::test(SocialQueue::class)
+        ->set('dmReply.'.$conv->id, '')
+        ->call('replyToDm', $conv->id);
+
+    Http::assertNothingSent();
+    $this->assertDatabaseMissing('messages', ['direction' => 'outbound']);
+});
+
+test('j outside window', function () {
+    Tenancy::forget();
+    $payload = json_encode([
+        'id' => 'evt_msg_1',
+        'event' => 'message.received',
+        'message' => [
+            'id' => 'm_7802',
+            'conversationId' => 'conv_fb_7803',
+            'platform' => 'facebook',
+            'platformMessageId' => 'mid_7804',
+            'direction' => 'incoming',
+            'text' => 'Do you open Sundays 7805',
+            'attachments' => [],
+            'sender' => ['id' => 'psid_7806', 'name' => 'Robin Asker'],
+            'sentAt' => '2026-09-27T10:00:00Z',
+        ],
+        'account' => ['accountId' => 'acct_fb_7801'],
+    ], JSON_THROW_ON_ERROR);
+    $sig = hash_hmac('sha256', $payload, 'test_secret');
+    $this->call('POST', '/webhooks/zernio', [], [], [], ['HTTP_X_ZERNIO_SIGNATURE' => $sig, 'CONTENT_TYPE' => 'application/json'], $payload);
+    Tenancy::set($this->biz->id);
+    $conv = Conversation::where('provider_conversation_ref', 'conv_fb_7803')->first();
+
+    $this->actingAs($this->owner);
+    Http::fake(['zernio.com/api/v1/inbox/conversations/conv_fb_7803/messages' => Http::response(['error' => 'Outside the messaging window', 'code' => 'platform_api_error', 'type' => 'platform_error'], 400)]);
+
+    Livewire::test(SocialQueue::class)
+        ->set('dmReply.'.$conv->id, 'Yes, 9 to 5 on Sundays 8202')
+        ->call('replyToDm', $conv->id);
+
+    $this->assertDatabaseMissing('messages', ['direction' => 'outbound']);
+});
+
+test('k staff', function () {
+    Tenancy::forget();
+    $payload = json_encode([
+        'id' => 'evt_msg_1',
+        'event' => 'message.received',
+        'message' => [
+            'id' => 'm_7802',
+            'conversationId' => 'conv_fb_7803',
+            'platform' => 'facebook',
+            'platformMessageId' => 'mid_7804',
+            'direction' => 'incoming',
+            'text' => 'Do you open Sundays 7805',
+            'attachments' => [],
+            'sender' => ['id' => 'psid_7806', 'name' => 'Robin Asker'],
+            'sentAt' => '2026-09-27T10:00:00Z',
+        ],
+        'account' => ['accountId' => 'acct_fb_7801'],
+    ], JSON_THROW_ON_ERROR);
+    $sig = hash_hmac('sha256', $payload, 'test_secret');
+    $this->call('POST', '/webhooks/zernio', [], [], [], ['HTTP_X_ZERNIO_SIGNATURE' => $sig, 'CONTENT_TYPE' => 'application/json'], $payload);
+    Tenancy::set($this->biz->id);
+    $conv = Conversation::where('provider_conversation_ref', 'conv_fb_7803')->first();
+
+    $staff = User::factory()->create(['role' => UserRole::Staff]);
+    $this->actingAs($staff);
+    Tenancy::setUser($staff->id);
+    Tenancy::set($this->biz->id);
+
+    Http::fake();
+
+    Livewire::test(SocialQueue::class)
+        ->set('dmReply.'.$conv->id, 'Yes')
+        ->call('replyToDm', $conv->id)
+        ->assertForbidden();
+
+    Http::assertNothingSent();
+});
+
+test('l sms conversation', function () {
+    $this->actingAs($this->owner);
+    Http::fake();
+
+    $smsConv = Conversation::factory()->create([
+        'business_id' => $this->biz->id,
+        'channel' => 'sms',
+    ]);
+
+    Livewire::test(SocialQueue::class)
+        ->set('dmReply.'.$smsConv->id, 'Yes')
+        ->call('replyToDm', $smsConv->id);
+
+    Http::assertNothingSent();
+});
+
+test('m empty incoming', function () {
+    Tenancy::forget();
+    $payload = json_encode([
+        'id' => 'evt_msg_1',
+        'event' => 'message.received',
+        'message' => [
+            'id' => 'm_7802',
+            'conversationId' => 'conv_fb_7803_m',
+            'platform' => 'facebook',
+            'platformMessageId' => 'mid_7804_m',
+            'direction' => 'incoming',
+            'text' => null,
+            'attachments' => [],
+            'sender' => ['id' => 'psid_7806', 'name' => 'Robin Asker'],
+            'sentAt' => '2026-09-27T10:00:00Z',
+        ],
+        'account' => ['accountId' => 'acct_fb_7801'],
+    ], JSON_THROW_ON_ERROR);
+    $sig = hash_hmac('sha256', $payload, 'test_secret');
+    $resp = $this->call('POST', '/webhooks/zernio', [], [], [], ['HTTP_X_ZERNIO_SIGNATURE' => $sig, 'CONTENT_TYPE' => 'application/json'], $payload);
+
+    expect($resp->json('outcome'))->toBe('ignored');
+
+    Tenancy::set($this->biz->id);
+    $this->assertDatabaseMissing('conversations', ['provider_conversation_ref' => 'conv_fb_7803_m']);
+});
+
+test('n real GET route after reply', function () {
+    Tenancy::forget();
+    $payload = json_encode([
+        'id' => 'evt_msg_1',
+        'event' => 'message.received',
+        'message' => [
+            'id' => 'm_7802',
+            'conversationId' => 'conv_fb_7803',
+            'platform' => 'facebook',
+            'platformMessageId' => 'mid_7804',
+            'direction' => 'incoming',
+            'text' => 'Do you open Sundays 7805',
+            'attachments' => [],
+            'sender' => ['id' => 'psid_7806', 'name' => 'Robin Asker'],
+            'sentAt' => '2026-09-27T10:00:00Z',
+        ],
+        'account' => ['accountId' => 'acct_fb_7801'],
+    ], JSON_THROW_ON_ERROR);
+    $sig = hash_hmac('sha256', $payload, 'test_secret');
+    $this->call('POST', '/webhooks/zernio', [], [], [], ['HTTP_X_ZERNIO_SIGNATURE' => $sig, 'CONTENT_TYPE' => 'application/json'], $payload);
+    Tenancy::set($this->biz->id);
+    $conv = Conversation::where('provider_conversation_ref', 'conv_fb_7803')->first();
+
+    $this->actingAs($this->owner);
+    Http::fake(['zernio.com/api/v1/inbox/conversations/conv_fb_7803/messages' => Http::response(['success' => true, 'data' => ['messageId' => 'mid_out_8201']], 200)]);
+
+    Livewire::test(SocialQueue::class)
+        ->set('dmReply.'.$conv->id, 'Yes, 9 to 5 on Sundays 8202')
+        ->call('replyToDm', $conv->id);
+
+    $this->get(route('x-182.social-queue'))
+        ->assertOk()
+        ->assertSee('You wrote: Yes, 9 to 5 on Sundays 8202');
 });

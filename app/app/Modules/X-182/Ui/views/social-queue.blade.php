@@ -72,6 +72,8 @@
                                 <li>{{ $m->direction->value === 'inbound' ? 'They wrote' : 'You wrote' }}: {{ $m->body }}</li>
                             @endforeach
                         </ul>
+                        <input type="text" wire:model="dmReply.{{ $t->id }}" maxlength="1000">
+                        <x-ui.button wire:click="replyToDm({{ $t->id }})" size="sm">Reply</x-ui.button>
                     </li>
                 @endforeach
             </ul>
