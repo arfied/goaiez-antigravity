@@ -58,9 +58,19 @@ class PerplatformDeliveryHealth extends Component
 
     public function render()
     {
+        /** @var list<array{label: string, n: int}> $statuses */
+        $statuses = [];
+
+        if ($this->businessId > 0) {
+            $rows = PushDelivery::where('business_id', $this->businessId)->selectRaw('status, COUNT(*) as n')->groupBy('status')->orderBy('status')->get();
+            foreach ($rows as $s) {
+                $statuses[] = ['label' => self::STATUS_WORDS[(string) $s->status] ?? (string) $s->status, 'n' => (int) $s->n];
+            }
+        }
+
         return view('x-207::perplatform-delivery-health', [
             'platforms' => ($this->businessId > 0) ? DeviceToken::where('business_id', $this->businessId)->selectRaw('platform, COUNT(*) as devices')->groupBy('platform')->orderBy('platform')->get() : collect(),
-            'statuses' => ($this->businessId > 0) ? PushDelivery::where('business_id', $this->businessId)->selectRaw('status, COUNT(*) as n')->groupBy('status')->orderBy('status')->get()->map(fn ($s) => ['label' => self::STATUS_WORDS[$s->status] ?? $s->status, 'n' => $s->n]) : collect(),
+            'statuses' => $statuses,
         ]);
     }
 }
