@@ -13,7 +13,9 @@ use App\Modules\X182\Models\SocialAccount;
 use App\Modules\X182\Models\SocialPost;
 use App\Services\Conversations\ConversationThreads;
 use App\Services\Zernio\ZernioSocialClient;
+use App\Services\Zernio\ZernioWhatsappMedia;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -372,6 +374,22 @@ class SocialQueue extends Component
         Toaster::success('Sent on '.ucfirst($thread->channel).'.');
         unset($this->dmReply[$conversationId]);
         $this->dmDraftKey = (string) Str::uuid();
+    }
+
+    public function downloadDmAttachment(int $conversationId, int $messageId, int $index)
+    {
+        // The Messages section is shown to every role that opens this screen, so no role gate beyond tenancy.
+        $thread = app(ConversationThreads::class)->findSocial($conversationId);
+        if ($thread === null) {
+            abort(404);
+        }
+
+        $att = app(ConversationThreads::class)->attachmentOn($thread, $messageId, $index);
+        if (($att['status'] ?? null) !== 'stored' || ! is_string($att['path'] ?? null) || ($att['path'] ?? '') === '') {
+            abort(404);
+        }
+
+        return Storage::disk(ZernioWhatsappMedia::DISK)->download($att['path'], 'attachment-'.$messageId.'-'.($index + 1));
     }
 
     public function render()
