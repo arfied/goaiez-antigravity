@@ -716,6 +716,31 @@ class X155Test extends TestCase
         $this->assertEquals('captured', $res['status']);
     }
 
+    public function test_an_unreadable_date_of_birth_is_refused_and_named(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Whitespace DOB Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Whitespace DOB Form',
+            'slug' => 'whitespace-dob-form',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $res = $this->captureAction->handle($biz->id, $form->id, [
+            'first_name' => 'Adult',
+            'phone' => '+15550004444',
+            'date_of_birth' => 'Distinctive nonsense 4926',
+        ]);
+
+        $this->assertEquals('rejected', $res['status']);
+        $this->assertEquals('dob_unreadable', $res['reason']);
+        $this->assertEquals(0, Person::where('business_id', $biz->id)->where('phone', '+15550004444')->count());
+        $this->assertEquals(0, FormSubmission::where('business_id', $biz->id)->count());
+    }
+
     public function test_an_array_date_of_birth_is_not_an_age_signal(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Array DOB Tenant']);

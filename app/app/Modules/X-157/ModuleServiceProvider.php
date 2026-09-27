@@ -133,9 +133,12 @@ final class ModuleServiceProvider extends ServiceProvider
 
             return response()->view('x-157::form-result', [
                 'heading' => 'That didn’t send.',
-                'body' => ($result['reason'] ?? '') === 'incomplete_step'
-                    ? 'Some required fields were missing. Use your browser’s Back button to keep what you typed, then fill in:'
-                    : 'Something in the form was refused. Use your browser’s Back button to keep what you typed and try again.',
+                'body' => match (true) {
+                    ($result['reason'] ?? '') === 'incomplete_step' => 'Some required fields were missing. Use your browser’s Back button to keep what you typed, then fill in:',
+                    ($result['reason'] ?? '') === 'dob_unreadable' => 'We couldn’t read the date of birth. Use your browser’s Back button and enter it as a full date, for example 1985-06-30.',
+                    ($result['reason'] ?? '') === 'under_18' => 'This form is for adults only.',
+                    default => 'Something in the form was refused. Use your browser’s Back button to keep what you typed and try again.',
+                },
                 'missing' => array_values(array_map('strval', $result['missing'] ?? [])),
                 'backUrl' => $backUrl,
                 'backLabel' => 'Back to the site',

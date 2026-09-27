@@ -3432,6 +3432,55 @@ class X157Test extends TestCase
         $this->assertNotNull($person);
     }
 
+    public function test_a_browser_giving_an_unreadable_date_of_birth_is_told_so(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Contact',
+            'slug' => 'contact',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $pageResp = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $html = (string) $pageResp->getContent();
+        preg_match('/action="[^"]*?(\/sites\/[^"]*?\/forms\/\\d+)"/', $html, $m);
+
+        $post = $this->withHeaders(['Accept' => 'text/html'])->post($m[1], ['first_name' => 'Distinctive visitor 4915', 'phone' => '+15559994915', 'date_of_birth' => 'Distinctive nonsense 4927']);
+        $post->assertStatus(422);
+        $post->assertSee('read the date of birth');
+        $post->assertDontSee('dob_unreadable');
+    }
+
     public function test_a_browser_missing_a_required_field_sees_the_field_named_not_a_json_blob(): void
     {
         Storage::fake('local');
