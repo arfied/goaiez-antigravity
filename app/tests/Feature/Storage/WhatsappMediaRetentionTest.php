@@ -280,3 +280,8 @@ it('g', function () {
         expect($msg->attachments[0]['path'])->toBeNull();
     }
 });
+
+it('labels the kind for what it holds', function () {
+    expect(StoredObjectKind::WhatsappMedia->label())->toBe('Photos and files from messages');
+    expect(StoredObjectKind::WhatsappMedia->retentionKey())->toBe('storage.retention_days.whatsapp_media');
+});
