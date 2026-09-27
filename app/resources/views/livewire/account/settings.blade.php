@@ -304,6 +304,28 @@
         @endif
     </div>
 
+    <div class="rounded-[--radius-panel] border border-rule bg-card p-5">
+        <h2 class="font-display text-lg font-semibold text-ink">Alerts on this browser</h2>
+        @if (! $pushConfigured)
+            <p>Browser alerts are not set up on this server yet.</p>
+        @else
+            <p>{{ $pushDevices > 0 ? 'This browser has alerts turned on.' : 'Turn on alerts to get a notification here when something needs you.' }}</p>
+
+            <div x-data="pushEnable(@js($pushPublicKey))">
+                <div class="mt-4 flex flex-wrap gap-3">
+                    <button type="button" x-on:click="enablePush" class="min-h-11 rounded-[--radius-control] border border-rule px-4 text-base text-ink-2 hover:text-ink">Turn on alerts in this browser</button>
+                </div>
+                <p x-show="errorMessage" x-text="errorMessage" class="mt-2 text-sm text-red-500" style="display: none;"></p>
+            </div>
+
+            @if ($pushDevices > 0)
+                <form wire:submit="sendTestAlert" class="mt-4">
+                    <x-ui.submit size="default" target="sendTestAlert" busy="Sending…">Send a test alert</x-ui.submit>
+                </form>
+            @endif
+        @endif
+    </div>
+
     {{--
         DOWNLOAD MY DATA (`28` §3.7). A control, not navigation — pressing it
         starts a build, which is what earns it a place on this "controls only"
@@ -405,3 +427,38 @@
         </div>
     </div>
 </div>
+
+@script
+<script>
+    Alpine.data('pushEnable', (publicKey) => ({
+        errorMessage: '',
+        async enablePush() {
+            this.errorMessage = '';
+            try {
+                const registration = await navigator.serviceWorker.register('/push-sw.js');
+                const permission = await Notification.requestPermission();
+                
+                if (permission !== 'granted') {
+                    this.errorMessage = 'Your browser blocked alerts for this site. Allow them in the browser\'s site settings, then try again.';
+                    return;
+                }
+
+                const rawData = window.atob(publicKey.replace(/-/g, '+').replace(/_/g, '/'));
+                const applicationServerKey = new Uint8Array(rawData.length);
+                for (let i = 0; i < rawData.length; ++i) {
+                    applicationServerKey[i] = rawData.charCodeAt(i);
+                }
+
+                const subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: applicationServerKey
+                });
+
+                $wire.savePushSubscription(subscription.toJSON());
+            } catch (e) {
+                this.errorMessage = e.message || 'Failed to turn on alerts.';
+            }
+        }
+    }));
+</script>
+@endscript

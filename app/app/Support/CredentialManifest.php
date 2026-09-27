@@ -416,6 +416,20 @@ final class CredentialManifest
                 // a subset of the set the call behind it signs with.
                 'degradation' => 'The card form is not drawn at all, so nothing is tokenised and no card data leaves the browser. Nothing is charged and nothing is stored — this fails in the safe direction, and it fails the same way as the other two keys on this gateway, because one derived question covers all three.',
             ],
+
+            'webpush_vapid_public_key' => [
+                'vendor' => 'Web Push',
+                'label' => 'VAPID public key',
+                'description' => 'Shown to browsers to authenticate push subscriptions. Public key.',
+                'degradation' => 'Push notifications to browsers are not sent.',
+            ],
+
+            'webpush_vapid_private_key' => [
+                'vendor' => 'Web Push',
+                'label' => 'VAPID private key',
+                'description' => 'Used to sign outgoing push notifications. Private key.',
+                'degradation' => 'Push notifications to browsers are not sent.',
+            ],
         ];
     }
 

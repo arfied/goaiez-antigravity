@@ -11,4 +11,8 @@ class DeviceToken extends Model
     protected $table = 'device_tokens';
 
     protected $guarded = [];
+
+    protected $casts = [
+        'subscription' => 'array',
+    ];
 }
