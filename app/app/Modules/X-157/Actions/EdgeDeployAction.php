@@ -300,9 +300,9 @@ JS;
             $canonicalHost = $verified !== null && $verified !== '' ? strtolower($verified) : $zone->domain_name;
 
             // Where this page's siblings live. On a verified custom domain a root-relative
-            // slug is right; at the platform address it would resolve against the platform's
+            // slug is right; at the platform address (the `platform` zone) it would resolve against the platform's
             // own routes, so links go through the stable per-page route (wave 821).
-            $linkBase = ($verified !== null && $verified !== '') ? '' : "/sites/{$businessId}/p";
+            $linkBase = ($zone->provider === 'platform' && ($verified === null || $verified === '')) ? "/sites/{$businessId}/p" : '';
 
             if ($x176Usable) {
                 $seoResult = app(SeoRenderAction::class)->handle(
