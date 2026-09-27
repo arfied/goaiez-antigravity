@@ -25,6 +25,8 @@ class Thread extends Component
     #[Locked]
     public int $businessId = 0;
 
+    public ?string $notice = null;
+
     public ?Customer $customer = null;
 
     public ?string $draftReply = null;
@@ -135,6 +137,7 @@ class Thread extends Component
         ]);
 
         $this->errorMessage = null;
+        $this->notice = null;
         try {
             $personId = $this->resolvePersonId();
             $conversation = Conversation::where(function ($q) use ($personId) {
@@ -173,8 +176,9 @@ class Thread extends Component
             $this->replyText = '';
             $this->draftReply = null;
             $this->draftForMessageId = null;
+            $this->notice = 'Added to the conversation. Nothing was sent to the customer — to text them, reply from the Inbox.';
         } catch (\Throwable $e) {
-            $this->errorMessage = 'Could not send reply: '.$e->getMessage();
+            $this->errorMessage = 'Could not add that to the conversation: '.$e->getMessage();
         }
     }
 

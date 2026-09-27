@@ -269,4 +269,40 @@ class ThreadScreenTest extends TestCase
                 ->assertSee('Distinctive reply 4846');
         });
     }
+
+    public function test_send_reply_adds_notice_and_changes_button_text(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::actingAs($biz->id, function () use ($owner) {
+            Tenancy::setUser($owner->id);
+            $customer = Customer::factory()->create(['name' => 'Jane Empty']);
+
+            $conversation = Conversation::factory()->create([
+                'customer_id' => $customer->id,
+                'channel' => 'sms',
+                'status' => 'open',
+            ]);
+
+            Message::factory()->create([
+                'conversation_id' => $conversation->id,
+                'direction' => 'inbound',
+                'sender_type' => 'customer',
+                'sender_id' => (string) $customer->id,
+                'body' => 'I need a quote.',
+            ]);
+
+            Livewire::test(Thread::class, ['customer' => $customer])
+                ->set('replyText', 'Distinctive note 5501')
+                ->call('sendReply')
+                ->assertSet('notice', 'Added to the conversation. Nothing was sent to the customer — to text them, reply from the Inbox.');
+        });
+
+        $this->get(route('x-01.thread'))
+            ->assertOk()
+            ->assertSee('Add to the conversation')
+            ->assertDontSee('Send Reply');
+    }
 }
