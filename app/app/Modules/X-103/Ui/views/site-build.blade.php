@@ -8,17 +8,8 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
             
-            @if($error)
-                <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
-                    <p class="text-red-700">{{ $error }}</p>
-                </div>
-            @endif
-
-            @if(isset($success) && $success)
-                <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-4">
-                    <p class="text-green-700">{{ $success }}</p>
-                </div>
-            @endif
+            <x-ui.toast kind="error" :message="$error" />
+            <x-ui.toast kind="success" :message="$success" />
 
             <!-- STEP 1: Crawl -->
             <div class="bg-surface overflow-hidden shadow-sm sm:rounded-lg p-6 border border-line">

@@ -615,4 +615,17 @@ class SiteBuildScreenTest extends TestCase
         $this->assertSame('fetched', SiteInventoryPage::where('business_id', $business->id)->where('url', 'https://example.com')->value('status'));
         Http::assertSent(fn ($request) => $request->url() === 'https://example.com');
     }
+
+    public function test_a_build_refusal_still_reaches_the_page_as_a_toast(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        Livewire::actingAs($owner)
+            ->test(SiteBuild::class)
+            ->set('error', 'Distinctive refusal 4938')
+            ->assertSee('Distinctive refusal 4938')
+            ->assertSeeHtml('role="alert"');
+    }
 }

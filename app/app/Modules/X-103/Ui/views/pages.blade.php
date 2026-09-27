@@ -1,10 +1,6 @@
 <div>
-    @if ($error)
-        <div class="text-ink mb-4">{{ $error }}</div>
-    @endif
-    @if ($success)
-        <div class="text-ink mb-4">{{ $success }}</div>
-    @endif
+    <x-ui.toast kind="error" :message="$error" />
+    <x-ui.toast kind="success" :message="$success" />
 
     <details class="mb-4">
         <summary class="cursor-pointer">Questions customers asked ({{ count($questions) }})</summary>

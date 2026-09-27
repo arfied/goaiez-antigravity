@@ -26,6 +26,7 @@ use App\Modules\X157\Actions\CustomDomainStatusAction;
 use App\Modules\X157\Actions\CustomDomainVerifyAction;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
 use App\Modules\X157\Actions\PlatformSiteAddressAction;
+use App\Services\Ai\AiSpend;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Facts\BusinessFacts;
 use App\Services\Industry\IndustryQuestions;
@@ -218,7 +219,11 @@ class SiteBuild extends Component
                 } elseif ($result['reason'] === 'no_facts_available') {
                     $this->error = 'Confirm a price or show a review first, so the AI has something true to write from.';
                 } else {
-                    $this->error = 'The AI could not propose right now: '.$result['reason'].'.';
+                    $this->error = 'The AI could not propose right now: '.match (true) {
+                        $result['reason'] === AiSpend::REFUSAL_PLAN_INACTIVE => 'this account\'s plan is not active — add a card on Your plan, or ask the platform to extend the trial',
+                        $result['reason'] === AiSpend::REFUSAL_CREDIT_EXHAUSTED => 'this month\'s AI credit is used up',
+                        default => $result['reason']
+                    }.'.';
                 }
             } else {
                 $this->headlineOptions = $result['headlines'];
