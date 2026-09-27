@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Modules\X182\Ui;
 
 use App\Exceptions\GbpRequestFailed;
+use App\Modules\X182\Actions\CommentIngestAction;
 use App\Modules\X182\Actions\SocialPostSettleAction;
 use App\Modules\X182\Domain\SocialPublisher;
+use App\Modules\X182\Models\Comment;
 use App\Modules\X182\Models\SocialAccount;
 use App\Modules\X182\Models\SocialPost;
 use App\Services\Zernio\ZernioSocialClient;
@@ -27,6 +29,8 @@ class SocialQueue extends Component
     public string $content = '';
 
     public string $imageUrl = '';
+
+    public array $commentReply = [];
 
     public function mount(int $businessId = 0): void
     {
@@ -114,6 +118,62 @@ class SocialQueue extends Component
         } else {
             Toaster::info('Zernio is still publishing it.');
         }
+    }
+
+    public function replyToComment(int $commentId): void
+    {
+        abort_unless(auth()->user()?->role->canConfigureAutomation() === true, 403);
+
+        $comment = Comment::where('business_id', $this->businessId)->find($commentId);
+        if ($comment === null) {
+            Toaster::error('That comment is not here any more.');
+
+            return;
+        }
+
+        if ($comment->replied_at !== null) {
+            Toaster::info('You already replied to this comment.');
+
+            return;
+        }
+
+        if ($comment->platform_comment_id === null) {
+            Toaster::error('This comment cannot be answered from here.');
+
+            return;
+        }
+
+        $post = SocialPost::where('business_id', $this->businessId)->with('account')->find($comment->post_id);
+        if ($post === null || $post->provider_post_id === null || $post->account === null || $post->account->status !== 'connected' || $post->account->account_ref === null) {
+            Toaster::error('Connect this account through Zernio first.');
+
+            return;
+        }
+
+        $text = trim((string) ($this->commentReply[$commentId] ?? ''));
+        if ($text === '' || mb_strlen($text) > 1000) {
+            Toaster::error('Write a reply of up to 1,000 characters.');
+
+            return;
+        }
+
+        try {
+            $ref = app(ZernioSocialClient::class)->replyToComment(
+                $post->account->account_ref,
+                $post->provider_post_id,
+                $comment->platform_comment_id,
+                $text,
+                'comment-reply-'.$comment->id
+            );
+        } catch (GbpRequestFailed $e) {
+            Toaster::error('Zernio did not accept the reply: '.$e->getMessage());
+
+            return;
+        }
+
+        app(CommentIngestAction::class)->recordOwnerReply($comment, $text, $ref);
+        Toaster::success('Replied.');
+        unset($this->commentReply[$commentId]);
     }
 
     public function render()
