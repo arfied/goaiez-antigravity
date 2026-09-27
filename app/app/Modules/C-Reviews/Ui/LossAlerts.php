@@ -109,7 +109,7 @@ class LossAlerts extends Component
         );
 
         $this->noticeType = 'success';
-        $this->actionNotice = '✅ Ticket resolved and team alerted.';
+        $this->actionNotice = '✅ Ticket resolved. Logged on Team alerts — nobody is texted yet.';
         $this->resolvingTicketId = null;
         $this->resolutionNotes = '';
     }
@@ -131,7 +131,7 @@ class LossAlerts extends Component
             alertClass: 'account'
         );
         $this->noticeType = 'success';
-        $this->actionNotice = '✅ Team alerted.';
+        $this->actionNotice = '✅ Logged on Team alerts — nobody is texted yet.';
     }
 
     public function startPrepare(int $id): void

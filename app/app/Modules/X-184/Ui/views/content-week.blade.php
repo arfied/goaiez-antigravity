@@ -69,10 +69,10 @@
                                                 </div>
                                                 <div>
                                                     @if($item->is_scheduled)
-                                                        <x-ui.status-pill state="ok" label="Scheduled">Scheduled</x-ui.status-pill>
+                                                        <x-ui.status-pill state="ok" label="Planned">Planned</x-ui.status-pill>
                                                     @else
                                                         <x-ui.button wire:click="scheduleItem({{ $item->id }})" size="sm">
-                                                            Schedule
+                                                            Mark as planned
                                                         </x-ui.button>
                                                     @endif
                                                 </div>

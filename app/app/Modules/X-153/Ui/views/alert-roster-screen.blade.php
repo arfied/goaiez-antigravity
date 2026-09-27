@@ -2,7 +2,7 @@
     <div class="alert-roster-container p-4">
         <h2 class="text-lg font-bold text-ink">Team alerts</h2>
         @if($alerts->isEmpty())
-            <p class="text-ink-2">No alerts broadcasted.</p>
+            <p class="text-ink-2">No alerts recorded.</p>
         @else
             <ul>
                 @foreach($alerts as $a)
@@ -17,7 +17,7 @@
             <form wire:submit="broadcastAlert" class="flex flex-col gap-2">
                 <input type="text" wire:model="title" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Title">
                 <input type="text" wire:model="body" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Body">
-                <button type="submit" class="bg-surface text-ink border rounded p-2">Broadcast</button>
+                <button type="submit" class="bg-surface text-ink border rounded p-2">Record an alert</button>
             </form>
         </div>
     </div>
