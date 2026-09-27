@@ -11,6 +11,7 @@ use App\Models\ZernioWebhookEvent;
 use App\Modules\CWhatsapp\Actions\WhatsappConnectionLookupAction;
 use App\Modules\CWhatsapp\Actions\WhatsappDisconnectedExternallyAction;
 use App\Modules\X177\Actions\GbpPostSettleAction;
+use App\Modules\X182\Actions\CommentIngestAction;
 use App\Modules\X182\Actions\SocialAccountLookupAction;
 use App\Modules\X182\Actions\SocialPostSettleAction;
 use App\Modules\X182\Domain\SocialConnections;
@@ -110,6 +111,9 @@ final class ZernioWebhooks
         }
         if ($event === 'account.connected') {
             return $this->handleAccountConnected($payload);
+        }
+        if ($event === 'comment.received') {
+            return $this->handleComment($payload);
         }
         if ($event === 'post.platform.published' || $event === 'post.platform.failed') {
             return $this->handlePostPlatform($payload, $event === 'post.platform.published');
@@ -218,6 +222,37 @@ final class ZernioWebhooks
             );
 
             return $result === 'settled' ? 'handled' : $result;
+        });
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     * @return 'handled'|'unbound'|'ignored'|string
+     */
+    private function handleComment(array $payload): string
+    {
+        $accountRef = $this->accountRefFrom($payload);
+
+        if ($accountRef === null) {
+            return 'ignored';
+        }
+
+        $binding = ZernioAccountBinding::where('account_ref', $accountRef)->first();
+        if ($binding === null || ! in_array($binding->platform, ['facebook', 'instagram'], true)) {
+            return 'unbound';
+        }
+
+        $businesses = $this->connections->businessesForProfiles([$binding->profile_ref]);
+        $businessId = $businesses[$binding->profile_ref] ?? null;
+
+        if ($businessId === null) {
+            return 'unbound';
+        }
+
+        return Tenancy::actingAs($businessId, function () use ($businessId, $payload): string {
+            $result = app(CommentIngestAction::class)->fromZernio($businessId, is_array($payload['comment'] ?? null) ? $payload['comment'] : []);
+
+            return ($result === 'stored' || $result === 'duplicate') ? 'handled' : $result;
         });
     }
 
