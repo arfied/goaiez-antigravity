@@ -7,7 +7,6 @@ namespace App\Modules\X153\Ui;
 use App\Modules\X153\Actions\AlertSendAction;
 use App\Modules\X153\Models\Alert;
 use App\Modules\X207\Actions\PushBroadcastAction;
-use App\Modules\X207\Jobs\SendPushToUserJob;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -40,9 +39,7 @@ class AlertRosterScreen extends Component
 
         $recipients = array_values(array_diff(app(PushBroadcastAction::class)->activeWebUserIds(Tenancy::idOrFail()), [(int) auth()->id()]));
 
-        foreach ($recipients as $userId) {
-            SendPushToUserJob::dispatch(Tenancy::idOrFail(), $userId, 'team_alert', route('x-153.alert-reply-by', [], false));
-        }
+        app(PushBroadcastAction::class)->notifyUsers(Tenancy::idOrFail(), $recipients, 'team_alert', route('x-153.alert-reply-by', [], false));
 
         $this->success = 'Broadcasted alert with reply code '.$result['code'].'. '.(count($recipients) === 0 ? 'Nobody else on your team has turned on alerts in their browser yet, so no one was notified.' : 'Sent to '.count($recipients).' '.(count($recipients) === 1 ? 'teammate' : 'teammates').'\'s browser alerts.');
         $this->title = '';

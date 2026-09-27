@@ -181,4 +181,16 @@ final class PushTriggersTest extends TestCase
         $this->assertCount(0, $this->history);
         $this->assertTrue(true);
     }
+
+    public function test_notify_users_dispatches_jobs(): void
+    {
+        Queue::fake();
+
+        $count = app(PushBroadcastAction::class)->notifyUsers(10, [11, 12], 'team_alert', '/x');
+
+        $this->assertEquals(2, $count);
+        Queue::assertPushed(SendPushToUserJob::class, 2);
+        Queue::assertPushed(SendPushToUserJob::class, fn ($j) => $j->userId === 11 && $j->businessId === 10 && $j->eventType === 'team_alert' && $j->deepLink === '/x');
+        Queue::assertPushed(SendPushToUserJob::class, fn ($j) => $j->userId === 12 && $j->businessId === 10 && $j->eventType === 'team_alert' && $j->deepLink === '/x');
+    }
 }

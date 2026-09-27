@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X207\Actions;
 
+use App\Modules\X207\Jobs\SendPushToUserJob;
 use App\Modules\X207\Models\DeviceToken;
 
 final class PushBroadcastAction
@@ -72,5 +73,16 @@ final class PushBroadcastAction
             ->pluck('user_id')
             ->map(fn ($id) => (int) $id)
             ->all();
+    }
+
+    public function notifyUsers(int $businessId, array $userIds, string $eventType, string $deepLink): int
+    {
+        $count = 0;
+        foreach ($userIds as $userId) {
+            SendPushToUserJob::dispatch($businessId, (int) $userId, $eventType, $deepLink);
+            $count++;
+        }
+
+        return $count;
     }
 }
