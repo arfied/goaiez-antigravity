@@ -67,6 +67,9 @@ enum FetchRefusalReason: string
      */
     case RobotsUnavailable = 'robots_unavailable';
 
+    /** the address is inside this server's own network, so it is never fetched */
+    case PrivateAddress = 'private_address';
+
     /**
      * Whether waiting is the remedy.
      *
@@ -80,7 +83,7 @@ enum FetchRefusalReason: string
     {
         return match ($this) {
             self::CoolingDown, self::RateBudget, self::RobotsUnavailable => true,
-            self::KillSwitch, self::GuidedOnly, self::AboveCeiling, self::RobotsDisallow => false,
+            self::KillSwitch, self::GuidedOnly, self::AboveCeiling, self::RobotsDisallow, self::PrivateAddress => false,
         };
     }
 
@@ -145,7 +148,7 @@ enum FetchRefusalReason: string
     {
         return match ($this) {
             self::KillSwitch, self::GuidedOnly, self::AboveCeiling,
-            self::CoolingDown, self::RateBudget => true,
+            self::CoolingDown, self::RateBudget, self::PrivateAddress => true,
             self::RobotsDisallow, self::RobotsUnavailable => false,
         };
     }

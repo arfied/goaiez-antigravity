@@ -9,6 +9,7 @@ use App\Enums\FetchOutcome;
 use App\Enums\FetchRefusalReason;
 use App\Enums\FetchTier;
 use App\Enums\RobotsVerdict;
+use App\Exceptions\FetchRedirectRefused;
 use App\Models\FetchAttempt;
 use App\Models\FetchSource;
 use App\Services\Config\DefaultsRegistry;
@@ -140,6 +141,12 @@ final class DirectFetchGateway implements FetchGateway
             );
         }
 
+        $ips = app(PublicAddressGuard::class)->check($url);
+
+        if ($ips === null) {
+            return $this->refuse($source, $url, $tier, FetchRefusalReason::PrivateAddress);
+        }
+
         if ($source->kill) {
             return $this->refuse($source, $url, $tier, FetchRefusalReason::KillSwitch);
         }
@@ -175,11 +182,28 @@ final class DirectFetchGateway implements FetchGateway
                 : FetchRefusalReason::RobotsUnavailable);
         }
 
-        return $this->perform($source, $url, $tier);
+        return $this->perform($source, $url, $tier, $ips);
     }
 
-    private function perform(FetchSource $source, string $url, FetchTier $tier): FetchResult
+    private function perform(FetchSource $source, string $url, FetchTier $tier, array $ips = []): FetchResult
     {
+        $options = ['allow_redirects' => [
+            'max' => 3,
+            'strict' => true,
+            'on_redirect' => function ($request, $response, $uri) {
+                if (app(PublicAddressGuard::class)->check((string) $uri) === null) {
+                    throw new FetchRedirectRefused((string) $uri);
+                }
+            },
+        ]] + self::proxyOptionsFor($source->key);
+
+        if (! empty($ips) && ! isset($options['proxy'])) {
+            $parts = parse_url($url);
+            $host = $parts['host'];
+            $port = $parts['port'] ?? (isset($parts['scheme']) && $parts['scheme'] === 'https' ? 443 : 80);
+            $options['curl'] = [CURLOPT_RESOLVE => ["{$host}:{$port}:{$ips[0]}"]];
+        }
+
         try {
             $response = VendorLog::timed(
                 'fetch:'.$source->key,
@@ -189,7 +213,7 @@ final class DirectFetchGateway implements FetchGateway
                     ->timeout((int) config('fetch.timeout', 10))
                     // Redirects are followed but capped: a redirect chain is a
                     // cheap way to make one permitted fetch into many.
-                    ->withOptions(['allow_redirects' => ['max' => 3, 'strict' => true]] + self::proxyOptionsFor($source->key))
+                    ->withOptions($options)
                     ->get($url),
             );
         } catch (ConnectionException) {
@@ -198,6 +222,8 @@ final class DirectFetchGateway implements FetchGateway
             $this->record($source, $url, $tier, FetchOutcome::Error);
 
             return FetchResult::failed(FetchOutcome::Error, $tier);
+        } catch (FetchRedirectRefused) {
+            return $this->refuse($source, $url, $tier, FetchRefusalReason::PrivateAddress);
         }
 
         $status = $response->status();
