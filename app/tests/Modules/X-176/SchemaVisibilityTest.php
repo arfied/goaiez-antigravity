@@ -231,6 +231,58 @@ final class SchemaVisibilityTest extends TestCase
         $this->assertEquals($schemaFaqs, $visibleFaqs);
     }
 
+    public function test_an_ai_placed_faq_in_items_shape_reaches_the_schema_and_matches_the_page(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant(['name' => 'Visibility Tenant FAQ Items']);
+        Tenancy::set((int) $biz->id);
+
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => 'home']);
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'visibility-faq-items.example.com', true);
+
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => 'commit_faq_items',
+            'content_blocks' => [
+                ['type' => 'faq', 'items' => [['question' => 'Distinctive question 4611?', 'answer' => 'Distinctive answer 4612'], ['question' => 'Distinctive question 4613?', 'answer' => 'Distinctive answer 4614']], 'source' => 'ai', 'model' => 'openai-4o-mini'],
+            ],
+        ]);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $page->id,
+            commitId: 'commit_faq_items',
+            businessName: 'Visibility Biz FAQ Items'
+        );
+
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
+        preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $html, $matches);
+        $json = json_decode($matches[1] ?? '{}', true);
+
+        $schemaFaqs = [];
+        if (isset($json['mainEntity'])) {
+            foreach ($json['mainEntity'] as $q) {
+                if (($q['@type'] ?? '') === 'Question') {
+                    $schemaFaqs[] = $q['name'];
+                }
+            }
+        }
+
+        preg_match('/<div id="faq-x176">(.*?)<\/div>\n(?:<div|<nav|<script|<\/body)/s', $html, $blockMatches);
+        $visibleFaqs = [];
+        if (! empty($blockMatches)) {
+            preg_match_all('/<div class="faq-item" data-question="([^"]+)"/', $blockMatches[1], $itemMatches);
+            $visibleFaqs = $itemMatches[1];
+        }
+
+        $this->assertCount(2, $schemaFaqs);
+        $this->assertEquals($schemaFaqs, $visibleFaqs);
+        $this->assertSame('Distinctive question 4611?', $json['mainEntity'][0]['name'] ?? null);
+    }
+
     public function test_f1_video_corresponds_with_hierarchy(): void
     {
         Storage::fake('local');

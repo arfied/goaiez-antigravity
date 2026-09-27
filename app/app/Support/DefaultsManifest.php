@@ -307,9 +307,24 @@ final class DefaultsManifest
                 'description' => 'The model router\'s per-task override for site_copy (seed = the same model the Conversation task seeds).',
             ],
             'sites.copy.system_prompt' => [
-                'seed' => 'Rewrite this text for a small local service business. Keep every fact and number, use plain words, and output at most {max_chars} characters.',
+                'seed' => 'Rewrite this text for a small local service business. Keep every fact and number, use plain words, and output at most {max_chars} characters. If notes about nearby businesses are included, they are reference only: cover what they cover if it fits, in this business\'s own words; never reuse a name, sentence or phrase from them.',
                 'group' => 'Content',
                 'description' => 'The system prompt used to polish drafted site copy.',
+            ],
+            'sites.edit.system_prompt' => [
+                'seed' => 'You edit a small business website. You receive the page as a JSON list of blocks and a request from the owner. Return ONLY JSON with two keys: "blocks" — the full new block list, same shape as the input, keeping every key you did not change — and "explanation" — two or three plain sentences saying what you changed and why. Rules: never invent a price, a year, a licence number, a review count or any claim; keep the owner\'s own wording of what they do unless the request is about wording; you may reorder, add or remove blocks only of these types: hero, about, services, reviews_strip, booking_button, contact, faq, video_embed, gallery, team, form.',
+                'group' => 'Content',
+                'description' => 'System prompt for the talk-to-your-site editor: the AI rewrites a page\'s block list from an owner\'s plain-words request and explains what it changed',
+            ],
+            'sites.page.system_prompt' => [
+                'seed' => 'You make ONE new page for a small business website from the owner\'s plain-words request. Return ONLY JSON with four keys: "title" — the page title in the owner\'s words; "slug" — a short lowercase URL word or two with hyphens; "blocks" — a list of blocks, each an object with a "type" and the fields that type needs; "explanation" — two or three plain sentences saying what the page contains. Rules: never invent a price, a date, a year, a licence number, a review count or any claim the owner did not state; if the request names an offer, describe it only in the owner\'s terms; use only these block types: hero (headline, subline), about (text), services (items: name, description), faq (items: question, answer), booking_button (label, url), contact. If notes about nearby businesses are included, they are reference only: cover what they cover if it fits, in this business\'s own words; never reuse a name, sentence or phrase from them.',
+                'group' => 'Content',
+                'description' => 'System prompt for "Make me a page": the AI proposes a new page (title, slug, blocks) from an owner\'s plain-words request; the page lands as an unpublished draft the owner publishes or deletes',
+            ],
+            'sites.variant.system_prompt' => [
+                'seed' => 'Write exactly two alternative headlines for the top of a local service business\'s home page. Plain words, at most 70 characters each, no prices, no claims the facts do not support, no business names of any kind. Return them as a list.',
+                'group' => 'Content',
+                'description' => 'System prompt for proposing variant headlines: the AI proposes two alternative headlines for the home page.',
             ],
             'sites.copy.max_chars' => [
                 'seed' => 600,
@@ -3588,6 +3603,24 @@ final class DefaultsManifest
                 'seed' => 'Write at most 6 plain-language question and answer pairs a customer of a local service business would ask. Use ONLY the facts given, include no prices not present, and make no promises.',
                 'group' => 'Content',
                 'description' => 'System prompt for generating the FAQ block.',
+            ],
+
+            'sites.questions.recent_days' => [
+                'seed' => 90,
+                'group' => 'Content',
+                'description' => 'How many days back the Pages screen looks for questions customers typed into the site chat or the contact form.',
+            ],
+
+            'sites.questions.max' => [
+                'seed' => 20,
+                'group' => 'Content',
+                'description' => 'How many unanswered customer questions the Pages screen lists at once.',
+            ],
+
+            'sites.questions.answer_system_prompt' => [
+                'seed' => "Answer ONE customer question in plain language for a local service business. Use ONLY the facts given, include no prices not present, make no promises, and keep the customer's question as asked, tidied for spelling only. Return the question and the answer.",
+                'group' => 'Content',
+                'description' => 'System prompt for answering customer questions on Pages.',
             ],
 
             'reviews.reply.max_recovery_length' => [

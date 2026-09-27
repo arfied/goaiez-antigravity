@@ -18,4 +18,9 @@ final class BookingReadAction
     {
         return Appointment::where('business_id', $businessId)->whereIn('status', ['booked', 'reminded', 'completed'])->where('created_at', '>=', $since)->when($until !== null, fn ($q) => $q->where('created_at', '<', $until))->count();
     }
+
+    public function requestsForDeployment(int $businessId, string $deployHash): int
+    {
+        return Waitlist::where('business_id', $businessId)->where('deploy_hash', $deployHash)->count();
+    }
 }

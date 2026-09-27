@@ -26,7 +26,10 @@ class SortedView extends Component
     public function render()
     {
         $sorted = ($this->businessId > 0)
-            ? ChurnScore::where('business_id', $this->businessId)->orderByDesc('risk_level')->get()
+            ? ChurnScore::where('business_id', $this->businessId)
+                ->orderByRaw("case risk_level when 'high' then 0 when 'medium' then 1 else 2 end")
+                ->orderByDesc('id')
+                ->get()
             : collect();
 
         return view('x-08::sorted', [

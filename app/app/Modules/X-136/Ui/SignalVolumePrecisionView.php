@@ -105,7 +105,7 @@ class SignalVolumePrecisionView extends Component
                     $decay = $decayModels->get($row->signal_type);
                     $decayStr = $decay
                         ? "{$decay->half_life_days} days / ".($decay->decay_rate * 100).'%'
-                        : 'No decay model yet. A model needs 30 days of events.';
+                        : 'Platform default until you set one.';
 
                     return (object) [
                         'signal_type' => $row->signal_type,

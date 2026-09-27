@@ -8,11 +8,13 @@ use App\Modules\X185\Actions\PackSeedAction;
 use App\Modules\X185\Models\ContentPack;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 #[Layout('components.account.layout', ['heading' => 'What is working for businesses like yours'])]
 class ExperimentBoard extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public string $packName = '';

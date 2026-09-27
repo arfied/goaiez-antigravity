@@ -4,17 +4,21 @@ declare(strict_types=1);
 
 namespace App\Modules\X172\Ui;
 
+use App\Modules\X164\Actions\EstimateReadAction;
 use App\Modules\X165\Actions\MembershipStatusAction;
 use App\Modules\X172\Actions\PortalActionHandler;
 use App\Modules\X172\Actions\PortalLinkAction;
 use App\Modules\X172\Actions\PortalViewAction;
 use App\Modules\X172\Models\PortalLink;
+use App\Modules\X199\Actions\InvoiceReadAction;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class CustomerfacingPortal extends Component
 {
+    #[Locked]
     public $token;
 
     public $errorMessage = null;
@@ -91,10 +95,11 @@ class CustomerfacingPortal extends Component
     public function render()
     {
         $link = PortalLink::where('token', $this->token)->first();
+        $jobState = null;
         $resourceTitle = null;
         $jobEtaMinutes = null;
         $isJobEnRoute = false;
-        $isDocumentPrepared = false;
+        $document = null;
         $membershipStatus = null;
 
         if ($link && $link->is_active) {
@@ -110,6 +115,12 @@ class CustomerfacingPortal extends Component
                 if ($wo) {
                     $resourceTitle = $wo->title;
                 }
+                $jobState = match (true) {
+                    $wo === null => 'missing',
+                    in_array((string) ($wo->status ?? ''), ['cancelled', 'canceled'], true) => 'cancelled',
+                    in_array((string) ($wo->status ?? ''), ['completed', 'done', 'closed'], true) => 'completed',
+                    default => 'open',
+                };
 
                 $assignment = DB::table('dispatch_assignments')
                     ->where('business_id', $link->business_id)
@@ -126,17 +137,20 @@ class CustomerfacingPortal extends Component
                         $jobEtaMinutes = $eta->eta_minutes;
                     }
                 }
-            } elseif (in_array($link->resource_type, ['estimate', 'invoice'])) {
-                $isDocumentPrepared = true;
+            } elseif ($link->resource_type === 'estimate') {
+                $document = app(EstimateReadAction::class)->forPortal($link->business_id, (int) $link->resource_id);
+            } elseif ($link->resource_type === 'invoice') {
+                $document = app(InvoiceReadAction::class)->forPortal($link->business_id, (int) $link->resource_id);
             }
         }
 
         return view('x-172::customerfacing-portal', [
             'link' => $link,
+            'jobState' => $jobState,
             'resourceTitle' => $resourceTitle,
             'isJobEnRoute' => $isJobEnRoute,
             'jobEtaMinutes' => $jobEtaMinutes,
-            'isDocumentPrepared' => $isDocumentPrepared,
+            'document' => $document,
             'membershipStatus' => $membershipStatus,
         ]);
     }

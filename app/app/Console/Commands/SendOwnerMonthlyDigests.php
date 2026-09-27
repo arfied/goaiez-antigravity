@@ -197,7 +197,7 @@ final class SendOwnerMonthlyDigests extends Command
         // ⚠️ **`Model::query()->update()` AND NOT `$business->update()`, AND
         // `$guarded` IS NOT WHAT MAKES THAT SAFE**.
         Business::query()->whereKey($business->getKey())->update([
-            'owner_monthly_digest_sent_at' => now(),
+            'owner_monthly_digest_sent_at' => $content['to'],
         ]);
 
         return true;

@@ -5,7 +5,7 @@
         </x-ui.error-panel>
     @endif
 
-    @if($success) <p class="text-base text-ink-2">{{ $success }}</p> @endif
+    <x-ui.toast kind="success" :message="$success" />
 
     @if($connections->isEmpty())
         <x-ui.empty-state heading="No gateway connected yet" action="Connect" target="connect">

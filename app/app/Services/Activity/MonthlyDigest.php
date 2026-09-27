@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Activity;
 
+use App\Enums\VitalSampleState;
 use App\Models\Business;
 use App\Modules\X108\Actions\BookingReadAction;
 use App\Modules\X137\Actions\CallAttributionReadAction;
@@ -70,7 +71,7 @@ final class MonthlyDigest
         return ['from' => $from, 'to' => $to, 'label' => 'since '.$from->translatedFormat('j F')];
     }
 
-    /** @return ?array{label: string, pages: list<array{title: string, times: int}>, visits: ?int, lines: list<string>} */
+    /** @return ?array{label: string, pages: list<array{title: string, times: int}>, visits: ?int, lines: list<string>, to: CarbonImmutable} */
     public function compose(Business $business): ?array
     {
         Tenancy::idOrFail();
@@ -96,12 +97,12 @@ final class MonthlyDigest
             $lines[] = 'Your website: '.$booked.' '.($booked === 1 ? 'job' : 'jobs').' booked';
         }
         $reading = $this->conversions->rate($w['from'], $w['to']);
-        $visits = $reading->isMeasured() ? $reading->sessions : null;
+        $visits = $reading->state === VitalSampleState::NoMeasurements ? null : $reading->sessions;
 
         if ($pages === [] && $lines === [] && $visits === null) {
             return null;
         }
 
-        return ['label' => $w['label'], 'pages' => $pages, 'visits' => $visits, 'lines' => $lines];
+        return ['to' => $w['to'], 'label' => $w['label'], 'pages' => $pages, 'visits' => $visits, 'lines' => $lines];
     }
 }

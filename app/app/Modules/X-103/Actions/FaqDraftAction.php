@@ -49,7 +49,8 @@ final class FaqDraftAction
             }
         }
 
-        $reviews = Review::where('business_id', $businessId)
+        // displayable() is the moderation gate — the same one the public widget feed applies; display fails closed.
+        $reviews = Review::query()->displayable()->where('business_id', $businessId)
             ->where('display_on_website', true)
             ->whereNotNull('comment')
             ->where('comment', '!=', '')

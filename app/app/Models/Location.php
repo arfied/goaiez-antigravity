@@ -142,6 +142,7 @@ final class Location extends Model implements TenantScoped
             'cloudflare_detected_at' => 'datetime',
             'about_url_confirmed_at' => 'datetime',
             'content_generation_paused_at' => 'datetime',
+            'opening_hours' => 'array',
         ];
     }
 

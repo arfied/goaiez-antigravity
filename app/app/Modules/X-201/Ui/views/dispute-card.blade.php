@@ -2,7 +2,7 @@
 <h2 class="text-lg font-bold text-ink">Disputes</h2>
 <p class="text-base text-ink-2">A chargeback on one of this account's invoices opens a dispute here. You compile the bundle from the dispute queue and add what only you know. Money does not go back from this card: a dispute is defended, and giving money back is the gateway account's.</p>
 @if($error) <x-ui.error-panel heading="We couldn't do that">{{ $error }}</x-ui.error-panel> @endif
-@if($success) <p>{{ $success }}</p> @endif
+<x-ui.toast kind="success" :message="$success" />
 <div wire:loading><x-ui.skeleton label="Reading the disputes…" /></div>
 @if($disputes->isEmpty())
 <x-ui.empty-state heading="No disputes.">No chargeback has arrived. A dispute opens here when the gateway chargeback webhook reaches this app; no such webhook is received in this checkout, so no bundle exists to add to yet.</x-ui.empty-state>

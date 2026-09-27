@@ -144,6 +144,14 @@ final class PlacesSpend
     public const string TENANT_PURPOSE = 'tenant_places';
 
     /**
+     * Calls made with the TENANT'S OWN Google key (X-206 service `google_places`).
+     * Google bills their project, not ours, so no platform ceiling applies and
+     * no platform sum may include them. Recorded so "what did the tenant's key
+     * do today" is a query rather than a belief.
+     */
+    public const string OWN_KEY_PURPOSE = 'tenant_own_key';
+
+    /**
      * ⚠️ **THE TWO DEFAULT BUDGETS USED TO BE CONSTANTS HERE. THEY ARE SEEDS IN
      * `DefaultsManifest` NOW, WITH THEIR REASONING**, and this class reads them
      * through `DefaultsRegistry` (doc `38` Part 2 / CFG1, decision 505). A
@@ -266,6 +274,7 @@ final class PlacesSpend
             ->billable()
             ->onDay(Carbon::now())
             ->when($purpose !== null, fn ($query) => $query->where('purpose', $purpose))
+            ->when($purpose === null, fn ($query) => $query->where('purpose', '!=', self::OWN_KEY_PURPOSE))
             ->sum('unit_cents_per_thousand');
 
         return $unitSum / 1000;
@@ -342,6 +351,10 @@ final class PlacesSpend
     public function allows(PlacesSku $sku, string $purpose = self::AUDIT_PURPOSE, ?int $businessId = null): bool
     {
         if ($sku->isFree()) {
+            return true;
+        }
+
+        if ($purpose === self::OWN_KEY_PURPOSE) {
             return true;
         }
 
@@ -422,6 +435,7 @@ final class PlacesSpend
         /** @var array<int, object{sku: string, calls: int, unit_sum: string|int}> $rows */
         $rows = DB::table('places_api_calls')
             ->where('served_from_cache', false)
+            ->where('purpose', '!=', self::OWN_KEY_PURPOSE)
             ->where('unit_cents_per_thousand', '>', 0)
             ->whereBetween('called_at', [
                 Carbon::now()->startOfDay(),

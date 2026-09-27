@@ -894,7 +894,7 @@ class AppServiceProvider extends ServiceProvider
      * Bind the one gateway every outbound page fetch goes through.
      *
      * `40` Part 6 makes this singular by design — "No module fetches HTML on its
-     * own" — and ArchitectureTest enforces it as an import lint. Bound to the F0
+     * own" — and tests/Feature/Architecture/OutboundHttpTest.php enforces it as an import lint. Bound to the F0
      * implementation; F1-F3 are not built (BUILD-PLAN §2.5.2 slice D).
      */
     private function registerFetchGateway(): void

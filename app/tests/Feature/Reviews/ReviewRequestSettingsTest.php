@@ -76,5 +76,5 @@ it('a csat of 5 is sent when the low csat below is written as 4', function () {
     ]);
 
     $result = $action->handle($this->biz->id, $personId, 'how did it go?', 'google', 5, 100);
-    expect($result['status'])->toBe('sent');
+    expect($result['status'])->toBe('requested');
 });

@@ -185,3 +185,19 @@ test('closes a ticket', function () {
         ->call('close')
         ->assertHasErrors(['reply' => 'That request is closed. Raising a new one keeps the history readable.']);
 });
+
+test('the close toast does not promise a reopen the desk refuses', function () {
+    $desk = app(SupportDesk::class);
+    $ticket = $desk->raise($this->owner, 'To close', 'Closing this soon');
+
+    Livewire::test(Support::class)
+        ->call('open', $ticket->id)
+        ->call('close')
+        ->assertDispatched('toaster:received', function (string $name, array $params): bool {
+            return str_contains($params['message'] ?? '', 'ask a new question')
+                && ! str_contains($params['message'] ?? '', 'replying opens it again');
+        });
+
+    expect(fn () => $desk->replyAsTenant($ticket->id, $this->owner, 'More reply'))
+        ->toThrow(InvalidArgumentException::class, 'That request is closed.');
+});

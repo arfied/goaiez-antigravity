@@ -29,8 +29,14 @@ use App\Modules\X01\Models\TakeoverLatch;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
 use App\Modules\X01\Ui\CustomersList;
 use App\Modules\X01\Ui\Thread;
+use App\Modules\X10\Actions\RoutingRulesEnsureAction;
+use App\Modules\X10\Models\Assignment;
 use App\Modules\X102\Events\ChatLeadCaptured;
+use App\Modules\X121\Actions\PersonLookupAction;
+use App\Modules\X121\Actions\PersonUpsertAction;
 use App\Modules\X121\Models\Person;
+use App\Modules\X155\Events\FormCaptured;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -738,5 +744,38 @@ class X01Test extends TestCase
 
         $this->assertEquals(1, $results['results_count']);
         $this->assertEquals('+15125550888', $results['contacts'][0]['phone']);
+    }
+
+    public function test_a_website_form_submission_lands_in_the_inbox_and_is_routed(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+        (new RoutingRulesEnsureAction(new DefaultsRegistry))->handle($biz->id);
+
+        $upsert = app(PersonUpsertAction::class)->upsertByPhone($biz->id, '+15125567731', ['first_name' => 'Distinctive', 'email' => null], false);
+        Event::dispatch(new FormCaptured(businessId: $biz->id, submissionId: 4471, formDefinitionId: 1, personId: (int) $upsert['id']));
+
+        $this->assertDatabaseHas('conversations', ['business_id' => $biz->id, 'channel' => 'form', 'status' => 'open']);
+
+        $assignment = Assignment::where('business_id', $biz->id)->where('lead_id', (int) $upsert['id'])->first();
+        $this->assertNotNull($assignment);
+        $this->assertSame('default_staff', $assignment->assignment_reason);
+
+        Event::dispatch(new FormCaptured(businessId: $biz->id, submissionId: 4471, formDefinitionId: 1, personId: (int) $upsert['id']));
+        $this->assertEquals(1, Assignment::where('business_id', $biz->id)->where('lead_id', (int) $upsert['id'])->count());
+    }
+
+    public function test_a_form_submission_for_a_person_with_no_phone_or_email_is_ignored(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $this->artisan('defaults:sync');
+        (new RoutingRulesEnsureAction(new DefaultsRegistry))->handle($biz->id);
+
+        $personId = app(PersonLookupAction::class)->create($biz->id, ['first_name' => 'Nobody', 'last_name' => '', 'email' => null, 'phone' => null]);
+        Event::dispatch(new FormCaptured(businessId: $biz->id, submissionId: 4471, formDefinitionId: 1, personId: $personId));
+
+        $this->assertDatabaseMissing('conversations', ['business_id' => $biz->id, 'channel' => 'form']);
     }
 }

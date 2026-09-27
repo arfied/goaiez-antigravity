@@ -47,7 +47,7 @@ class LiveRunScreenTest extends TestCase
             ->assertSee('Marcus Reyes')
             ->assertSee('spring-tune-up')
             ->assertSee('Step 1')
-            ->assertSee('Running')
+            ->assertSee('Enrolled at step 1')
             ->assertDontSee('Dana Whitfield')
             ->assertDontSee('No campaign is running for anyone yet');
 

@@ -29,15 +29,13 @@ final class OwnerMonthlyDigest extends Notification implements ClassifiesUnderCa
      * @param  list<string>  $lines
      */
     public function __construct(
-        string $businessName,
+        private readonly string $businessName,
         private readonly string $label,
         private readonly array $pages,
         private readonly ?int $visits,
         private readonly array $lines,
         private readonly string $activityUrl,
-    ) {
-        unset($businessName);
-    }
+    ) {}
 
     /**
      * @return array<int, string>
@@ -50,8 +48,8 @@ final class OwnerMonthlyDigest extends Notification implements ClassifiesUnderCa
     public function toMail(object $notifiable): MailMessage
     {
         $subject = str_starts_with($this->label, 'since ')
-            ? "What your website did {$this->label}"
-            : "What your website did — {$this->label}";
+            ? "What {$this->businessName}'s website did {$this->label}"
+            : "What {$this->businessName}'s website did — {$this->label}";
 
         $greetingLabel = str_starts_with($this->label, 'since ')
             ? $this->label

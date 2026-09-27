@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Concerns\IsTenantRoot;
 use App\Contracts\TenantScoped;
 use App\Enums\DataClassification;
+use App\Enums\IndustryFamily;
 use App\Services\Activity\OwnerDigest;
 use App\Support\Tenancy;
 use Carbon\CarbonInterface;
@@ -125,6 +126,7 @@ final class Business extends Model implements TenantScoped
         return [
             'address' => 'array',
             'data_classification' => DataClassification::class,
+            'industry' => IndustryFamily::class,
             'marketing_sends_enabled' => 'boolean',
             'advanced_dashboard_enabled' => 'boolean',
             'paused_at' => 'datetime',

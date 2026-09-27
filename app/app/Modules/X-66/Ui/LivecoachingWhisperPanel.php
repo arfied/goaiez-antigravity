@@ -37,6 +37,12 @@ class LivecoachingWhisperPanel extends Component
             return;
         }
 
+        if (! Tenancy::check()) {
+            $this->error = 'No business is in view — open one from Tenant locations first.';
+
+            return;
+        }
+
         $businessId = Tenancy::idOrFail();
         $autopsy = $engine->coach($businessId, $this->sessionId, $this->transcript);
 
@@ -45,8 +51,8 @@ class LivecoachingWhisperPanel extends Component
 
     public function render()
     {
-        $businessId = Tenancy::idOrFail();
-        $autopsies = CallAutopsy::where('business_id', $businessId)->orderByDesc('id')->get();
+        $businessId = Tenancy::id();
+        $autopsies = $businessId === null ? collect() : CallAutopsy::where('business_id', $businessId)->orderByDesc('id')->get();
 
         return view('x-66::livecoaching-whisper-panel', ['autopsies' => $autopsies]);
     }

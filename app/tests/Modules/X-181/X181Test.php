@@ -132,7 +132,7 @@ class X181Test extends TestCase
         );
 
         Event::assertDispatched(SendRequested::class);
-        $this->assertEquals('sent', is_array($result) ? $result['status'] : $result->status);
+        $this->assertEquals('requested', is_array($result) ? $result['status'] : $result->status);
     }
 
     /**

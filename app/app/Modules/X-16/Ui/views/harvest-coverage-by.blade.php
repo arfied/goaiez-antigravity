@@ -6,9 +6,11 @@
         </button>
     </div>
 
-    <x-ui.attention-card heading="Waiting on a Places key">
-        Harvests run on the tenant's own free Places key (§474) and no key is connected yet; holding harvested records costs nothing.
-    </x-ui.attention-card>
+    @if($keyInUse !== 'tenant')
+        <x-ui.attention-card heading="Waiting on a Places key">
+            Harvests run on the tenant's own free Places key (§474) and no key is connected yet; holding harvested records costs nothing.
+        </x-ui.attention-card>
+    @endif
 
     @if(! $hasPlaces && ! $isSample)
         <div class="mt-6">

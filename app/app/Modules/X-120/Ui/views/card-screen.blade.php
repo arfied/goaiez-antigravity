@@ -7,9 +7,7 @@
         </x-ui.error-panel>
     @endif
 
-    @if($success)
-        <p class="text-green-600 mb-4">{{ $success }}</p>
-    @endif
+    <x-ui.toast kind="success" :message="$success" />
 
     @foreach($expiringCards as $card)
         <x-ui.attention-card heading="Card Expiring Soon">

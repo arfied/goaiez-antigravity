@@ -98,6 +98,14 @@ class SiteImagesCopyAction
                 continue;
             }
 
+            $width = null;
+            $height = null;
+            $size = @getimagesizefromstring($result->body);
+            if (is_array($size) && (int) $size[0] > 0 && (int) $size[1] > 0) {
+                $width = (int) $size[0];
+                $height = (int) $size[1];
+            }
+
             $ext = 'bin';
             if ($mime === 'image/jpeg') {
                 $ext = 'jpg';
@@ -131,6 +139,9 @@ class SiteImagesCopyAction
                     'status' => 'stored',
                     'refusal_reason' => null,
                     'attribution' => $attribution,
+                    'alt' => $existing?->alt ?: (($page->image_alts[$url] ?? null) ?: null),
+                    'width' => $width,
+                    'height' => $height,
                 ]
             );
             $counts['stored']++;

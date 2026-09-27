@@ -16,12 +16,8 @@
         <div class="mt-8 p-4 bg-surface border rounded">
             <h3 class="text-lg font-bold text-ink mb-4">Create Automation</h3>
             
-            @if($success)
-                <div class="mb-4 text-ink-2">{{ $success }}</div>
-            @endif
-            @if($error)
-                <div class="mb-4 text-ink-3">{{ $error }}</div>
-            @endif
+            <x-ui.toast kind="success" :message="$success" />
+            <x-ui.toast kind="error" :message="$error" />
             
             <form wire:submit="createFlow" class="flex flex-col gap-4">
                 <input type="text" wire:model="flowName" placeholder="Flow Name" class="border rounded p-2 text-ink bg-surface">

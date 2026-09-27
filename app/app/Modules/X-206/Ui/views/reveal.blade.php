@@ -2,9 +2,7 @@
     <div class="reveal-container p-4">
         <h2 class="text-lg font-bold text-ink">Reveal credential</h2>
         <p class="text-ink-2">Every reveal is logged with who, when and which key.</p>
-        @if($error)
-            <p class="text-ink-2">{{ $error }}</p>
-        @endif
+        <x-ui.toast kind="error" :message="$error" />
         @if($revealedSecret !== null)
             <p class="text-ink-2">Shown once, for this page only:</p>
             <pre class="font-mono text-sm text-ink">{{ $revealedSecret }}</pre>

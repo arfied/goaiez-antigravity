@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X157;
 
+use App\Enums\IndustryFamily;
 use App\Enums\UserRole;
+use App\Models\Business;
+use App\Models\IndustryStartingPoint;
 use App\Models\User;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
+use App\Modules\X157\Actions\LatestDeploymentForPageAction;
+use App\Modules\X157\Models\Deployment;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -89,6 +94,21 @@ class PublicBookingRouteTest extends TestCase
         $this->get(route('x-108.waitlist'))->assertOk()->assertSee('Distinctive Visitor 4471')->assertDontSee('Nobody is waiting');
     }
 
+    public function test_a_booking_request_remembers_the_deployed_page_it_came_from(): void
+    {
+        Tenancy::forgetAll();
+
+        $this->postJson("/sites/{$this->biz->id}/{$this->deploy['deploy_hash']}/book", [
+            'name' => 'Distinctive Visitor 4551',
+            'phone' => '+15125567731',
+            'service' => 'Haircut',
+            'preferred_date' => now()->addDays(2)->toDateString(),
+        ])->assertStatus(201)->assertJson(['status' => 'requested']);
+
+        Tenancy::set((int) $this->biz->id);
+        $this->assertDatabaseHas('waitlists', ['customer_name' => 'Distinctive Visitor 4551', 'deploy_hash' => $this->deploy['deploy_hash']]);
+    }
+
     public function test_an_under_18_visitor_is_refused_before_any_write(): void
     {
         Tenancy::forgetAll();
@@ -153,5 +173,207 @@ class PublicBookingRouteTest extends TestCase
             'service' => 'Haircut',
             'preferred_date' => now()->addDays(2)->toDateString(),
         ])->assertStatus(201);
+    }
+
+    public function test_a_variant_arm_deploys_beside_control_without_superseding_it(): void
+    {
+        $page = Page::first();
+        $commitId = 'commit_'.Str::random(16);
+        PageVersion::create([
+            'business_id' => $this->biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [
+                ['type' => 'hero', 'headline' => 'Distinctive variant headline 4561'],
+            ],
+            'pixel_installed' => true,
+        ]);
+
+        $controlDeployment = Deployment::where('deploy_hash', $this->deploy['deploy_hash'])->first();
+
+        $variantDeploy = app(EdgeDeployAction::class)->handle(
+            businessId: $this->biz->id,
+            edgeZoneId: $controlDeployment->edge_zone_id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $this->biz->name,
+            pageVariantId: 4562
+        );
+
+        $variantDeployment = Deployment::where('deploy_hash', $variantDeploy['deploy_hash'])->first();
+
+        $this->assertEquals('deployed', $controlDeployment->fresh()->status);
+        $this->assertEquals('deployed', $variantDeployment->fresh()->status);
+
+        $this->assertTrue(Storage::disk('local')->exists("sites/{$variantDeploy['deploy_hash']}.html"));
+        $variantHtml = Storage::disk('local')->get("sites/{$variantDeploy['deploy_hash']}.html");
+        $controlHtml = Storage::disk('local')->get("sites/{$this->deploy['deploy_hash']}.html");
+
+        $this->assertStringContainsString('Distinctive variant headline 4561', $variantHtml);
+        $this->assertStringNotContainsString('Distinctive variant headline 4561', $controlHtml);
+
+        $latestAction = app(LatestDeploymentForPageAction::class);
+        $latest = $latestAction->handle($this->biz->id, $page->id);
+        $this->assertEquals($this->deploy['deploy_hash'], $latest->deploy_hash);
+
+        // Third deploy supersedes only the first variant row
+        $variantDeploy2 = app(EdgeDeployAction::class)->handle(
+            businessId: $this->biz->id,
+            edgeZoneId: $controlDeployment->edge_zone_id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $this->biz->name,
+            pageVariantId: 4562
+        );
+
+        $this->assertEquals('superseded', $variantDeployment->fresh()->status);
+        $this->assertEquals('deployed', $controlDeployment->fresh()->status);
+
+        $controlDeploy2 = app(EdgeDeployAction::class)->handle(
+            businessId: $this->biz->id,
+            edgeZoneId: $controlDeployment->edge_zone_id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $this->biz->name
+        );
+        $this->assertEquals('superseded', $controlDeployment->fresh()->status);
+    }
+
+    public function test_serving_a_page_counts_it_and_a_404_does_not(): void
+    {
+        Tenancy::forgetAll();
+
+        $this->get("/sites/{$this->biz->id}/{$this->deploy['deploy_hash']}")->assertStatus(200);
+        $this->get("/sites/{$this->biz->id}/{$this->deploy['deploy_hash']}")->assertStatus(200);
+
+        Tenancy::set((int) $this->biz->id);
+        $this->assertEquals(2, Deployment::where('deploy_hash', $this->deploy['deploy_hash'])->first()->served_count);
+
+        Tenancy::forgetAll();
+        $this->get("/sites/{$this->biz->id}/bogus_hash")->assertStatus(404);
+
+        Tenancy::set((int) $this->biz->id);
+        $this->assertEquals(2, Deployment::where('deploy_hash', $this->deploy['deploy_hash'])->first()->served_count);
+    }
+
+    public function test_the_deployed_page_wears_industry_colours_when_set(): void
+    {
+        $biz2 = TestCase::provisionTenant(['name' => 'Edge Tenant 2', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz2->id}'");
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz2->id, 'acme-hvac2.com', true);
+
+        $page = Page::create([
+            'business_id' => $biz2->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $commitId = 'commit_'.Str::random(16);
+        PageVersion::create([
+            'business_id' => $biz2->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [],
+            'pixel_installed' => true,
+        ]);
+
+        $deploy1 = app(EdgeDeployAction::class)->handle(
+            businessId: $biz2->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $biz2->name
+        );
+
+        $html1 = Storage::disk('local')->get("sites/{$deploy1['deploy_hash']}.html");
+        $this->assertStringContainsString('#16191c', $html1); // Default canvas
+
+        // Now set industry to care and deploy again
+        Business::whereKey($biz2->id)->update(['industry' => 'care']);
+
+        $deploy2 = app(EdgeDeployAction::class)->handle(
+            businessId: $biz2->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $biz2->name
+        );
+
+        $html2 = Storage::disk('local')->get("sites/{$deploy2['deploy_hash']}.html");
+        $this->assertStringContainsString('#8a4b6e', $html2); // Care primary
+    }
+
+    public function test_deployed_site_uses_site_variant_palette(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = self::provisionTenant(['owner_user_id' => $owner->id]);
+        $biz->update(['industry' => IndustryFamily::Trades->value, 'site_variant' => 'c']);
+
+        IndustryStartingPoint::updateOrCreate(['family' => IndustryFamily::Trades->value], [
+
+            'palette' => ['surface' => '#ffffff', 'ink' => '#000000', 'primary' => '#ff0000', 'accent' => '#0000ff'],
+            'type_pairing' => ['heading' => 'serif', 'body' => 'sans'],
+            'section_order' => ['hero', 'about', 'gallery', 'reviews_strip', 'contact'],
+        ]);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'roofing.example.com', true);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+            'is_published' => true,
+        ]);
+
+        $commitId = 'commit_'.Str::random(16);
+        $version = PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [['type' => 'hero', 'headline' => 'H']],
+            'pixel_installed' => true,
+        ]);
+        $page->update(['current_version_id' => $version->id]);
+
+        $deploy = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: 'Roofing Corp'
+        );
+
+        $response = $this->get('/sites/'.$biz->id.'/'.$deploy['deploy_hash']);
+        $response->assertStatus(200);
+        $response->assertSee('--color-accent: #ff0000', false);
+    }
+
+    public function test_a_browser_booking_request_sees_a_page_that_says_nothing_is_booked_yet(): void
+    {
+        Tenancy::forgetAll();
+
+        $post = $this->withHeaders(['Accept' => 'text/html'])->post("/sites/{$this->biz->id}/{$this->deploy['deploy_hash']}/book", [
+            'name' => 'Distinctive Visitor 4471',
+            'phone' => '+15125567731',
+            'service' => 'Haircut',
+            'preferred_date' => now()->addDays(2)->toDateString(),
+        ]);
+
+        $post->assertStatus(201);
+        $post->assertSee('Nothing is booked yet');
+        $post->assertDontSee('waitlist_id');
     }
 }

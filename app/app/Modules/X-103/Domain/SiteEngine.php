@@ -17,6 +17,8 @@ use Illuminate\Support\Str;
 
 final class SiteEngine
 {
+    public const REQUIRED_BLOCK_TYPES = ['pixel_script', 'chat_widget', 'form_capture', 'dni_script', 'seo_tags', 'schema_markup'];
+
     /**
      * Publish page with shared commit ID for Facts invalidation (TEST ANCHOR).
      */
@@ -27,7 +29,7 @@ final class SiteEngine
 
             $commitId = 'commit_'.Str::random(16);
 
-            $required = ['pixel_script', 'chat_widget', 'form_capture', 'dni_script', 'seo_tags', 'schema_markup'];
+            $required = self::REQUIRED_BLOCK_TYPES;
             foreach ($required as $type) {
                 $found = false;
                 foreach ($contentBlocks as $block) {

@@ -35,7 +35,7 @@ class OnetapApprovalCard extends Component
         $command = $action->execute($this->businessId, $id);
         $ladder = FixerLadder::where('business_id', $this->businessId)->where('action_name', $command->parsed_intent)->first();
         $level = $ladder ? $ladder->current_level : 0;
-        $this->toast = 'Sent — '.$command->parsed_intent.' is now level '.$level;
+        $this->toast = 'Approved — '.$command->parsed_intent.' is now level '.$level.'. Nothing is sent to the customer yet.';
     }
 
     public function delegate(int $id, FixerDelegateAction $action): void

@@ -8,6 +8,7 @@ use App\Enums\UserRole;
 use App\Modules\X142\Actions\McpTokenAction;
 use App\Modules\X142\Models\McpToken;
 use App\Support\Tenancy;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class McpTokenRegistry extends Component
@@ -18,6 +19,9 @@ class McpTokenRegistry extends Component
 
     public int $revokeTokenId = 0;
 
+    #[Locked]
+    public int $businessId = 0;
+
     public string $error = '';
 
     public string $success = '';
@@ -25,6 +29,7 @@ class McpTokenRegistry extends Component
     public function mount(): void
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager, UserRole::SuperAdmin), 403);
+        $this->businessId = Tenancy::id() ?? 0;
     }
 
     public function issueToken(McpTokenAction $action): void
@@ -75,7 +80,7 @@ class McpTokenRegistry extends Component
 
     public function render()
     {
-        $tokens = McpToken::orderBy('id', 'desc')->get();
+        $tokens = McpToken::where('business_id', $this->businessId)->orderBy('id', 'desc')->get();
 
         return view('x-142::mcp-token-registry', [
             'tokens' => $tokens,

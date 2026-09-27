@@ -1,10 +1,6 @@
 <div>
-    @if($success)
-        <div class="mb-4 p-4 border rounded bg-surface text-ink">{{ $success }}</div>
-    @endif
-    @if($error)
-        <div class="mb-4 p-4 border rounded bg-surface text-ink">{{ $error }}</div>
-    @endif
+    <x-ui.toast kind="success" :message="$success" />
+    <x-ui.toast kind="error" :message="$error" />
 
     <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
         <h2 class="font-bold text-ink">Issue Token</h2>

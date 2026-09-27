@@ -4,8 +4,17 @@ declare(strict_types=1);
 
 namespace App\Modules\X136;
 
+use App\Events\Voice\CallMissed;
+use App\Modules\X01\Events\ContactCreated;
+use App\Modules\X136\Console\DecaySignalsCommand;
+use App\Modules\X136\Listeners\RecordContactSignalListener;
+use App\Modules\X136\Listeners\RecordFormSignalListener;
+use App\Modules\X136\Listeners\RecordMissedCallSignalListener;
 use App\Modules\X136\Ui\CoolingView;
 use App\Modules\X136\Ui\SignalVolumePrecisionView;
+use App\Modules\X155\Events\FormCaptured;
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -26,6 +35,17 @@ final class ModuleServiceProvider extends ServiceProvider
         if (class_exists(Livewire::class)) {
             Livewire::component('x-136.cooling', CoolingView::class);
             Livewire::component('x-136.signal-volume-precision', SignalVolumePrecisionView::class);
+        }
+
+        Event::listen(ContactCreated::class, RecordContactSignalListener::class);
+        Event::listen(FormCaptured::class, RecordFormSignalListener::class);
+        Event::listen(CallMissed::class, RecordMissedCallSignalListener::class);
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([DecaySignalsCommand::class]);
+            $this->app->booted(function (): void {
+                $this->app->make(Schedule::class)->command('x136:decay-signals')->daily()->withoutOverlapping(180);
+            });
         }
     }
 }

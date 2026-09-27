@@ -19,12 +19,8 @@
 
     <div class="mt-8 bg-surface p-4 border rounded">
         <h3 class="text-lg font-bold text-ink">Generate Lead-Capture Block</h3>
-        @if($success)
-            <div class="text-ink bg-surface border rounded p-2 mb-4">{{ $success }}</div>
-        @endif
-        @if($error)
-            <div class="text-ink bg-surface border rounded p-2 mb-4">{{ $error }}</div>
-        @endif
+        <x-ui.toast kind="success" :message="$success" />
+        <x-ui.toast kind="error" :message="$error" />
         <form wire:submit="generate" class="flex flex-col gap-4 mt-4">
             <input type="number" wire:model="pageId" placeholder="Page ID" class="border rounded p-2 text-ink bg-surface">
             <input type="text" wire:model="niche" placeholder="Niche" class="border rounded p-2 text-ink bg-surface">

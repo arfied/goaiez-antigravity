@@ -5,12 +5,8 @@
         
         <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4 border border-surface">
             <h3 class="text-lg font-bold text-ink">Ask Agent</h3>
-            @if($success)
-                <div class="p-2 bg-surface text-ink border rounded">{{ $success }}</div>
-            @endif
-            @if($error)
-                <div class="p-2 bg-surface text-ink border rounded">{{ $error }}</div>
-            @endif
+            <x-ui.toast kind="success" :message="$success" />
+            <x-ui.toast kind="error" :message="$error" />
             <form wire:submit="askAgent" class="flex gap-2">
                 <input type="text" wire:model="userMessage" placeholder="Ask something..." class="border rounded p-2 text-ink flex-1 bg-surface">
                 <button type="submit" class="bg-surface text-ink border rounded p-2">Ask</button>

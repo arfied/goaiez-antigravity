@@ -74,7 +74,7 @@ class PricebookScreenTest extends TestCase
         Livewire::actingAs($owner)
             ->test(Pricebook::class)
             ->assertSee('Sample Service')
-            ->assertSee('Sample');
+            ->assertSeeHtml('<span>Sample</span>');
     }
 
     public function test_seeded_row_reaches_the_page(): void

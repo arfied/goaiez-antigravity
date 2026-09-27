@@ -21,6 +21,12 @@ class PageReadAction
         return Page::where('business_id', $businessId)->find($pageId);
     }
 
+    /** The tenant's Home page (slug `home`), draft or published, or null before the first draft. */
+    public function homeFor(int $businessId): ?Page
+    {
+        return Page::where('business_id', $businessId)->where('slug', 'home')->first();
+    }
+
     public function publishedForSlugs(int $businessId, array $normalisedSlugs): Collection
     {
         return Page::where('business_id', $businessId)

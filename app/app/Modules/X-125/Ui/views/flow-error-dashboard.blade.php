@@ -1,17 +1,9 @@
 <div>
     <h2>Automation errors and pauses</h2>
 
-    @if($error)
-        <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4 text-red-600">
-            {{ $error }}
-        </div>
-    @endif
+    <x-ui.toast kind="error" :message="$error" />
 
-    @if($success)
-        <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4 text-green-600">
-            {{ $success }}
-        </div>
-    @endif
+    <x-ui.toast kind="success" :message="$success" />
 
     @if($paused->isEmpty() && $errors->isEmpty())
         <p>No automation has failed or been paused</p>

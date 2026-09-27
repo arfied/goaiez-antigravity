@@ -3,7 +3,7 @@
 <p class="text-base text-ink-2">Card payments in this checkout are taken on the goaiez platform Stripe account, not on the merchant account recorded below. Routing a charge to a tenant merchant account waits on the processor contract, so nothing is routed to it yet.</p>
 @if($error) <x-ui.error-panel heading="We couldn't do that">{{ $error }}</x-ui.error-panel> @endif
 @if($waiting) <x-ui.attention-card state="attention" heading="Waiting on the gateway">{{ $waiting }}</x-ui.attention-card> @endif
-@if($success) <p>{{ $success }}</p> @endif
+<x-ui.toast kind="success" :message="$success" />
 <div wire:loading><x-ui.skeleton label="Reading payments and payouts…" /></div>
 @if($connections->isEmpty())
 <x-ui.empty-state heading="No merchant account recorded yet.">No merchant account has been recorded on this account. Recording one waits on the Stripe Connect redirect, which is not built in this checkout yet. Card payments are taken on the goaiez platform Stripe account, and no payout has ever been imported.</x-ui.empty-state>

@@ -7,6 +7,7 @@ namespace App\Modules\X103\Actions;
 use App\Models\Business;
 use App\Models\Location;
 use App\Models\Review;
+use App\Modules\X103\Domain\SectionOrder;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\SiteInventoryImage;
 use App\Modules\X103\Models\SiteInventoryPage;
@@ -14,6 +15,10 @@ use App\Modules\X113\Actions\StaffRosterAction;
 use App\Modules\X155\Actions\FormReadAction;
 use App\Services\Assistant\PriceBook;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Facts\BusinessFactKey;
+use App\Services\Facts\BusinessFacts;
+use App\Services\Industry\IndustryQuestions;
+use App\Services\Industry\IndustryStartingPoints;
 use App\Services\Links\TenantLinks;
 use App\Support\PlanPricing;
 use Illuminate\Support\Str;
@@ -23,13 +28,17 @@ final class SiteDraftAction
     public function __construct(
         private readonly PriceBook $priceBook,
         private readonly TenantLinks $tenantLinks,
-        private readonly DefaultsRegistry $registry
+        private readonly DefaultsRegistry $registry,
+        private readonly BusinessFacts $facts,
+        private readonly IndustryStartingPoints $startingPoints,
+        private readonly IndustryQuestions $questions
     ) {}
 
     public function handle(int $businessId, int $locationId): array
     {
         $business = Business::find($businessId);
         $location = Location::find($locationId);
+        $stated = $this->facts->all($businessId);
 
         $pagesCreated = 0;
         $blocksGenerated = 0;
@@ -61,6 +70,7 @@ final class SiteDraftAction
         $reviewsMinRating = $this->registry->int('sites.draft.reviews_min_rating');
         $galleryMax = $this->registry->int('sites.draft.gallery_max');
         $teamMin = $this->registry->int('sites.draft.team_min');
+        $order = $this->startingPoints->forBusiness($businessId)['section_order'];
 
         // Existing FAQs
         $allPages = Page::where('business_id', $businessId)->get();
@@ -100,7 +110,7 @@ final class SiteDraftAction
             $contactPhoneSource = 'business';
         }
 
-        $buildContactBlock = function () use ($address, $contactPhone, $contactPhoneSource, $contactEmail, $contactEmailSource, &$blocksGenerated, &$sourcesUsed) {
+        $buildContactBlock = function () use ($businessId, $location, $address, $contactPhone, $contactPhoneSource, $contactEmail, $contactEmailSource, &$blocksGenerated, &$sourcesUsed, $stated) {
             $contactSource = 'location';
             if ($contactPhone) {
                 $contactSource .= ", phone: {$contactPhoneSource}";
@@ -122,6 +132,35 @@ final class SiteDraftAction
             if ($contactEmail) {
                 $block['email'] = $contactEmail;
             }
+            if ($location !== null && is_array($location->opening_hours) && $location->opening_hours !== []) {
+                $block['hours'] = $location->opening_hours;
+                $contactSource .= ', hours: location';
+                $block['source'] = $contactSource;
+            }
+
+            $contactFacts = [];
+            foreach ([BusinessFactKey::LICENCE_NUMBER, BusinessFactKey::INSURANCE, BusinessFactKey::SERVICE_AREA, BusinessFactKey::YEARS_IN_BUSINESS] as $fKey) {
+                if (($stated[$fKey] ?? '') !== '') {
+                    $contactFacts[$fKey] = $stated[$fKey];
+                }
+            }
+            if ($contactFacts !== []) {
+                $block['facts'] = $contactFacts;
+                $contactSource .= ', facts: owner';
+                $block['source'] = $contactSource;
+            }
+
+            $industryQuestions = $this->questions->forBusiness($businessId);
+            $industryFactsBlock = [];
+            foreach ($industryQuestions as $key => $def) {
+                if (($stated[$key] ?? '') !== '') {
+                    $industryFactsBlock[] = ['label' => $def['label'], 'value' => $stated[$key]];
+                }
+            }
+            if ($industryFactsBlock !== []) {
+                $block['industry_facts'] = $industryFactsBlock;
+            }
+
             $blocksGenerated++;
             $sourcesUsed[] = $contactSource;
 
@@ -160,7 +199,7 @@ final class SiteDraftAction
                         }
                         $items[] = [
                             'name' => $entry->label,
-                            'price' => $priceText,
+                            'price_text' => $priceText,
                         ];
                     }
                 }
@@ -193,20 +232,45 @@ final class SiteDraftAction
             if ($homeInventoryPage && $homeInventoryPage->text) {
                 $subline = Str::limit($homeInventoryPage->text, 160, '');
             }
+            $heroSource = 'inventory';
+            if ($subline === '' && ($stated[BusinessFactKey::TAGLINE] ?? '') !== '') {
+                $subline = $stated[BusinessFactKey::TAGLINE];
+                $heroSource = 'inventory, tagline: facts';
+            }
+            if ($subline === '') {
+                $heroKey = $this->questions->heroKeyFor($businessId);
+                if ($heroKey !== null && ($stated[$heroKey] ?? '') !== '') {
+                    $subline = $stated[$heroKey];
+                    $heroSource = 'inventory, subline: industry fact';
+                }
+            }
             $hero = [
                 'type' => 'hero',
                 'headline' => $headline,
                 'subline' => $subline,
-                'source' => 'inventory',
+                'source' => $heroSource,
             ];
             if ($firstImage) {
                 $hero['image_path'] = $firstImage->path;
+                $hero['image_alt'] = (string) ($firstImage->alt ?? '');
+                if ($firstImage->width !== null && $firstImage->height !== null) {
+                    $hero['image_width'] = (int) $firstImage->width;
+                    $hero['image_height'] = (int) $firstImage->height;
+                }
             }
             $homeBlocks[] = $hero;
             $blocksGenerated++;
             $sourcesUsed[] = 'inventory';
 
-            if ($longestInventoryPage && $longestInventoryPage->text) {
+            if (($stated[BusinessFactKey::DESCRIPTION] ?? '') !== '') {
+                $homeBlocks[] = [
+                    'type' => 'about',
+                    'text' => Str::limit($stated[BusinessFactKey::DESCRIPTION], $aboutMaxChars, ''),
+                    'source' => 'facts',
+                ];
+                $blocksGenerated++;
+                $sourcesUsed[] = 'facts';
+            } elseif ($longestInventoryPage && $longestInventoryPage->text) {
                 $homeBlocks[] = [
                     'type' => 'about',
                     'text' => Str::limit($longestInventoryPage->text, $aboutMaxChars, ''),
@@ -226,14 +290,15 @@ final class SiteDraftAction
             if ($storedImages->isNotEmpty()) {
                 $galleryItems = [];
                 foreach ($storedImages as $img) {
-                    $alt = $img->alt;
-                    if (empty($alt)) {
-                        $alt = pathinfo($img->original_filename ?? '', PATHINFO_FILENAME);
-                    }
-                    $galleryItems[] = [
+                    $item = [
                         'image_path' => $img->path,
-                        'alt' => $alt,
+                        'alt' => (string) ($img->alt ?? ''),
                     ];
+                    if ($img->width !== null && $img->height !== null) {
+                        $item['width'] = (int) $img->width;
+                        $item['height'] = (int) $img->height;
+                    }
+                    $galleryItems[] = $item;
                 }
                 $homeBlocks[] = [
                     'type' => 'gallery',
@@ -249,7 +314,8 @@ final class SiteDraftAction
                 $homeBlocks[] = $servicesBlock;
             }
 
-            $reviews = Review::where('location_id', $locationId)
+            // displayable() is the moderation gate — the same one the public widget feed applies; display fails closed.
+            $reviews = Review::query()->displayable()->where('location_id', $locationId)
                 ->where('display_on_website', true)
                 ->where('rating', '>=', $reviewsMinRating)
                 ->take($reviewsMax)
@@ -311,6 +377,8 @@ final class SiteDraftAction
                 $homeBlocks[] = $formBlock;
             }
 
+            $homeBlocks = SectionOrder::apply($homeBlocks, $order);
+
             Page::create([
                 'business_id' => $businessId,
                 'slug' => 'home',
@@ -358,15 +426,19 @@ final class SiteDraftAction
             if ($servicesBlock) {
                 $servicesPageBlocks[] = $servicesBlock;
             }
-            Page::create([
-                'business_id' => $businessId,
-                'slug' => 'services',
-                'title' => 'Services',
-                'is_tenant_edited' => false,
-                'is_published' => false,
-                'draft_blocks' => $servicesPageBlocks,
-            ]);
-            $pagesCreated++;
+            if ($servicesPageBlocks !== []) {
+                Page::create([
+                    'business_id' => $businessId,
+                    'slug' => 'services',
+                    'title' => 'Services',
+                    'is_tenant_edited' => false,
+                    'is_published' => false,
+                    'draft_blocks' => $servicesPageBlocks,
+                ]);
+                $pagesCreated++;
+            } else {
+                $sourcesWithoutData[] = 'pricebook';
+            }
         }
 
         // 3. CONTACT

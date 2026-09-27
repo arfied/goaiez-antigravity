@@ -188,7 +188,9 @@ class DocumentVaultScreenTest extends TestCase
         $this->actingAs($owner);
         Storage::fake('local');
 
-        $staff = StaffUser::create(['business_id' => $biz->id, 'name' => 'Alice', 'role_id' => null, 'email' => 'a@b.c']);
+        $role = app(RoleCreateAction::class)->handle($biz->id, 'Manager');
+        app(RolePermissionGrantAction::class)->handle($biz->id, $role->id, 'view_employee_documents');
+        $staff = StaffUser::create(['business_id' => $biz->id, 'name' => 'Alice', 'role_id' => $role->id, 'email' => 'a@b.c']);
         $file = UploadedFile::fake()->createWithContent('contract.pdf', 'downloadable bytes');
 
         $doc = app(DocumentUploadAction::class)->handle($biz->id, $staff->id, $file, $owner->id);
@@ -197,6 +199,50 @@ class DocumentVaultScreenTest extends TestCase
             ->call('download', $doc->id);
 
         $response->assertFileDownloaded('contract.pdf');
+    }
+
+    public function test_a_staff_member_whose_role_lacks_the_grant_gets_no_download_button_and_a_403(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Storage::fake('local');
+
+        $role = app(RoleCreateAction::class)->handle($biz->id, 'Manager');
+        $staff = StaffUser::create(['business_id' => $biz->id, 'name' => 'Alice', 'role_id' => $role->id, 'email' => 'a@b.c']);
+        $file = UploadedFile::fake()->createWithContent('contract.pdf', 'downloadable bytes');
+
+        $doc = app(DocumentUploadAction::class)->handle($biz->id, $staff->id, $file, $owner->id);
+
+        $this->get(route('x-113.document-vault'))
+            ->assertOk()
+            ->assertSee('Not permitted')
+            ->assertDontSee('wire:click="download('.$doc->id.')"', false);
+
+        Livewire::actingAs($owner)->test(DocumentVault::class)->call('download', $doc->id)->assertForbidden();
+    }
+
+    public function test_the_vault_stops_saying_no_documents_once_one_is_stored(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Storage::fake('local');
+
+        $this->get(route('x-113.document-vault'))
+            ->assertOk()
+            ->assertSee('No documents are stored yet');
+
+        $role = app(RoleCreateAction::class)->handle($biz->id, 'Manager');
+        $staff = StaffUser::create(['business_id' => $biz->id, 'name' => 'Alice', 'role_id' => $role->id, 'email' => 'a@b.c']);
+        $file = UploadedFile::fake()->createWithContent('Distinctive contract 4691.pdf', 'downloadable bytes');
+
+        $doc = app(DocumentUploadAction::class)->handle($biz->id, $staff->id, $file, $owner->id);
+
+        $this->get(route('x-113.document-vault'))
+            ->assertOk()
+            ->assertSee('Distinctive contract 4691.pdf')
+            ->assertDontSee('No documents are stored yet');
     }
 
     public function test_document_belonging_to_another_tenant_refused(): void

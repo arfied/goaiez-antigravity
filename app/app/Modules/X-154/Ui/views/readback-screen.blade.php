@@ -1,17 +1,9 @@
 <div>
     <div class="readback-screen-view p-4">
         
-        @if ($error)
-            <div class="bg-surface text-ink border rounded p-4 mb-4">
-                {{ $error }}
-            </div>
-        @endif
+        <x-ui.toast kind="error" :message="$error" />
 
-        @if ($success)
-            <div class="bg-surface text-ink border rounded p-4 mb-4">
-                {{ $success }}
-            </div>
-        @endif
+        <x-ui.toast kind="success" :message="$success" />
 
         <form wire:submit="setMapping" class="mb-6 flex flex-col gap-4 bg-surface p-4 border rounded mt-4">
             <div>

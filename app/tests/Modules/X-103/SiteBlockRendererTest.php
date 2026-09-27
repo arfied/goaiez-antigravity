@@ -9,7 +9,9 @@ use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Models\EdgeZone;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\View;
 use Tests\TestCase;
 
 class SiteBlockRendererTest extends TestCase
@@ -172,5 +174,124 @@ class SiteBlockRendererTest extends TestCase
 
         $htmlBad = $renderer->render([['type' => 'booking_form']], []);
         $this->assertStringNotContainsString('site-block-booking', $htmlBad);
+    }
+
+    public function test_renders_opening_hours_in_contact_block(): void
+    {
+        $renderer = new SiteBlockRenderer;
+        $html = $renderer->render([
+            ['type' => 'contact', 'hours' => [['day' => 'Monday', 'open' => '08:00', 'close' => '17:00']]],
+        ], []);
+        $this->assertStringContainsString('Monday: 08:00 - 17:00', $html);
+    }
+
+    public function test_contact_block_renders_stated_facts(): void
+    {
+        $html = (new SiteBlockRenderer)->render([[
+            'type' => 'contact',
+            'facts' => ['licence_number' => 'LIC-4473', 'years_in_business' => '12'],
+        ]], []);
+        $this->assertStringContainsString('Licence number: LIC-4473', $html);
+        $this->assertStringContainsString('Years in business: 12', $html);
+
+        $htmlNoFacts = (new SiteBlockRenderer)->render([[
+            'type' => 'contact',
+        ]], []);
+        $this->assertStringNotContainsString('Licence number', $htmlNoFacts);
+    }
+
+    public function test_a_faq_item_without_an_answer_is_dropped_and_a_complete_list_renders(): void
+    {
+        $renderer = new SiteBlockRenderer;
+        $htmlBad = $renderer->render([['type' => 'faq', 'items' => [['question' => 'Distinctive q 4493', 'answer' => '']]]], []);
+        $this->assertStringNotContainsString('faq-item', $htmlBad);
+
+        $htmlGood = $renderer->render([['type' => 'faq', 'items' => [['question' => 'Distinctive q 4494', 'answer' => 'Distinctive a 4495']]]], []);
+        $this->assertStringContainsString('Distinctive q 4494 - Distinctive a 4495', $htmlGood);
+    }
+
+    public function test_hero_image_renders_its_description_and_an_empty_alt_when_there_is_none(): void
+    {
+        $html1 = (new SiteBlockRenderer)->render([['type' => 'hero', 'headline' => 'H', 'image_path' => 'inventory/a.jpg', 'image_alt' => 'Distinctive alt 4476']], ['tenant_storage_url_prefix' => '/m/']);
+        $this->assertStringContainsString('alt="Distinctive alt 4476"', $html1);
+
+        $html2 = (new SiteBlockRenderer)->render([['type' => 'hero', 'headline' => 'H', 'image_path' => 'inventory/a.jpg']], ['tenant_storage_url_prefix' => '/m/']);
+        $this->assertStringContainsString('alt=""', $html2);
+    }
+
+    public function test_images_declare_their_size_when_known_and_the_gallery_loads_lazily(): void
+    {
+        $html1 = (new SiteBlockRenderer)->render([['type' => 'hero', 'headline' => 'H', 'image_path' => 'inventory/a.jpg', 'image_width' => 640, 'image_height' => 480]], ['tenant_storage_url_prefix' => '/m/']);
+        $this->assertStringContainsString('width="640" height="480"', $html1);
+        $this->assertStringNotContainsString('loading=', $html1);
+
+        $html2 = (new SiteBlockRenderer)->render([['type' => 'hero', 'headline' => 'H', 'image_path' => 'inventory/a.jpg']], ['tenant_storage_url_prefix' => '/m/']);
+        $this->assertStringNotContainsString('width=', $html2);
+
+        $html3 = (new SiteBlockRenderer)->render([['type' => 'gallery', 'items' => [['image_path' => 'inventory/a.jpg', 'width' => 300, 'height' => 200]]]], ['tenant_storage_url_prefix' => '/m/']);
+        $this->assertStringContainsString('width="300" height="200" loading="lazy" decoding="async"', $html3);
+
+        $html4 = (new SiteBlockRenderer)->render([['type' => 'gallery', 'items' => [['image_path' => 'inventory/a.jpg']]]], ['tenant_storage_url_prefix' => '/m/']);
+        $this->assertStringContainsString('loading="lazy"', $html4);
+        $this->assertStringNotContainsString('width=', $html4);
+    }
+
+    public function test_the_style_block_takes_tokens_and_keeps_todays_values_without_them(): void
+    {
+        $renderer = new SiteBlockRenderer;
+        $html1 = $renderer->render([], []);
+        $this->assertStringContainsString('#16191c', $html1);
+        $this->assertStringContainsString('#f2f2f0', $html1);
+        $this->assertStringContainsString('sans-serif', $html1);
+
+        $html2 = $renderer->render([], [
+            'tokens' => [
+                'palette' => [
+                    'surface' => '#abcdef',
+                    'ink' => '#123456',
+                    'primary' => '#0f5f9c',
+                    'accent' => '#e07a1f',
+                ],
+                'type_pairing' => [
+                    'heading' => 'Georgia, serif',
+                    'body' => 'Arial, sans-serif',
+                ],
+            ],
+        ]);
+        $this->assertStringContainsString('--color-canvas: #abcdef', $html2);
+        $this->assertStringContainsString('--color-accent: #e07a1f', $html2);
+        $this->assertStringContainsString('Georgia, serif', $html2);
+
+        $html3 = $renderer->render([], [
+            'tokens' => [
+                'palette' => [
+                    'surface' => '<script>',
+                ],
+            ],
+        ]);
+        $this->assertStringContainsString('&lt;script&gt;', $html3);
+    }
+
+    public function test_a_closed_day_renders_without_a_dangling_separator(): void
+    {
+        $renderer = new SiteBlockRenderer;
+        $html = $renderer->render([
+            ['type' => 'contact', 'hours' => [['day' => 'Distinctive Sunday 4916', 'open' => 'Closed', 'close' => '']]],
+        ], []);
+
+        $this->assertStringContainsString('Distinctive Sunday 4916: Closed', $html);
+        $this->assertStringNotContainsString('Closed - ', $html);
+    }
+
+    public function test_a_block_whose_view_throws_is_left_out_and_logged(): void
+    {
+        Log::spy();
+        View::shouldReceive('make')->once()->andThrow(new \RuntimeException('Distinctive render failure 4919'));
+
+        $html = (new SiteBlockRenderer)->render([['type' => 'hero', 'headline' => 'Hello']], []);
+
+        $this->assertStringNotContainsString('class="site-block', $html);
+        $this->assertStringNotContainsString('Hello', $html);
+        Log::shouldHaveReceived('warning')->once();
     }
 }

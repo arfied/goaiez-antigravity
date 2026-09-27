@@ -238,7 +238,8 @@ final class SchedulingEngine
         string $customerPhone,
         string $serviceName,
         string $preferredDate,
-        bool $isMember = false
+        bool $isMember = false,
+        ?string $deployHash = null
     ): Waitlist {
         return Waitlist::create([
             'business_id' => $businessId,
@@ -248,6 +249,7 @@ final class SchedulingEngine
             'preferred_date' => $preferredDate,
             'is_member' => $isMember,
             'status' => 'pending',
+            'deploy_hash' => $deployHash,
         ]);
     }
 }

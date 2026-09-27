@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Activity;
 
 use App\Enums\UserRole;
+use App\Models\L2FactDailyTenant;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Modules\X103\Models\Page;
@@ -122,6 +123,25 @@ class MonthlyDigestTest extends TestCase
     }
 
     public function test_nothing_in_window_returns_null(): void
+    {
+        $this->assertNull(app(MonthlyDigest::class)->compose($this->biz));
+    }
+
+    public function test_visits_under_the_rate_floor_are_still_counted_and_still_send(): void
+    {
+        $lastMonthStart = now()->subMonthNoOverflow()->startOfMonth();
+        L2FactDailyTenant::insert([
+            ['business_id' => $this->biz->id, 'day' => $lastMonthStart->copy()->addDays(2)->format('Y-m-d'), 'sessions' => 25, 'engaged_sessions' => 0, 'bot_sessions' => 0, 'users' => 0, 'new_users' => 0, 'pageviews' => 0, 'conversions' => 0, 'phone_clicks' => 0, 'form_submissions' => 0, 'directions_clicks' => 0],
+            ['business_id' => $this->biz->id, 'day' => $lastMonthStart->copy()->addDays(3)->format('Y-m-d'), 'sessions' => 15, 'engaged_sessions' => 0, 'bot_sessions' => 0, 'users' => 0, 'new_users' => 0, 'pageviews' => 0, 'conversions' => 0, 'phone_clicks' => 0, 'form_submissions' => 0, 'directions_clicks' => 0],
+        ]);
+
+        $content = app(MonthlyDigest::class)->compose($this->biz);
+
+        $this->assertNotNull($content);
+        $this->assertSame(40, $content['visits']);
+    }
+
+    public function test_a_tenant_the_pixel_never_measured_still_reads_null(): void
     {
         $this->assertNull(app(MonthlyDigest::class)->compose($this->biz));
     }
