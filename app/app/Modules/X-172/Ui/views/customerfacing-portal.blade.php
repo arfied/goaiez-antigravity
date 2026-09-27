@@ -57,17 +57,9 @@
                     </div>
                 @endif
 
-                <div class="flex flex-col gap-3 mt-6 border-t border-rule pt-6">
-                    <button wire:click="approve" class="h-12 bg-accent text-white rounded font-medium hover:bg-accent-hover">
-                        Approve
-                    </button>
-                    <button wire:click="requestPay" class="h-12 bg-paper border border-rule text-ink rounded font-medium hover:bg-surface">
-                        Pay
-                    </button>
-                    <button wire:click="requestFollowUp" class="h-12 bg-paper border border-rule text-ink rounded font-medium hover:bg-surface">
-                        Book a follow-up
-                    </button>
-                </div>
+                {{-- Approve / Pay / Book a follow-up are not rendered: the actions behind them
+                     record a row nothing reads and dispatch an event nothing listens to (wave 816).
+                     The component methods stay for the day they are wired. --}}
             </div>
         @else
             <x-ui.empty-state 
