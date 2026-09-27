@@ -1400,7 +1400,7 @@ class CReviewsTest extends TestCase
         $res = $action->handle($biz->id, $customerId, 'How did the repair go? Please leave us a review!', 'google');
 
         $this->assertEquals('queued', $res['request_status']);
-        
+
         $req = ReviewRequest::find($res['review_request_id']);
         $this->assertEquals('queued', $req->status);
 
