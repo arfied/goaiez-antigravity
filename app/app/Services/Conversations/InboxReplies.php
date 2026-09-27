@@ -135,6 +135,11 @@ final class InboxReplies
             );
         }
 
+        // Only SMS threads are answered from here. A WhatsApp conversation must not be answered by text message; WhatsApp replies go through Zernio once connected (REVIEWS-56).
+        if ($conversation->channel !== OutreachChannel::Sms->value) {
+            return SendRefusalReason::ChannelUnavailable;
+        }
+
         $body = trim($body);
 
         if ($body === '' || mb_strlen($body) > $this->bodyLimit()) {
