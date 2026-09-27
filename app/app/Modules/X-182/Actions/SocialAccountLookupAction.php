@@ -25,4 +25,15 @@ final class SocialAccountLookupAction
             ->pluck('id')
             ->toArray();
     }
+
+    public function facebookAccountRefForLocation(int $locationId): ?string
+    {
+        /** @var string|null $ref */
+        $ref = SocialAccount::where('platform', 'facebook')
+            ->where('status', 'connected')
+            ->where('location_id', $locationId)
+            ->value('account_ref');
+
+        return $ref;
+    }
 }

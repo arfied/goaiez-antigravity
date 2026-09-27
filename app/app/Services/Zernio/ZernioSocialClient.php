@@ -150,4 +150,27 @@ final class ZernioSocialClient
             nextCursor: is_string($nextCursor) && $nextCursor !== '' ? $nextCursor : null,
         );
     }
+
+    public function replyToFacebookReview(string $accountRef, string $reviewId, string $message, string $idempotencyKey): ?string
+    {
+        $this->http->assertUsable('social.zernio_enabled');
+
+        $message = trim($message);
+        if ($message === '') {
+            throw GbpRequestFailed::unreadable('reply_comment_empty');
+        }
+
+        $response = $this->http->post('inbox/reviews/'.rawurlencode($reviewId).'/reply', [
+            'accountId' => $accountRef,
+            'message' => $message,
+        ], $idempotencyKey);
+
+        if ($response->failed()) {
+            throw GbpRequestFailed::from($response, accountScoped: true);
+        }
+
+        $id = $response->json('reply.id');
+
+        return is_string($id) && $id !== '' ? $id : null;
+    }
 }
