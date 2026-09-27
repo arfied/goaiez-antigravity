@@ -159,8 +159,7 @@ it('b', function () {
     expect(Storage::disk('local')->get($msg->attachments[0]['path']))->toBe('JPEGBYTES8302');
 
     Http::assertSent(function ($request) {
-        return str_contains($request->url(), 'zernio.com/api/v1/whatsapp/media/media_8301') &&
-               str_contains($request->url(), 'acct_wa_5802') &&
+        return $request->url() === 'https://zernio.com/api/v1/whatsapp/media/media_8301?accountId=acct_wa_5802' &&
                $request->hasHeader('Authorization');
     });
     Http::assertNotSent(function ($request) {
@@ -356,7 +355,7 @@ it('f', function () {
         ->call('open', $conv->id)
         ->assertSee('Download the image')
         ->call('downloadAttachment', $msg->id, 0)
-        ->assertFileDownloaded('whatsapp-'.$msg->id.'-1');
+        ->assertFileDownloaded('attachment-'.$msg->id.'-1');
 
     $other = TestCase::provisionTenant();
     Tenancy::set($other->id);
@@ -409,4 +408,92 @@ it('g', function () {
         ->call('open', $conv->id)
         ->assertSee('Saving the image…')
         ->assertDontSee('Download the image');
+});
+
+it('h', function () {
+    $biz = setupMediaTest($this);
+    PlatformSetting::write('whatsapp.zernio_enabled', true, 'test');
+    Storage::fake('local');
+    PlatformSetting::write('whatsapp.zernio_enabled', true, 'test');
+    Http::fake([
+        'https://zernio.com/api/v1/whatsapp/media/media_8301*' => Http::response('JPEGBYTES8302', 200, ['Content-Type' => 'image/jpeg']),
+        'https://zernio.com/api/v1/whatsapp/media/media_8313*' => Http::response('JPEGBYTES8314', 200, ['Content-Type' => 'image/jpeg']),
+    ]);
+
+    $payload1 = [
+        'id' => 'evt_wa_5803',
+        'event' => 'message.received',
+        'message' => [
+            'id' => 'm1',
+            'conversationId' => 'conv_5804',
+            'platform' => 'whatsapp',
+            'platformMessageId' => 'wamid.IN5805',
+            'direction' => 'incoming',
+            'text' => '',
+            'attachments' => [
+                ['type' => 'image', 'mimeType' => 'image/jpeg', 'url' => 'http://169.254.169.254/latest/meta-data/', 'payload' => ['id' => 'media_8301']],
+            ],
+            'sender' => [
+                'name' => 'Ana',
+                'phoneNumber' => '+15125550199',
+                'businessScopedUserId' => 'bsuid_5807',
+            ],
+        ],
+        'conversation' => [
+            'id' => 'conv_5804',
+        ],
+        'account' => [
+            'accountId' => 'acct_wa_5802',
+            'profileId' => 'profile_5801',
+        ],
+    ];
+    postZernioMediaWebhook($this, $payload1);
+
+    $payload2 = [
+        'id' => 'evt_wa_8312',
+        'event' => 'message.received',
+        'message' => [
+            'id' => 'm2',
+            'conversationId' => 'conv_8314',
+            'platform' => 'whatsapp',
+            'platformMessageId' => 'wamid.IN8315',
+            'direction' => 'incoming',
+            'text' => '',
+            'attachments' => [
+                ['type' => 'image', 'mimeType' => 'image/jpeg', 'url' => 'http://169.254.169.254/latest/meta-data/', 'payload' => ['id' => 'media_8313']],
+            ],
+            'sender' => [
+                'name' => 'Bob',
+                'phoneNumber' => '+15125550188',
+                'businessScopedUserId' => 'bsuid_8311',
+            ],
+        ],
+        'conversation' => [
+            'id' => 'conv_8314',
+        ],
+        'account' => [
+            'accountId' => 'acct_wa_5802',
+            'profileId' => 'profile_5801',
+        ],
+    ];
+    postZernioMediaWebhook($this, $payload2);
+
+    Tenancy::set($biz->id);
+
+    $conv1 = Conversation::query()->where('channel', 'whatsapp')->orderBy('id')->first();
+    $msg1 = Message::query()->where('conversation_id', $conv1->id)->first();
+    $job1 = new StoreWhatsappMediaJob($biz->id, $msg1->id);
+    $job1->handle();
+
+    $conv2 = Conversation::query()->where('channel', 'whatsapp')->where('id', '>', $conv1->id)->orderBy('id')->first();
+    $msg2 = Message::query()->where('conversation_id', $conv2->id)->first();
+    $job2 = new StoreWhatsappMediaJob($biz->id, $msg2->id);
+    $job2->handle();
+
+    $user = User::find($biz->owner_user_id);
+    Livewire::actingAs($user);
+    Livewire::test(Inbox::class)
+        ->call('open', $conv1->id)
+        ->call('downloadAttachment', $msg2->id, 0)
+        ->assertStatus(404);
 });
