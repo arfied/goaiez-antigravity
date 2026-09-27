@@ -12,6 +12,7 @@ use App\Modules\CWhatsapp\Actions\WhatsappConnectionLookupAction;
 use App\Modules\CWhatsapp\Actions\WhatsappDisconnectedExternallyAction;
 use App\Modules\X177\Actions\GbpPostSettleAction;
 use App\Modules\X182\Actions\SocialAccountLookupAction;
+use App\Modules\X182\Actions\SocialPostSettleAction;
 use App\Modules\X182\Domain\SocialConnections;
 use App\Services\Zernio\ZernioWhatsappInbound;
 use App\Support\Tenancy;
@@ -117,7 +118,13 @@ final class ZernioWebhooks
      */
     private function handlePostPlatform(array $payload, bool $published): string
     {
-        if (($payload['platform']['name'] ?? null) !== 'googlebusiness') {
+        $platform = $payload['platform']['name'] ?? null;
+
+        if ($platform === 'facebook' || $platform === 'instagram') {
+            return $this->handleSocialPostPlatform($payload, $published);
+        }
+
+        if ($platform !== 'googlebusiness') {
             return 'ignored';
         }
 
@@ -138,12 +145,61 @@ final class ZernioWebhooks
         }
 
         return Tenancy::actingAs($binding->business_id, function () use ($binding, $gbpPostId, $published, $payload): string {
+            $providerPostId = $payload['post']['id'] ?? $payload['post']['_id'] ?? null;
+
             $result = app(GbpPostSettleAction::class)->settle(
                 $binding->business_id,
                 $gbpPostId,
                 $published,
                 is_string($payload['platform']['error'] ?? null) ? $payload['platform']['error'] : null,
-                is_string($payload['post']['_id'] ?? null) ? $payload['post']['_id'] : null
+                is_string($providerPostId) ? $providerPostId : null
+            );
+
+            return $result === 'settled' ? 'handled' : $result;
+        });
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     * @return 'handled'|'unbound'|'ignored'|string
+     */
+    private function handleSocialPostPlatform(array $payload, bool $published): string
+    {
+        $socialPostId = $payload['post']['metadata']['social_post_id'] ?? null;
+        if (! is_numeric($socialPostId)) {
+            return 'ignored';
+        }
+
+        $accountRef = $this->accountRefFrom($payload);
+        if ($accountRef === null) {
+            return 'ignored';
+        }
+
+        $binding = ZernioAccountBinding::where('account_ref', $accountRef)->first();
+        if ($binding === null || ! in_array($binding->platform, ['facebook', 'instagram'], true)) {
+            return 'unbound';
+        }
+
+        $businesses = $this->connections->businessesForProfiles([$binding->profile_ref]);
+        $businessId = $businesses[$binding->profile_ref] ?? null;
+
+        if ($businessId === null) {
+            return 'unbound';
+        }
+
+        return Tenancy::actingAs($businessId, function () use ($businessId, $socialPostId, $accountRef, $published, $payload): string {
+            $publishedUrl = $payload['platform']['publishedUrl'] ?? null;
+            $error = $payload['platform']['error'] ?? null;
+            $postId = $payload['post']['id'] ?? null;
+
+            $result = app(SocialPostSettleAction::class)->settle(
+                $businessId,
+                (int) $socialPostId,
+                $accountRef,
+                $published,
+                is_string($publishedUrl) ? $publishedUrl : null,
+                is_string($error) ? $error : null,
+                is_string($postId) ? $postId : null
             );
 
             return $result === 'settled' ? 'handled' : $result;
