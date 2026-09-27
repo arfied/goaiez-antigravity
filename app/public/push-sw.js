@@ -17,6 +17,8 @@ self.addEventListener('push', function(event) {
             body = 'A customer wrote to you.';
         } else if (payload.event_type === 'new_review') {
             body = 'You have a new review.';
+        } else if (payload.event_type === 'team_alert') {
+            body = 'Your team has a new alert.';
         }
 
         event.waitUntil(

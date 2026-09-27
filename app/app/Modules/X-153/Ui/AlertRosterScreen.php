@@ -6,6 +6,7 @@ namespace App\Modules\X153\Ui;
 
 use App\Modules\X153\Actions\AlertSendAction;
 use App\Modules\X153\Models\Alert;
+use App\Modules\X207\Actions\PushBroadcastAction;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -23,6 +24,8 @@ class AlertRosterScreen extends Component
 
     public function broadcastAlert(AlertSendAction $action): void
     {
+        abort_unless(auth()->user()?->role->canConfigureAutomation() === true, 403);
+
         $this->success = null;
         $this->error = null;
 
@@ -34,7 +37,11 @@ class AlertRosterScreen extends Component
 
         $result = $action->handle(Tenancy::idOrFail(), $this->title, $this->body);
 
-        $this->success = 'Broadcasted alert with reply code '.$result['code'].'. This feeds the claim screen; nothing downstream is wired to it yet.';
+        $recipients = array_values(array_diff(app(PushBroadcastAction::class)->activeWebUserIds(Tenancy::idOrFail()), [(int) auth()->id()]));
+
+        app(PushBroadcastAction::class)->notifyUsers(Tenancy::idOrFail(), $recipients, 'team_alert', route('x-153.alert-reply-by', [], false));
+
+        $this->success = 'Broadcasted alert with reply code '.$result['code'].'. '.(count($recipients) === 0 ? 'Nobody else on your team has turned on alerts in their browser yet, so no one was notified.' : 'Sent to '.count($recipients).' '.(count($recipients) === 1 ? 'teammate' : 'teammates').'\'s browser alerts.');
         $this->title = '';
         $this->body = '';
     }
