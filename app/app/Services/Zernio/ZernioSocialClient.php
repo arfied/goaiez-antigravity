@@ -189,6 +189,28 @@ final class ZernioSocialClient
         return is_string($id) && $id !== '' ? $id : null;
     }
 
+    public function hideComment(string $accountRef, string $zernioPostId, string $commentId): void
+    {
+        $this->http->assertUsable('social.zernio_enabled');
+
+        $response = $this->http->post('inbox/comments/'.rawurlencode($zernioPostId).'/'.rawurlencode($commentId).'/hide', ['accountId' => $accountRef]);
+
+        if ($response->failed()) {
+            throw GbpRequestFailed::from($response, accountScoped: true);
+        }
+    }
+
+    public function unhideComment(string $accountRef, string $zernioPostId, string $commentId): void
+    {
+        $this->http->assertUsable('social.zernio_enabled');
+
+        $response = $this->http->delete('inbox/comments/'.rawurlencode($zernioPostId).'/'.rawurlencode($commentId).'/hide?'.http_build_query(['accountId' => $accountRef]));
+
+        if ($response->failed()) {
+            throw GbpRequestFailed::from($response, accountScoped: true);
+        }
+    }
+
     public function replyInConversation(string $accountRef, string $conversationRef, string $message, string $idempotencyKey): ?string
     {
         $this->http->assertUsable('social.zernio_enabled');
