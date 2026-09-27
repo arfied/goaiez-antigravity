@@ -125,6 +125,8 @@ enum StoredObjectKind: string
     /** Voicemail audio pulled off the carrier by `FetchVoicemailRecordingJob`. */
     case VoicemailRecording = 'voicemail_recording';
 
+    case WhatsappMedia = 'whatsapp_media';
+
     /**
      * What an operator reads on the Ops command's output.
      *
@@ -139,6 +141,7 @@ enum StoredObjectKind: string
             self::CampaignMedia => 'Campaign images',
             self::InboundMedia => 'Inbound media',
             self::VoicemailRecording => 'Voicemail audio',
+            self::WhatsappMedia => 'Photos and files from messages',
         };
     }
 
@@ -182,7 +185,8 @@ enum StoredObjectKind: string
             self::KnowledgeUpload,
             self::CampaignMedia,
             self::InboundMedia,
-            self::VoicemailRecording => StorageRetention::KEY_PREFIX.$this->value,
+            self::VoicemailRecording,
+            self::WhatsappMedia => StorageRetention::KEY_PREFIX.$this->value,
         };
     }
 }

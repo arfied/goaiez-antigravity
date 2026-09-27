@@ -10,6 +10,7 @@ use App\Models\CampaignRecipient;
 use App\Models\InboundMedia;
 use App\Models\KnowledgeSource;
 use App\Models\Voicemail;
+use App\Services\Conversations\ConversationThreads;
 use App\Services\Export\ExportBuilder;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\Builder;
@@ -148,6 +149,7 @@ final class StorageFootprint
                 InboundMedia::query()->whereNotNull('storage_path'),
                 'byte_size',
             ),
+            $this->fromCounts(StoredObjectKind::WhatsappMedia, app(ConversationThreads::class)->storedMediaTotals()),
             $this->totals(
                 StoredObjectKind::VoicemailRecording,
                 // Same shape: `VoicemailAudioState::Unavailable` is a voicemail we

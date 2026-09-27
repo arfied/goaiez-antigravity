@@ -189,6 +189,8 @@
                                 This {{ $att['type'] }} is too large to save here.
                             @elseif (($att['status'] ?? '') === 'refused_health_tenant')
                                 This {{ $att['type'] }} was not saved, because this business handles health information.
+                            @elseif (($att['status'] ?? '') === 'pruned')
+                                This {{ $att['type'] }} was deleted after your media retention period.
                             @else
                                 This {{ $att['type'] }} could not be saved.
                             @endif
