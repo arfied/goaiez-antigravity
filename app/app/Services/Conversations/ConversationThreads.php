@@ -7,6 +7,7 @@ namespace App\Services\Conversations;
 use App\Enums\MessageDirection;
 use App\Enums\MessageSenderType;
 use App\Enums\OutreachChannel;
+use App\Jobs\Whatsapp\StoreWhatsappMediaJob;
 use App\Models\Conversation;
 use App\Models\Customer;
 use App\Models\Message;
@@ -347,15 +348,30 @@ final class ConversationThreads
     /**
      * File what the customer said.
      */
-    public function recordInbound(Conversation $conversation, string $body): Message
+    public function recordInbound(Conversation $conversation, string $body, array $attachments = []): Message
     {
-        return $this->record(
+        $message = $this->record(
             $conversation,
             MessageDirection::Inbound,
             MessageSenderType::Customer,
             null,
             $body,
+            $attachments
         );
+
+        $hasPending = false;
+        foreach ($attachments as $att) {
+            if (($att['status'] ?? null) === 'pending') {
+                $hasPending = true;
+                break;
+            }
+        }
+
+        if ($hasPending) {
+            StoreWhatsappMediaJob::dispatch((int) $message->business_id, (int) $message->getKey())->afterCommit();
+        }
+
+        return $message;
     }
 
     /**
@@ -391,6 +407,7 @@ final class ConversationThreads
         MessageSenderType $senderType,
         ?string $senderId,
         string $body,
+        array $attachments = []
     ): Message {
         $this->refuseForeignThread($conversation);
 
@@ -420,6 +437,7 @@ final class ConversationThreads
             $senderType,
             $senderId,
             $body,
+            $attachments
         ): Message {
             $message = Message::query()->create([
                 'business_id' => Tenancy::idOrFail(),
@@ -442,7 +460,7 @@ final class ConversationThreads
                 // ledger already holds the carrier's handle; a thread row that
                 // needs it can be joined through `outreach_messages` when
                 // something needs to.
-                'attachments' => [],
+                'attachments' => array_values($attachments),
                 'created_at' => now(),
             ]);
 
@@ -501,5 +519,58 @@ final class ConversationThreads
                 'That conversation belongs to another tenant, so it cannot be read or written here.',
             );
         }
+    }
+
+    public function inboundWithPendingMedia(int $messageId): ?Message
+    {
+        $businessId = Tenancy::idOrFail();
+
+        /** @var ?Message $message */
+        $message = Message::query()
+            ->where('id', $messageId)
+            ->where('business_id', $businessId)
+            ->where('direction', MessageDirection::Inbound->value)
+            ->first();
+
+        return $message;
+    }
+
+    public function markAttachment(Message $message, int $index, array $fields): void
+    {
+        DB::transaction(function () use ($message, $index, $fields) {
+            $row = Message::query()
+                ->where('id', $message->getKey())
+                ->lockForUpdate()
+                ->first();
+
+            if ($row === null) {
+                return;
+            }
+
+            $attachments = $row->attachments ?? [];
+            if (! isset($attachments[$index])) {
+                return;
+            }
+
+            $attachments[$index] = array_merge($attachments[$index], $fields);
+            $row->update(['attachments' => $attachments]);
+        });
+    }
+
+    public function attachmentOn(Conversation $conversation, int $messageId, int $index): ?array
+    {
+        $this->refuseForeignThread($conversation);
+
+        /** @var ?Message $message */
+        $message = Message::query()
+            ->where('id', $messageId)
+            ->where('conversation_id', $conversation->getKey())
+            ->first();
+
+        if ($message === null) {
+            return null;
+        }
+
+        return $message->attachments[$index] ?? null;
     }
 }

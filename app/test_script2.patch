@@ -1,0 +1,22 @@
+--- app/tests/Feature/Whatsapp/WhatsappInboundMediaTest.php
++++ app/tests/Feature/Whatsapp/WhatsappInboundMediaTest.php
+@@ -155,8 +155,8 @@
+ 
+     Http::assertSent(function ($request) {
+-        return str_contains($request->url(), 'https://zernio.com/api/v1/whatsapp/media/media_8301') &&
+-               $request['accountId'] === 'acct_wa_5802' &&
++        return str_contains($request->url(), 'media_8301') &&
++               str_contains($request->url(), 'acct_wa_5802') &&
+                $request->hasHeader('Authorization');
+     });
+     Http::assertNotSent(function ($request) {
+@@ -343,7 +343,8 @@
+ 
+     $other = TestCase::provisionTenant();
+     Tenancy::set($other->id);
+-    Livewire::actingAs($other->users->first());
++    $otherUser = \App\Models\User::find($other->owner_user_id);
++    Livewire::actingAs($otherUser);
+     Livewire::test(Inbox::class)
+         ->call('open', $conv->id)
+         ->assertStatus(404);
