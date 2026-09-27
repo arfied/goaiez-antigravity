@@ -149,6 +149,20 @@ final class Inbox extends Component
             'reply' => ['required', 'string', 'min:1', 'max:'.$this->bodyLimit()],
         ]);
 
+        if ($thread->channel === OutreachChannel::Whatsapp->value) {
+            $out = $replies->sendWhatsapp($thread, $this->reply, $this->user());
+            if (! $out['sent']) {
+                $this->addError('reply', $out['message']);
+
+                return;
+            }
+            $this->reply = '';
+            $this->draftKey = (string) Str::uuid();
+            Toaster::success($out['message']);
+
+            return;
+        }
+
         $result = $replies->send($thread, $this->reply, $this->user(), $this->draftKey);
 
         if ($result instanceof SendRefusalReason) {
@@ -287,9 +301,17 @@ final class Inbox extends Component
 
         $thread = $this->openThreadId === null ? null : $store->find($this->openThreadId);
 
+        $threadList = $store->list();
+        $contacts = [];
+        foreach ($threadList as $t) {
+            $contacts[$t->id] = $store->contactFor($t);
+        }
+
         return view('livewire.account.inbox', [
-            'threads' => $store->list(),
+            'threads' => $threadList,
             'thread' => $thread,
+            'contacts' => $contacts,
+            'contact' => $thread === null ? null : $store->contactFor($thread),
             'messages' => $thread === null ? null : $store->messages($thread),
             // ⚠️ **READ THROUGH THE CONTRACT RATHER THAN OFF THE MODEL, AND
             // THE HONEST CLAIM IS NARROWER THAN IT LOOKS.** `stateFor()`

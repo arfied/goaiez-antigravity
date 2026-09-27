@@ -110,7 +110,7 @@ class InboxScreenTest extends TestCase
             ->call('open', $conv->id)
             ->set('reply', 'Hello on WhatsApp')
             ->call('send')
-            ->assertHasErrors(['reply' => 'Not sent — replying on WhatsApp is not connected yet, so nothing went out.']);
+            ->assertHasErrors(['reply' => 'Not sent — connect a WhatsApp number first.']);
 
         $this->assertDatabaseMissing('messages', [
             'conversation_id' => $conv->id,

@@ -89,7 +89,8 @@
                                 >
                                     {{-- A contact the owner deleted leaves the thread standing
                                          with nobody on it. Saying so beats a blank line. --}}
-                                    {{ $item->customer?->name ?? 'This contact was removed' }}
+                                    {{ $contacts[$item->id]['name'] ?? 'This contact was removed' }}
+                                    @if ($item->channel === 'whatsapp') <span class="ml-2 text-xs text-ink-2">WhatsApp</span> @endif
                                 </button>
                                 <p class="text-sm text-ink-2">{{ $item->updated_at?->diffForHumans() }}</p>
                             </div>
@@ -105,7 +106,8 @@
         <section class="rounded-[--radius-panel] border border-rule bg-card p-5" aria-label="One conversation">
             <div class="flex flex-wrap items-baseline justify-between gap-2">
                 <h2 class="font-display text-lg font-semibold text-ink">
-                    {{ $thread->customer?->name ?? 'This contact was removed' }}
+                    {{ $contact['name'] ?? 'This contact was removed' }}
+                    @if ($thread->channel === 'whatsapp') <span class="ml-2 text-xs text-ink-2">WhatsApp</span> @endif
                 </h2>
                 <p class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-paper text-ink-2 border border-rule" data-thread-state>{{ $state->status->ownerLabel() }}</p>
             </div>
@@ -192,7 +194,7 @@
                 @endforelse
             </ol>
 
-            @if ($thread->customer === null)
+            @if ($thread->channel === 'whatsapp' ? (($contact['phone'] ?? null) === null) : $thread->customer === null)
                 <p class="mt-6 text-base text-ink-2">
                     You can read this conversation, but there is nobody left to reply to —
                     this contact was removed.

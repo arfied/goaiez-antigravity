@@ -10,6 +10,7 @@ use App\Enums\OutreachChannel;
 use App\Models\Conversation;
 use App\Models\Customer;
 use App\Models\Message;
+use App\Modules\X121\Actions\EntityReadAction;
 use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\Collection;
@@ -102,7 +103,7 @@ final class ConversationThreads
     public function list(): Collection
     {
         return Conversation::query()
-            ->where('channel', OutreachChannel::Sms->value)
+            ->whereIn('channel', [OutreachChannel::Sms->value, OutreachChannel::Whatsapp->value])
             ->with('customer')
             // Newest first on `updated_at`, which `touch()` moves on every
             // message. Ordering on the message table would need a join no
@@ -131,9 +132,37 @@ final class ConversationThreads
     public function find(int $conversationId): ?Conversation
     {
         return Conversation::query()
-            ->where('channel', OutreachChannel::Sms->value)
+            ->whereIn('channel', [OutreachChannel::Sms->value, OutreachChannel::Whatsapp->value])
             ->with('customer')
             ->find($conversationId);
+    }
+
+    public function contactFor(Conversation $conversation): ?array
+    {
+        $this->refuseForeignThread($conversation);
+
+        if ($conversation->customer !== null) {
+            return [
+                'name' => $conversation->customer->name,
+                'phone' => $conversation->customer->phone,
+            ];
+        }
+
+        if ($conversation->person_id !== null) {
+            $person = app(EntityReadAction::class)->handle('people', (int) $conversation->person_id, (int) $conversation->business_id);
+            if ($person === null) {
+                return null;
+            }
+
+            $name = trim(($person['first_name'] ?? '').' '.($person['last_name'] ?? ''));
+
+            return [
+                'name' => $name === '' ? null : $name,
+                'phone' => $person['phone'] ?? null,
+            ];
+        }
+
+        return null;
     }
 
     /**
