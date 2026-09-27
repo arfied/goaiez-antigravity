@@ -19,19 +19,54 @@ final class WhatsappEngine
         private readonly ConsentService $consentService
     ) {}
 
-    /**
-     * Inbound message opens/extends 24-hour conversational window.
-     */
-    public function recordInbound(int $businessId, string $recipientPhone, string $body = '', string $senderName = ''): WhatsappSession
-    {
-        $session = WhatsappSession::updateOrCreate(
-            ['business_id' => $businessId, 'recipient_phone' => $recipientPhone],
-            [
-                'last_inbound_at' => Carbon::now(),
-                'session_window_expires_at' => Carbon::now()->addHours(24),
-                'is_window_open' => true,
-            ]
-        );
+    public function recordInbound(
+        int $businessId,
+        string $recipientPhone,
+        string $body = '',
+        string $senderName = '',
+        ?string $zernioConversationId = null,
+        ?string $participantRef = null,
+        ?string $inboundRef = null
+    ): WhatsappSession {
+        $session = null;
+        if ($participantRef !== null) {
+            $session = WhatsappSession::where('business_id', $businessId)
+                ->where('zernio_participant_ref', $participantRef)
+                ->first();
+        }
+
+        $now = Carbon::now();
+        $attributes = [
+            'last_inbound_at' => $now,
+            'session_window_expires_at' => $now->copy()->addHours(24),
+            'is_window_open' => true,
+        ];
+
+        if ($zernioConversationId !== null) {
+            $attributes['zernio_conversation_id'] = $zernioConversationId;
+        }
+        if ($participantRef !== null) {
+            $attributes['zernio_participant_ref'] = $participantRef;
+        }
+        if ($inboundRef !== null) {
+            $attributes['last_inbound_ref'] = $inboundRef;
+        }
+
+        if ($session !== null) {
+            if ($recipientPhone !== '') {
+                $attributes['recipient_phone'] = $recipientPhone;
+            }
+            $session->update($attributes);
+        } else {
+            $session = WhatsappSession::updateOrCreate(
+                ['business_id' => $businessId, 'recipient_phone' => $recipientPhone],
+                $attributes
+            );
+        }
+
+        if ($recipientPhone === '') {
+            return $session;
+        }
 
         Event::dispatch(new WhatsappSessionOpened($businessId, $session->id, $recipientPhone, $body, $senderName));
 
@@ -121,7 +156,6 @@ final class WhatsappEngine
         $template = WhatsappTemplate::where('business_id', $businessId)->findOrFail($templateId);
         $template->update([
             'status' => 'approved',
-            'meta_template_id' => 'meta_waba_'.uniqid(),
         ]);
 
         Event::dispatch(new TemplateApproved($businessId, $template->id, $template->name));

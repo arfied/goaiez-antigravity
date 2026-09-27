@@ -6,7 +6,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-final class WhatsappAccountBinding extends Model
+final class ZernioAccountBinding extends Model
 {
+    protected $table = 'zernio_account_bindings';
+
     protected $guarded = ['id'];
 }

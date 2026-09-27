@@ -11,7 +11,7 @@
     @endif
     <ul>
         @foreach($statuses as $s)
-            <li>{{ $s->status }}: {{ $s->n }}</li>
+            <li>{{ $s['label'] }}: {{ $s['n'] }}</li>
         @endforeach
     </ul>
 

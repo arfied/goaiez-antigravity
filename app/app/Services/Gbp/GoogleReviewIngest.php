@@ -11,6 +11,7 @@ use App\Jobs\Reviews\GenerateReplyJob;
 use App\Models\AutopilotSettings;
 use App\Models\Location;
 use App\Models\Review;
+use App\Modules\X207\Jobs\SendPushToUserJob;
 use App\Services\ActivityService;
 use App\Services\Reviews\ReviewReplies;
 use App\Support\Tenancy;
@@ -224,6 +225,22 @@ final class GoogleReviewIngest
                 $review->ownerReplyReported,
                 $observedAt,
             );
+        }
+
+        if ($outcome === 'inserted') {
+            $ownerUserId = Tenancy::actingAs(
+                (int) $location->business_id,
+                fn () => DB::table('businesses')->where('id', $location->business_id)->value('owner_user_id')
+            );
+
+            if ($ownerUserId !== null) {
+                SendPushToUserJob::dispatch(
+                    (int) $location->business_id,
+                    (int) $ownerUserId,
+                    'new_review',
+                    '/account'
+                );
+            }
         }
 
         return $outcome;

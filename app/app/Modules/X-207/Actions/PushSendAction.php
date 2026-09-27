@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X207\Actions;
 
+use App\Modules\X207\Domain\WebPushTransport;
 use App\Modules\X207\Events\SendRequested;
 use App\Modules\X207\Models\DeviceToken;
 use App\Modules\X207\Models\PushDelivery;
@@ -56,20 +57,44 @@ final class PushSendAction
         // 2. Serialize and sanitize payload (TEST ANCHOR)
         $sanitizedPayload = $this->serializePayload($rawPayload);
 
+        $status = 'not_sent_no_transport';
+        $reason = null;
+
+        if ($device->platform === 'web' && $device->subscription !== null) {
+            $transportResult = app(WebPushTransport::class)->send($device->subscription, $sanitizedPayload);
+            if ($transportResult['ok']) {
+                $status = 'sent';
+            } elseif ($transportResult['expired']) {
+                $status = 'expired';
+                $device->update(['status' => 'retired', 'retirement_reason' => 'expired']);
+            } else {
+                $status = 'failed';
+                $reason = $transportResult['reason'];
+            }
+        }
+
         $delivery = PushDelivery::create([
             'business_id' => $businessId,
             'device_token_id' => $device->id,
             'payload' => $sanitizedPayload,
             'sanitized' => true,
-            'status' => 'delivered',
+            'status' => $status,
         ]);
 
-        Event::dispatch(new SendRequested($businessId, $device->id, $sanitizedPayload));
+        if ($status === 'sent') {
+            Event::dispatch(new SendRequested($businessId, $device->id, $sanitizedPayload));
+        }
 
-        return [
-            'status' => 'delivered',
+        $result = [
+            'status' => $status,
             'delivery_id' => $delivery->id,
             'payload' => $sanitizedPayload,
         ];
+
+        if ($status !== 'sent' && $reason !== null) {
+            $result['reason'] = $reason;
+        }
+
+        return $result;
     }
 }

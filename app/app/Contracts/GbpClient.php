@@ -12,14 +12,14 @@ use App\Services\Gbp\GbpReviewPage;
  * Reading a location's Google reviews, whoever we are reading them through.
  *
  * WHY AN INTERFACE, WHEN THERE IS ONE IMPLEMENTATION. Google Business Profile
- * API access is an application with a lead time — `GoogleBusinessService`'s
+ * API access is an application with a lead time — the retired direct Google Business client (deleted in SIXTY-56)'s
  * docblock records the terms: a new Cloud project sits at **0 QPM** until
  * approval, and there is no sandbox. Ours is applied for and pending. Zernio
  * holds its own approved project, so a tenant can OAuth into *their* app today
  * and we read reviews while our own application clears.
  *
  * ⚠️ **THIS IS NOT A SEAM WITH AN EXPIRY DATE, AND AN EARLIER VERSION OF THIS
- * DOCBLOCK SAID IT WAS.** It read *"when our approval lands, `GoogleBusinessService`
+ * DOCBLOCK SAID IT WAS.** It read *"when our approval lands, the retired direct Google Business client (deleted in SIXTY-56)
  * implements this interface and the swap is a container binding"*. The owner
  * settled decision 530 the other way on 2026-08-04 (decisions 546–548): **both
  * implementations stay live, permanently**, Zernio as the fallback and direct

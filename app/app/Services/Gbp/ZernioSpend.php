@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Gbp;
 
 use App\Models\GbpAccountBinding;
-use App\Models\WhatsappAccountBinding;
+use App\Models\ZernioAccountBinding;
 use App\Models\ZernioAccountDay;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Places\PlacesSpend;
@@ -227,7 +227,7 @@ final class ZernioSpend
      */
     public function connectedAccounts(): int
     {
-        return GbpAccountBinding::query()->count() + WhatsappAccountBinding::query()->count();
+        return GbpAccountBinding::query()->count() + ZernioAccountBinding::query()->count();
     }
 
     /**

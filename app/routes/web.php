@@ -45,6 +45,7 @@ use App\Http\Controllers\Sms\InfobipInboundController;
 use App\Http\Controllers\SmsOptInController;
 use App\Http\Controllers\SuspendedAccountController;
 use App\Http\Controllers\Voice\InfobipVoiceController;
+use App\Http\Controllers\Whatsapp\WhatsappConnectController;
 use App\Http\Controllers\WidgetScriptController;
 use App\Http\Middleware\EnsureAdvancedDashboard;
 use App\Http\Middleware\RequireIndustryPages;
@@ -70,14 +71,14 @@ use App\Livewire\Account\Messages as AccountMessages;
 use App\Livewire\Account\PixelInstall as AccountPixelInstall;
 use App\Livewire\Account\PlacesKey as AccountPlacesKey;
 use App\Livewire\Account\Plan as AccountPlan;
-use App\Livewire\Account\ReplyQueue as AccountReplyQueue;
 // Aliased for the reason `Support` below is: `App\Services\Actuation\SiteChanges`
 // is the change log this screen reads, and the two names differ only by
 // namespace.
-use App\Livewire\Account\Settings as AccountSettings;
+use App\Livewire\Account\ReplyQueue as AccountReplyQueue;
 // Aliased: `Support` unqualified in this file would sit beside the whole
 // `App\Livewire\Support` console namespace, and the two are opposite ends of
 // one desk.
+use App\Livewire\Account\Settings as AccountSettings;
 use App\Livewire\Account\SiteChanges as AccountSiteChanges;
 use App\Livewire\Account\Support as AccountSupport;
 use App\Livewire\Account\Texting as AccountTexting;
@@ -85,21 +86,21 @@ use App\Livewire\Account\Visibility as AccountVisibility;
 use App\Livewire\Account\WidgetInstall as AccountWidgetInstall;
 use App\Livewire\Account\WinBack as AccountWinBack;
 use App\Livewire\Admin\AccountAudit;
-use App\Livewire\Admin\AutomationRuns;
 // Aliased for the same reason as LegalDocuments below: `Credentials` next to
 // `CredentialStore` and `PlatformCredentials` in one file is three names for
 // three different things, and the ambiguity is only ever resolved by luck.
+use App\Livewire\Admin\AutomationRuns;
 use App\Livewire\Admin\Credentials as CredentialsAdmin;
 use App\Livewire\Admin\GbpGrantRevocations;
-use App\Livewire\Admin\IndustryStartingPoints;
 // Aliased: the component and the service it calls share a name, and the two
 // appearing unqualified in one file is how the wrong one gets injected.
+use App\Livewire\Admin\IndustryStartingPoints;
 use App\Livewire\Admin\InternalUsers;
 use App\Livewire\Admin\LegalDocumentIndex;
-use App\Livewire\Admin\LegalDocuments as LegalDocumentsAdmin;
 // Named for the screen rather than for the table, and deliberately not
 // `OperatorAlerts`: the service that raises them already owns that name, and
 // the two appearing unqualified in one file is how the wrong one gets injected.
+use App\Livewire\Admin\LegalDocuments as LegalDocumentsAdmin;
 use App\Livewire\Admin\LocationSettings;
 use App\Livewire\Admin\MailSending;
 use App\Livewire\Admin\NumberLookup;
@@ -109,23 +110,23 @@ use App\Livewire\Admin\OwnerNotifyConsents;
 use App\Livewire\Admin\PhiTenants;
 use App\Livewire\Admin\PlatformSettings;
 use App\Livewire\Admin\ReviewQueue;
-use App\Livewire\Admin\SendingControls;
 // Aliased for the same reason as LegalDocuments above: the screen and the
 // service it reads through share a name, and the two appearing unqualified in
 // one file is how the wrong one gets injected.
+use App\Livewire\Admin\SendingControls;
 use App\Livewire\Admin\StaffActivity;
 use App\Livewire\Admin\TenantLocations;
 use App\Livewire\Admin\TermsAcceptances as TermsAcceptancesAdmin;
 use App\Livewire\Advanced\BroadcastComposer;
 use App\Livewire\Advanced\Broadcasts;
 use App\Livewire\Advanced\Changes;
-use App\Livewire\Advanced\Citations;
 // Aliased for the same reason as LegalDocuments above: `Accounts` alone says
 // nothing about which console it belongs to.
-use App\Livewire\Advanced\Competitors;
+use App\Livewire\Advanced\Citations;
 // Aliased for the same reason as the two above: `Tickets` alone says nothing
 // about which desk it belongs to, and `Account\Support` is a screen with the
 // same word in its name one namespace over.
+use App\Livewire\Advanced\Competitors;
 use App\Livewire\Advanced\Credits;
 use App\Livewire\Advanced\Defense;
 use App\Livewire\Advanced\Home;
@@ -1435,6 +1436,10 @@ Route::middleware(GbpConnectController::middleware())
     ->get('/account/connections/google/callback/{location}', GbpConnectController::class)
     ->whereNumber('location')
     ->name('gbp.connect.callback');
+
+Route::middleware(WhatsappConnectController::middleware())
+    ->get('/account/connections/whatsapp/callback', WhatsappConnectController::class)
+    ->name('whatsapp.connect.callback');
 
 /*
 |--------------------------------------------------------------------------
