@@ -168,10 +168,30 @@
         panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
     };
 
+    var ensureSession = function(then) {
+        if (sessionToken) { then(); return; }
+        fetch(origin + '/api/chat/' + encodeURIComponent(key) + '/start', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+            credentials: 'omit',
+            body: JSON.stringify({})
+        }).then(function(res) {
+            return res.json().then(function(data) {
+                if (res.ok && data.session_token) {
+                    sessionToken = data.session_token;
+                    then();
+                } else throw new Error('Bad start');
+            });
+        }).catch(function() {
+            appendRow('Sorry — chat is unavailable right now.', false);
+        });
+    };
+
     revealLink.onclick = function(e) {
         e.preventDefault();
         footer.style.display = 'none';
         detailsForm.style.display = 'flex';
+        ensureSession(function() {});
     };
 
     sendBtn.onclick = function() {
@@ -219,35 +239,41 @@
     };
 
     detailsSendBtn.onclick = function() {
-        fetch(origin + '/api/chat/' + encodeURIComponent(key) + '/capture', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-            credentials: 'omit',
-            body: JSON.stringify({
-                session_token: sessionToken,
-                name: nameInput.value,
-                phone: phoneInput.value,
-                email: emailInput.value,
-                message: lastVisitorMessage,
-                consent: consentCheckbox.checked
-            })
-        }).then(function(res) {
-            if (res.status === 201) {
-                appendRow('Thanks — we will be in touch.', false);
-                detailsForm.style.display = 'none';
-            } else if (res.status === 422) {
-                return res.json().then(function(data) {
-                    if (data.reason === 'under_18') {
-                        appendRow('Sorry, we can only chat with adults.', false);
-                    } else {
-                        throw new Error('Other 422');
-                    }
-                });
-            } else {
-                throw new Error('Other status');
-            }
-        }).catch(function() {
-            appendRow('Sorry — chat is unavailable right now.', false);
+        if (!consentCheckbox.checked) {
+            appendRow('Tick "You may contact me about this" first — without it we cannot reach you.', false);
+            return;
+        }
+        ensureSession(function() {
+            fetch(origin + '/api/chat/' + encodeURIComponent(key) + '/capture', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+                credentials: 'omit',
+                body: JSON.stringify({
+                    session_token: sessionToken,
+                    name: nameInput.value,
+                    phone: phoneInput.value,
+                    email: emailInput.value,
+                    message: lastVisitorMessage,
+                    consent: consentCheckbox.checked
+                })
+            }).then(function(res) {
+                if (res.status === 201) {
+                    appendRow('Thanks — we will be in touch.', false);
+                    detailsForm.style.display = 'none';
+                } else if (res.status === 422) {
+                    return res.json().then(function(data) {
+                        if (data.reason === 'under_18') {
+                            appendRow('Sorry, we can only chat with adults.', false);
+                        } else {
+                            throw new Error('Other 422');
+                        }
+                    });
+                } else {
+                    throw new Error('Other status');
+                }
+            }).catch(function() {
+                appendRow('Sorry — chat is unavailable right now.', false);
+            });
         });
     };
 })();
