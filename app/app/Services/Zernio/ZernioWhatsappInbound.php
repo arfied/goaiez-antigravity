@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Zernio;
 
+use App\Enums\DataClassification;
+use App\Models\Business;
 use App\Modules\CWhatsapp\Actions\WhatsappConnectionLookupAction;
 use App\Modules\CWhatsapp\Domain\WhatsappEngine;
 use App\Services\Gbp\GbpConnections;
@@ -56,10 +58,20 @@ final class ZernioWhatsappInbound
 
             $attachments = [];
             $rawAttachments = array_slice($payload['message']['attachments'] ?? [], 0, 4);
+
+            $business = Business::query()->find($businessId);
+            $healthTenant = $business !== null && $business->data_classification === DataClassification::Phi;
+
             foreach ($rawAttachments as $a) {
                 $id = $a['payload']['id'] ?? null;
                 $type = (string) ($a['type'] ?? 'file');
-                if (is_string($id) && $id !== '') {
+
+                if ($healthTenant) {
+                    $attachments[] = [
+                        'type' => $type,
+                        'status' => 'refused_health_tenant',
+                    ];
+                } elseif (is_string($id) && $id !== '') {
                     $attachments[] = [
                         'type' => $type,
                         'mime' => $a['mimeType'] ?? null,

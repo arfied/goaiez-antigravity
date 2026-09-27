@@ -43,9 +43,8 @@ final class StoreWhatsappMediaJob extends AutopilotJob
                     $res = app(ZernioWhatsappMedia::class)->download($att['account_ref'], $att['media_id']);
                     $bytes = $res['bytes'];
                     $mime = $res['mime'];
-
-                    $path = 'whatsapp-media/'.$message->business_id.'/'.$message->getKey().'/'.$index;
-                    Storage::disk('local')->put($path, $bytes);
+                    $path = app(ZernioWhatsappMedia::class)->pathFor((int) $message->business_id, (int) $message->getKey(), (int) $index);
+                    Storage::disk(ZernioWhatsappMedia::DISK)->put($path, $bytes);
 
                     app(ConversationThreads::class)->markAttachment($message, $index, [
                         'status' => 'stored',

@@ -14,6 +14,7 @@ use App\Modules\CWhatsapp\Actions\WhatsappTemplateLookupAction;
 use App\Services\Conversations\ConversationThreads;
 use App\Services\Conversations\InboxReplies;
 use App\Services\Messaging\Outbound\SendOutcome;
+use App\Services\Zernio\ZernioWhatsappMedia;
 use App\Support\Tenancy;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Storage;
@@ -256,7 +257,7 @@ final class Inbox extends Component
             abort(404);
         }
 
-        return Storage::disk('local')->download($att['path'], 'attachment-'.$id.'-'.($index + 1));
+        return Storage::disk(ZernioWhatsappMedia::DISK)->download($att['path'], 'attachment-'.$id.'-'.($index + 1));
     }
 
     /**

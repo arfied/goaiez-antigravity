@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\DataClassification;
 use App\Jobs\Whatsapp\StoreWhatsappMediaJob;
 use App\Livewire\Account\Inbox;
 use App\Models\Conversation;
@@ -9,6 +10,8 @@ use App\Models\Message;
 use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Modules\CWhatsapp\Models\WhatsappConnection;
+use App\Services\Tenant\TenantDeletion;
+use App\Services\Zernio\ZernioWhatsappMedia;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -111,7 +114,7 @@ it('a', function () {
 it('b', function () {
     $biz = setupMediaTest($this);
     PlatformSetting::write('whatsapp.zernio_enabled', true, 'test');
-    Storage::fake('local');
+    Storage::fake(ZernioWhatsappMedia::DISK);
     PlatformSetting::write('whatsapp.zernio_enabled', true, 'test');
     Http::fake([
         'https://zernio.com/api/v1/whatsapp/media/media_8301*' => Http::response('JPEGBYTES8302', 200, ['Content-Type' => 'image/jpeg']),
@@ -155,8 +158,8 @@ it('b', function () {
     expect($msg->attachments[0]['status'])->toBe('stored');
     expect($msg->attachments[0]['size'])->toBe(13);
 
-    Storage::disk('local')->assertExists($msg->attachments[0]['path']);
-    expect(Storage::disk('local')->get($msg->attachments[0]['path']))->toBe('JPEGBYTES8302');
+    Storage::disk(ZernioWhatsappMedia::DISK)->assertExists($msg->attachments[0]['path']);
+    expect(Storage::disk(ZernioWhatsappMedia::DISK)->get($msg->attachments[0]['path']))->toBe('JPEGBYTES8302');
 
     Http::assertSent(function ($request) {
         return $request->url() === 'https://zernio.com/api/v1/whatsapp/media/media_8301?accountId=acct_wa_5802' &&
@@ -171,7 +174,7 @@ it('b', function () {
 it('c', function () {
     $biz = setupMediaTest($this);
     PlatformSetting::write('whatsapp.zernio_enabled', true, 'test');
-    Storage::fake('local');
+    Storage::fake(ZernioWhatsappMedia::DISK);
     PlatformSetting::write('whatsapp.zernio_enabled', true, 'test');
     Http::fake([
         'https://zernio.com/api/v1/whatsapp/media/media_8301*' => Http::response('Expired', 400),
@@ -218,7 +221,7 @@ it('c', function () {
 it('d', function () {
     $biz = setupMediaTest($this);
     PlatformSetting::write('whatsapp.zernio_enabled', true, 'test');
-    Storage::fake('local');
+    Storage::fake(ZernioWhatsappMedia::DISK);
     PlatformSetting::write('whatsapp.zernio_enabled', true, 'test');
     Http::fake([
         'https://zernio.com/api/v1/whatsapp/media/media_8301*' => Http::response('123456', 200, ['Content-Type' => 'image/jpeg']),
@@ -307,7 +310,7 @@ it('e', function () {
 it('f', function () {
     $biz = setupMediaTest($this);
     PlatformSetting::write('whatsapp.zernio_enabled', true, 'test');
-    Storage::fake('local');
+    Storage::fake(ZernioWhatsappMedia::DISK);
     PlatformSetting::write('whatsapp.zernio_enabled', true, 'test');
     Http::fake([
         'https://zernio.com/api/v1/whatsapp/media/media_8301*' => Http::response('JPEGBYTES8302', 200, ['Content-Type' => 'image/jpeg']),
@@ -413,7 +416,7 @@ it('g', function () {
 it('h', function () {
     $biz = setupMediaTest($this);
     PlatformSetting::write('whatsapp.zernio_enabled', true, 'test');
-    Storage::fake('local');
+    Storage::fake(ZernioWhatsappMedia::DISK);
     PlatformSetting::write('whatsapp.zernio_enabled', true, 'test');
     Http::fake([
         'https://zernio.com/api/v1/whatsapp/media/media_8301*' => Http::response('JPEGBYTES8302', 200, ['Content-Type' => 'image/jpeg']),
@@ -496,4 +499,75 @@ it('h', function () {
         ->call('open', $conv1->id)
         ->call('downloadAttachment', $msg2->id, 0)
         ->assertStatus(404);
+});
+
+it('i', function () {
+    $biz = setupMediaTest($this);
+    $biz->forceFill(['data_classification' => DataClassification::Phi])->save();
+    PlatformSetting::write('whatsapp.zernio_enabled', true, 'test');
+    Queue::fake();
+    Http::fake();
+
+    $payload = [
+        'id' => 'evt_wa_5803',
+        'event' => 'message.received',
+        'message' => [
+            'id' => 'm1',
+            'conversationId' => 'conv_5804',
+            'platform' => 'whatsapp',
+            'platformMessageId' => 'wamid.IN5805',
+            'direction' => 'incoming',
+            'text' => '',
+            'attachments' => [
+                ['type' => 'image', 'mimeType' => 'image/jpeg', 'url' => 'http://169.254.169.254/latest/meta-data/', 'payload' => ['id' => 'media_8321']],
+            ],
+            'sender' => [
+                'name' => 'Ana',
+                'phoneNumber' => '+15125550199',
+                'businessScopedUserId' => 'bsuid_5807',
+            ],
+        ],
+        'conversation' => [
+            'id' => 'conv_5804',
+        ],
+        'account' => [
+            'accountId' => 'acct_wa_5802',
+            'profileId' => 'profile_5801',
+        ],
+    ];
+    postZernioMediaWebhook($this, $payload);
+    Tenancy::set($biz->id);
+    $msg = Message::query()->first();
+    $conv = Conversation::query()->first();
+
+    expect($msg->attachments[0])->toBe(['type' => 'image', 'status' => 'refused_health_tenant']);
+    Queue::assertNotPushed(StoreWhatsappMediaJob::class);
+    Http::assertNothingSent();
+
+    $user = User::find($biz->owner_user_id);
+    Livewire::actingAs($user);
+    Livewire::test(Inbox::class)
+        ->call('open', $conv->id)
+        ->assertSee('was not saved, because this business handles health information')
+        ->assertDontSee('Download the image');
+});
+
+it('j', function () {
+    $biz = setupMediaTest($this);
+    $other = TestCase::provisionTenant();
+
+    Storage::fake(ZernioWhatsappMedia::DISK);
+    Storage::disk(ZernioWhatsappMedia::DISK)->put('whatsapp-media/'.$biz->id.'/1/0', 'content');
+    Storage::disk(ZernioWhatsappMedia::DISK)->put('whatsapp-media/'.$other->id.'/1/0', 'content');
+
+    $purged = app(ZernioWhatsappMedia::class)->purgeAllFor($biz->id);
+
+    expect($purged)->toBeTrue();
+    Storage::disk(ZernioWhatsappMedia::DISK)->assertMissing('whatsapp-media/'.$biz->id.'/1/0');
+    Storage::disk(ZernioWhatsappMedia::DISK)->assertExists('whatsapp-media/'.$other->id.'/1/0');
+});
+
+it('k', function () {
+    expect(file_get_contents(app_path('Services/Tenant/TenantDeletion.php')))->toContain('$this->whatsappMedia->purgeAllFor((int) $business->id)');
+    expect(app(TenantDeletion::class))->not->toBeNull();
 });
