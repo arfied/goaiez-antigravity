@@ -11,6 +11,9 @@ use Carbon\Carbon;
 
 final class CommentIngestAction
 {
+    // Meta limits private replies to 7 days, as documented by Zernio; this is not a setting
+    public const int PRIVATE_REPLY_WINDOW_DAYS = 7;
+
     /**
      * @param  array<string, mixed>  $comment
      */
@@ -70,6 +73,10 @@ final class CommentIngestAction
             $newComment->platform = $comment['platform'];
         }
 
+        if (isset($comment['platformPostId']) && is_string($comment['platformPostId']) && $comment['platformPostId'] !== '') {
+            $newComment->platform_post_id = $comment['platformPostId'];
+        }
+
         if (isset($comment['author']['id']) && is_string($comment['author']['id'])) {
             $newComment->author_ref = $comment['author']['id'];
         }
@@ -94,5 +101,25 @@ final class CommentIngestAction
         $comment->replied_at = Carbon::now();
         $comment->is_publicly_replied = true;
         $comment->save();
+    }
+
+    public function recordPrivateReply(Comment $comment, string $text): void
+    {
+        if ((int) $comment->business_id !== Tenancy::idOrFail()) {
+            throw new \InvalidArgumentException('Comment does not belong to the current tenant');
+        }
+
+        $comment->private_reply_text = $text;
+        $comment->private_replied_at = Carbon::now();
+        $comment->save();
+    }
+
+    public function canReplyPrivately(Comment $comment): bool
+    {
+        return $comment->platform_comment_id !== null
+            && $comment->platform_post_id !== null
+            && $comment->private_replied_at === null
+            && $comment->commented_at !== null
+            && Carbon::parse($comment->commented_at)->isAfter(Carbon::now()->subDays(self::PRIVATE_REPLY_WINDOW_DAYS));
     }
 }

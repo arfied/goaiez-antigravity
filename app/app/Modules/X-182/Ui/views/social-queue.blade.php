@@ -38,6 +38,18 @@
                                         <input type="text" wire:model="commentReply.{{ $c->id }}" maxlength="1000">
                                         <x-ui.button wire:click="replyToComment({{ $c->id }})" size="sm">Reply</x-ui.button>
                                     @endif
+                                    @if($c->hidden_at)
+                                        (hidden — only the commenter and your page see it)
+                                        <x-ui.button wire:click="unhideComment({{ $c->id }})" size="sm">Unhide</x-ui.button>
+                                    @elseif($c->platform_comment_id)
+                                        <x-ui.button wire:click="hideComment({{ $c->id }})" size="sm">Hide</x-ui.button>
+                                    @endif
+                                    @if($c->private_replied_at)
+                                        — You messaged them privately: {{ $c->private_reply_text }}
+                                    @elseif(app(\App\Modules\X182\Actions\CommentIngestAction::class)->canReplyPrivately($c))
+                                        <input type="text" wire:model="privateReply.{{ $c->id }}" maxlength="1000">
+                                        <x-ui.button wire:click="privateReplyToComment({{ $c->id }})" size="sm">Message privately</x-ui.button>
+                                    @endif
                                 </li>
                             @endforeach
                         </ul>
@@ -70,6 +82,19 @@
                         <ul class="text-sm text-ink-2">
                             @foreach($dmTails[$t->id] ?? [] as $m)
                                 <li>{{ $m->direction->value === 'inbound' ? 'They wrote' : 'You wrote' }}: {{ $m->body }}</li>
+                                @foreach (($m->attachments ?? []) as $i => $att)
+                                    @if (($att['status'] ?? '') === 'stored')
+                                        <x-ui.button variant="secondary" size="default" wire:click="downloadDmAttachment({{ $t->id }}, {{ $m->id }}, {{ $i }})">Download the {{ $att['type'] }}</x-ui.button>
+                                    @elseif (($att['status'] ?? '') === 'pending')
+                                        Saving the {{ $att['type'] }}…
+                                    @elseif (($att['status'] ?? '') === 'refused_health_tenant')
+                                        This {{ $att['type'] }} was not saved, because this business handles health information.
+                                    @elseif (($att['status'] ?? '') === 'too_large')
+                                        This {{ $att['type'] }} is too large to save here.
+                                    @else
+                                        This {{ $att['type'] }} could not be saved.
+                                    @endif
+                                @endforeach
                             @endforeach
                         </ul>
                         <input type="text" wire:model="dmReply.{{ $t->id }}" maxlength="1000">

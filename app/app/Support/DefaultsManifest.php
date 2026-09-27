@@ -107,6 +107,7 @@ use App\Services\Warehouse\PixelSightings;
 use App\Services\Warehouse\Replayer;
 use App\Services\Warehouse\WarehouseRetention;
 use App\Services\Widgets\WidgetInstalls;
+use App\Services\Zernio\ZernioSocialMedia;
 use App\Services\Zernio\ZernioWhatsappMedia;
 
 /**
@@ -606,6 +607,11 @@ final class DefaultsManifest
                 'seed' => ZernioWhatsappMedia::MAX_BYTES,
                 'group' => 'Messaging',
                 'description' => 'Largest WhatsApp photo, voice note or file saved from an incoming message, in bytes.',
+            ],
+            'social.dm_media_max_bytes' => [
+                'seed' => ZernioSocialMedia::MAX_BYTES,
+                'group' => 'Messaging',
+                'description' => 'Largest photo or file saved from an incoming Facebook or Instagram message, in bytes.',
             ],
 
             /*

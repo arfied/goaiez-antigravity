@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Zernio;
 
+use App\Enums\DataClassification;
+use App\Models\Business;
 use App\Models\ZernioAccountBinding;
 use App\Services\Conversations\ConversationThreads;
 use App\Services\Gbp\GbpConnections;
@@ -51,7 +53,7 @@ final class ZernioSocialInbound
             return 'unbound';
         }
 
-        return Tenancy::actingAs($businessId, function () use ($platform, $conversationRef, $accountRef, $message): string {
+        return Tenancy::actingAs($businessId, function () use ($businessId, $platform, $conversationRef, $accountRef, $message): string {
             $text = $message['text'] ?? null;
             $attachments = $message['attachments'] ?? [];
 
@@ -64,12 +66,45 @@ final class ZernioSocialInbound
                 return 'ignored';
             }
 
+            $business = Business::query()->find($businessId);
+            $healthTenant = $business !== null && $business->data_classification === DataClassification::Phi;
+
+            $saved = [];
+            $rawAttachments = array_slice($attachments, 0, 4);
+
+            foreach ($rawAttachments as $i => $a) {
+                $type = (string) ($a['type'] ?? 'file');
+
+                if ($healthTenant) {
+                    $saved[] = [
+                        'type' => $type,
+                        'status' => 'refused_health_tenant',
+                    ];
+                } elseif (is_string($message['platformMessageId'] ?? null) && $message['platformMessageId'] !== '') {
+                    $saved[] = [
+                        'type' => $type,
+                        'mime' => $a['mimeType'] ?? null,
+                        'source' => 'meta',
+                        'conversation_ref' => $conversationRef,
+                        'platform_message_id' => $message['platformMessageId'],
+                        'index' => $i,
+                        'account_ref' => $accountRef,
+                        'status' => 'pending',
+                    ];
+                } else {
+                    $saved[] = [
+                        'type' => $type,
+                        'status' => 'unavailable',
+                    ];
+                }
+            }
+
             $sender = $message['sender'] ?? [];
             $label = $sender['name'] ?? $sender['username'] ?? null;
             $label = is_string($label) ? $label : null;
 
             $thread = app(ConversationThreads::class)->socialThread($platform, $conversationRef, $accountRef, $label);
-            app(ConversationThreads::class)->recordInbound($thread, $body);
+            app(ConversationThreads::class)->recordInbound($thread, $body, $saved);
 
             return 'handled';
         });

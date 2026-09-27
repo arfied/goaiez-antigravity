@@ -13,7 +13,9 @@ use App\Modules\X182\Models\SocialAccount;
 use App\Modules\X182\Models\SocialPost;
 use App\Services\Conversations\ConversationThreads;
 use App\Services\Zernio\ZernioSocialClient;
+use App\Services\Zernio\ZernioWhatsappMedia;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -33,6 +35,8 @@ class SocialQueue extends Component
     public string $imageUrl = '';
 
     public array $commentReply = [];
+
+    public array $privateReply = [];
 
     public array $dmReply = [];
 
@@ -184,6 +188,146 @@ class SocialQueue extends Component
         unset($this->commentReply[$commentId]);
     }
 
+    public function hideComment(int $commentId): void
+    {
+        abort_unless(auth()->user()?->role->canConfigureAutomation() === true, 403);
+
+        $comment = Comment::where('business_id', $this->businessId)->find($commentId);
+        if ($comment === null) {
+            Toaster::error('That comment is not here any more.');
+
+            return;
+        }
+
+        if ($comment->platform_comment_id === null) {
+            Toaster::error('This comment cannot be hidden from here.');
+
+            return;
+        }
+
+        $post = SocialPost::where('business_id', $this->businessId)->with('account')->find($comment->post_id);
+        if ($post === null || $post->provider_post_id === null || $post->account === null || $post->account->status !== 'connected' || $post->account->account_ref === null) {
+            Toaster::error('Connect this account through Zernio first.');
+
+            return;
+        }
+
+        if ($comment->hidden_at !== null) {
+            Toaster::info('This comment is already hidden.');
+
+            return;
+        }
+
+        try {
+            app(ZernioSocialClient::class)->hideComment($post->account->account_ref, $post->provider_post_id, $comment->platform_comment_id);
+        } catch (GbpRequestFailed $e) {
+            Toaster::error('Zernio did not hide it: '.$e->getMessage());
+
+            return;
+        }
+
+        $comment->update(['hidden_at' => now()]);
+        Toaster::success('Hidden. Only the commenter and your page can see it now.');
+    }
+
+    public function unhideComment(int $commentId): void
+    {
+        abort_unless(auth()->user()?->role->canConfigureAutomation() === true, 403);
+
+        $comment = Comment::where('business_id', $this->businessId)->find($commentId);
+        if ($comment === null) {
+            Toaster::error('That comment is not here any more.');
+
+            return;
+        }
+
+        if ($comment->platform_comment_id === null) {
+            Toaster::error('This comment cannot be hidden from here.');
+
+            return;
+        }
+
+        $post = SocialPost::where('business_id', $this->businessId)->with('account')->find($comment->post_id);
+        if ($post === null || $post->provider_post_id === null || $post->account === null || $post->account->status !== 'connected' || $post->account->account_ref === null) {
+            Toaster::error('Connect this account through Zernio first.');
+
+            return;
+        }
+
+        if ($comment->hidden_at === null) {
+            Toaster::info('This comment is not hidden.');
+
+            return;
+        }
+
+        try {
+            app(ZernioSocialClient::class)->unhideComment($post->account->account_ref, $post->provider_post_id, $comment->platform_comment_id);
+        } catch (GbpRequestFailed $e) {
+            Toaster::error('Zernio did not unhide it: '.$e->getMessage());
+
+            return;
+        }
+
+        $comment->update(['hidden_at' => null]);
+        Toaster::success('Shown again to everyone.');
+    }
+
+    public function privateReplyToComment(int $commentId): void
+    {
+        abort_unless(auth()->user()?->role->canConfigureAutomation() === true, 403);
+
+        $comment = Comment::where('business_id', $this->businessId)->find($commentId);
+        if ($comment === null) {
+            Toaster::error('That comment is not here any more.');
+
+            return;
+        }
+
+        if ($comment->private_replied_at !== null) {
+            Toaster::info('You already sent this person a private message.');
+
+            return;
+        }
+
+        if (! app(CommentIngestAction::class)->canReplyPrivately($comment)) {
+            Toaster::error('Facebook and Instagram allow one private message within 7 days of a comment, and this comment cannot get one.');
+
+            return;
+        }
+
+        $post = SocialPost::where('business_id', $this->businessId)->with('account')->find($comment->post_id);
+        if ($post === null || $post->provider_post_id === null || $post->account === null || $post->account->status !== 'connected' || $post->account->account_ref === null || ! in_array($post->account->platform, ['facebook', 'instagram'], true)) {
+            Toaster::error('Connect this account through Zernio first.');
+
+            return;
+        }
+
+        $text = trim((string) ($this->privateReply[$commentId] ?? ''));
+        if ($text === '' || mb_strlen($text) > 1000) {
+            Toaster::error('Write a message of up to 1,000 characters.');
+
+            return;
+        }
+
+        try {
+            app(ZernioSocialClient::class)->privateReplyToComment(
+                $post->account->account_ref,
+                $comment->platform_post_id,
+                $comment->platform_comment_id,
+                $text,
+                'comment-private-reply-'.$comment->id
+            );
+        } catch (GbpRequestFailed $e) {
+            Toaster::error('Zernio did not send it: '.$e->getMessage());
+
+            return;
+        }
+
+        app(CommentIngestAction::class)->recordPrivateReply($comment, $text);
+        Toaster::success('Sent as a private message.');
+        unset($this->privateReply[$commentId]);
+    }
+
     public function replyToDm(int $conversationId): void
     {
         abort_unless(auth()->user()?->role->canConfigureAutomation() === true, 403);
@@ -230,6 +374,22 @@ class SocialQueue extends Component
         Toaster::success('Sent on '.ucfirst($thread->channel).'.');
         unset($this->dmReply[$conversationId]);
         $this->dmDraftKey = (string) Str::uuid();
+    }
+
+    public function downloadDmAttachment(int $conversationId, int $messageId, int $index)
+    {
+        // The Messages section is shown to every role that opens this screen, so no role gate beyond tenancy.
+        $thread = app(ConversationThreads::class)->findSocial($conversationId);
+        if ($thread === null) {
+            abort(404);
+        }
+
+        $att = app(ConversationThreads::class)->attachmentOn($thread, $messageId, $index);
+        if (($att['status'] ?? null) !== 'stored' || ! is_string($att['path'] ?? null) || ($att['path'] ?? '') === '') {
+            abort(404);
+        }
+
+        return Storage::disk(ZernioWhatsappMedia::DISK)->download($att['path'], 'attachment-'.$messageId.'-'.($index + 1));
     }
 
     public function render()
