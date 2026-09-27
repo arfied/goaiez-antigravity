@@ -32,7 +32,8 @@ final class WhatsappEngine
         string $senderName = '',
         ?string $zernioConversationId = null,
         ?string $participantRef = null,
-        ?string $inboundRef = null
+        ?string $inboundRef = null,
+        array $attachments = []
     ): WhatsappSession {
         $session = null;
         if ($participantRef !== null) {
@@ -74,7 +75,7 @@ final class WhatsappEngine
             return $session;
         }
 
-        Event::dispatch(new WhatsappSessionOpened($businessId, $session->id, $recipientPhone, $body, $senderName));
+        Event::dispatch(new WhatsappSessionOpened($businessId, $session->id, $recipientPhone, $body, $senderName, $attachments));
 
         return $session;
     }

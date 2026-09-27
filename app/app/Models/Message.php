@@ -32,6 +32,7 @@ use Illuminate\Support\Carbon;
  * @property ?string $sender_id
  * @property ?string $body
  * @property ?string $provider_msg_id
+ * @property ?array<int, array<string, mixed>> $attachments
  * @property ?Carbon $created_at
  */
 final class Message extends Model implements TenantScoped

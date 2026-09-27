@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Zernio;
 
+use App\Enums\DataClassification;
+use App\Models\Business;
 use App\Modules\CWhatsapp\Actions\WhatsappConnectionLookupAction;
 use App\Modules\CWhatsapp\Domain\WhatsappEngine;
 use App\Services\Gbp\GbpConnections;
@@ -54,6 +56,37 @@ final class ZernioWhatsappInbound
                 $body = "[attachment: {$firstType}]";
             }
 
+            $attachments = [];
+            $rawAttachments = array_slice($payload['message']['attachments'] ?? [], 0, 4);
+
+            $business = Business::query()->find($businessId);
+            $healthTenant = $business !== null && $business->data_classification === DataClassification::Phi;
+
+            foreach ($rawAttachments as $a) {
+                $id = $a['payload']['id'] ?? null;
+                $type = (string) ($a['type'] ?? 'file');
+
+                if ($healthTenant) {
+                    $attachments[] = [
+                        'type' => $type,
+                        'status' => 'refused_health_tenant',
+                    ];
+                } elseif (is_string($id) && $id !== '') {
+                    $attachments[] = [
+                        'type' => $type,
+                        'mime' => $a['mimeType'] ?? null,
+                        'media_id' => $id,
+                        'account_ref' => $accountId,
+                        'status' => 'pending',
+                    ];
+                } else {
+                    $attachments[] = [
+                        'type' => $type,
+                        'status' => 'unavailable',
+                    ];
+                }
+            }
+
             $senderName = (string) ($payload['message']['sender']['name'] ?? '');
 
             $conversationId = (string) ($payload['conversation']['id'] ?? ($payload['message']['conversationId'] ?? ''));
@@ -68,7 +101,8 @@ final class ZernioWhatsappInbound
                 $senderName,
                 $conversationId === '' ? null : $conversationId,
                 $bsuid,
-                $wamid
+                $wamid,
+                $attachments
             );
 
             if ($phone === '') {

@@ -14,8 +14,10 @@ use App\Modules\CWhatsapp\Actions\WhatsappTemplateLookupAction;
 use App\Services\Conversations\ConversationThreads;
 use App\Services\Conversations\InboxReplies;
 use App\Services\Messaging\Outbound\SendOutcome;
+use App\Services\Zernio\ZernioWhatsappMedia;
 use App\Support\Tenancy;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -240,6 +242,22 @@ final class Inbox extends Component
         $this->templateId = null;
         $this->draftKey = (string) Str::uuid();
         Toaster::success($out['message']);
+    }
+
+    public function downloadAttachment(int $id, int $index, ConversationThreads $store)
+    {
+        $thread = $this->requireOpenThread($store);
+
+        if ($thread === null) {
+            return;
+        }
+
+        $att = $store->attachmentOn($thread, $id, $index);
+        if ($att === null || ($att['status'] ?? null) !== 'stored' || ! is_string($att['path'] ?? null)) {
+            abort(404);
+        }
+
+        return Storage::disk(ZernioWhatsappMedia::DISK)->download($att['path'], 'attachment-'.$id.'-'.($index + 1));
     }
 
     /**

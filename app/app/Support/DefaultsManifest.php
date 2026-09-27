@@ -107,6 +107,7 @@ use App\Services\Warehouse\PixelSightings;
 use App\Services\Warehouse\Replayer;
 use App\Services\Warehouse\WarehouseRetention;
 use App\Services\Widgets\WidgetInstalls;
+use App\Services\Zernio\ZernioWhatsappMedia;
 
 /**
  * THE SEED MANIFEST — doc `38` Part 2's "one reviewed file", CFG1.
@@ -600,6 +601,11 @@ final class DefaultsManifest
                 'seed' => 'api',
                 'group' => 'Messaging',
                 'description' => 'Zernio onboarding mode for connecting a number. api is Cloud API only; business_app keeps the number usable in the WhatsApp Business phone app but caps throughput at 20 messages a second and disables groups and calling.',
+            ],
+            'whatsapp.media_max_bytes' => [
+                'seed' => ZernioWhatsappMedia::MAX_BYTES,
+                'group' => 'Messaging',
+                'description' => 'Largest WhatsApp photo, voice note or file saved from an incoming message, in bytes.',
             ],
 
             /*

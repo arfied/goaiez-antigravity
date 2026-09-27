@@ -46,9 +46,10 @@ final class UnifiedInboxManager
         string $channel,
         string $identifier, // phone or email
         string $senderName,
-        string $body
+        string $body,
+        array $attachments = []
     ): array {
-        return DB::transaction(function () use ($businessId, $channel, $identifier, $senderName, $body) {
+        return DB::transaction(function () use ($businessId, $channel, $identifier, $senderName, $body, $attachments) {
             $isEmail = str_contains($identifier, '@');
 
             $lookup = app(PersonLookupAction::class);
@@ -109,7 +110,7 @@ final class UnifiedInboxManager
             // with a matching WITH CHECK in 2026_08_30_000001_create_x121_noun_tables.php:203). If the ambient
             // tenant is absent or mismatched, the Person write fails before reaching here.
             try {
-                app(ConversationThreads::class)->recordInbound($conversation, $body);
+                app(ConversationThreads::class)->recordInbound($conversation, $body, $attachments);
             } catch (\InvalidArgumentException $e) {
                 if (str_contains($e->getMessage(), 'cleared to store message content')) {
                     // A thread that has not been cleared to store message content does not store one, dropping it instead.
