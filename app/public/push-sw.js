@@ -11,6 +11,12 @@ self.addEventListener('push', function(event) {
 
         if (payload.event_type === 'test_alert') {
             body = 'Alerts are working on this browser.';
+        } else if (payload.event_type === 'lead_assigned') {
+            body = 'A lead was assigned to you.';
+        } else if (payload.event_type === 'inbound_message') {
+            body = 'A customer wrote to you.';
+        } else if (payload.event_type === 'new_review') {
+            body = 'You have a new review.';
         }
 
         event.waitUntil(
