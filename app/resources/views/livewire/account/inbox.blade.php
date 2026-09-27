@@ -187,6 +187,8 @@
                                 WhatsApp deleted this {{ $att['type'] }} before it could be saved.
                             @elseif (($att['status'] ?? '') === 'too_large')
                                 This {{ $att['type'] }} is too large to save here.
+                            @elseif (($att['status'] ?? '') === 'refused_health_tenant')
+                                This {{ $att['type'] }} was not saved, because this business handles health information.
                             @else
                                 This {{ $att['type'] }} could not be saved.
                             @endif
