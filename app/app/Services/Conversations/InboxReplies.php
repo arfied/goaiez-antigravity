@@ -14,6 +14,7 @@ use App\Models\Customer;
 use App\Models\User;
 use App\Modules\CWhatsapp\Actions\WhatsappConnectionLookupAction;
 use App\Modules\CWhatsapp\Actions\WhatsappSendAction;
+use App\Modules\CWhatsapp\Actions\WhatsappTemplateLookupAction;
 use App\Services\AuditService;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Consent\ConsentService;
@@ -257,14 +258,60 @@ final class InboxReplies
 
         $res = app(WhatsappSendAction::class)->handle($businessId, $phone, $body);
 
+        return $this->whatsappOutcome($conversation, $actor, $res, $body, null);
+    }
+
+    public function sendWhatsappTemplate(Conversation $conversation, int $templateId, User $actor): array
+    {
+        $businessId = Tenancy::idOrFail();
+
+        if ((int) $conversation->business_id !== $businessId) {
+            throw new InvalidArgumentException(
+                'That conversation belongs to another tenant, so it cannot be answered here.',
+            );
+        }
+
+        if ($conversation->channel !== OutreachChannel::Whatsapp->value) {
+            throw new InvalidArgumentException('Only a WhatsApp conversation is answered on WhatsApp.');
+        }
+
+        $contact = $this->store->contactFor($conversation);
+        $phone = $contact['phone'] ?? null;
+        if (empty($phone)) {
+            return ['sent' => false, 'message' => 'Not sent — there is no phone number for this person.'];
+        }
+
+        $connection = app(WhatsappConnectionLookupAction::class)->forBusiness($businessId);
+        if ($connection === null || $connection->status !== 'connected') {
+            return ['sent' => false, 'message' => 'Not sent — connect a WhatsApp number first.'];
+        }
+
+        $template = app(WhatsappTemplateLookupAction::class)->sendable($businessId)->firstWhere('id', $templateId);
+        if ($template === null) {
+            return ['sent' => false, 'message' => 'Not sent — that template is not approved for sending.'];
+        }
+
+        $this->threads->latch($conversation, $actor);
+
+        $res = app(WhatsappSendAction::class)->handle($businessId, $phone, $template->body_text, $template->name);
+
+        return $this->whatsappOutcome($conversation, $actor, $res, $template->body_text, $template->name);
+    }
+
+    private function whatsappOutcome(Conversation $conversation, User $actor, array $res, string $recordedBody, ?string $templateName): array
+    {
         if ($res['status'] === 'sent') {
-            $this->store->recordOutboundFromPerson(conversation: $conversation, body: $body, userId: (int) $actor->id);
+            $this->store->recordOutboundFromPerson(conversation: $conversation, body: $recordedBody, userId: (int) $actor->id);
             $this->audit->record(
                 action: 'inbox.reply.sent',
                 actor: 'user:'.$actor->id,
                 entity: $conversation,
-                metadata: ['channel' => 'whatsapp', 'carrier_handle' => $res['provider_message_ref'] ?? null],
+                metadata: ['channel' => 'whatsapp', 'carrier_handle' => $res['provider_message_ref'] ?? null, 'template' => $templateName],
             );
+
+            if ($templateName !== null) {
+                return ['sent' => true, 'message' => 'Sent the "'.$templateName.'" template on WhatsApp. Your assistant will stay quiet on this conversation.'];
+            }
 
             return ['sent' => true, 'message' => 'Sent on WhatsApp. Your assistant will stay quiet on this conversation.'];
         }
