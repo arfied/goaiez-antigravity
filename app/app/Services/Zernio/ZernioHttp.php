@@ -60,4 +60,19 @@ final class ZernioHttp
             throw GbpRequestFailed::unreachable('connection_failed');
         }
     }
+
+    public function delete(string $path): Response
+    {
+        $url = self::BASE.'/'.ltrim($path, '/');
+
+        $request = Http::withToken(PlatformCredentials::get('zernio_api_key'))
+            ->timeout((int) config('gbp.timeout', 10))
+            ->acceptJson();
+
+        try {
+            return VendorLog::timed('zernio', 'DELETE', $url, fn () => $request->delete($url));
+        } catch (ConnectionException) {
+            throw GbpRequestFailed::unreachable('connection_failed');
+        }
+    }
 }
