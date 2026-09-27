@@ -28,7 +28,19 @@
                 @foreach($posts as $post)
                     <li>
                         {{ $post->content_text }} {{ $post->comments->count() }} comments
-                        <ul class="text-sm text-ink-2">@foreach($post->comments->sortBy('id')->take(20) as $c)<li>{{ $c->author_name }}: {{ $c->comment_text }}</li>@endforeach</ul>
+                        <ul class="text-sm text-ink-2">
+                            @foreach($post->comments->sortBy('id')->take(20) as $c)
+                                <li>
+                                    {{ $c->author_name }}: {{ $c->comment_text }}
+                                    @if($c->replied_at)
+                                        — You replied: {{ $c->reply_text }}
+                                    @elseif($c->platform_comment_id)
+                                        <input type="text" wire:model="commentReply.{{ $c->id }}" maxlength="1000">
+                                        <x-ui.button wire:click="replyToComment({{ $c->id }})" size="sm">Reply</x-ui.button>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ul>
                         @if($post->publish_status === 'published')
                             — published on {{ ucfirst($post->account?->platform) }}
                             @if($post->platform_post_url)

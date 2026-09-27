@@ -6,6 +6,7 @@ namespace App\Modules\X182\Actions;
 
 use App\Modules\X182\Models\Comment;
 use App\Modules\X182\Models\SocialPost;
+use App\Support\Tenancy;
 use Carbon\Carbon;
 
 final class CommentIngestAction
@@ -80,5 +81,18 @@ final class CommentIngestAction
         $newComment->save();
 
         return 'stored';
+    }
+
+    public function recordOwnerReply(Comment $comment, string $text, ?string $replyRef): void
+    {
+        if ((int) $comment->business_id !== Tenancy::idOrFail()) {
+            throw new \InvalidArgumentException('Comment does not belong to the current tenant');
+        }
+
+        $comment->reply_text = $text;
+        $comment->reply_ref = $replyRef;
+        $comment->replied_at = Carbon::now();
+        $comment->is_publicly_replied = true;
+        $comment->save();
     }
 }
