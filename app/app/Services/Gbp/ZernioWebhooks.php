@@ -15,6 +15,7 @@ use App\Modules\X182\Actions\CommentIngestAction;
 use App\Modules\X182\Actions\SocialAccountLookupAction;
 use App\Modules\X182\Actions\SocialPostSettleAction;
 use App\Modules\X182\Domain\SocialConnections;
+use App\Services\Zernio\ZernioSocialInbound;
 use App\Services\Zernio\ZernioWhatsappInbound;
 use App\Services\Zernio\ZernioWhatsappStatuses;
 use App\Services\Zernio\ZernioWhatsappTemplates;
@@ -119,6 +120,11 @@ final class ZernioWebhooks
             return $this->handlePostPlatform($payload, $event === 'post.platform.published');
         }
         if ($event === 'message.received') {
+            $platform = $payload['message']['platform'] ?? null;
+            if ($platform === 'facebook' || $platform === 'instagram') {
+                return app(ZernioSocialInbound::class)->handle($payload);
+            }
+
             return app(ZernioWhatsappInbound::class)->handle($payload);
         }
         if ($event === 'whatsapp.template.status_updated') {

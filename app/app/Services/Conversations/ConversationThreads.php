@@ -10,6 +10,7 @@ use App\Enums\OutreachChannel;
 use App\Models\Conversation;
 use App\Models\Customer;
 use App\Models\Message;
+use App\Modules\X121\Actions\EntityReadAction;
 use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\Collection;
@@ -102,7 +103,7 @@ final class ConversationThreads
     public function list(): Collection
     {
         return Conversation::query()
-            ->where('channel', OutreachChannel::Sms->value)
+            ->whereIn('channel', [OutreachChannel::Sms->value, OutreachChannel::Whatsapp->value])
             ->with('customer')
             // Newest first on `updated_at`, which `touch()` moves on every
             // message. Ordering on the message table would need a join no
@@ -131,9 +132,96 @@ final class ConversationThreads
     public function find(int $conversationId): ?Conversation
     {
         return Conversation::query()
-            ->where('channel', OutreachChannel::Sms->value)
+            ->whereIn('channel', [OutreachChannel::Sms->value, OutreachChannel::Whatsapp->value])
             ->with('customer')
             ->find($conversationId);
+    }
+
+    public function findSocial(int $conversationId): ?Conversation
+    {
+        return Conversation::query()
+            ->whereIn('channel', ['facebook', 'instagram'])
+            ->with('customer')
+            ->find($conversationId);
+    }
+
+    public function socialThreads(): Collection
+    {
+        return Conversation::query()
+            ->whereIn('channel', ['facebook', 'instagram'])
+            ->with('customer')
+            ->orderByRaw('updated_at DESC NULLS LAST')
+            ->orderByDesc('id')
+            ->limit($this->defaults->int('conversations.list_limit'))
+            ->get();
+    }
+
+    public function socialThread(string $platform, string $conversationRef, string $accountRef, ?string $label): Conversation
+    {
+        if (! in_array($platform, ['facebook', 'instagram'], true)) {
+            throw new InvalidArgumentException("Platform must be facebook or instagram, got $platform");
+        }
+
+        $businessId = Tenancy::idOrFail();
+
+        /** @var Conversation $thread */
+        $thread = DB::transaction(function () use ($platform, $conversationRef, $accountRef, $label, $businessId): Conversation {
+            $existing = Conversation::query()
+                ->where('channel', $platform)
+                ->where('provider_conversation_ref', $conversationRef)
+                ->lockForUpdate()
+                ->first();
+
+            if ($existing instanceof Conversation) {
+                if ($existing->contact_label === null && $label !== null) {
+                    $existing->update(['contact_label' => $label]);
+                }
+
+                return $existing;
+            }
+
+            return Conversation::query()->create([
+                'business_id' => $businessId,
+                'channel' => $platform,
+                'status' => 'open',
+                'priority' => 'normal',
+                'is_bot_handled' => false,
+                'provider_conversation_ref' => $conversationRef,
+                'provider_account_ref' => $accountRef,
+                'contact_label' => $label,
+                'consent_logged_at' => now(),
+            ]);
+        });
+
+        return $thread;
+    }
+
+    public function contactFor(Conversation $conversation): ?array
+    {
+        $this->refuseForeignThread($conversation);
+
+        if ($conversation->customer !== null) {
+            return [
+                'name' => $conversation->customer->name,
+                'phone' => $conversation->customer->phone,
+            ];
+        }
+
+        if ($conversation->person_id !== null) {
+            $person = app(EntityReadAction::class)->handle('people', (int) $conversation->person_id, (int) $conversation->business_id);
+            if ($person === null) {
+                return null;
+            }
+
+            $name = trim(($person['first_name'] ?? '').' '.($person['last_name'] ?? ''));
+
+            return [
+                'name' => $name === '' ? null : $name,
+                'phone' => $person['phone'] ?? null,
+            ];
+        }
+
+        return null;
     }
 
     /**
