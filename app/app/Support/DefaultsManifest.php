@@ -588,7 +588,7 @@ final class DefaultsManifest
             'whatsapp.zernio_enabled' => [
                 'seed' => false,
                 'group' => 'Messaging',
-                'description' => 'Whether WhatsApp routes through Zernio. Off until the owner connects a number.',
+                'description' => 'Whether WhatsApp routes through Zernio. Off until the owner connects a number. The first connection for a business creates its Zernio profile through the Google Business integration, so gbp.zernio_enabled must be on for that step.',
             ],
 
             'whatsapp.zernio_onboarding' => [

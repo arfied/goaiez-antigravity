@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Gbp;
 
 use App\Exceptions\GbpRequestFailed;
-use App\Models\WhatsappAccountBinding;
+use App\Models\ZernioAccountBinding;
 
 /**
  * What we are billed for, against what we are using — 6779(d), closed as far as
@@ -94,7 +94,7 @@ final class ZernioReconciliation
         // never names `GbpAccountBinding` and `GbpTest`'s two-part lint on that
         // model keeps the allowlist it has (624's shape).
         $bindings = $this->connections->bindingsByAccountRef();
-        $whatsappRefs = WhatsappAccountBinding::query()->pluck('account_ref')->flip();
+        $zernioRefs = ZernioAccountBinding::query()->pluck('account_ref')->flip();
 
         $orphanAccounts = [];
         $seen = [];
@@ -106,8 +106,8 @@ final class ZernioReconciliation
                 continue;
             }
 
-            // A WhatsApp number bound through wave 839 is ours, not an orphan. Missing-at-provider detection below stays Google-only (WhatsApp bindings carry no business_id) — recorded as a follow-up.
-            if ($whatsappRefs->has($account->accountRef)) {
+            // A WhatsApp/Facebook/Instagram account bound through Zernio is ours, not an orphan. Missing-at-provider detection below stays Google-only (WhatsApp bindings carry no business_id) — recorded as a follow-up.
+            if ($zernioRefs->has($account->accountRef)) {
                 continue;
             }
 

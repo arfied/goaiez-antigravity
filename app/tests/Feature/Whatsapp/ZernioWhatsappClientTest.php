@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 use App\Exceptions\GbpRequestFailed;
 use App\Models\Business;
-use App\Models\WhatsappAccountBinding;
+use App\Models\GbpProfileBinding;
+use App\Models\ZernioAccountBinding;
 use App\Modules\CWhatsapp\Models\WhatsappConnection;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Gbp\GbpConnections;
+use App\Services\Gbp\ZernioReconciliation;
 use App\Services\Gbp\ZernioSpend;
 use App\Services\Zernio\ZernioWhatsappClient;
 use App\Support\Tenancy;
@@ -107,7 +110,58 @@ it('adds to connectedAccounts spend count', function () {
     $spend = app(ZernioSpend::class);
     $before = $spend->connectedAccounts();
 
-    WhatsappAccountBinding::create(['account_ref' => 'new_wa', 'profile_ref' => 'prof']);
+    ZernioAccountBinding::create(['account_ref' => 'new_wa', 'profile_ref' => 'prof', 'platform' => 'whatsapp']);
 
     expect($spend->connectedAccounts())->toBe($before + 1);
+});
+
+it('returns stored profile and makes no vendor call when flag is off', function () {
+    app(DefaultsRegistry::class)->set('gbp.zernio_enabled', false, 'test');
+
+    $business = Business::factory()->create();
+    Tenancy::set((int) $business->id);
+
+    GbpProfileBinding::forceCreate([
+        'business_id' => $business->id,
+        'profile_ref' => 'profile_5201',
+    ]);
+
+    Http::fake();
+
+    $profile = app(GbpConnections::class)->zernioProfileForCurrentBusiness();
+
+    expect($profile)->toBe('profile_5201');
+    Http::assertNothingSent();
+});
+
+it('counts facebook platform in connectedAccounts and excludes from orphans', function () {
+    app(DefaultsRegistry::class)->set('gbp.zernio_enabled', true, 'test');
+
+    $business = Business::factory()->create();
+    Tenancy::set((int) $business->id);
+
+    $spend = app(ZernioSpend::class);
+    $beforeCount = $spend->connectedAccounts();
+
+    ZernioAccountBinding::create([
+        'account_ref' => 'acct_fb_5202',
+        'profile_ref' => 'profile_5201',
+        'platform' => 'facebook',
+    ]);
+
+    expect($spend->connectedAccounts())->toBe($beforeCount + 1);
+
+    Http::fake([
+        'zernio.com/api/v1/accounts*' => Http::response(['accounts' => [
+            [
+                '_id' => 'acct_fb_5202',
+                'profileId' => 'profile_5201',
+                'platform' => 'facebook',
+            ],
+        ]]),
+    ]);
+
+    $recon = app(ZernioReconciliation::class)->run();
+
+    expect($recon->orphans)->toBeEmpty();
 });
