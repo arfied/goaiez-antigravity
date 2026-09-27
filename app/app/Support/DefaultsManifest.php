@@ -585,6 +585,18 @@ final class DefaultsManifest
                 'description' => 'Whether Google Business reads route through Zernio while our own GBP API application is pending. Off until a tenant-scoped account mapping exists — the client cannot verify that an account id belongs to the tenant it is called for. Retire this key when direct access is approved; the swap re-authorises every tenant and is a commercial decision, not a deploy.',
             ],
 
+            'whatsapp.zernio_enabled' => [
+                'seed' => false,
+                'group' => 'Messaging',
+                'description' => 'Whether WhatsApp routes through Zernio. Off until the owner connects a number.',
+            ],
+
+            'whatsapp.zernio_onboarding' => [
+                'seed' => 'api',
+                'group' => 'Messaging',
+                'description' => 'Zernio onboarding mode for connecting a number. api is Cloud API only; business_app keeps the number usable in the WhatsApp Business phone app but caps throughput at 20 messages a second and disables groups and calling.',
+            ],
+
             /*
              * The platform's monthly Zernio ceiling — decision 4720, closing
              * 4685's "no meter, no budget, no ceiling and no debit".

@@ -1406,6 +1406,15 @@ final class GbpConnections
      *
      * @throws GbpRequestFailed
      */
+    public function zernioProfileForCurrentBusiness(): string
+    {
+        $business = Business::findOrFail(Tenancy::idOrFail());
+        $profileRef = $this->profileRefFor($business);
+        $this->recordProfile($profileRef, (int) $business->id);
+
+        return $profileRef;
+    }
+
     private function profileRefFor(Business $business): string
     {
         $stored = GbpConnection::query()
