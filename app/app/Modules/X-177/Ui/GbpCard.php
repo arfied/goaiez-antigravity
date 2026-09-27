@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace App\Modules\X177\Ui;
 
+use App\Exceptions\GbpRequestFailed;
 use App\Modules\X177\Actions\GbpPostAction;
+use App\Modules\X177\Actions\GbpPostSettleAction;
 use App\Modules\X177\Actions\GbpStateAction;
 use App\Modules\X177\Models\GbpConnection;
 use App\Modules\X177\Models\GbpPost;
 use App\Modules\X177\Models\GbpStateLog;
+use App\Services\Gbp\ZernioGbpClient;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Masmerise\Toaster\Toaster;
 
 #[Layout('components.account.layout', ['heading' => 'Google profile'])]
 class GbpCard extends Component
@@ -70,8 +74,49 @@ class GbpCard extends Component
 
     public array $postCtaUrl = [];
 
+    public function checkAgain(int $postId): void
+    {
+        abort_unless(auth()->user()?->role->canConfigureAutomation() === true, 403);
+
+        $post = GbpPost::where('business_id', $this->businessId)
+            ->where('status', 'publishing')
+            ->find($postId);
+
+        if (! $post) {
+            Toaster::info('Nothing to check — that post is not waiting on Zernio.');
+
+            return;
+        }
+
+        if (! $post->zernio_dispatch_id) {
+            Toaster::error('That post never reached Zernio, so there is nothing to check.');
+
+            return;
+        }
+
+        try {
+            $receipt = app(ZernioGbpClient::class)->getPost($post->zernio_dispatch_id);
+        } catch (GbpRequestFailed) {
+            Toaster::error('We could not reach Zernio. Try again shortly.');
+
+            return;
+        }
+
+        if ($receipt->status === 'published') {
+            app(GbpPostSettleAction::class)->settle($this->businessId, $post->id, true, null, $receipt->providerPostId);
+            Toaster::success('Posted on Google.');
+        } elseif ($receipt->status === 'failed' || $receipt->status === 'partial') {
+            app(GbpPostSettleAction::class)->settle($this->businessId, $post->id, false, $receipt->errorMessage, $receipt->providerPostId);
+            Toaster::error('Google refused it: '.($receipt->errorMessage ?? 'no reason given').'.');
+        } else {
+            Toaster::info('Zernio is still publishing it.');
+        }
+    }
+
     public function postUpdate(int $connectionId): void
     {
+        abort_unless(auth()->user()?->role->canConfigureAutomation() === true, 403);
+
         if ($this->isSample) {
             return;
         }
