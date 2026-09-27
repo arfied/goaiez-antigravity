@@ -69,7 +69,7 @@ final class SchemaRenderAction
                         ],
                         'lowPrice' => $p['price'] ?? null,
                         'highPrice' => $p['price_max'],
-                        'priceCurrency' => 'USD',
+                        'priceCurrency' => $p['currency'] ?? 'USD',
                     ]
                     : [
                         '@type' => 'Offer',
@@ -78,7 +78,7 @@ final class SchemaRenderAction
                             'name' => $p['name'],
                         ],
                         'price' => $p['price'] ?? null,
-                        'priceCurrency' => 'USD',
+                        'priceCurrency' => $p['currency'] ?? 'USD',
                     ], $productOffers),
             ];
         }

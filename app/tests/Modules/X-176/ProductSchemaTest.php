@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X176;
 
+use App\Models\PlatformSetting;
 use App\Modules\X103\Models\Page;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
@@ -237,5 +238,54 @@ final class ProductSchemaTest extends TestCase
         $this->assertEquals(100, $offer['lowPrice']);
         $this->assertEquals(300, $offer['highPrice']);
         $this->assertArrayNotHasKey('price', $offer);
+    }
+
+    public function test_offers_print_the_configured_currency_through_the_platform_formatter(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant(['name' => 'Schema Tenant 5']);
+        Tenancy::set((int) $biz->id);
+
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => 'home']);
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'schema5.example.com', true);
+
+        PlatformSetting::write('billing.currency', 'CAD', 'test');
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Distinctive CAD Service 4936',
+            'price_cents' => 15000,
+            'is_confirmed' => true,
+            'is_sample' => false,
+        ]);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $page->id,
+            commitId: 'commit_p5',
+            businessName: 'My Biz'
+        );
+
+        $this->assertEquals('deployed', $res['status']);
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
+        $this->assertStringContainsString('Distinctive CAD Service 4936 - CAD 150', $html);
+        $this->assertStringNotContainsString('4936 - $', $html);
+
+        preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $html, $matches);
+        $this->assertNotEmpty($matches, 'JSON-LD script tag not found');
+        $json = json_decode($matches[1], true);
+
+        $this->assertArrayHasKey('hasOfferCatalog', $json);
+        $catalog = $json['hasOfferCatalog'];
+        $this->assertEquals('OfferCatalog', $catalog['@type']);
+        $this->assertCount(1, $catalog['itemListElement']);
+
+        $offer = $catalog['itemListElement'][0];
+        $this->assertEquals('Offer', $offer['@type']);
+        $this->assertEquals('Distinctive CAD Service 4936', $offer['itemOffered']['name']);
+        $this->assertEquals(150, $offer['price']);
+        $this->assertEquals('CAD', $offer['priceCurrency']);
     }
 }

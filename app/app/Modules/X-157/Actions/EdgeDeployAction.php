@@ -23,6 +23,8 @@ use App\Modules\X176\Actions\SeoRenderAction;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Industry\IndustryStartingPoints;
 use App\Services\Pixel\PixelKeys;
+use App\Support\Money;
+use App\Support\PlanPricing;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
@@ -144,6 +146,9 @@ JS;
                 ];
             }
 
+            $stored = $this->defaults->value('billing.currency');
+            $currency = is_string($stored) && trim($stored) !== '' ? strtoupper(trim($stored)) : 'USD';
+
             $productOffers = [];
             $priceBookItems = app(QuotablePriceAction::class)->options($businessId);
             // The old code did ->limit(20), so we do array_slice
@@ -157,6 +162,9 @@ JS;
                     'name' => $item['service_name'],
                     'price' => $item['price_cents'] / 100,
                     'price_max' => isset($item['price_max_cents']) ? $item['price_max_cents'] / 100 : null,
+                    'currency' => $currency,
+                    'price_text' => PlanPricing::format(Money::of((int) $item['price_cents'], $currency)),
+                    'price_max_text' => isset($item['price_max_cents']) ? PlanPricing::format(Money::of((int) $item['price_max_cents'], $currency)) : null,
                 ];
             }
 
@@ -382,7 +390,7 @@ JS;
             if (! empty($productOffers)) {
                 $html .= "<div id=\"offers-x176\">\n";
                 foreach ($productOffers as $offer) {
-                    $priceText = '$'.e((string) $offer['price']).(isset($offer['price_max']) ? ' to $'.e((string) $offer['price_max']) : '');
+                    $priceText = e($offer['price_text']).(isset($offer['price_max_text']) ? ' to '.e($offer['price_max_text']) : '');
                     $html .= '  <div class="offer-item" data-name="'.e($offer['name']).'">'.e($offer['name']).' - '.$priceText."</div>\n";
                 }
                 $html .= "</div>\n";
