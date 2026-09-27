@@ -665,6 +665,8 @@ class X157Test extends TestCase
         $response->assertStatus(200);
         $html = (string) $response->getContent();
 
+        $this->assertStringStartsWith('<!doctype html><html lang="en"><head>', ltrim($html));
+        $this->assertStringContainsString('<meta name="viewport" content="width=device-width, initial-scale=1">', $html);
         $this->assertStringContainsString('x110-pixel', $html);
         $this->assertStringContainsString('chat-widget-container', $html);
         $this->assertStringContainsString('form-capture-x155', $html);

@@ -32,10 +32,38 @@ final class SiteBlockRenderer
     --font-heading: '.$fontHeading.';
     --font-body: '.$fontBody.';
 }
-body { background: var(--color-canvas); color: var(--color-ink); font-family: var(--font-body); }
-h1, h2, h3 { font-family: var(--font-heading); }
-.site-block.booking a { color: var(--color-accent); }
-.site-block { margin-bottom: 2rem; }
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0 auto; max-width: 72rem; padding: 0 1.25rem 4rem; background: var(--color-canvas); color: var(--color-ink); font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.6; }
+h1, h2, h3 { font-family: var(--font-heading); line-height: 1.15; margin: 0 0 0.75rem; text-wrap: balance; }
+h1 { font-size: clamp(2rem, 5vw, 3.25rem); }
+h2 { font-size: clamp(1.5rem, 3.2vw, 2.125rem); }
+p { margin: 0 0 1rem; max-width: 65ch; }
+img { max-width: 100%; height: auto; display: block; }
+a { color: var(--color-accent); }
+.site-block { margin: 0; padding: clamp(2rem, 5vw, 3.5rem) 0; border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent); }
+.site-block:last-child { border-bottom: 0; }
+.site-block ul { list-style: none; margin: 0; padding: 0; }
+.site-block.hero { padding-top: clamp(3rem, 8vw, 6rem); }
+.site-block.hero p { font-size: 1.25rem; opacity: 0.85; }
+.site-block.hero img { margin-top: 1.5rem; width: 100%; max-height: 32rem; object-fit: cover; border-radius: 12px; }
+.site-block.services ul, .site-block.team ul { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); }
+.site-block.services li, .site-block.team li { display: grid; gap: 0.35rem; padding: 1.25rem; border-radius: 12px; background: var(--color-card); }
+.site-block.services li span { color: var(--color-accent); font-weight: 600; }
+.site-block.services li p { margin: 0; opacity: 0.85; }
+.site-block.gallery { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
+.site-block.gallery h2 { grid-column: 1 / -1; }
+.site-block.gallery img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; }
+.review-list { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); }
+.review-list blockquote { margin: 0; padding: 1.25rem; border-radius: 12px; background: var(--color-card); }
+.review-list cite { font-style: normal; font-size: 0.9rem; opacity: 0.8; }
+.site-block.booking a { display: inline-block; padding: 0.85rem 1.5rem; border-radius: 999px; background: var(--color-primary); color: var(--color-canvas); font-weight: 600; text-decoration: none; }
+.site-block.booking a:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
+.site-block.contact ul { display: grid; gap: 0.25rem; margin-top: 0.5rem; }
+#faq-x176 > div { padding: 0.75rem 0; border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent); }
+.site-block form { display: grid; gap: 0.75rem; max-width: 32rem; }
+.site-block input, .site-block textarea, .site-block select { font: inherit; padding: 0.65rem 0.8rem; border-radius: 8px; border: 1px solid color-mix(in srgb, var(--color-ink) 25%, transparent); background: var(--color-card); color: var(--color-ink); }
+.site-block button { font: inherit; font-weight: 600; padding: 0.75rem 1.25rem; border: 0; border-radius: 999px; background: var(--color-primary); color: var(--color-canvas); cursor: pointer; }
 </style>
 ';
 
