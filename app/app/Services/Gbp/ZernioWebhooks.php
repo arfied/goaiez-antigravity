@@ -12,6 +12,7 @@ use App\Modules\CWhatsapp\Actions\WhatsappConnectionLookupAction;
 use App\Modules\CWhatsapp\Actions\WhatsappDisconnectedExternallyAction;
 use App\Modules\X177\Actions\GbpPostSettleAction;
 use App\Services\Zernio\ZernioWhatsappInbound;
+use App\Services\Zernio\ZernioWhatsappTemplates;
 use App\Support\Tenancy;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
@@ -104,6 +105,9 @@ final class ZernioWebhooks
         }
         if ($event === 'message.received') {
             return app(ZernioWhatsappInbound::class)->handle($payload);
+        }
+        if ($event === 'whatsapp.template.status_updated') {
+            return app(ZernioWhatsappTemplates::class)->handle($payload);
         }
 
         return 'ignored';

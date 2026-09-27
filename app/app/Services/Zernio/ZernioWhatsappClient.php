@@ -113,4 +113,66 @@ final class ZernioWhatsappClient
             throw GbpRequestFailed::from($response, accountScoped: true);
         }
     }
+
+    public function submitTemplate(string $accountRef, string $name, string $category, string $language, string $bodyText): array
+    {
+        $this->assertUsable();
+
+        $component = [
+            'type' => 'body',
+            'text' => $bodyText,
+        ];
+
+        // Only build example.body_text when text contains {{n}} placeholders
+        $exampleCount = preg_match_all('/\{\{(\d+)\}\}/', $bodyText);
+        if ($exampleCount > 0) {
+            $component['example'] = [
+                'body_text' => [array_fill(0, $exampleCount, 'example')],
+            ];
+        }
+
+        try {
+            $response = $this->request()->post(self::BASE.'/whatsapp/templates', [
+                'accountId' => $accountRef,
+                'name' => $name,
+                'category' => strtoupper($category),
+                'language' => $language,
+                'components' => [$component],
+            ]);
+        } catch (ConnectionException) {
+            throw GbpRequestFailed::unreachable('connection_failed');
+        }
+
+        if ($response->failed()) {
+            throw GbpRequestFailed::from($response, accountScoped: true);
+        }
+
+        $template = $response->json('template');
+
+        return [
+            'ref' => is_array($template) && array_key_exists('id', $template) ? (string) $template['id'] : null,
+            'status' => is_array($template) && array_key_exists('status', $template) ? (string) $template['status'] : null,
+        ];
+    }
+
+    public function templates(string $accountRef): array
+    {
+        $this->assertUsable();
+
+        try {
+            $response = $this->request()->get(self::BASE.'/whatsapp/templates', [
+                'accountId' => $accountRef,
+            ]);
+        } catch (ConnectionException) {
+            throw GbpRequestFailed::unreachable('connection_failed');
+        }
+
+        if ($response->failed()) {
+            throw GbpRequestFailed::from($response, accountScoped: true);
+        }
+
+        $templates = $response->json('templates');
+
+        return is_array($templates) ? $templates : [];
+    }
 }

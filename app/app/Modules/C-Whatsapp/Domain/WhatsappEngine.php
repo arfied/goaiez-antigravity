@@ -148,18 +148,60 @@ final class WhatsappEngine
         ];
     }
 
+    public function applyTemplateStatus(int $businessId, ?string $providerRef, string $name, string $language, string $zernioStatus, ?string $reason): ?WhatsappTemplate
+    {
+        $template = null;
+        if ($providerRef !== null) {
+            $template = WhatsappTemplate::where('business_id', $businessId)
+                ->where('provider_template_ref', $providerRef)
+                ->first();
+        }
+
+        if ($template === null) {
+            $template = WhatsappTemplate::where('business_id', $businessId)
+                ->where('name', $name)
+                ->where('language', $language)
+                ->first();
+        }
+
+        if ($template === null) {
+            return null;
+        }
+
+        $new = TemplateStatuses::fromZernio($zernioStatus);
+
+        if ($new === null) {
+            return $template;
+        }
+
+        $oldStatus = $template->status;
+
+        $updates = [
+            'status' => $new,
+            'status_reason' => $reason === 'NONE' ? null : $reason,
+            'status_updated_at' => Carbon::now(),
+        ];
+        if (empty($template->provider_template_ref) && $providerRef !== null) {
+            $updates['provider_template_ref'] = $providerRef;
+        }
+
+        $template->update($updates);
+
+        if ($new === 'approved' && $oldStatus !== 'approved') {
+            Event::dispatch(new TemplateApproved($businessId, $template->id, $template->name));
+        }
+
+        return $template;
+    }
+
     /**
      * Submit and approve template.
      */
     public function approveTemplate(int $businessId, int $templateId): WhatsappTemplate
     {
         $template = WhatsappTemplate::where('business_id', $businessId)->findOrFail($templateId);
-        $template->update([
-            'status' => 'approved',
-        ]);
+        $this->applyTemplateStatus($businessId, null, $template->name, $template->language, 'APPROVED', null);
 
-        Event::dispatch(new TemplateApproved($businessId, $template->id, $template->name));
-
-        return $template;
+        return $template->refresh();
     }
 }

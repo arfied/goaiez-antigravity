@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\CWhatsapp\Actions;
 
+use App\Exceptions\GbpRequestFailed;
+use App\Modules\CWhatsapp\Domain\TemplateStatuses;
+use App\Modules\CWhatsapp\Models\WhatsappConnection;
 use App\Modules\CWhatsapp\Models\WhatsappTemplate;
+use App\Services\Zernio\ZernioWhatsappClient;
 
 final class TemplateSubmitAction
 {
@@ -15,14 +19,62 @@ final class TemplateSubmitAction
         string $bodyText,
         string $language = 'en_US'
     ): WhatsappTemplate {
-        return WhatsappTemplate::updateOrCreate(
+        if (! preg_match('/^[a-z][a-z0-9_]*$/', $name)) {
+            throw new \InvalidArgumentException('Template names use lowercase letters, numbers and underscores, starting with a letter.');
+        }
+
+        if (! in_array(strtoupper($category), ['UTILITY', 'MARKETING', 'AUTHENTICATION'], true)) {
+            throw new \InvalidArgumentException('Invalid category.');
+        }
+
+        $template = WhatsappTemplate::updateOrCreate(
             ['business_id' => $businessId, 'name' => $name],
             [
                 'category' => $category,
                 'body_text' => $bodyText,
                 'language' => $language,
-                'status' => 'pending_approval',
+                'status' => 'draft',
             ]
         );
+
+        $lookup = app(WhatsappConnectionLookupAction::class);
+        try {
+            $connection = $lookup->forBusiness($businessId);
+        } catch (\Error) {
+            $connection = WhatsappConnection::where('business_id', $businessId)->first();
+        }
+
+        if (! $connection || $connection->status !== 'connected') {
+            return $template;
+        }
+
+        $client = app(ZernioWhatsappClient::class);
+
+        try {
+            $ref = $client->submitTemplate(
+                $connection->account_ref,
+                $name,
+                $category,
+                $language,
+                $bodyText
+            );
+
+            $template->update([
+                'status' => TemplateStatuses::fromZernio($ref['status']) ?? 'pending_approval',
+                'provider_template_ref' => $ref['ref'],
+                'submitted_at' => now(),
+                'status_reason' => null,
+            ]);
+        } catch (GbpRequestFailed $e) {
+            if ($e->reason === 'unknown_error') {
+                dump('Trace:', $e->getTraceAsString());
+            }
+            $template->update([
+                'status' => 'submit_failed',
+                'status_reason' => $e->reason,
+            ]);
+        }
+
+        return $template;
     }
 }
