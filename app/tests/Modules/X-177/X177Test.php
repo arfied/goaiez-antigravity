@@ -16,8 +16,10 @@ use App\Modules\X177\Events\GbpSuspended;
 use App\Modules\X177\Events\GbpSuspensionRisk;
 use App\Modules\X177\Models\GbpConnection;
 use App\Modules\X177\Models\GbpPost;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class X177Test extends TestCase
@@ -65,6 +67,8 @@ class X177Test extends TestCase
             'account_id' => 'acc_gbp_9901',
             'location_id' => $loc->id,
             'profile_status' => 'active',
+            'account_ref' => 'acc_zernio_4955',
+            'status' => 'connected',
         ]);
 
         // 1. A write flagged by the risk ruleset NEVER reaches Zernio (TEST ANCHOR)
@@ -117,6 +121,12 @@ class X177Test extends TestCase
         $this->assertEquals('active', $conn->profile_status);
 
         Event::assertDispatched(GbpReinstated::class);
+
+        app(DefaultsRegistry::class)->set('gbp.zernio_enabled', true, 'test');
+        config(['credentials.zernio_api_key' => 'test-key']);
+        Http::fake([
+            'zernio.com/api/v1/posts' => Http::response(['post' => ['_id' => 'zp_4955', 'status' => 'published', 'platforms' => [['platform' => 'googlebusiness', 'status' => 'published', 'platformPostId' => 'g_4955']]]], 201),
+        ]);
 
         $validPostRes = $this->postAction->post(
             businessId: $biz->id,
