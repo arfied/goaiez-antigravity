@@ -276,7 +276,8 @@ class ThreadScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        Tenancy::actingAs($biz->id, function () use ($owner) {
+        $customer = null;
+        Tenancy::actingAs($biz->id, function () use ($owner, &$customer) {
             Tenancy::setUser($owner->id);
             $customer = Customer::factory()->create(['name' => 'Jane Empty']);
 
@@ -300,7 +301,7 @@ class ThreadScreenTest extends TestCase
                 ->assertSet('notice', 'Added to the conversation. Nothing was sent to the customer — to text them, reply from the Inbox.');
         });
 
-        $this->get(route('x-01.thread'))
+        $this->get(route('x-01.thread', ['customer' => $customer->id]))
             ->assertOk()
             ->assertSee('Add to the conversation')
             ->assertDontSee('Send Reply');
