@@ -51,7 +51,6 @@ class LatencyP50p95PerScreenTest extends TestCase
     {
         $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
         $this->actingAs($user);
-        $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
 
         $this->get(route('x-66.latency-p50p95-per.admin'))->assertOk();
 
