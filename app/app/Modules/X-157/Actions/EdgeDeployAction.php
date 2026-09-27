@@ -168,7 +168,8 @@ JS;
                 ];
             }
 
-            $html = '<html><head>';
+            $html = '<!doctype html><html lang="en"><head>';
+            $html .= "<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n";
             $html .= "<meta name=\"ssl\" content=\"valid\">\n";
 
             $x176Usable = false;

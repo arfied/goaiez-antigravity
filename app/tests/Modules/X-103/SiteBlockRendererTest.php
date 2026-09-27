@@ -294,4 +294,18 @@ class SiteBlockRendererTest extends TestCase
         $this->assertStringNotContainsString('Hello', $html);
         Log::shouldHaveReceived('warning')->once();
     }
+
+    public function test_renders_new_stylesheet_and_has_no_external_calls(): void
+    {
+        $renderer = new SiteBlockRenderer;
+        $html = $renderer->render([['type' => 'hero', 'headline' => 'Test']], []);
+
+        $this->assertStringContainsString('--color-canvas:', $html);
+        $this->assertStringContainsString('.site-block.services ul', $html);
+        $this->assertStringContainsString('grid-template-columns: repeat(auto-fill', $html);
+        $this->assertStringContainsString('.site-block.booking a:focus-visible', $html);
+
+        $this->assertStringNotContainsString('url(', $html);
+        $this->assertStringNotContainsString('@import', $html);
+    }
 }
