@@ -28,6 +28,7 @@
                 @foreach($posts as $post)
                     <li>
                         {{ $post->content_text }} {{ $post->comments->count() }} comments
+                        <ul class="text-sm text-ink-2">@foreach($post->comments->sortBy('id')->take(20) as $c)<li>{{ $c->author_name }}: {{ $c->comment_text }}</li>@endforeach</ul>
                         @if($post->publish_status === 'published')
                             — published on {{ ucfirst($post->account?->platform) }}
                             @if($post->platform_post_url)
