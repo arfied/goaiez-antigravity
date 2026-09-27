@@ -63,7 +63,7 @@ class TemplateApprovalQueue extends Component
                 bodyText: $this->bodyText
             );
 
-            $this->success = "Submitted template {$this->name}.";
+            $this->success = "Recorded template {$this->name} — we cannot submit templates to Meta yet, so it stays pending.";
             $this->name = '';
             $this->category = '';
             $this->bodyText = '';

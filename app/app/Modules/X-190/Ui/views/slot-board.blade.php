@@ -22,7 +22,7 @@
                     <li>
                         {{ $slot->category }} {{ $slot->territory_zip }} {{ $slot->status }}
                         @if($slot->status === 'open')
-                            <input wire:model="partnerName.{{ $slot->id }}" placeholder="Company to invite">
+                            <input wire:model="partnerName.{{ $slot->id }}" placeholder="Company to shortlist">
                             <button type="button" wire:click="proposePartner({{ $slot->id }})">Propose partner</button>
                             @error('partnerName.'.$slot->id) <span>{{ $message }}</span> @enderror
 

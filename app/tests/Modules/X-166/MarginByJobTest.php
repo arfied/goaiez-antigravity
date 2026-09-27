@@ -44,7 +44,7 @@ class MarginByJobTest extends TestCase
         Tenancy::setUser($user->id);
 
         Livewire::actingAs($user)->test(MarginByJob::class)
-            ->assertSee('No costed jobs yet. A job is costed when it completes.');
+            ->assertSee('No costed jobs yet. Add one with the form above — costs are not captured automatically.');
     }
 
     public function test_seeded_row_shows_values_and_no_sample_pill(): void

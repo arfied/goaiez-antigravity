@@ -78,7 +78,7 @@ class PluginSettingsPageScreenTest extends TestCase
             ->set('siteUrl', 'https://example.com')
             ->set('apiKey', 'my_api_key')
             ->call('activate')
-            ->assertSet('success', 'Activated plugin for site https://example.com.')
+            ->assertSet('success', 'Recorded https://example.com — the plugin is not installed on it from here.')
             ->assertSet('siteUrl', '')
             ->assertSet('apiKey', '');
 
@@ -130,7 +130,7 @@ class PluginSettingsPageScreenTest extends TestCase
 
         Livewire::test(PluginSettingsPage::class)
             ->call('deactivate', 'https://shop.example.com')
-            ->assertSet('deactivateSuccess', 'Plugin deactivated for https://shop.example.com. Its injected assets have been removed; switching it back on needs the site URL and the API key again.');
+            ->assertSet('deactivateSuccess', 'Recorded as off for https://shop.example.com. Nothing on your website changed.');
 
         $this->assertDatabaseHas((new PluginInstall)->getTable(), [
             'business_id' => $biz->id,

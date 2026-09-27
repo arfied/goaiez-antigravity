@@ -90,6 +90,9 @@ final class FactResolver
         return DB::transaction(function () use ($businessId, $key, $value, $source) {
             $commitId = (string) Str::uuid();
 
+            // The newest teaching supersedes the old row: lookup() takes the first is_valid row with no ordering (wave 836).
+            DB::table('facts')->where('business_id', $businessId)->where('key', $key)->where('is_valid', true)->update(['is_valid' => false]);
+
             $id = DB::table('facts')->insertGetId([
                 'business_id' => $businessId,
                 'key' => $key,
