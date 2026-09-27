@@ -9,7 +9,9 @@ use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Models\EdgeZone;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\View;
 use Tests\TestCase;
 
 class SiteBlockRendererTest extends TestCase
@@ -279,5 +281,17 @@ class SiteBlockRendererTest extends TestCase
 
         $this->assertStringContainsString('Distinctive Sunday 4916: Closed', $html);
         $this->assertStringNotContainsString('Closed - ', $html);
+    }
+
+    public function test_a_block_whose_view_throws_is_left_out_and_logged(): void
+    {
+        Log::spy();
+        View::shouldReceive('make')->once()->andThrow(new \RuntimeException('Distinctive render failure 4919'));
+
+        $html = (new SiteBlockRenderer)->render([['type' => 'hero', 'headline' => 'Hello']], []);
+
+        $this->assertStringNotContainsString('class="site-block', $html);
+        $this->assertStringNotContainsString('Hello', $html);
+        Log::shouldHaveReceived('warning')->once();
     }
 }

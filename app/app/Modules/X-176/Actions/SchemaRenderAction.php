@@ -59,15 +59,26 @@ final class SchemaRenderAction
             $jsonLd['hasOfferCatalog'] = [
                 '@type' => 'OfferCatalog',
                 'name' => 'Services Pricebook',
-                'itemListElement' => array_map(fn ($p) => [
-                    '@type' => 'Offer',
-                    'itemOffered' => [
-                        '@type' => 'Service',
-                        'name' => $p['name'],
-                    ],
-                    'price' => $p['price'] ?? null,
-                    'priceCurrency' => 'USD',
-                ], $productOffers),
+                'itemListElement' => array_map(fn ($p) => isset($p['price_max'])
+                    ? [
+                        '@type' => 'AggregateOffer',
+                        'itemOffered' => [
+                            '@type' => 'Service',
+                            'name' => $p['name'],
+                        ],
+                        'lowPrice' => $p['price'] ?? null,
+                        'highPrice' => $p['price_max'],
+                        'priceCurrency' => 'USD',
+                    ]
+                    : [
+                        '@type' => 'Offer',
+                        'itemOffered' => [
+                            '@type' => 'Service',
+                            'name' => $p['name'],
+                        ],
+                        'price' => $p['price'] ?? null,
+                        'priceCurrency' => 'USD',
+                    ], $productOffers),
             ];
         }
 
@@ -217,10 +228,17 @@ final class SchemaRenderAction
                 return false;
             }
             foreach ($catalog['itemListElement'] as $item) {
-                if (($item['@type'] ?? '') !== 'Offer' || ($item['itemOffered']['@type'] ?? '') !== 'Service') {
+                $type = $item['@type'] ?? '';
+                if (! in_array($type, ['Offer', 'AggregateOffer'], true) || ($item['itemOffered']['@type'] ?? '') !== 'Service') {
                     return false;
                 }
-                if (! array_key_exists('price', $item) || $item['price'] === null || ! isset($item['priceCurrency'])) {
+                if (! isset($item['priceCurrency'])) {
+                    return false;
+                }
+                if ($type === 'Offer' && (! array_key_exists('price', $item) || $item['price'] === null)) {
+                    return false;
+                }
+                if ($type === 'AggregateOffer' && (! isset($item['lowPrice'], $item['highPrice']) || $item['lowPrice'] > $item['highPrice'])) {
                     return false;
                 }
             }

@@ -190,4 +190,52 @@ final class ProductSchemaTest extends TestCase
         $this->assertArrayNotHasKey('hasOfferCatalog', $json);
         $this->assertStringNotContainsString('Derivation Service', $html2);
     }
+
+    public function test_a_priced_range_publishes_as_a_range_on_the_page_and_in_the_schema(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant(['name' => 'Schema Tenant']);
+        Tenancy::set((int) $biz->id);
+
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => 'home']);
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'schema1.example.com', true);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Distinctive Range Service 4918',
+            'price_cents' => 10000,
+            'price_max_cents' => 30000,
+            'is_confirmed' => true,
+            'is_sample' => false,
+        ]);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $page->id,
+            commitId: 'commit_p1',
+            businessName: 'My Biz'
+        );
+
+        $this->assertEquals('deployed', $res['status']);
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
+        $this->assertStringContainsString('Distinctive Range Service 4918 - $100 to $300', $html);
+
+        preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $html, $matches);
+        $this->assertNotEmpty($matches, 'JSON-LD script tag not found');
+        $json = json_decode($matches[1], true);
+
+        $this->assertArrayHasKey('hasOfferCatalog', $json);
+        $catalog = $json['hasOfferCatalog'];
+        $this->assertEquals('OfferCatalog', $catalog['@type']);
+        $this->assertCount(1, $catalog['itemListElement']);
+
+        $offer = $catalog['itemListElement'][0];
+        $this->assertEquals('AggregateOffer', $offer['@type']);
+        $this->assertEquals('Distinctive Range Service 4918', $offer['itemOffered']['name']);
+        $this->assertEquals(100, $offer['lowPrice']);
+        $this->assertEquals(300, $offer['highPrice']);
+        $this->assertArrayNotHasKey('price', $offer);
+    }
 }

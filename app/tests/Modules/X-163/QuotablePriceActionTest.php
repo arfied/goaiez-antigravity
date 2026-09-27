@@ -70,7 +70,7 @@ class QuotablePriceActionTest extends TestCase
 
         $options = app(QuotablePriceAction::class)->options($businessId);
 
-        $this->assertSame([['id' => $tuneUp->id, 'service_name' => 'Annual Tune-Up', 'price_cents' => 4999]], $options, 'T6 A1 options listed something other than the one quotable item');
+        $this->assertSame([['id' => $tuneUp->id, 'service_name' => 'Annual Tune-Up', 'price_cents' => 4999, 'price_max_cents' => null]], $options, 'T6 A1 options listed something other than the one quotable item');
     }
 
     private function tenant(): int

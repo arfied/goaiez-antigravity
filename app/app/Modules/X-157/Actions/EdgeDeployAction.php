@@ -156,6 +156,7 @@ JS;
                 $productOffers[] = [
                     'name' => $item['service_name'],
                     'price' => $item['price_cents'] / 100,
+                    'price_max' => isset($item['price_max_cents']) ? $item['price_max_cents'] / 100 : null,
                 ];
             }
 
@@ -374,7 +375,8 @@ JS;
             if (! empty($productOffers)) {
                 $html .= "<div id=\"offers-x176\">\n";
                 foreach ($productOffers as $offer) {
-                    $html .= '  <div class="offer-item" data-name="'.e($offer['name']).'">'.e($offer['name']).' - $'.e((string) $offer['price'])."</div>\n";
+                    $priceText = '$'.e((string) $offer['price']).(isset($offer['price_max']) ? ' to $'.e((string) $offer['price_max']) : '');
+                    $html .= '  <div class="offer-item" data-name="'.e($offer['name']).'">'.e($offer['name']).' - '.$priceText."</div>\n";
                 }
                 $html .= "</div>\n";
             }

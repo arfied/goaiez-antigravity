@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X103\Domain;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 
 final class SiteBlockRenderer
@@ -58,7 +59,12 @@ h1, h2, h3 { font-family: var(--font-heading); }
                     'context' => $context,
                 ])->render();
             } catch (\Throwable $e) {
-                // Ignore rendering errors
+                // The page still deploys without this block (owner's call whether it
+                // should); the drop is no longer silent (wave 813).
+                Log::warning('a site block failed to render and was left out of the page', [
+                    'type' => $type,
+                    'error' => $e->getMessage(),
+                ]);
             }
         }
 
