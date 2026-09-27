@@ -11,6 +11,7 @@ use App\Models\ZernioWebhookEvent;
 use App\Modules\CWhatsapp\Actions\WhatsappConnectionLookupAction;
 use App\Modules\CWhatsapp\Actions\WhatsappDisconnectedExternallyAction;
 use App\Modules\X177\Actions\GbpPostSettleAction;
+use App\Services\Zernio\ZernioWhatsappInbound;
 use App\Support\Tenancy;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
@@ -100,6 +101,9 @@ final class ZernioWebhooks
         }
         if ($event === 'post.platform.published' || $event === 'post.platform.failed') {
             return $this->handlePostPlatform($payload, $event === 'post.platform.published');
+        }
+        if ($event === 'message.received') {
+            return app(ZernioWhatsappInbound::class)->handle($payload);
         }
 
         return 'ignored';

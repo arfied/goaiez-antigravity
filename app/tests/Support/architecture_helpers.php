@@ -676,6 +676,7 @@ function outboundHttpPermittedFiles(): array
         'Services/Gbp/ZernioGbpClient.php',
         // Zernio (same host) — WhatsApp, H2 wave 839
         'Services/Zernio/ZernioWhatsappClient.php',
+        'Services/Zernio/ZernioHttp.php', // Zernio (same host) — shared transport for social posting, H3
 
         // Stripe — payments (X-198). A documented vendor JSON API with a
         // credential and an idempotency key, like the entries above; it never
