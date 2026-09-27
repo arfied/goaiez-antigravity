@@ -6,17 +6,9 @@
             <p class="mt-4 mb-6">No documents are stored yet, but here is who will be able to view them.</p>
         @endif
 
-        @if($success)
-            <div class="mb-6 p-4 bg-surface border rounded text-ink">
-                {{ $success }}
-            </div>
-        @endif
+        <x-ui.toast kind="success" :message="$success" />
         
-        @if($error)
-            <div class="mb-6 p-4 bg-surface border rounded text-ink">
-                {{ $error }}
-            </div>
-        @endif
+        <x-ui.toast kind="error" :message="$error" />
 
         <form wire:submit="uploadDocument" class="mb-6 flex flex-col gap-2 bg-surface p-4 border rounded mt-4">
             <h3 class="font-bold">Upload a document</h3>

@@ -11,9 +11,7 @@
             <x-ui.error-panel heading="That didn't go through">{{ $error }}</x-ui.error-panel>
         @endif
 
-        @if($success)
-            <x-ui.attention-card state="ok" heading="Service area recorded">{{ $success }}</x-ui.attention-card>
-        @endif
+        <x-ui.toast kind="success" :message="$success" />
 
         @if($territories->isEmpty())
             <x-ui.empty-state icon="○" heading="No service areas yet">
