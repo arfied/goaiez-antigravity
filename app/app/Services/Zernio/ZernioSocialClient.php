@@ -211,6 +211,29 @@ final class ZernioSocialClient
         }
     }
 
+    public function privateReplyToComment(string $accountRef, string $platformPostId, string $commentId, string $message, string $idempotencyKey): ?string
+    {
+        $this->http->assertUsable('social.zernio_enabled');
+
+        $message = trim($message);
+        if ($message === '') {
+            throw GbpRequestFailed::unreadable('reply_comment_empty');
+        }
+
+        $response = $this->http->post('inbox/comments/'.rawurlencode($platformPostId).'/'.rawurlencode($commentId).'/private-reply', [
+            'accountId' => $accountRef,
+            'message' => $message,
+        ], $idempotencyKey);
+
+        if ($response->failed()) {
+            throw GbpRequestFailed::from($response, accountScoped: true);
+        }
+
+        $id = $response->json('messageId');
+
+        return is_string($id) && $id !== '' ? $id : null;
+    }
+
     public function replyInConversation(string $accountRef, string $conversationRef, string $message, string $idempotencyKey): ?string
     {
         $this->http->assertUsable('social.zernio_enabled');

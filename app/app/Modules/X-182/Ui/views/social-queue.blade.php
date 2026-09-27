@@ -44,6 +44,12 @@
                                     @elseif($c->platform_comment_id)
                                         <x-ui.button wire:click="hideComment({{ $c->id }})" size="sm">Hide</x-ui.button>
                                     @endif
+                                    @if($c->private_replied_at)
+                                        — You messaged them privately: {{ $c->private_reply_text }}
+                                    @elseif(app(\App\Modules\X182\Actions\CommentIngestAction::class)->canReplyPrivately($c))
+                                        <input type="text" wire:model="privateReply.{{ $c->id }}" maxlength="1000">
+                                        <x-ui.button wire:click="privateReplyToComment({{ $c->id }})" size="sm">Message privately</x-ui.button>
+                                    @endif
                                 </li>
                             @endforeach
                         </ul>
