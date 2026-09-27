@@ -3,12 +3,8 @@
         <h2 class="text-lg font-bold text-ink">Call coaching</h2>
 
         <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
-            @if($success)
-                <div class="text-green-600 mb-2">{{ $success }}</div>
-            @endif
-            @if($error)
-                <div class="text-red-600 mb-2">{{ $error }}</div>
-            @endif
+            <x-ui.toast kind="success" :message="$success" />
+            <x-ui.toast kind="error" :message="$error" />
             <form wire:submit.prevent="coach" class="flex flex-col gap-2">
                 <input type="number" wire:model="sessionId" placeholder="Session ID" class="border rounded p-2 text-ink flex-1 bg-surface">
                 <textarea wire:model="transcript" placeholder="Transcript" class="border rounded p-2 text-ink flex-1 bg-surface"></textarea>
