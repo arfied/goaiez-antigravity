@@ -46,8 +46,20 @@
                         @endif
                     @endif
                 @elseif(in_array($link->resource_type, ['estimate', 'invoice']))
-                    @if($isDocumentPrepared)
-                        <p class="text-ink-2 italic mb-6">This document is being prepared.</p>
+                    @if($document === null)
+                        <p class="text-ink-2 mb-6">We couldn’t find this document. Please contact us directly.</p>
+                    @else
+                        <p class="text-ink-2 mb-1">{{ $document['kind'] }} {{ $document['number'] }}</p>
+                        <p class="font-medium text-ink mb-4">{{ $document['state'] }}</p>
+                        @if(!empty($document['lines']))
+                            <table class="w-full text-sm mb-4">
+                                @foreach($document['lines'] as $line)
+                                    <tr><td class="py-1 text-ink">{{ $line['label'] }}@if($line['quantity'] > 1) × {{ $line['quantity'] }}@endif</td><td class="py-1 text-right text-ink">${{ number_format($line['subtotal_cents'] / 100, 2) }}</td></tr>
+                                @endforeach
+                            </table>
+                        @endif
+                        <p class="font-medium text-ink mb-1">Total: ${{ number_format($document['total_cents'] / 100, 2) }}</p>
+                        @if($document['secondary'])<p class="text-ink-2 mb-6">{{ $document['secondary'] }}</p>@endif
                     @endif
                 @endif
                 
