@@ -157,4 +157,84 @@ class GbpPostZernioTest extends TestCase
             ->assertOk()
             ->assertSee('Post to Google');
     }
+
+    public function test_with_https_image_sent(): void
+    {
+        Http::fake([
+            'zernio.com/api/v1/posts' => Http::response(['post' => ['_id' => 'zp_6101', 'status' => 'published', 'platforms' => [['platform' => 'googlebusiness', 'status' => 'published', 'platformPostId' => 'g_6101', 'errorMessage' => null]]]], 201),
+        ]);
+
+        $result = $this->postAction->post($this->biz->id, $this->conn->id, 'Test 6101', 'update', 'https://cdn.example.test/p/6101.jpg');
+
+        $this->assertEquals('posted', $result['status']);
+        $post = GbpPost::find($result['post_id']);
+        $this->assertEquals('https://cdn.example.test/p/6101.jpg', $post->image_url);
+
+        Http::assertSent(function ($request) {
+            return $request['mediaItems'][0]['type'] === 'image'
+                && $request['mediaItems'][0]['url'] === 'https://cdn.example.test/p/6101.jpg';
+        });
+    }
+
+    public function test_without_image_no_media_items(): void
+    {
+        Http::fake([
+            'zernio.com/api/v1/posts' => Http::response(['post' => ['_id' => 'zp_6102', 'status' => 'published', 'platforms' => [['platform' => 'googlebusiness', 'status' => 'published', 'platformPostId' => 'g_6102', 'errorMessage' => null]]]], 201),
+        ]);
+
+        $this->postAction->post($this->biz->id, $this->conn->id, 'Test 6102', 'update', null);
+
+        Http::assertSent(function ($request) {
+            return ! isset($request['mediaItems']);
+        });
+    }
+
+    public function test_refused_images(): void
+    {
+        Http::fake();
+
+        $initialCount = GbpPost::count();
+
+        $result1 = $this->postAction->post($this->biz->id, $this->conn->id, 'Test 6102', 'update', 'http://cdn.example.test/p/6102.jpg');
+        $this->assertEquals('refused_image', $result1['status']);
+
+        $result2 = $this->postAction->post($this->biz->id, $this->conn->id, 'Test 6103', 'update', 'https://cdn.example.test/p/6103.gif');
+        $this->assertEquals('refused_image', $result2['status']);
+
+        Http::assertNothingSent();
+        $this->assertEquals($initialCount, GbpPost::count());
+    }
+
+    public function test_image_rejected_by_zernio(): void
+    {
+        Http::fake([
+            'zernio.com/api/v1/posts' => Http::response(['post' => ['_id' => 'zp_6105', 'status' => 'failed', 'platforms' => [['platform' => 'googlebusiness', 'status' => 'failed', 'platformPostId' => null, 'errorMessage' => 'Image too small.']]]], 207),
+        ]);
+
+        $result = $this->postAction->post($this->biz->id, $this->conn->id, 'Test small image', 'update', 'https://cdn.example.test/p/6105.jpg');
+
+        $this->assertEquals('failed', $result['status']);
+        $post = GbpPost::find($result['post_id']);
+        $this->assertEquals('Image too small.', $post->failure_reason);
+    }
+
+    public function test_livewire_card_with_image(): void
+    {
+        Http::fake([
+            'zernio.com/api/v1/posts' => Http::response(['post' => ['_id' => 'zp_6104', 'status' => 'published', 'platforms' => [['platform' => 'googlebusiness', 'status' => 'published', 'platformPostId' => 'g_6104', 'errorMessage' => null]]]], 201),
+        ]);
+
+        Tenancy::set($this->biz->id);
+
+        Livewire::test(GbpCard::class, ['businessId' => $this->biz->id])
+            ->set('postContent.'.$this->conn->id, 'With image 6104')
+            ->set('postImage.'.$this->conn->id, 'https://cdn.example.test/p/6104.png')
+            ->call('postUpdate', $this->conn->id);
+
+        $this->assertDatabaseHas('gbp_posts', [
+            'content' => 'With image 6104',
+            'status' => 'posted',
+            'image_url' => 'https://cdn.example.test/p/6104.png',
+        ]);
+    }
 }

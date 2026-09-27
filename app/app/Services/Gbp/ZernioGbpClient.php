@@ -343,7 +343,7 @@ final class ZernioGbpClient implements GbpClient
     /**
      * @throws GbpRequestFailed
      */
-    public function publishPost(string $accountRef, string $content, string $idempotencyKey, array $metadata = []): GbpPostReceipt
+    public function publishPost(string $accountRef, string $content, string $idempotencyKey, array $metadata = [], ?string $imageUrl = null): GbpPostReceipt
     {
         $this->assertUsable();
 
@@ -353,22 +353,28 @@ final class ZernioGbpClient implements GbpClient
 
         $url = self::BASE.'/posts';
 
+        $payload = [
+            'content' => $content,
+            'platforms' => [
+                [
+                    'platform' => self::PLATFORM,
+                    'accountId' => $accountRef,
+                ],
+            ],
+            'publishNow' => true,
+            'metadata' => (object) $metadata,
+        ];
+
+        if ($imageUrl !== null) {
+            $payload['mediaItems'] = [['type' => 'image', 'url' => $imageUrl]];
+        }
+
         try {
             $response = VendorLog::timed(
                 'zernio',
                 'POST',
                 $url,
-                fn (): Response => $this->request()->withHeaders(['Idempotency-Key' => $idempotencyKey])->post($url, [
-                    'content' => $content,
-                    'platforms' => [
-                        [
-                            'platform' => self::PLATFORM,
-                            'accountId' => $accountRef,
-                        ],
-                    ],
-                    'publishNow' => true,
-                    'metadata' => (object) $metadata,
-                ]),
+                fn (): Response => $this->request()->withHeaders(['Idempotency-Key' => $idempotencyKey])->post($url, $payload),
             );
         } catch (ConnectionException $e) {
             $failure = self::transportFailure($e);

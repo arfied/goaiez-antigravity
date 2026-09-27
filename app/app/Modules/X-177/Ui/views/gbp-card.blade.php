@@ -43,6 +43,9 @@
                                 <form wire:submit="postUpdate({{ $c->id }})" class="mt-4 border-t pt-4">
                                     <label class="block font-bold mb-1">Post an update to Google</label>
                                     <textarea wire:model="postContent.{{ $c->id }}" maxlength="1500" class="w-full border rounded p-2 mb-2"></textarea>
+                                    <label class="block font-bold mb-1">Image link (optional)</label>
+                                    <input type="url" wire:model="postImage.{{ $c->id }}" class="w-full border rounded p-2 mb-1">
+                                    <div class="text-xs text-ink-2 mb-2">A public https JPEG or PNG, at least 400&times;300. Google shows one image per post.</div>
                                     <x-ui.submit size="default" target="postUpdate" busy="Posting…">Post to Google</x-ui.submit>
                                 </form>
                             @endif

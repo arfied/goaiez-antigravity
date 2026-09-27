@@ -32,7 +32,8 @@ final class GbpPostAction
         int $businessId,
         int $connectionId,
         string $content,
-        string $postType = 'update'
+        string $postType = 'update',
+        ?string $imageUrl = null
     ): array {
         $conn = GbpConnection::where('business_id', $businessId)->findOrFail($connectionId);
 
@@ -80,6 +81,20 @@ final class GbpPostAction
             }
         }
 
+        if ($imageUrl !== null) {
+            $parsed = parse_url($imageUrl);
+            $path = $parsed['path'] ?? '';
+            $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+            if (! str_starts_with(strtolower($imageUrl), 'https://') || ! in_array($ext, ['jpg', 'jpeg', 'png', 'webp'], true)) {
+                return [
+                    'status' => 'refused_image',
+                    'message' => 'Use a public https link to a JPEG or PNG image.',
+                    'dispatched_to_zernio' => false,
+                    'zernio_dispatch_id' => null,
+                ];
+            }
+        }
+
         // 3. Valid post dispatch to Zernio (TEST ANCHOR)
         $connRow = DB::table('gbp_connections')->where('id', $conn->id)->first(['account_ref', 'status']);
 
@@ -91,6 +106,7 @@ final class GbpPostAction
                 'content' => $content,
                 'status' => 'not_connected',
                 'zernio_dispatch_id' => null,
+                'image_url' => $imageUrl,
             ]);
 
             return [
@@ -109,6 +125,7 @@ final class GbpPostAction
             'content' => $content,
             'status' => 'publishing',
             'zernio_dispatch_id' => null,
+            'image_url' => $imageUrl,
         ]);
 
         try {
@@ -116,7 +133,8 @@ final class GbpPostAction
                 $connRow->account_ref,
                 $content,
                 'gbp-post-'.$post->id,
-                ['gbp_post_id' => $post->id]
+                ['gbp_post_id' => $post->id],
+                $imageUrl
             );
 
             $status = 'failed';
