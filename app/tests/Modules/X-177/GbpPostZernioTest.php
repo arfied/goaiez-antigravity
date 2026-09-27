@@ -33,6 +33,7 @@ class GbpPostZernioTest extends TestCase
         $this->postAction = new GbpPostAction;
 
         $this->biz = TestCase::provisionTenant(['name' => 'GBP Tenant', 'currency' => 'USD']);
+        $this->actingAs(User::find($this->biz->owner_user_id));
         DB::statement("SET app.business_id = '{$this->biz->id}'");
 
         $loc = Location::factory()->create(['business_id' => $this->biz->id]);

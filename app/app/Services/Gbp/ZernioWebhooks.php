@@ -15,6 +15,7 @@ use App\Modules\X182\Actions\SocialAccountLookupAction;
 use App\Modules\X182\Actions\SocialPostSettleAction;
 use App\Modules\X182\Domain\SocialConnections;
 use App\Services\Zernio\ZernioWhatsappInbound;
+use App\Services\Zernio\ZernioWhatsappStatuses;
 use App\Services\Zernio\ZernioWhatsappTemplates;
 use App\Support\Tenancy;
 use Carbon\CarbonInterface;
@@ -120,7 +121,7 @@ final class ZernioWebhooks
             return app(ZernioWhatsappTemplates::class)->handle($payload);
         }
         if (in_array($event, self::WHATSAPP_STATUS_EVENTS, true)) {
-            return app(\App\Services\Zernio\ZernioWhatsappStatuses::class)->handle($payload);
+            return app(ZernioWhatsappStatuses::class)->handle($payload);
         }
 
         return 'ignored';

@@ -142,6 +142,29 @@ final class ZernioSocialClient
         return $this->receiptFrom($response->json('post') ?? []);
     }
 
+    public function replyToFacebookReview(string $accountRef, string $reviewId, string $message, string $idempotencyKey): ?string
+    {
+        $this->http->assertUsable('social.zernio_enabled');
+
+        $message = trim($message);
+        if ($message === '') {
+            throw GbpRequestFailed::unreadable('reply_comment_empty');
+        }
+
+        $response = $this->http->post('inbox/reviews/'.rawurlencode($reviewId).'/reply', [
+            'accountId' => $accountRef,
+            'message' => $message,
+        ], $idempotencyKey);
+
+        if ($response->failed()) {
+            throw GbpRequestFailed::from($response, accountScoped: true);
+        }
+
+        $id = $response->json('reply.id');
+
+        return is_string($id) && $id !== '' ? $id : null;
+    }
+
     private function receiptFrom(array $post): SocialPostReceipt
     {
         $vendorStatus = $post['status'] ?? '';
