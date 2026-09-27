@@ -2490,6 +2490,27 @@ class X157Test extends TestCase
         $this->assertTrue($pos3 < $pos1);
     }
 
+    public function test_at_the_platform_address_the_sitemap_lists_stable_page_urls(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $zone = app(PlatformSiteAddressAction::class)->handle($biz->id);
+
+        $p1 = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => 'home', 'is_published' => true]);
+        $p2 = Page::create(['business_id' => $biz->id, 'title' => 'Dist', 'slug' => 'distinctive-4935', 'is_published' => true]);
+
+        Deployment::create(['business_id' => $biz->id, 'edge_zone_id' => $zone->id, 'deploy_hash' => 'hA4935', 'status' => 'deployed', 'page_id' => $p1->id, 'deployed_at' => now()->subDay()]);
+        Deployment::create(['business_id' => $biz->id, 'edge_zone_id' => $zone->id, 'deploy_hash' => 'hB4935', 'status' => 'deployed', 'page_id' => $p2->id, 'deployed_at' => now()]);
+
+        $xml = app(SitemapRenderAction::class)->handle($biz->id);
+
+        $this->assertSame(2, substr_count($xml, '<loc>'));
+        $this->assertStringContainsString("/sites/{$biz->id}/p/home", $xml);
+        $this->assertStringContainsString("/sites/{$biz->id}/p/distinctive-4935", $xml);
+        $this->assertStringNotContainsString('hA4935', $xml);
+        $this->assertStringNotContainsString('hB4935', $xml);
+    }
+
     public function test_sitemap_and_robots_404_for_an_unknown_hash(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
