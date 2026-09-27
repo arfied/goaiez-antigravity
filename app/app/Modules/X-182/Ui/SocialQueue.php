@@ -29,6 +29,10 @@ class SocialQueue extends Component
     {
         $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
         abort_if($this->businessId === 0, 404);
+        $topic = request()->query('topic');
+        if (is_string($topic) && trim($topic) !== '') {
+            $this->content = mb_substr(trim($topic), 0, 500);
+        }
     }
 
     public function publish(SocialPublisher $publisher): void
