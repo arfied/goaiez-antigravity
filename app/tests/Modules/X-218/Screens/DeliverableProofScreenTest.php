@@ -63,7 +63,7 @@ class DeliverableProofScreenTest extends TestCase
             ->set('artifactHash', 'abc123hash')
             ->call('submitProof')
             ->assertSet('success', function ($value) use ($deal) {
-                return str_contains((string) $value, 'Recorded deliverable for deal '.$deal->id) && str_contains((string) $value, 'status was recorded as 200');
+                return str_contains((string) $value, 'Recorded deliverable for deal '.$deal->id) && str_contains((string) $value, 'with the status you entered (200)');
             });
 
         $this->assertDatabaseHas((new Deliverable)->getTable(), [
