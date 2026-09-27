@@ -137,6 +137,57 @@ final class ConversationThreads
             ->find($conversationId);
     }
 
+    public function socialThreads(): Collection
+    {
+        return Conversation::query()
+            ->whereIn('channel', ['facebook', 'instagram'])
+            ->with('customer')
+            ->orderByRaw('updated_at DESC NULLS LAST')
+            ->orderByDesc('id')
+            ->limit($this->defaults->int('conversations.list_limit'))
+            ->get();
+    }
+
+    public function socialThread(string $platform, string $conversationRef, string $accountRef, ?string $label): Conversation
+    {
+        if (! in_array($platform, ['facebook', 'instagram'], true)) {
+            throw new InvalidArgumentException("Platform must be facebook or instagram, got $platform");
+        }
+
+        $businessId = Tenancy::idOrFail();
+
+        /** @var Conversation $thread */
+        $thread = DB::transaction(function () use ($platform, $conversationRef, $accountRef, $label, $businessId): Conversation {
+            $existing = Conversation::query()
+                ->where('channel', $platform)
+                ->where('provider_conversation_ref', $conversationRef)
+                ->lockForUpdate()
+                ->first();
+
+            if ($existing instanceof Conversation) {
+                if ($existing->contact_label === null && $label !== null) {
+                    $existing->update(['contact_label' => $label]);
+                }
+
+                return $existing;
+            }
+
+            return Conversation::query()->create([
+                'business_id' => $businessId,
+                'channel' => $platform,
+                'status' => 'open',
+                'priority' => 'normal',
+                'is_bot_handled' => false,
+                'provider_conversation_ref' => $conversationRef,
+                'provider_account_ref' => $accountRef,
+                'contact_label' => $label,
+                'consent_logged_at' => now(),
+            ]);
+        });
+
+        return $thread;
+    }
+
     public function contactFor(Conversation $conversation): ?array
     {
         $this->refuseForeignThread($conversation);

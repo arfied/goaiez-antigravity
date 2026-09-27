@@ -11,6 +11,7 @@ use App\Modules\X182\Domain\SocialPublisher;
 use App\Modules\X182\Models\Comment;
 use App\Modules\X182\Models\SocialAccount;
 use App\Modules\X182\Models\SocialPost;
+use App\Services\Conversations\ConversationThreads;
 use App\Services\Zernio\ZernioSocialClient;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -186,9 +187,20 @@ class SocialQueue extends Component
             ? SocialAccount::where('business_id', $this->businessId)->where('status', 'connected')->whereNotNull('account_ref')->orderBy('platform')->get()
             : collect();
 
+        $dmThreads = ($this->businessId > 0)
+            ? app(ConversationThreads::class)->socialThreads()
+            : collect();
+
+        $dmTails = [];
+        foreach ($dmThreads as $t) {
+            $dmTails[$t->id] = app(ConversationThreads::class)->tail($t, 5);
+        }
+
         return view('x-182::social-queue', [
             'posts' => $posts,
             'accounts' => $accounts,
+            'dmThreads' => $dmThreads,
+            'dmTails' => $dmTails,
         ]);
     }
 }
