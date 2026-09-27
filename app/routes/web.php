@@ -58,6 +58,7 @@ use App\Livewire\Account\Connections as AccountConnections;
 use App\Livewire\Account\Credit as AccountCredit;
 use App\Livewire\Account\CustomerProfile as AccountCustomerProfile;
 use App\Livewire\Account\Customers as AccountCustomers;
+use App\Livewire\Account\FacebookReviews as AccountFacebookReviews;
 use App\Livewire\Account\Facts as AccountFacts;
 use App\Livewire\Account\FollowUps as AccountFollowUps;
 use App\Livewire\Account\Home as AccountHome;
@@ -1345,6 +1346,10 @@ Route::middleware('auth')
 Route::middleware('auth')
     ->get('/account/replies', AccountReplyQueue::class)
     ->name('account.replies');
+
+Route::middleware('auth')
+    ->get('/account/facebook-reviews', AccountFacebookReviews::class)
+    ->name('account.facebook-reviews');
 
 /*
 | The recovery queue (`17` TRIAGE-03/04, decision 2689) — where a below-threshold
