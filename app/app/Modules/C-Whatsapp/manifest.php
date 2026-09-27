@@ -48,6 +48,7 @@ return [
         'whatsapp_templates',
         'whatsapp_sessions',
         'whatsapp_connections',
+        'whatsapp_messages',
     ],
     'reads_table' => [],
 

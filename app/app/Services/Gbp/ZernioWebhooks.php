@@ -62,6 +62,13 @@ final class ZernioWebhooks
         private readonly GoogleReviewIngest $ingest,
     ) {}
 
+    private const array WHATSAPP_STATUS_EVENTS = [
+        'message.sent',
+        'message.delivered',
+        'message.read',
+        'message.failed',
+    ];
+
     /**
      * @param  array<string, mixed>  $payload
      * @return 'handled'|'duplicate'|'ignored'|'unbound'|'confirmed'|'mismatched'
@@ -108,6 +115,9 @@ final class ZernioWebhooks
         }
         if ($event === 'whatsapp.template.status_updated') {
             return app(ZernioWhatsappTemplates::class)->handle($payload);
+        }
+        if (in_array($event, self::WHATSAPP_STATUS_EVENTS, true)) {
+            return app(\App\Services\Zernio\ZernioWhatsappStatuses::class)->handle($payload);
         }
 
         return 'ignored';

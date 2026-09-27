@@ -60,6 +60,19 @@ class CWhatsappTest extends TestCase
             'last_inbound_at' => Carbon::now()->subHours(23),
             'session_window_expires_at' => Carbon::now()->addHour(),
             'is_window_open' => true,
+            'zernio_conversation_id' => 'conv_6202',
+        ]);
+
+        app(\App\Services\Config\DefaultsRegistry::class)->set('whatsapp.zernio_enabled', true, 'test');
+        config(['credentials.zernio_api_key' => 'test_key']);
+        \App\Modules\CWhatsapp\Models\WhatsappConnection::forceCreate([
+            'business_id' => $biz->id,
+            'account_ref' => 'acct_wa_6201',
+            'status' => 'connected',
+        ]);
+        \Illuminate\Support\Facades\Http::fake([
+            'zernio.com/api/v1/inbox/conversations/conv_6202/messages' => \Illuminate\Support\Facades\Http::response(['success' => true, 'data' => ['messageId' => 'wamid.OUT6203', 'conversationId' => 'conv_6202']]),
+            'zernio.com/api/v1/inbox/conversations' => \Illuminate\Support\Facades\Http::response(['success' => true, 'data' => ['messageId' => 'wamid.T6204', 'conversationId' => 'conv_6205', 'participantId' => '15558889999']], 201)
         ]);
 
         $freeFormRes = $this->sendAction->handle(
@@ -87,6 +100,7 @@ class CWhatsappTest extends TestCase
 
         $this->assertEquals('refused', $refusedRes['status']);
         $this->assertEquals('OUTSIDE_24H_WINDOW_TEMPLATE_REQUIRED', $refusedRes['refusal_code']);
+        \Illuminate\Support\Facades\Http::assertNothingSent();
 
         // 3. Outside 24h window WITH approved template -> Succeeds via template
         $template = $this->templateAction->handle(
@@ -131,6 +145,7 @@ class CWhatsappTest extends TestCase
 
         $this->assertEquals('refused', $refusedRes['status']);
         $this->assertEquals('SUPPRESSED', $refusedRes['refusal_code']);
+        \Illuminate\Support\Facades\Http::assertNothingSent();
 
         $this->engine->recordInbound($biz->id, $customerPhone);
 
@@ -142,6 +157,7 @@ class CWhatsappTest extends TestCase
 
         $this->assertEquals('refused', $refusedRes2['status']);
         $this->assertEquals('SUPPRESSED', $refusedRes2['refusal_code']);
+        \Illuminate\Support\Facades\Http::assertNothingSent();
     }
 
     /**
