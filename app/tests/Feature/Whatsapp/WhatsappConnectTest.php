@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Whatsapp\WhatsappConnectController;
 use App\Models\GbpProfileBinding;
 use App\Models\User;
@@ -226,4 +227,29 @@ test('h webhook disconnect', function () {
 
 test('i google disconnect is skipped because there is no Google test to reuse', function () {
     expect(true)->toBeTrue();
+});
+
+test('j staff cannot start a whatsapp connect', function () {
+    $staff = User::factory()->create(['role' => UserRole::Staff]);
+    $this->actingAs($staff);
+    Tenancy::setUser($staff->id);
+    Tenancy::set($this->biz->id);
+
+    Livewire::test(Thread::class)->call('connect')->assertForbidden();
+    Http::assertNothingSent();
+    expect(WhatsappConnection::where('business_id', $this->biz->id)->count())->toBe(0);
+});
+
+test('k staff cannot disconnect the whatsapp number', function () {
+    Tenancy::set($this->biz->id);
+    WhatsappConnection::forceCreate(['business_id' => $this->biz->id, 'account_ref' => 'acct_wa_5409', 'status' => 'connected']);
+
+    $staff = User::factory()->create(['role' => UserRole::Staff]);
+    $this->actingAs($staff);
+    Tenancy::setUser($staff->id);
+    Tenancy::set($this->biz->id);
+
+    Livewire::test(Thread::class)->call('disconnect')->assertForbidden();
+    Http::assertNothingSent();
+    $this->assertDatabaseHas('whatsapp_connections', ['account_ref' => 'acct_wa_5409', 'status' => 'connected']);
 });

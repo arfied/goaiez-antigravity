@@ -9,6 +9,7 @@ final class WhatsappSent
     public function __construct(
         public readonly int $businessId,
         public readonly string $recipientPhone,
-        public readonly string $mode
+        public readonly string $mode,
+        public readonly ?string $providerMessageRef = null
     ) {}
 }

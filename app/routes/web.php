@@ -43,6 +43,7 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\Sms\InfobipDeliveryController;
 use App\Http\Controllers\Sms\InfobipInboundController;
 use App\Http\Controllers\SmsOptInController;
+use App\Http\Controllers\Social\SocialConnectController;
 use App\Http\Controllers\SuspendedAccountController;
 use App\Http\Controllers\Voice\InfobipVoiceController;
 use App\Http\Controllers\Whatsapp\WhatsappConnectController;
@@ -1440,6 +1441,11 @@ Route::middleware(GbpConnectController::middleware())
 Route::middleware(WhatsappConnectController::middleware())
     ->get('/account/connections/whatsapp/callback', WhatsappConnectController::class)
     ->name('whatsapp.connect.callback');
+
+Route::middleware(SocialConnectController::middleware())
+    ->get('/account/connections/social/{platform}/callback', SocialConnectController::class)
+    ->whereIn('platform', ['facebook', 'instagram'])
+    ->name('social.connect.callback');
 
 /*
 |--------------------------------------------------------------------------

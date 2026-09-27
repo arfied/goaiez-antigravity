@@ -21,7 +21,15 @@
             </div>
         </div>
 
-        @if($errorMessage)
+        @if($notice)
+            <div class="p-4">
+                <div class="flex flex-col gap-3 rounded-[--radius-card] border border-rule bg-card p-4 sm:p-5">
+                    <p class="text-base leading-relaxed text-ink-2">
+                        {{ str_replace('Inbox.', '', $notice) }}<a href="{{ route('account.inbox') }}" class="underline text-ink">Inbox</a>.
+                    </p>
+                </div>
+            </div>
+        @elseif($errorMessage)
             <div class="p-4">
                 <x-ui.error-panel heading="Could not load or reply">
                     {{ $errorMessage }}
@@ -78,7 +86,7 @@
                 <form wire:submit="sendReply" class="flex flex-col gap-2">
                     <textarea wire:model="replyText" class="w-full rounded-[--radius-control] border border-rule bg-paper p-3 text-sm focus:outline-none focus:border-ink" rows="2" placeholder="Write a reply..."></textarea>
                     <div class="flex justify-end">
-                        <x-ui.button type="submit">Send Reply</x-ui.button>
+                        <x-ui.button type="submit">Add to the conversation</x-ui.button>
                     </div>
                 </form>
             </div>
