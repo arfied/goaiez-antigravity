@@ -12,4 +12,9 @@ final class WhatsappConnectionLookupAction
     {
         return WhatsappConnection::where('account_ref', $accountRef)->first();
     }
+
+    public function forBusiness(int $businessId): ?WhatsappConnection
+    {
+        return WhatsappConnection::query()->where('business_id', $businessId)->first();
+    }
 }

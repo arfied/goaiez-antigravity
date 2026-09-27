@@ -7,7 +7,6 @@ namespace App\Modules\CWhatsapp\Ui;
 use App\Exceptions\GbpRequestFailed;
 use App\Modules\CWhatsapp\Actions\WhatsappConnectionLookupAction;
 use App\Modules\CWhatsapp\Domain\WhatsappEngine;
-use App\Modules\CWhatsapp\Models\WhatsappConnection;
 use App\Modules\CWhatsapp\Models\WhatsappTemplate;
 use App\Services\Zernio\ZernioWhatsappClient;
 use App\Support\Tenancy;
@@ -36,12 +35,7 @@ class TemplateStatusCard extends Component
             return;
         }
 
-        $lookup = app(WhatsappConnectionLookupAction::class);
-        try {
-            $connection = $lookup->forBusiness($this->businessId);
-        } catch (\Error) {
-            $connection = WhatsappConnection::where('business_id', $this->businessId)->first();
-        }
+        $connection = app(WhatsappConnectionLookupAction::class)->forBusiness($this->businessId);
 
         if (! $connection || $connection->status !== 'connected') {
             $this->error = 'Connect WhatsApp first.';

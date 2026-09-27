@@ -6,7 +6,6 @@ namespace App\Modules\CWhatsapp\Actions;
 
 use App\Exceptions\GbpRequestFailed;
 use App\Modules\CWhatsapp\Domain\TemplateStatuses;
-use App\Modules\CWhatsapp\Models\WhatsappConnection;
 use App\Modules\CWhatsapp\Models\WhatsappTemplate;
 use App\Services\Zernio\ZernioWhatsappClient;
 
@@ -37,12 +36,7 @@ final class TemplateSubmitAction
             ]
         );
 
-        $lookup = app(WhatsappConnectionLookupAction::class);
-        try {
-            $connection = $lookup->forBusiness($businessId);
-        } catch (\Error) {
-            $connection = WhatsappConnection::where('business_id', $businessId)->first();
-        }
+        $connection = app(WhatsappConnectionLookupAction::class)->forBusiness($businessId);
 
         if (! $connection || $connection->status !== 'connected') {
             return $template;
