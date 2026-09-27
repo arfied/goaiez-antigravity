@@ -15,11 +15,13 @@ use Illuminate\Support\Facades\Event;
 
 final class GbpPostAction
 {
-    private const RISK_KEYWORDS = [
+    private const array RISK_KEYWORDS = [
         'guaranteed ranking #1',
         'click here for free crypto',
         'wire transfer to claim prize',
     ];
+
+    private const array CTA_TYPES = ['LEARN_MORE', 'BOOK', 'ORDER', 'SHOP', 'SIGN_UP', 'CALL'];
 
     public function __construct(private readonly ?ZernioGbpClient $client = null) {}
 
@@ -33,7 +35,9 @@ final class GbpPostAction
         int $connectionId,
         string $content,
         string $postType = 'update',
-        ?string $imageUrl = null
+        ?string $imageUrl = null,
+        ?string $ctaType = null,
+        ?string $ctaUrl = null
     ): array {
         $conn = GbpConnection::where('business_id', $businessId)->findOrFail($connectionId);
 
@@ -95,6 +99,17 @@ final class GbpPostAction
             }
         }
 
+        if ($ctaType !== null || $ctaUrl !== null) {
+            if ($ctaType === null || $ctaUrl === null || ! in_array($ctaType, self::CTA_TYPES, true) || ! str_starts_with($ctaUrl, 'https://')) {
+                return [
+                    'status' => 'refused_cta',
+                    'message' => 'Pick a button and give it an https link.',
+                    'dispatched_to_zernio' => false,
+                    'zernio_dispatch_id' => null,
+                ];
+            }
+        }
+
         // 3. Valid post dispatch to Zernio (TEST ANCHOR)
         $connRow = DB::table('gbp_connections')->where('id', $conn->id)->first(['account_ref', 'status']);
 
@@ -107,6 +122,8 @@ final class GbpPostAction
                 'status' => 'not_connected',
                 'zernio_dispatch_id' => null,
                 'image_url' => $imageUrl,
+                'cta_type' => $ctaType,
+                'cta_url' => $ctaUrl,
             ]);
 
             return [
@@ -126,6 +143,8 @@ final class GbpPostAction
             'status' => 'publishing',
             'zernio_dispatch_id' => null,
             'image_url' => $imageUrl,
+            'cta_type' => $ctaType,
+            'cta_url' => $ctaUrl,
         ]);
 
         try {
@@ -134,7 +153,8 @@ final class GbpPostAction
                 $content,
                 'gbp-post-'.$post->id,
                 ['gbp_post_id' => $post->id],
-                $imageUrl
+                $imageUrl,
+                $ctaType !== null ? ['type' => $ctaType, 'url' => $ctaUrl] : null
             );
 
             $status = 'failed';

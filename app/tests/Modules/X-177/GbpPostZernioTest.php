@@ -237,4 +237,107 @@ class GbpPostZernioTest extends TestCase
             'image_url' => 'https://cdn.example.test/p/6104.png',
         ]);
     }
+
+    public function test_cta_book_and_url_sent_and_stored(): void
+    {
+        Http::fake([
+            'zernio.com/api/v1/posts' => Http::response(['post' => ['_id' => 'zp_6301', 'status' => 'published', 'platforms' => [['platform' => 'googlebusiness', 'status' => 'published', 'platformPostId' => 'g_6301', 'errorMessage' => null]]]], 201),
+        ]);
+
+        $result = $this->postAction->post($this->biz->id, $this->conn->id, 'Test 6301 CTA', 'update', null, 'BOOK', 'https://book.example.test/6301');
+
+        $this->assertEquals('posted', $result['status']);
+        $post = GbpPost::find($result['post_id']);
+        $this->assertEquals('BOOK', $post->cta_type);
+        $this->assertEquals('https://book.example.test/6301', $post->cta_url);
+
+        Http::assertSent(function ($request) {
+            $data = $request['platforms'][0]['platformSpecificData'] ?? null;
+
+            return $data !== null
+                && $data['topicType'] === 'STANDARD'
+                && $data['callToAction']['type'] === 'BOOK'
+                && $data['callToAction']['url'] === 'https://book.example.test/6301';
+        });
+    }
+
+    public function test_no_cta_means_no_platform_specific_data(): void
+    {
+        Http::fake([
+            'zernio.com/api/v1/posts' => Http::response(['post' => ['_id' => 'zp_6302', 'status' => 'published', 'platforms' => [['platform' => 'googlebusiness', 'status' => 'published', 'platformPostId' => 'g_6302', 'errorMessage' => null]]]], 201),
+        ]);
+
+        $this->postAction->post($this->biz->id, $this->conn->id, 'Test 6302 CTA null');
+
+        Http::assertSent(function ($request) {
+            return ! isset($request['platforms'][0]['platformSpecificData']);
+        });
+    }
+
+    public function test_cta_validation_refuses_partial_or_invalid(): void
+    {
+        Http::fake();
+
+        $initialCount = GbpPost::count();
+
+        // type without url
+        $result1 = $this->postAction->post($this->biz->id, $this->conn->id, 'Test 6303 A', 'update', null, 'BOOK', null);
+        $this->assertEquals('refused_cta', $result1['status']);
+
+        // url without type
+        $result2 = $this->postAction->post($this->biz->id, $this->conn->id, 'Test 6303 B', 'update', null, null, 'https://book.example.test/6303');
+        $this->assertEquals('refused_cta', $result2['status']);
+
+        // http url
+        $result3 = $this->postAction->post($this->biz->id, $this->conn->id, 'Test 6303 C', 'update', null, 'BOOK', 'http://book.example.test/6303');
+        $this->assertEquals('refused_cta', $result3['status']);
+
+        // invalid type
+        $result4 = $this->postAction->post($this->biz->id, $this->conn->id, 'Test 6303 D', 'update', null, 'ALERT', 'https://book.example.test/6303');
+        $this->assertEquals('refused_cta', $result4['status']);
+
+        Http::assertNothingSent();
+        $this->assertEquals($initialCount, GbpPost::count());
+    }
+
+    public function test_image_and_cta_together(): void
+    {
+        Http::fake([
+            'zernio.com/api/v1/posts' => Http::response(['post' => ['_id' => 'zp_6304', 'status' => 'published', 'platforms' => [['platform' => 'googlebusiness', 'status' => 'published', 'platformPostId' => 'g_6304', 'errorMessage' => null]]]], 201),
+        ]);
+
+        $this->postAction->post($this->biz->id, $this->conn->id, 'Test 6304 Both', 'update', 'https://cdn.example.test/p/6304.jpg', 'SHOP', 'https://shop.example.test/6304');
+
+        Http::assertSent(function ($request) {
+            $data = $request['platforms'][0]['platformSpecificData'] ?? null;
+
+            return isset($request['mediaItems'])
+                && $request['mediaItems'][0]['type'] === 'image'
+                && $data !== null
+                && $data['topicType'] === 'STANDARD'
+                && $data['callToAction']['type'] === 'SHOP';
+        });
+    }
+
+    public function test_livewire_card_with_cta(): void
+    {
+        Http::fake([
+            'zernio.com/api/v1/posts' => Http::response(['post' => ['_id' => 'zp_6305', 'status' => 'published', 'platforms' => [['platform' => 'googlebusiness', 'status' => 'published', 'platformPostId' => 'g_6305', 'errorMessage' => null]]]], 201),
+        ]);
+
+        Tenancy::set($this->biz->id);
+
+        Livewire::test(GbpCard::class, ['businessId' => $this->biz->id])
+            ->set('postContent.'.$this->conn->id, 'Call us 6305')
+            ->set('postCtaType.'.$this->conn->id, 'CALL')
+            ->set('postCtaUrl.'.$this->conn->id, 'https://call.example.test/6302')
+            ->call('postUpdate', $this->conn->id);
+
+        $this->assertDatabaseHas('gbp_posts', [
+            'content' => 'Call us 6305',
+            'status' => 'posted',
+            'cta_type' => 'CALL',
+            'cta_url' => 'https://call.example.test/6302',
+        ]);
+    }
 }

@@ -343,7 +343,7 @@ final class ZernioGbpClient implements GbpClient
     /**
      * @throws GbpRequestFailed
      */
-    public function publishPost(string $accountRef, string $content, string $idempotencyKey, array $metadata = [], ?string $imageUrl = null): GbpPostReceipt
+    public function publishPost(string $accountRef, string $content, string $idempotencyKey, array $metadata = [], ?string $imageUrl = null, ?array $callToAction = null): GbpPostReceipt
     {
         $this->assertUsable();
 
@@ -353,13 +353,22 @@ final class ZernioGbpClient implements GbpClient
 
         $url = self::BASE.'/posts';
 
+        $platform = [
+            'platform' => self::PLATFORM,
+            'accountId' => $accountRef,
+        ];
+
+        if ($callToAction !== null) {
+            $platform['platformSpecificData'] = [
+                'topicType' => 'STANDARD',
+                'callToAction' => $callToAction,
+            ];
+        }
+
         $payload = [
             'content' => $content,
             'platforms' => [
-                [
-                    'platform' => self::PLATFORM,
-                    'accountId' => $accountRef,
-                ],
+                $platform,
             ],
             'publishNow' => true,
             'metadata' => (object) $metadata,
