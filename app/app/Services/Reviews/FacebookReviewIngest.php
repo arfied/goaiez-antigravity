@@ -113,4 +113,20 @@ final class FacebookReviewIngest
             'recommendation' => $review->recommendation,
         ];
     }
+
+    public function recordOwnerReply(Review $review, string $text, ?string $replyRef): void
+    {
+        if ((int) $review->business_id !== Tenancy::idOrFail()) {
+            throw new InvalidArgumentException('Review belongs to another tenant.');
+        }
+
+        if ($review->source !== ReviewSource::Facebook) {
+            throw new InvalidArgumentException('Review source must be Facebook.');
+        }
+
+        $review->owner_reply_text = $text;
+        $review->owner_reply_ref = $replyRef;
+        $review->owner_replied_at = now()->toDateTimeString();
+        $review->save();
+    }
 }

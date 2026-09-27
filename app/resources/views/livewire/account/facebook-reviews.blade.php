@@ -33,6 +33,12 @@
                     @if (data_get($review->raw_payload, 'has_owner_reply'))
                         <p class="text-sm text-ink-3">Replied on Facebook</p>
                     @endif
+                    @if ($review->owner_replied_at)
+                        <p class="text-sm text-ink-2">You replied: {{ $review->owner_reply_text }}</p>
+                    @elseif ($review->provider_review_id)
+                        <textarea wire:model="replyText.{{ $review->id }}" maxlength="1500"></textarea>
+                        <x-ui.button wire:click="reply({{ $review->id }})" size="sm">Reply on Facebook</x-ui.button>
+                    @endif
                 </li>
             @endforeach
         </ul>

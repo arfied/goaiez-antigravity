@@ -101,6 +101,11 @@ Schedule::command('gbp:sync')
     ->withoutOverlapping(30)
     ->runInBackground();
 
+Schedule::command('facebook:sync-reviews')
+    ->everyFifteenMinutes()
+    ->withoutOverlapping(30)
+    ->runInBackground();
+
 Schedule::command('reviews:retry-stranded-replies')
     ->everyFifteenMinutes()
     ->withoutOverlapping(30)
