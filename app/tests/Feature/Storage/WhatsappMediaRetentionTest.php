@@ -216,3 +216,67 @@ it('f', function () {
         ->assertSee('was deleted after your media retention period')
         ->assertDontSee('Download the image');
 });
+
+it('g', function () {
+    $biz = setupRetentionTest($this);
+
+    PlatformSetting::write('storage.retention.chunk', 1, 'test');
+    PlatformSetting::write('storage.retention_days.whatsapp_media', 30, 'test');
+
+    Storage::fake(ZernioWhatsappMedia::DISK);
+    PlatformSetting::write('whatsapp.zernio_enabled', true, 'test');
+
+    $msgs = [];
+    foreach ([
+        ['phone' => '+15125550191', 'media' => 'media_8351', 'evt' => 'evt_wa_8351', 'conv' => 'conv_8351', 'msgId' => 'm_8351', 'wamid' => 'wamid.8351'],
+        ['phone' => '+15125550192', 'media' => 'media_8352', 'evt' => 'evt_wa_8352', 'conv' => 'conv_8352', 'msgId' => 'm_8352', 'wamid' => 'wamid.8352'],
+        ['phone' => '+15125550193', 'media' => 'media_8353', 'evt' => 'evt_wa_8353', 'conv' => 'conv_8353', 'msgId' => 'm_8353', 'wamid' => 'wamid.8353'],
+    ] as $m) {
+        Http::fake([
+            "https://zernio.com/api/v1/whatsapp/media/{$m['media']}*" => Http::response('JPEGBYTES', 200, ['Content-Type' => 'image/jpeg']),
+        ]);
+        $payload = [
+            'id' => $m['evt'],
+            'event' => 'message.received',
+            'message' => [
+                'id' => $m['msgId'],
+                'conversationId' => $m['conv'],
+                'platform' => 'whatsapp',
+                'platformMessageId' => $m['wamid'],
+                'direction' => 'incoming',
+                'text' => '',
+                'attachments' => [
+                    ['type' => 'image', 'mimeType' => 'image/jpeg', 'url' => 'http://169.254.169.254/latest/meta-data/', 'payload' => ['id' => $m['media']]],
+                ],
+                'sender' => [
+                    'name' => 'Ana',
+                    'phoneNumber' => $m['phone'],
+                    'businessScopedUserId' => 'bsuid_'.$m['media'],
+                ],
+            ],
+            'conversation' => ['id' => $m['conv']],
+            'account' => ['accountId' => 'acct_wa_5802', 'profileId' => 'profile_5801'],
+        ];
+        postRetentionWebhook($this, $payload);
+        Tenancy::set($biz->id);
+        $msg = Message::query()->orderBy('id', 'desc')->first();
+        $job = new StoreWhatsappMediaJob($biz->id, $msg->id);
+        $job->handle();
+        $msg->refresh();
+        $msgs[] = $msg;
+    }
+
+    Message::query()->whereIn('id', collect($msgs)->pluck('id'))->update([
+        'created_at' => now()->subDays(31),
+    ]);
+
+    $sweep = app(StorageRetention::class)->prune(StoredObjectKind::WhatsappMedia);
+
+    expect($sweep->pruned)->toBe(3);
+
+    foreach ($msgs as $msg) {
+        $msg->refresh();
+        expect($msg->attachments[0]['status'])->toBe('pruned');
+        expect($msg->attachments[0]['path'])->toBeNull();
+    }
+});

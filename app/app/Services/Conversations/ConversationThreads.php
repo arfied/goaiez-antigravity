@@ -620,8 +620,9 @@ final class ConversationThreads
             ->where('direction', MessageDirection::Inbound->value)
             ->whereJsonContains('attachments', [['status' => 'stored']])
             ->where('created_at', '<', $cutoff)
-            ->orderBy('id')
-            ->chunk($chunk, function ($messages) use (&$pruned, &$refused) {
+            // chunkById RATHER THAN chunk, because this loop rewrites the very
+            // column its whereJsonContains filters on, matching StorageRetention.php:396
+            ->chunkById($chunk, function ($messages) use (&$pruned, &$refused) {
                 foreach ($messages as $message) {
                     foreach ($message->attachments as $index => $att) {
                         if (($att['status'] ?? null) === 'stored') {
