@@ -10,6 +10,7 @@ use App\Enums\SendRefusalReason;
 use App\Jobs\SummariseClosedThreadJob;
 use App\Models\Conversation;
 use App\Models\User;
+use App\Modules\CWhatsapp\Actions\WhatsappTemplateLookupAction;
 use App\Services\Conversations\ConversationThreads;
 use App\Services\Conversations\InboxReplies;
 use App\Services\Messaging\Outbound\SendOutcome;
@@ -90,6 +91,8 @@ final class Inbox extends Component
 
     public string $reply = '';
 
+    public ?int $templateId = null;
+
     public function mount(): void
     {
         abort_if(Tenancy::id() === null, 403);
@@ -118,13 +121,14 @@ final class Inbox extends Component
 
         $this->openThreadId = $threadId;
         $this->reply = '';
+        $this->templateId = null;
         $this->draftKey = (string) Str::uuid();
         $this->resetErrorBag();
     }
 
     public function back(): void
     {
-        $this->reset(['openThreadId', 'reply']);
+        $this->reset(['openThreadId', 'reply', 'templateId']);
         $this->resetErrorBag();
     }
 
@@ -157,6 +161,7 @@ final class Inbox extends Component
                 return;
             }
             $this->reply = '';
+            $this->templateId = null;
             $this->draftKey = (string) Str::uuid();
             Toaster::success($out['message']);
 
@@ -193,6 +198,7 @@ final class Inbox extends Component
         }
 
         $this->reply = '';
+        $this->templateId = null;
 
         // ⚠️ **THE KEY ROTATES ONLY ON AN ACCEPTED SEND.** A refusal keeps it,
         // so pressing send again after fixing nothing cannot become a second
@@ -205,6 +211,35 @@ final class Inbox extends Component
         // what changed about the assistant, because that is the half an owner
         // would otherwise not notice.
         Toaster::success('Sent. Your assistant will stay quiet on this conversation.');
+    }
+
+    public function sendTemplate(InboxReplies $replies, ConversationThreads $store): void
+    {
+        $thread = $this->requireOpenThread($store);
+
+        if ($thread === null) {
+            return;
+        }
+
+        abort_if($thread->channel !== OutreachChannel::Whatsapp->value, 404);
+
+        if ($this->templateId === null) {
+            $this->addError('templateId', 'Choose a template to send.');
+
+            return;
+        }
+
+        $out = $replies->sendWhatsappTemplate($thread, (int) $this->templateId, $this->user());
+
+        if (! $out['sent']) {
+            $this->addError('templateId', $out['message']);
+
+            return;
+        }
+
+        $this->templateId = null;
+        $this->draftKey = (string) Str::uuid();
+        Toaster::success($out['message']);
     }
 
     /**
@@ -313,6 +348,9 @@ final class Inbox extends Component
             'contacts' => $contacts,
             'contact' => $thread === null ? null : $store->contactFor($thread),
             'messages' => $thread === null ? null : $store->messages($thread),
+            'templates' => $thread !== null && $thread->channel === OutreachChannel::Whatsapp->value
+                ? app(WhatsappTemplateLookupAction::class)->sendable(Tenancy::idOrFail())
+                : collect(),
             // ⚠️ **READ THROUGH THE CONTRACT RATHER THAN OFF THE MODEL, AND
             // THE HONEST CLAIM IS NARROWER THAN IT LOOKS.** `stateFor()`
             // re-reads the row, which is what stops a *stale* object defeating

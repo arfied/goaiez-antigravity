@@ -14,9 +14,11 @@ use App\Livewire\Account\Inbox;
 use App\Models\Conversation;
 use App\Models\Customer;
 use App\Models\User;
+use App\Modules\CWhatsapp\Actions\WhatsappTemplateLookupAction;
 use App\Modules\CWhatsapp\Domain\WhatsappEngine;
 use App\Modules\CWhatsapp\Models\WhatsappConnection;
 use App\Modules\CWhatsapp\Models\WhatsappSession;
+use App\Modules\CWhatsapp\Models\WhatsappTemplate;
 use App\Modules\X01\Domain\UnifiedInboxManager;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Consent\ConsentCapture;
@@ -207,5 +209,109 @@ class InboxWhatsappReplyTest extends TestCase
             'conversation_id' => $conv->id,
             'body' => 'Hello on SMS',
         ]);
+    }
+
+    public function test_send_template_success()
+    {
+        $conv = $this->setupZernio(true, false);
+
+        $tpl = WhatsappTemplate::forceCreate([
+            'business_id' => $this->biz->id,
+            'name' => 'booking_followup_8101',
+            'category' => 'marketing',
+            'language' => 'en',
+            'body_text' => 'Hi, following up on your booking 8102',
+            'status' => 'approved',
+        ]);
+
+        Http::fake([
+            'zernio.com/api/v1/inbox/conversations*' => Http::response(['success' => true, 'data' => ['messageId' => 'wamid.T8103', 'conversationId' => 'conv_8104', 'participantId' => '15558887001']], 201),
+        ]);
+
+        Livewire::test(Inbox::class)
+            ->call('open', $conv->id)
+            ->set('templateId', $tpl->id)
+            ->call('sendTemplate')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('messages', [
+            'conversation_id' => $conv->id,
+            'body' => 'Hi, following up on your booking 8102',
+            'direction' => 'outbound',
+        ]);
+
+        Http::assertSentCount(1);
+    }
+
+    public function test_template_with_placeholder_not_offered()
+    {
+        $conv = $this->setupZernio(true, false);
+
+        $tpl = WhatsappTemplate::forceCreate([
+            'business_id' => $this->biz->id,
+            'name' => 'has_placeholder',
+            'category' => 'marketing',
+            'language' => 'en',
+            'body_text' => 'Hi, following up on your booking {{1}}',
+            'status' => 'approved',
+        ]);
+
+        $this->assertEmpty(app(WhatsappTemplateLookupAction::class)->sendable($this->biz->id));
+
+        Livewire::test(Inbox::class)
+            ->call('open', $conv->id)
+            ->set('templateId', $tpl->id)
+            ->call('sendTemplate')
+            ->assertHasErrors(['templateId' => 'Not sent — that template is not approved for sending.']);
+
+        $this->assertDatabaseMissing('messages', [
+            'conversation_id' => $conv->id,
+            'direction' => 'outbound',
+        ]);
+    }
+
+    public function test_pending_template_not_offered()
+    {
+        $conv = $this->setupZernio(true, false);
+
+        $tpl = WhatsappTemplate::forceCreate([
+            'business_id' => $this->biz->id,
+            'name' => 'pending_tpl',
+            'category' => 'marketing',
+            'language' => 'en',
+            'body_text' => 'Hi, following up on your booking 8102',
+            'status' => 'pending_approval',
+        ]);
+
+        Livewire::test(Inbox::class)
+            ->call('open', $conv->id)
+            ->set('templateId', $tpl->id)
+            ->call('sendTemplate')
+            ->assertHasErrors(['templateId' => 'Not sent — that template is not approved for sending.']);
+
+        $this->assertDatabaseMissing('messages', [
+            'conversation_id' => $conv->id,
+            'direction' => 'outbound',
+        ]);
+    }
+
+    public function test_no_sendable_template_does_not_show_send_template()
+    {
+        $conv = $this->setupZernio(true, false);
+
+        Livewire::test(Inbox::class)
+            ->call('open', $conv->id)
+            ->assertDontSee('Send template');
+    }
+
+    public function test_template_id_null()
+    {
+        $conv = $this->setupZernio(true, false);
+
+        Livewire::test(Inbox::class)
+            ->call('open', $conv->id)
+            ->set('templateId', null)
+            ->call('sendTemplate')
+            ->assertHasErrors(['templateId' => 'Choose a template to send.']);
     }
 }

@@ -224,6 +224,27 @@
                 <div class="mt-4">
                     <x-ui.button type="button" size="default" wire:click="send">Send</x-ui.button>
                 </div>
+
+                @if ($thread->channel === 'whatsapp' && $templates->isNotEmpty())
+                    <div class="mt-6 border-t border-rule pt-4">
+                        <label class="flex flex-col gap-1">
+                            <span class="text-sm font-medium text-ink-2">More than 24 hours since they last wrote? WhatsApp only allows an approved template.</span>
+                            <select wire:model="templateId" class="rounded-[--radius-control] border border-rule bg-card px-3 py-2 text-base text-ink">
+                                <option value="">Choose a template</option>
+                                @foreach ($templates as $tpl)
+                                    <option value="{{ $tpl->id }}">{{ $tpl->name }}</option>
+                                @endforeach
+                            </select>
+                        </label>
+                        @error('templateId')
+                            <p class="mt-2 text-base text-alert" role="alert">{{ $message }}</p>
+                        @enderror
+
+                        <div class="mt-4">
+                            <x-ui.button type="button" size="default" wire:click="sendTemplate">Send template</x-ui.button>
+                        </div>
+                    </div>
+                @endif
             @endif
 
             <div class="mt-6 flex flex-wrap gap-3 border-t border-rule pt-4">
