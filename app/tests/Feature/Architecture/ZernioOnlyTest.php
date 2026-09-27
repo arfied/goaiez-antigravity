@@ -12,8 +12,6 @@ it('reaches social, review and messaging networks only through Zernio', function
 
     $permitted = [
         'Services/Oauth/MetaTokenRefresher.php' => 'Facebook sign-in token refresh — owner decision pending',
-        'Contracts/GbpClient.php' => 'docblock mention only',
-        'Services/Ops/MethodCallers.php' => 'docblock mention only',
     ];
 
     $offenders = [];
