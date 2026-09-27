@@ -141,7 +141,7 @@ enum StoredObjectKind: string
             self::CampaignMedia => 'Campaign images',
             self::InboundMedia => 'Inbound media',
             self::VoicemailRecording => 'Voicemail audio',
-            self::WhatsappMedia => 'WhatsApp media',
+            self::WhatsappMedia => 'Photos and files from messages',
         };
     }
 
