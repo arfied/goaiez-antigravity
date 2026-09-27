@@ -93,7 +93,7 @@
                             <div>
                                 <div class="text-xs text-ink-2">
                                     @if(!empty($row->is_request))
-                                        Request #{{ $row->id }} - {{ $row->platform }} ({{ $row->rating ?? 'no rating' }}) - {{ $row->status }}
+                                        Request #{{ $row->id }} - {{ $row->platform }} ({{ $row->rating ?? 'no rating' }}) - {{ $row->status }}@if(!empty($row->settled_reason)) ({{ $row->settled_reason }})@endif
                                         <div class="italic text-[10px] mt-1 text-ink-2">"{{ $row->review_text ?? 'no text' }}"</div>
                                     @elseif(!empty($row->is_reply))
                                         Reply #{{ $row->id }} for Request #{{ $row->review_request_id }} - {{ $row->status }}

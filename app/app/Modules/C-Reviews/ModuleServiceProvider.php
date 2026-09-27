@@ -7,11 +7,13 @@ namespace App\Modules\CReviews;
 use App\Modules\CReviews\Listeners\AskForCsatOnTicketResolved;
 use App\Modules\CReviews\Listeners\AskForReviewOnJobCompleted;
 use App\Modules\CReviews\Listeners\RecordCsatOnReply;
+use App\Modules\CReviews\Listeners\SettleReviewRequestOnSend;
 use App\Modules\CReviews\Ui\LossAlerts;
 use App\Modules\CReviews\Ui\QaReport;
 use App\Modules\CReviews\Ui\ReviewsQaRequests;
 use App\Modules\CReviews\Ui\Tickets;
 use App\Modules\CSms\Events\MessageReceived;
+use App\Modules\CSms\Events\SendSettled;
 use App\Modules\X171\Events\JobCompleted;
 use App\Modules\X181\Events\TicketResolved;
 use Illuminate\Support\Facades\Event;
@@ -42,6 +44,11 @@ final class ModuleServiceProvider extends ServiceProvider
         Event::listen(
             TicketResolved::class,
             AskForCsatOnTicketResolved::class
+        );
+
+        Event::listen(
+            SendSettled::class,
+            SettleReviewRequestOnSend::class
         );
 
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');

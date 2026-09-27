@@ -121,7 +121,12 @@ class ReviewsQaRequests extends Component
                 $this->actionNotice = "🚫 REFUSAL [{$res['refusal_code']}]: {$res['message']}";
             } else {
                 $this->noticeType = 'success';
-                $this->actionNotice = "✅ Review request dispatched via {$this->platform}.";
+                $this->actionNotice = match ($res['request_status'] ?? '') {
+                    'sent' => "✅ Review request sent via {$this->platform}.",
+                    'refused' => "⚠️ Review request recorded but not sent via {$this->platform} — the sender refused it (consent, credit or quiet hours). See the QA report.",
+                    'no_phone' => '⚠️ Review request recorded, nothing sent — this customer has no phone number on file.',
+                    default => "✅ Review request queued via {$this->platform} — the sender will settle it.",
+                };
             }
         } catch (\Exception $e) {
             $this->noticeType = 'error';
