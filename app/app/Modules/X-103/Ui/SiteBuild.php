@@ -75,6 +75,9 @@ class SiteBuild extends Component
 
     public function mount()
     {
+        // A platform admin arrives here with no tenant (staff own no business); this
+        // screen builds ONE business's site, so refuse plainly rather than throw (wave 834).
+        abort_unless(Tenancy::check(), 403, 'Build my site works on one business — open it from Tenant locations first.');
         $this->businessId = Tenancy::idOrFail();
         $location = Location::where('business_id', $this->businessId)->first();
         $this->locationId = $location ? $location->id : 0;

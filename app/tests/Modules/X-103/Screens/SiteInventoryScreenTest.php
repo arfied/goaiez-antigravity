@@ -651,3 +651,10 @@ it('tells the owner what to allow when the site blocked us', function () {
         ->assertSee('GoAiEzBot')
         ->assertSee('Custom rules');
 });
+
+test('a platform admin with no tenant sees an empty site inventory not a 500', function () {
+    $admin = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+    $this->actingAs($admin)
+        ->get(route('x-103.site-inventory.admin'))
+        ->assertOk();
+});

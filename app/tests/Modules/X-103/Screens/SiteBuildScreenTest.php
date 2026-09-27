@@ -628,4 +628,11 @@ class SiteBuildScreenTest extends TestCase
             ->assertSee('Distinctive refusal 4938')
             ->assertSeeHtml('role="alert"');
     }
+
+    public function test_a_platform_admin_with_no_tenant_is_refused_plainly_on_build_my_site(): void
+    {
+        $admin = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+        $this->actingAs($admin)->get(route('x-103.site-build.admin'))
+            ->assertForbidden();
+    }
 }

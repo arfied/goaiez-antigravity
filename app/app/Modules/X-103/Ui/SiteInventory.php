@@ -167,11 +167,13 @@ final class SiteInventory extends Component
     {
         $tenantId = Tenancy::id();
 
-        $pages = SiteInventoryPage::latest('fetched_at')->withCount(['images' => function ($query) {
-            $query->where('status', 'stored');
-        }])->get();
+        $pages = $tenantId
+            ? SiteInventoryPage::latest('fetched_at')->withCount(['images' => function ($query) {
+                $query->where('status', 'stored');
+            }])->get()
+            : collect();
 
-        $images = SiteInventoryImage::where('business_id', $tenantId)->get();
+        $images = $tenantId ? SiteInventoryImage::where('business_id', $tenantId)->get() : collect();
 
         $draftPages = Page::where('business_id', $tenantId)->get();
 
