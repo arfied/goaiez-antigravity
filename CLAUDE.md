@@ -452,6 +452,19 @@ is what it exists to catch. Read it as a pair instead: `git show --name-only HEA
 or the tracker, and the manifest's diff must be only what that plan edit implies. *Two sibling arms of
 one check and only one of them got an adjudicator* — the N137 tell, in the forbidden-path check.
 
+⛔ **ZERNIO IS THE ONLY PATH TO GOOGLE BUSINESS PROFILE, WHATSAPP, FACEBOOK, INSTAGRAM AND THE OTHER SOCIAL NETWORKS
+(the owner's boss, 2026-09-27: *"it keeps getting lost and forgetting about zerino … it goes back to official modules meta and
+google"*).** Measured that day: the only real Zernio code is `app/Services/Gbp/*` (connect, review sync every 15 min, replies,
+webhooks, reconcile, meter). X-177 `GbpPostAction` fabricates a `zernio_` id and calls nothing; C-Whatsapp `WhatsappEngine::send`
+returns `sent` with no transport; X-184's social plan has no sender; `App\Services\Providers\MetaService` (direct Graph) has zero
+callers. The cause is structural, not a lapse: the modules were generated from a spec written around the official APIs, the coder
+writes from memory, and the Zernio ruling lived only in per-module capability strings (§156.3). **RULED: every brief that touches one
+of these channels names Zernio and quotes the endpoint from `.agents/supervisor/ZERNIO-DOCS-2026-09-27.md` (re-read the live docs
+when that file is older than a month); a direct `graph.facebook.com` / Cloud API / `googleapis.com` business-profile call in any wave
+is a `BLOCK`; and this seat is the one that reads the vendor docs, because Antigravity cannot be trusted to.** The coder-facing half is
+`.agents/rules/10-supervisor.md` §"EVERY SOCIAL, REVIEW AND MESSAGING CHANNEL GOES THROUGH ZERNIO". Stays direct: Search Console,
+Places, Gmail, Web Push.
+
 ## Dispatching the coder (added 2026-09-02)
 
 When the user has enabled the settings rule for

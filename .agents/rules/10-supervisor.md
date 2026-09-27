@@ -94,3 +94,7 @@ as they are and note it in `REPORT.md`. A stash of the supervisor's ledger was
 dropped once and the record had to be reconstructed; that is why this rule has
 its own heading. The same applies to history: **never amend or rebase a commit
 that has already been reviewed** — fix forward.
+
+## ⛔ ADDED 2026-09-27 — EVERY SOCIAL, REVIEW AND MESSAGING CHANNEL GOES THROUGH ZERNIO (owner's boss, standing)
+
+Google Business Profile (posts, reviews, replies), WhatsApp (connect, templates, sends, inbound), Facebook, Instagram, LinkedIn, TikTok and the other networks Zernio lists, and inbox DMs/comments/reviews are reached **only through Zernio** (`https://zernio.com/api/v1`, the existing `app/Services/Gbp/ZernioGbpClient.php` shows the auth, errors and credential). **Never** write a call to `graph.facebook.com`, the WhatsApp Cloud API, `mybusiness*.googleapis.com` or any Google Business Profile API, and never extend `App\Services\Providers\MetaService` — it has no callers and is not the path. A brief that touches one of these channels quotes the Zernio endpoint it read from the live docs (`.agents/supervisor/ZERNIO-DOCS-2026-09-27.md`); **work from that text, never from memory of Meta's or Google's own APIs** — that memory is exactly how this repo kept drifting back to them. If a brief's endpoint looks wrong, STOP and say so; do not substitute an official-API shape. Exceptions Zernio does not offer stay direct: Search Console, Google Places, Gmail, and browser Web Push.
