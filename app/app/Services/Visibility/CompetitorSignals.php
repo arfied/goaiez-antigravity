@@ -8,9 +8,11 @@ use App\Contracts\PlacesClient;
 use App\Enums\CompetitorAbsenceReason;
 use App\Exceptions\PlacesBudgetExhausted;
 use App\Exceptions\PlacesRequestFailed;
+use App\Models\Business;
 use App\Models\Competitor;
 use App\Models\CompetitorSnapshot;
 use App\Models\Location;
+use App\Services\Industry\PlacesTypeToIndustry;
 use App\Services\Places\PlaceSummary;
 use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
@@ -30,6 +32,7 @@ final class CompetitorSignals
         private readonly PlacesClient $places,
         private readonly VisibilitySyncHistory $history,
         private readonly ReviewLossDetection $reviewLoss,
+        private readonly PlacesTypeToIndustry $industries,
     ) {}
 
     /**
@@ -96,6 +99,13 @@ final class CompetitorSignals
             || $subject->primaryType === null
         ) {
             return 0;
+        }
+
+        if (Business::query()->whereKey($location->business_id)->value('industry') === null) {
+            $family = $this->industries->fromCategories($subject->categories());
+            if ($family !== null) {
+                Business::query()->whereKey($location->business_id)->update(['industry' => $family->value]);
+            }
         }
 
         $nearby = $this->places->nearby(

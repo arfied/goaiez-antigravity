@@ -6,6 +6,7 @@ namespace Tests\Feature\Account;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Services\Tenant\TenantPause;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
@@ -59,5 +60,27 @@ class HomeScreenTest extends TestCase
 
         $this->get(route('account.home'))
             ->assertStatus(403);
+    }
+
+    public function test_home_never_claims_the_engine_is_active_and_says_paused_when_it_is(): void
+    {
+        $this->get(route('account.home'))
+            ->assertDontSee('Autopilot Engine Active');
+
+        app(TenantPause::class)->pause($this->biz, 'user:'.$this->owner->id, 'Distinctive pause 4711');
+
+        $this->get(route('account.home'))
+            ->assertSee('Paused');
+    }
+
+    public function test_home_offers_directory_citations_only_with_the_advanced_dashboard(): void
+    {
+        $this->get(route('account.home'))
+            ->assertDontSee(route('advanced.citations'), false);
+
+        $this->biz->update(['advanced_dashboard_enabled' => true]);
+
+        $this->get(route('account.home'))
+            ->assertSee(route('advanced.citations'), false);
     }
 }

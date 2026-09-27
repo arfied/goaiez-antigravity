@@ -10,6 +10,8 @@ use App\Models\CompetitorSiteNote;
 use App\Models\Location;
 use App\Models\PlatformSetting;
 use App\Models\User;
+use App\Modules\X102\Models\ChatSession;
+use App\Modules\X102\Models\ChatTurn;
 use App\Modules\X103\Actions\PageCreateAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Events\PagePublished;
@@ -24,6 +26,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -129,7 +132,7 @@ class PagesScreenTest extends TestCase
         Livewire::test(Pages::class)
             ->call('publish', $page->id)
             ->assertOk()
-            ->assertSee('That page is already published.');
+            ->assertSee('That page is already published, and the draft has no changes.');
 
         $this->assertDatabaseCount('page_versions', 1);
     }
@@ -833,7 +836,7 @@ class PagesScreenTest extends TestCase
             'slug' => 'home',
             'title' => 'Home',
             'draft_blocks' => [
-                ['type' => 'hero', 'text' => 'Hero text'],
+                ['type' => 'hero', 'headline' => 'Hero headline', 'subline' => 'Hero text', 'source' => 'crawl'],
             ],
             'is_published' => false,
         ]);
@@ -853,14 +856,107 @@ class PagesScreenTest extends TestCase
             ->call('polish', $page->id)->assertSet('success', 'Polished 1 blocks with openai-4o-mini');
 
         $page->refresh();
-        $this->assertEquals('Polished UI text', $page->draft_blocks[0]['text']);
+        $this->assertEquals('Polished UI text', $page->draft_blocks[0]['subline']);
 
         Livewire::actingAs($owner)
             ->test(Pages::class)
             ->call('restoreOriginal', $page->id);
 
         $page->refresh();
-        $this->assertEquals('Hero text', $page->draft_blocks[0]['text']);
+        $this->assertEquals('Hero text', $page->draft_blocks[0]['subline']);
+    }
+
+    public function test_restore_original_puts_the_hero_subline_back(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Pages Test Subline Restore', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Distinctive headline 4601', 'subline' => 'Distinctive subline 4602', 'source' => 'crawl'],
+                ['type' => 'about', 'text' => 'About text'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'choices' => [
+                    ['message' => ['content' => 'Polished subline text']],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->call('polish', $page->id);
+
+        $page->refresh();
+        $this->assertEquals('Polished subline text', $page->draft_blocks[0]['subline']);
+        $this->assertEquals('Distinctive subline 4602', $page->draft_blocks[0]['original_subline']);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->call('restoreOriginal', $page->id);
+
+        $page->refresh();
+        $this->assertEquals('Distinctive subline 4602', $page->draft_blocks[0]['subline']);
+        $this->assertArrayNotHasKey('original_subline', $page->draft_blocks[0]);
+    }
+
+    public function test_the_faq_buttons_are_on_the_page_and_a_refusal_says_what_to_add_first(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $biz = TestCase::provisionTenant(['name' => 'Faq Controls Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'faq-controls',
+            'title' => 'FAQ',
+            'draft_blocks' => [],
+            'is_published' => false,
+        ]);
+
+        $this->actingAs($owner)->get(route('x-103.pages'))
+            ->assertOk()
+            ->assertSee('Ask the AI for questions and answers');
+
+        Livewire::actingAs($owner)->test(Pages::class)
+            ->call('draftFaq', $page->id)
+            ->assertSet('success', 'Nothing to write from yet — confirm a price or show a review on the website first.');
+
+        Http::assertNothingSent();
+
+        $page->update(['draft_meta' => ['pending_faq' => ['items' => [['question' => 'Distinctive question 4491?', 'answer' => 'Distinctive answer 4492.']], 'model' => 'openai-4o-mini']]]);
+
+        $this->actingAs($owner)->get(route('x-103.pages'))
+            ->assertSee('Proposed questions')
+            ->assertSee('Distinctive question 4491?')
+            ->assertSee('Place on this page');
+
+        Livewire::actingAs($owner)->test(Pages::class)
+            ->call('placeFaq', $page->id);
+
+        $this->actingAs($owner)->get(route('x-103.pages'))
+            ->assertDontSee('Proposed questions')
+            ->assertSee('1 question — Distinctive question 4491?');
+
+        $staff = User::factory()->create(['role' => UserRole::Manager]);
+        TestCase::provisionTenant(['owner_user_id' => $staff->id]);
+        $this->actingAs($staff);
+
+        Livewire::test(Pages::class)
+            ->call('draftFaq', $page->id)
+            ->assertForbidden();
     }
 
     public function test_faq_controls(): void
@@ -1288,7 +1384,7 @@ class PagesScreenTest extends TestCase
             'slug' => 'home',
             'title' => 'Home',
             'draft_blocks' => [
-                ['type' => 'hero', 'text' => 'Hero text'],
+                ['type' => 'hero', 'headline' => 'Hero headline', 'subline' => 'Hero text', 'source' => 'crawl'],
             ],
             'is_published' => false,
         ]);
@@ -1336,5 +1432,198 @@ class PagesScreenTest extends TestCase
 
         $page->refresh();
         $this->assertArrayNotHasKey('peers', $page->draft_blocks[0]);
+    }
+
+    public function test_the_questions_customers_asked_panel_lists_them_escaped(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $this->get(route('x-103.pages'))
+            ->assertOk()
+            ->assertSee('Questions customers asked (0)')
+            ->assertSee('Nothing waiting');
+
+        Tenancy::setUser($owner->id);
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => Str::random(10),
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        ChatTurn::create([
+            'business_id' => $biz->id,
+            'chat_session_id' => $session->id,
+            'author_type' => 'visitor',
+            'message' => '<b>Distinctive 4521</b>?',
+        ]);
+        Tenancy::forget();
+
+        $this->get(route('x-103.pages'))
+            ->assertOk()
+            ->assertSee('Questions customers asked (1)')
+            ->assertSee('&lt;b&gt;Distinctive 4521&lt;/b&gt;?', false)
+            ->assertDontSee('<b>Distinctive 4521</b>', false)
+            ->assertSee('from your site chat');
+    }
+
+    public function test_customer_question_panel_draft_answer(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+
+            'service_name' => 'A service',
+            'price_cents' => 1000,
+            'is_confirmed' => true,
+            'confirmed_at' => now(),
+        ]);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'test-page-4535',
+            'title' => 'Test',
+
+        ]);
+
+        $chat = ChatSession::create(['business_id' => $biz->id, 'session_token' => Str::uuid()->toString()]);
+        $turn = ChatTurn::create(['business_id' => $biz->id, 'chat_session_id' => $chat->id, 'author_type' => 'visitor', 'message' => 'Distinctive question 4535?', 'created_at' => now()]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::sequence()
+                ->push([
+                    'id' => 'chatcmpl-mod',
+                    'object' => 'chat.completion',
+                    'created' => 12345,
+                    'model' => 'gpt-4o-mini',
+                    'choices' => [
+                        [
+                            'message' => [
+                                'role' => 'assistant',
+                                'content' => json_encode(['flags' => []]),
+                            ],
+                            'finish_reason' => 'stop',
+                        ],
+                    ],
+                    'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+                ])
+                ->push([
+                    'id' => 'chatcmpl-1',
+                    'object' => 'chat.completion',
+                    'created' => 12345,
+                    'model' => 'gpt-4o-mini',
+                    'choices' => [
+                        [
+                            'message' => [
+                                'role' => 'assistant',
+                                'content' => json_encode(['question' => 'Distinctive question 4535?', 'answer' => 'Answer']),
+                            ],
+                            'finish_reason' => 'stop',
+                        ],
+                    ],
+                    'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+                ]),
+        ]);
+
+        Livewire::test(Pages::class)
+            ->assertSee('Draft an answer')
+            ->assertSee('Choose a page')
+            ->set('answerPage.chat:'.$turn->id, $page->id)
+            ->call('draftAnswer', 'chat:'.$turn->id)
+            ->assertSet('success', fn ($s) => str_starts_with($s, 'Drafted an answer with'));
+
+        $manager = User::factory()->create(['role' => UserRole::Manager]);
+        TestCase::provisionTenant(['owner_user_id' => $manager->id]);
+        $this->actingAs($manager);
+        Livewire::test(Pages::class)
+            ->call('draftAnswer', 'chat:'.$turn->id)
+            ->assertForbidden();
+    }
+
+    public function test_the_questions_list_does_not_deny_the_draft_button(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+        Tenancy::setUser($owner->id);
+        Tenancy::set($biz->id);
+
+        $session = ChatSession::create([
+            'business_id' => $biz->id,
+            'session_token' => Str::random(10),
+            'status' => 'active',
+            'rage_clicks_count' => 0,
+            'is_ai_capped' => false,
+        ]);
+        ChatTurn::create([
+            'business_id' => $biz->id,
+            'chat_session_id' => $session->id,
+            'author_type' => 'visitor',
+            'message' => 'Chat question 1?',
+            'created_at' => now()->subMinutes(10),
+        ]);
+
+        $this->actingAs($owner);
+
+        Livewire::test(Pages::class)
+            ->assertSee('Draft an answer')
+            ->assertDontSee('arrives in the next update');
+    }
+
+    public function test_a_published_page_with_a_changed_draft_can_be_published_again_without_unpublishing(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'launch-q9z', 'Launch');
+
+        app(SitePublishAction::class)->handle($biz->id, $page->id, []);
+
+        $page->update(['draft_blocks' => [['type' => 'hero', 'headline' => 'Distinctive changed headline 4945']]]);
+
+        Event::fake([SitePublished::class]);
+
+        Livewire::test(Pages::class)
+            ->call('publish', $page->id)
+            ->assertOk()
+            ->assertDontSee('already published');
+
+        $this->assertEquals(2, PageVersion::where('page_id', $page->id)->count());
+        $this->assertTrue($page->fresh()->is_published);
+        Event::assertDispatched(SitePublished::class);
+    }
+
+    public function test_pages_offers_publish_changes_only_when_the_draft_differs(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'launch-q9z', 'Launch');
+
+        app(SitePublishAction::class)->handle($biz->id, $page->id, []);
+
+        $this->get(route('x-103.pages'))
+            ->assertOk()
+            ->assertDontSee('Publish changes')
+            ->assertSee('Unpublish');
+
+        $page->update(['draft_blocks' => [['type' => 'hero', 'headline' => 'Distinctive changed headline 4945']]]);
+
+        $this->get(route('x-103.pages'))
+            ->assertOk()
+            ->assertSee('Publish changes')
+            ->assertSee('Unpublish');
     }
 }

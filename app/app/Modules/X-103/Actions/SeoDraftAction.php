@@ -34,9 +34,18 @@ final class SeoDraftAction
         $blocksText = '';
         $blocks = $page->draft_blocks ?? [];
         foreach ($blocks as $block) {
-            if (in_array($block['type'] ?? '', ['hero', 'about', 'services'])) {
-                $blocksText .= ($block['text'] ?? '')."\n";
+            $type = (string) ($block['type'] ?? '');
+            if (! in_array($type, ['hero', 'about', 'services'], true)) {
+                continue;
             }
+            $blocksText .= match ($type) {
+                'hero' => trim((string) ($block['headline'] ?? '')."\n".(string) ($block['subline'] ?? ''))."\n",
+                'about' => (string) ($block['text'] ?? '')."\n",
+                'services' => implode("\n", array_map(
+                    fn ($i) => trim((string) ($i['name'] ?? '').' '.(string) ($i['price_text'] ?? '')),
+                    is_array($block['items'] ?? null) ? $block['items'] : []
+                ))."\n",
+            };
         }
 
         $prompt = "Title: {$page->title}\nSlug: {$page->slug}\n\nContent:\n{$blocksText}";

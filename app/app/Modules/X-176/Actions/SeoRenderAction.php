@@ -8,7 +8,7 @@ use App\Modules\X103\Actions\PageReadAction;
 
 final class SeoRenderAction
 {
-    public function handle(int $businessId, int $pageId, string $businessName, string $commitId, string $domainName): array
+    public function handle(int $businessId, int $pageId, string $businessName, string $commitId, string $domainName, string $pathPrefix = ''): array
     {
         $page = app(PageReadAction::class)->findForBusiness($businessId, $pageId);
 
@@ -19,7 +19,7 @@ final class SeoRenderAction
         return [
             'title' => $title,
             'description' => $description,
-            'canonical' => "https://{$domainName}/{$slug}",
+            'canonical' => "https://{$domainName}{$pathPrefix}/{$slug}",
         ];
     }
 }

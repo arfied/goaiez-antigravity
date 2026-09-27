@@ -675,6 +675,19 @@ function outboundHttpPermittedFiles(): array
         // the only way to reach a new vendor is to name it.
         'Services/Gbp/ZernioGbpClient.php',
 
+        // Stripe — payments (X-198). A documented vendor JSON API with a
+        // credential and an idempotency key, like the entries above; it never
+        // fetches a page. Listed because the outbound-socket lint names who may
+        // open a socket, and a payment client that is not named is a payment
+        // client the lint would have to be weakened for.
+        'Modules/X-198/Domain/StripeGatewayClient.php',
+
+        // Google Places key validation (X-206, SIXTY-40). One autocomplete POST
+        // to places.googleapis.com with the CANDIDATE key — the same host
+        // GooglePlacesClient reaches, sent outside that client on purpose: the
+        // client resolves the stored key, and this call must not. A vendor JSON
+        // API with a credential, never a page fetch.
+        'Modules/X-206/Actions/PlacesKeyValidateAction.php',
         // IndexNow (row 9 slice E). One POST to the protocol's shared
         // endpoint, which the protocol itself requires: "You may submit your
         // request to only one of the following participating endpoints … your

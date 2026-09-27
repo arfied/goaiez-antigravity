@@ -24,12 +24,8 @@
 
         <div class="mt-8 border-t pt-4 bg-surface text-ink">
             <h3 class="font-display text-lg font-bold mb-4">Add Recommendation</h3>
-            @if($success)
-                <div class="mb-4 p-2 bg-surface border rounded text-ink">{{ $success }}</div>
-            @endif
-            @if($error)
-                <div class="mb-4 p-2 bg-surface border rounded text-ink">{{ $error }}</div>
-            @endif
+            <x-ui.toast kind="success" :message="$success" />
+            <x-ui.toast kind="error" :message="$error" />
 
             @if($sessions->isEmpty())
                 <p class="text-ink">No assistant sessions found. A session must be created via the chat dock first.</p>

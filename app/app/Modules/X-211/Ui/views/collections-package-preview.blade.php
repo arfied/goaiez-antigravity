@@ -9,9 +9,7 @@
         </x-ui.error-panel>
     @endif
 
-    @if($success)
-        <p>{{ $success }}</p>
-    @endif
+    <x-ui.toast kind="success" :message="$success" />
 
     @if($packages->isNotEmpty() && $packages->whereNull('transmitted_at')->isNotEmpty())
         <x-ui.attention-card state="attention" heading="Built, not sent">

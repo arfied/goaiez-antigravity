@@ -111,6 +111,13 @@ final class CredentialManifest
                 'degradation' => 'Tasks routed to OpenAI fail as a recorded AI call and the queued job moves on. Same held-for-a-human outcome on the moderation path.',
             ],
 
+            'fetch_proxy_url' => [
+                'vendor' => 'Outbound proxy',
+                'label' => 'Tenant-site fetch proxy URL',
+                'description' => 'A full proxy URL (scheme, host, port, credentials if any) that fetches of a tenant\'s OWN website go through, for origins that block this server\'s address. Applies to the `tenant_site` fetch source only; every other source and the robots.txt read stay direct. Optional.',
+                'degradation' => 'Tenant-site fetches go direct from this server. An origin that blocks this server\'s address (a Cloudflare security rule, for one) refuses them, and Site inventory records the page as "the request failed".',
+            ],
+
             'infobip_api_key' => [
                 'vendor' => 'Infobip',
                 'label' => 'Infobip API key',

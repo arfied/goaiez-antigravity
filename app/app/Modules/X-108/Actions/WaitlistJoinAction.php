@@ -17,8 +17,9 @@ final class WaitlistJoinAction
         string $customerPhone,
         string $serviceName,
         string $preferredDate,
-        bool $isMember = false
+        bool $isMember = false,
+        ?string $deployHash = null
     ): Waitlist {
-        return $this->engine->joinWaitlist($businessId, $customerName, $customerPhone, $serviceName, $preferredDate, $isMember);
+        return $this->engine->joinWaitlist($businessId, $customerName, $customerPhone, $serviceName, $preferredDate, $isMember, $deployHash);
     }
 }

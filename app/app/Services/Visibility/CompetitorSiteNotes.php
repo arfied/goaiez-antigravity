@@ -117,6 +117,28 @@ final class CompetitorSiteNotes
         return implode("\n", $lines);
     }
 
+    /**
+     * What the nearby peers' sites cover, for an owner screen that must not name
+     * them (decision 196): a count and the de-duplicated heading topics.
+     *
+     * @return array{read: int, topics: list<string>}
+     */
+    public function topicsFor(int $businessId, int $maxTopics = 12): array
+    {
+        $notes = $this->notesFor($businessId);
+        $topics = [];
+        foreach ($notes as $n) {
+            foreach ($n['headings'] as $h) {
+                $key = mb_strtolower(trim($h));
+                if ($key !== '' && ! isset($topics[$key])) {
+                    $topics[$key] = mb_substr(trim($h), 0, 80);
+                }
+            }
+        }
+
+        return ['read' => count($notes), 'topics' => array_slice(array_values($topics), 0, $maxTopics)];
+    }
+
     /** @return array{title: ?string, description: ?string, headings: list<string>} */
     private function extract(string $html): array
     {

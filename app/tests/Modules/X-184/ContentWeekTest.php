@@ -68,7 +68,7 @@ class ContentWeekTest extends TestCase
             ->call('approveCadence', $plan->id)
             ->assertSee('Approved')
             ->call('scheduleItem', $item->id)
-            ->assertSee('Scheduled');
+            ->assertSee('Planned');
 
         $this->assertTrue($plan->fresh()->is_cadence_approved);
         $this->assertTrue($item->fresh()->is_scheduled);

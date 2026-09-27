@@ -6,9 +6,7 @@
         <x-ui.error-panel heading="We couldn't resolve that">{{ $error }}</x-ui.error-panel>
     @endif
     
-    @if($success)
-        <p>{{ $success }}</p>
-    @endif
+    <x-ui.toast kind="success" :message="$success" />
 
     <div wire:loading><x-ui.skeleton label="Reading the conflicts…" /></div>
 

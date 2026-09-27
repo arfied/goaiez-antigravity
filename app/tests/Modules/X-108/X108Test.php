@@ -488,4 +488,18 @@ class X108Test extends TestCase
         $this->assertStringContainsString('14:00', $result['offered_slots'][0]['start_time']);
         $this->assertStringContainsString('16:00', $result['offered_slots'][1]['start_time']);
     }
+
+    public function test_joining_the_waitlist_without_a_deployed_page_leaves_the_hash_empty(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'No Hash Waitlist Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $futureDate = now()->addDays(2)->format('Y-m-d');
+
+        $entry = $this->waitlist->handle($biz->id, 'Distinctive 4552', '5550004552', 'Service', $futureDate);
+        $this->assertNull($entry->deploy_hash);
+
+        $entryWithHash = $this->waitlist->handle($biz->id, 'Distinctive 4553', '5550004553', 'Service', $futureDate, false, 'deploy_abc4553');
+        $this->assertSame('deploy_abc4553', $entryWithHash->fresh()->deploy_hash);
+    }
 }

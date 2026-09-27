@@ -9,8 +9,11 @@ use App\Models\User;
 use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CReviews\Ui\ReviewsQaRequests;
+use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X121\Models\Person;
+use App\Modules\X181\Actions\QaTicketCreateAction;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -90,5 +93,37 @@ class ReviewsQaRequestsScreenTest extends TestCase
         $this->get(route('c-reviews.reviews-qa-requests'))
             ->assertOk()
             ->assertSee('Distinctive Person4509');
+    }
+
+    public function test_resend_ask_under_qa_suppression_says_nothing_was_sent(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::setUser($owner->id);
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'Distinctive', 'last_name' => 'Person4510', 'phone' => '+15125554510']);
+        $req = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'customer_id' => $person->id,
+            'status' => 'sent',
+            'rating' => null,
+            'platform' => 'google',
+        ]);
+
+        app(QaTicketCreateAction::class)->handle($biz->id, $person->id, 'Triage');
+        Tenancy::forget();
+
+        Event::fake([SendRequested::class]);
+
+        $component = Livewire::actingAs($owner)->test(ReviewsQaRequests::class, ['businessId' => $biz->id])->call('resendAsk', $req->id);
+
+        $component->assertSet('noticeType', 'warning');
+        $actionNotice = $component->get('actionNotice');
+        $this->assertStringContainsString('Not sent', $actionNotice);
+        $this->assertStringNotContainsString('resent', $actionNotice);
+
+        Event::assertNotDispatched(SendRequested::class);
+        $this->assertTrue(ReviewRequest::where('customer_id', $person->id)->where('status', 'suppressed')->exists());
     }
 }

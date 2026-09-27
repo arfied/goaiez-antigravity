@@ -3,12 +3,8 @@
         <h2 class="text-lg font-bold text-ink">Roles</h2>
         
         <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
-            @if($error)
-                <div class="text-red-500">{{ $error }}</div>
-            @endif
-            @if($success)
-                <div class="text-green-500">{{ $success }}</div>
-            @endif
+            <x-ui.toast kind="error" :message="$error" />
+            <x-ui.toast kind="success" :message="$success" />
             <form wire:submit="createRole" class="flex flex-col gap-2">
                 <input type="text" wire:model="name" placeholder="Role Name" class="border rounded p-2 text-ink flex-1 bg-surface">
                 <input type="text" wire:model="description" placeholder="Description" class="border rounded p-2 text-ink flex-1 bg-surface">

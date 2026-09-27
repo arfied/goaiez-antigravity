@@ -1,17 +1,9 @@
 <div>
     <h2>Resolution rate & confidence</h2>
 
-    @if($error)
-        <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4 text-ink">
-            {{ $error }}
-        </div>
-    @endif
+    <x-ui.toast kind="error" :message="$error" />
 
-    @if($success)
-        <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4 text-ink">
-            {{ $success }}
-        </div>
-    @endif
+    <x-ui.toast kind="success" :message="$success" />
 
     <form wire:submit.prevent="linkPeople" class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
         <div class="flex gap-4">

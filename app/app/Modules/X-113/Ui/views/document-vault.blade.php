@@ -2,19 +2,13 @@
     <div class="doc-vault-view p-4 bg-surface text-ink border">
         <h2 class="text-lg font-bold">Employee Document Vault</h2>
         
-        <p class="mt-4 mb-6">No documents are stored yet, but here is who will be able to view them.</p>
+        @if(! $hasDocuments)
+            <p class="mt-4 mb-6">No documents are stored yet, but here is who will be able to view them.</p>
+        @endif
 
-        @if($success)
-            <div class="mb-6 p-4 bg-surface border rounded text-ink">
-                {{ $success }}
-            </div>
-        @endif
+        <x-ui.toast kind="success" :message="$success" />
         
-        @if($error)
-            <div class="mb-6 p-4 bg-surface border rounded text-ink">
-                {{ $error }}
-            </div>
-        @endif
+        <x-ui.toast kind="error" :message="$error" />
 
         <form wire:submit="uploadDocument" class="mb-6 flex flex-col gap-2 bg-surface p-4 border rounded mt-4">
             <h3 class="font-bold">Upload a document</h3>
@@ -57,7 +51,9 @@
                                     @foreach($s->documents as $doc)
                                         <li class="flex items-center gap-2">
                                             <span>{{ $doc->original_filename }} ({{ number_format($doc->size_bytes / 1024, 2) }} KB) - Uploaded {{ $doc->created_at->format('Y-m-d') }}</span>
-                                            <button type="button" wire:click="download({{ $doc->id }})" class="text-sm text-ink-2 underline">Download</button>
+                                            @if($s->can_view)
+                                                <button type="button" wire:click="download({{ $doc->id }})" class="text-sm text-ink-2 underline">Download</button>
+                                            @endif
                                         </li>
                                     @endforeach
                                 </ul>

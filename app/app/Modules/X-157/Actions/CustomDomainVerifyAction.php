@@ -14,7 +14,7 @@ class CustomDomainVerifyAction
 
     public function handle(int $businessId): array
     {
-        $request = CustomDomainRequest::where('business_id', $businessId)->first();
+        $request = CustomDomainRequest::where('business_id', $businessId)->orderByDesc('requested_at')->orderByDesc('id')->first();
         if (! $request) {
             return ['status' => 'no_request'];
         }

@@ -88,7 +88,7 @@ final class AgentAnswerAction
                     'conversation_id' => $conversationId,
                     'turn_number' => $turnNumber,
                     'user_message' => $userMessage,
-                    'agent_reply' => 'I am connecting you with a team member who can assist you further.',
+                    'agent_reply' => 'I cannot continue this chat here. Tap "Leave your details" below and the team will see your message.',
                     'status' => 'handoff',
                     'refusal_code' => 'UNDER_18',
                 ]);
@@ -115,7 +115,7 @@ final class AgentAnswerAction
                     'conversation_id' => $conversationId,
                     'turn_number' => $turnNumber,
                     'user_message' => $userMessage,
-                    'agent_reply' => 'I understand your frustration. Transferring you to our support manager now.',
+                    'agent_reply' => 'I understand. I cannot hand you to a person from here — tap "Leave your details" below and the team will see your message.',
                     'status' => 'handoff',
                     'refusal_code' => 'NEGATIVE_SENTIMENT_HANDOFF',
                 ]);
@@ -153,7 +153,7 @@ final class AgentAnswerAction
                         'conversation_id' => $conversationId,
                         'turn_number' => $turnNumber,
                         'user_message' => $userMessage,
-                        'agent_reply' => 'I do not have verified pricing on file for this service. Let me connect you with our team for an accurate quote.',
+                        'agent_reply' => 'I do not have a confirmed price for that. Tap "Leave your details" below and the team will see your question.',
                         'status' => 'handoff',
                         'refusal_code' => 'NO_FACT',
                     ]);
@@ -221,7 +221,7 @@ final class AgentAnswerAction
                         'conversation_id' => $conversationId,
                         'turn_number' => $turnNumber,
                         'user_message' => $userMessage,
-                        'agent_reply' => 'I do not have verified pricing on file for this service. Let me connect you with our team for an accurate quote.',
+                        'agent_reply' => 'I do not have a confirmed price for that. Tap "Leave your details" below and the team will see your question.',
                         'status' => 'handoff',
                         'refusal_code' => $quoteResult['refusal_code'],
                     ]);
@@ -302,7 +302,7 @@ final class AgentAnswerAction
                             'conversation_id' => $conversationId,
                             'turn_number' => $turnNumber,
                             'user_message' => $userMessage,
-                            'agent_reply' => 'I do not have verified pricing on file for this service. Let me connect you with our team for an accurate quote.',
+                            'agent_reply' => 'I do not have a confirmed price for that. Tap "Leave your details" below and the team will see your question.',
                             'status' => 'handoff',
                             'refusal_code' => 'NO_FACT',
                         ]);
@@ -326,7 +326,11 @@ final class AgentAnswerAction
                     }
                 }
             } else {
-                $reply = 'Hello! How can I help you today?';
+                // A greeting gets a greeting; anything else gets the truth about what
+                // this agent can do (wave 815).
+                $reply = preg_match('/^\W*(hi|hello|hey|howdy|good (morning|afternoon|evening))\b/i', $userMessage) === 1
+                    ? 'Hello! How can I help you today?'
+                    : 'I can answer questions about our prices. For anything else, tap "Leave your details" below and the team will see your message.';
                 $amount = null;
             }
 

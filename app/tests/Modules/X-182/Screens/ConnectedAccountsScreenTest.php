@@ -25,7 +25,7 @@ class ConnectedAccountsScreenTest extends TestCase
             ->assertSee('Your account')
             ->assertDontSee('Internal Platform Console')
             ->assertDontSee('this screen is planned in')
-            ->assertSee('No social accounts connected yet.');
+            ->assertSee('not built here yet');
 
         Tenancy::set((int) $biz->id);
         SocialAccount::create([
@@ -41,7 +41,7 @@ class ConnectedAccountsScreenTest extends TestCase
             ->assertSee('@distinctive_handle_4473')
             ->assertSee('instagram')
             ->assertSee('connected')
-            ->assertDontSee('No social accounts connected yet.');
+            ->assertDontSee('not built here yet');
 
         Livewire::actingAs($owner)->test(ConnectedAccounts::class, ['businessId' => $biz->id])->assertOk();
     }

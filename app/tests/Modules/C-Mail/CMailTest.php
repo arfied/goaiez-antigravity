@@ -648,4 +648,23 @@ class CMailTest extends TestCase
         $this->assertSame('processed', $acceptedSend['status'], 'A4: send should be processed when not paused');
         $this->assertFalse(MailDomain::where('business_id', $biz->id)->findOrFail($domainNegative->id)->is_marketing_paused, 'A4: domain is not paused');
     }
+
+    public function test_re_checking_dns_does_not_lift_a_complaint_halt(): void
+    {
+        $biz = self::provisionTenant();
+
+        $halted = MailDomain::create([
+            'business_id' => $biz->id,
+            'domain_name' => 'halted-4834.example',
+            'is_marketing_paused' => true,
+            'complaint_rate' => 0.0015,
+        ]);
+
+        $this->dnsAction->handle($biz->id, 'halted-4834.example');
+        $this->assertTrue($halted->fresh()->is_marketing_paused, 'a DNS re-check must not lift a complaint halt');
+
+        // positive control: a domain the action creates starts unpaused, from the column default
+        $fresh = $this->dnsAction->handle($biz->id, 'fresh-4835.example');
+        $this->assertFalse($fresh->fresh()->is_marketing_paused);
+    }
 }

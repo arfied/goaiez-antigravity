@@ -6,11 +6,11 @@
             <x-ui.sample />
         @endif
 
-        <div wire:loading.delay wire:target="previousPage, nextPage, gotoPage, openPerson, readConversation">
+        <div wire:loading.delay wire:target="openPerson, readConversation">
             <x-ui.skeleton label="Loading customers…" :lines="3" />
         </div>
 
-        <div wire:loading.delay.remove wire:target="previousPage, nextPage, gotoPage, openPerson, readConversation">
+        <div wire:loading.delay.remove wire:target="openPerson, readConversation">
             @if ($failed)
                 <x-ui.error-panel heading="We couldn't load the customers directory" retry="$refresh">
                     There was an error communicating with the database.

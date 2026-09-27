@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X138\Ui;
 
+use App\Modules\X138\Actions\SiteResultsAction;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
@@ -27,8 +28,11 @@ class RoiDashboard extends Component
             ? DB::table('roi_snapshots')->where('business_id', $this->businessId)->get()
             : collect();
 
+        $results = $this->businessId > 0 ? app(SiteResultsAction::class)->handle($this->businessId) : null;
+
         return view('x-138::roi-dashboard', [
             'snapshots' => $snapshots,
+            'results' => $results,
         ]);
     }
 }

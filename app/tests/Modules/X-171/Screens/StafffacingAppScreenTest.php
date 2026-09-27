@@ -22,4 +22,13 @@ class StafffacingAppScreenTest extends TestCase
 
         Livewire::test(StafffacingApp::class)->assertOk();
     }
+    public function test_the_device_id_cannot_be_overwritten_from_the_browser(): void
+    {
+        $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+        $this->actingAs($user);
+        $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
+
+        $this->expectException(\Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException::class);
+        Livewire::test(StafffacingApp::class)->set('deviceId', 'other-device-4852');
+    }
 }

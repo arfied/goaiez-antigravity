@@ -528,7 +528,8 @@ final class PlatformSettings extends Component
      * `DefaultsRegistry::int()` already coerces on the way out, so this is the
      * second of two guards rather than the only one — but storing `"250"` where
      * `250` was meant would make every raw read of the row wrong, and the Ops
-     * screen is the one place a human can introduce it.
+     * screen is the one place a human can introduce it. A JSON array edits as
+     * JSON, so it parses back to an array.
      */
     private function parse(string $input): mixed
     {
@@ -540,8 +541,33 @@ final class PlatformSettings extends Component
             // integer cents in this system — accepting `199.99` would be
             // accepting the bug (`18` §Money handling).
             preg_match('/^-?\d+$/', $input) === 1 => (int) $input,
+            // A JSON list or object, as edit() showed it. Only the shape the
+            // manifest can seed — a flat list of scalars, or an object of them —
+            // is accepted; anything else stays a string and reads back as one.
+            self::isJsonStructure($input) => self::decodeJsonStructure($input),
             default => $input,
         };
+    }
+
+    private static function isJsonStructure(string $input): bool
+    {
+        $t = trim($input);
+        if ($t === '' || ! (str_starts_with($t, '[') || str_starts_with($t, '{'))) {
+            return false;
+        }
+        $decoded = json_decode($t, true);
+
+        return is_array($decoded) && json_last_error() === JSON_ERROR_NONE
+            && array_reduce($decoded, fn (bool $ok, mixed $v): bool => $ok && (is_scalar($v) || $v === null), true);
+    }
+
+    /** @return array<int|string, scalar|null> */
+    private static function decodeJsonStructure(string $input): array
+    {
+        /** @var array<int|string, scalar|null> $decoded */
+        $decoded = json_decode(trim($input), true);
+
+        return $decoded;
     }
 
     /**

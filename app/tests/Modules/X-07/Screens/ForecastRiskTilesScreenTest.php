@@ -74,7 +74,7 @@ class ForecastRiskTilesScreenTest extends TestCase
         $this->actingAs($biz->owner)
             ->withSession(['tenant_id' => $biz->id])
             ->get('/app/x-07/forecast-risk-tiles')
-            ->assertSee('2026-09')
+            ->assertSee('% risk that customers leave')
             ->assertDontSee('No forecast yet');
     }
 

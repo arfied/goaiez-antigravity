@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X103\Actions;
 
 use App\Contracts\FetchGateway;
+use App\Enums\FetchOutcome;
 use App\Models\Location;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Services\Config\DefaultsRegistry;
@@ -47,7 +48,11 @@ final class SiteCrawlAction
                     [
                         'location_id' => $locationId,
                         'status' => $result->wasRefused() ? 'refused' : 'failed',
-                        'refusal_reason' => $result->refusalReason ? $result->refusalReason->value : 'unknown',
+                        'refusal_reason' => match (true) {
+                            $result->refusalReason !== null => $result->refusalReason->value,
+                            $result->outcome === FetchOutcome::Blocked, $result->outcome === FetchOutcome::Challenge => 'blocked_by_site',
+                            default => 'unknown',
+                        },
                         'fetched_at' => now(),
                     ]
                 );
@@ -78,10 +83,16 @@ final class SiteCrawlAction
             $text = $bodyNode ? preg_replace('/\s+/', ' ', trim($bodyNode->textContent)) : null;
 
             $imageUrls = [];
+            $imageAlts = [];
             foreach ($dom->getElementsByTagName('img') as $node) {
                 $src = $node->getAttribute('src');
                 if ($src) {
-                    $imageUrls[] = $this->resolveUrl($url, $src);
+                    $resolved = $this->resolveUrl($url, $src);
+                    $imageUrls[] = $resolved;
+                    $alt = trim(preg_replace('/\s+/', ' ', $node->getAttribute('alt')) ?? '');
+                    if ($resolved && $alt !== '' && ! isset($imageAlts[$resolved])) {
+                        $imageAlts[$resolved] = mb_substr($alt, 0, 160);
+                    }
                 }
             }
             $imageUrls = array_values(array_unique(array_filter($imageUrls)));
@@ -127,6 +138,7 @@ final class SiteCrawlAction
                     'headings' => $headings,
                     'text' => $text,
                     'image_urls' => $imageUrls,
+                    'image_alts' => $imageAlts,
                     'phones' => $phones,
                     'emails' => $emails,
                     'links_out' => $linksOut,

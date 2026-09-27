@@ -3,12 +3,8 @@
     
     <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
         <h3 class="font-semibold text-ink">Record Call</h3>
-        @if($success)
-            <div class="text-ink-2 bg-paper p-2 border rounded">{{ $success }}</div>
-        @endif
-        @if($error)
-            <div class="text-ink-2 bg-paper p-2 border rounded">{{ $error }}</div>
-        @endif
+        <x-ui.toast kind="success" :message="$success" />
+        <x-ui.toast kind="error" :message="$error" />
         <form wire:submit="recordCall" class="flex flex-col gap-2">
             <input type="text" wire:model="callSid" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Call SID">
             <input type="text" wire:model="fromPhone" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="From Phone">

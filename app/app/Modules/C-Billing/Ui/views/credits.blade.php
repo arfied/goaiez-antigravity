@@ -13,9 +13,7 @@
             <x-ui.error-panel heading="That didn't go through">{{ $error }}</x-ui.error-panel>
         @endif
 
-        @if($success)
-            <x-ui.attention-card state="ok" heading="Top-up recorded">{{ $success }}</x-ui.attention-card>
-        @endif
+        <x-ui.toast kind="success" :message="$success" />
 
         <div wire:loading.remove class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-8">
             <div class="bg-card overflow-hidden shadow rounded-[--radius-card] border border-rule">

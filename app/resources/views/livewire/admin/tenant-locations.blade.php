@@ -42,16 +42,15 @@
         <h2 class="font-display text-lg font-semibold text-ink">Find a business</h2>
 
         <p class="mt-1 text-base text-ink-2">
-            By its number. There is no list — see the note at the foot of this page.
+            By its number, or by the owner’s email address. There is no list — see the note at the foot of this page.
         </p>
 
         <form wire:submit="lookUp" class="mt-4 flex flex-wrap items-end gap-3">
             <label class="block">
-                <span class="text-sm text-ink-2">Business number</span>
+                <span class="text-sm text-ink-2">Business number or owner email</span>
                 <input
                     wire:model="lookup"
                     type="text"
-                    inputmode="numeric"
                     class="mt-1 w-40 rounded-[--radius-field] border border-rule bg-paper px-3 py-2 text-base text-ink"
                 >
             </label>
@@ -75,6 +74,15 @@
                 <span wire:loading wire:target="lookUp">Opening…</span>
             </x-ui.button>
         </form>
+
+        @if ($ownedChoices !== [])
+            <p class="mt-4 text-base text-ink">That owner has {{ count($ownedChoices) }} businesses. Open one:</p>
+            <ul class="mt-2 space-y-1">
+                @foreach ($ownedChoices as $choice)
+                    <li><x-ui.button wire:click="choose({{ $choice['id'] }})" size="default" variant="secondary">#{{ $choice['id'] }} — {{ $choice['name'] }}</x-ui.button></li>
+                @endforeach
+            </ul>
+        @endif
     </section>
 
     @if ($business !== null)
@@ -161,6 +169,34 @@
                     </li>
                 @endforelse
             </ul>
+        </section>
+
+        <section class="rounded-[--radius-panel] border border-rule bg-card p-5">
+            <h2 class="font-display text-lg font-semibold text-ink">No-card trial</h2>
+            @if ($onNoCardTrial && $noCardTrialEndsAt !== null)
+                <p class="mt-1 text-base text-ink-2">Ends {{ $noCardTrialEndsAt->format('j M Y') }}. Extending it moves that date for this account only.</p>
+                <form wire:submit="extendTrial" class="mt-4 flex flex-wrap items-end gap-3">
+                    <label class="block">
+                        <span class="text-sm text-ink-2">New end date</span>
+                        <input wire:model="trialUntil" type="date" class="mt-1 rounded-[--radius-field] border border-rule bg-paper px-3 py-2 text-base text-ink">
+                    </label>
+                    <x-ui.button
+                        type="submit"
+                        variant="secondary"
+                        size="default"
+                        wire:loading.attr="disabled"
+                        wire:target="extendTrial"
+                    >
+                        <span wire:loading.remove wire:target="extendTrial">Extend</span>
+                        <span wire:loading wire:target="extendTrial">Extending…</span>
+                    </x-ui.button>
+                </form>
+                @error('trialUntil')
+                    <p class="mt-3 text-base text-alert" role="alert">{{ $message }}</p>
+                @enderror
+            @else
+                <p class="mt-1 text-base text-ink-2">Not on a no-card trial, so there is nothing to extend here.</p>
+            @endif
         </section>
 
         <section class="rounded-[--radius-panel] border border-rule bg-card p-5">
@@ -264,6 +300,6 @@
         There is no list of businesses here. Every table this screen reads is
         row-level-secured on one tenant at a time and platform staff belong to
         none, so an operator opens one business by its number and sees nothing
-        else.
+        else. An owner’s email address opens that owner’s businesses through the same policy the owner themselves uses to see them.
     </p>
 </div>

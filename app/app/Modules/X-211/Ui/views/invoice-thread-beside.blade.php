@@ -7,9 +7,7 @@
         </x-ui.error-panel>
     @endif
 
-    @if($success)
-        <p>{{ $success }}</p>
-    @endif
+    <x-ui.toast kind="success" :message="$success" />
 
     <div wire:loading>
         <x-ui.skeleton label="Reading the thread…" />

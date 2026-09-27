@@ -321,6 +321,11 @@ final class DefaultsManifest
                 'group' => 'Content',
                 'description' => 'System prompt for "Make me a page": the AI proposes a new page (title, slug, blocks) from an owner\'s plain-words request; the page lands as an unpublished draft the owner publishes or deletes',
             ],
+            'sites.variant.system_prompt' => [
+                'seed' => 'Write exactly two alternative headlines for the top of a local service business\'s home page. Plain words, at most 70 characters each, no prices, no claims the facts do not support, no business names of any kind. Return them as a list.',
+                'group' => 'Content',
+                'description' => 'System prompt for proposing variant headlines: the AI proposes two alternative headlines for the home page.',
+            ],
             'sites.copy.max_chars' => [
                 'seed' => 600,
                 'group' => 'Content',
@@ -2139,6 +2144,12 @@ final class DefaultsManifest
                 'description' => 'Whether the weekly wins digest is emailed to account holders at all (automation #109, `16` §12). On by default — every send is account-holder email through PlatformMailer, needing no consent record. Turn it off to stop the whole sweep without a deploy; no week is lost, because the cursor moves only on a delivery and the next digest widens to cover the gap.',
             ],
 
+            'owner_digest.monthly_enabled' => [
+                'seed' => true,
+                'group' => 'Trust',
+                'description' => 'Whether the monthly "what your website did" email is sent to account holders at all. On by default — account-holder email through PlatformMailer, no consent record needed. Off stops the sweep without a deploy; the cursor moves only on a delivery, so the next email widens to cover the gap.',
+            ],
+
             /*
              * The domain every platform email is sent from (5500).
              *
@@ -3592,6 +3603,24 @@ final class DefaultsManifest
                 'seed' => 'Write at most 6 plain-language question and answer pairs a customer of a local service business would ask. Use ONLY the facts given, include no prices not present, and make no promises.',
                 'group' => 'Content',
                 'description' => 'System prompt for generating the FAQ block.',
+            ],
+
+            'sites.questions.recent_days' => [
+                'seed' => 90,
+                'group' => 'Content',
+                'description' => 'How many days back the Pages screen looks for questions customers typed into the site chat or the contact form.',
+            ],
+
+            'sites.questions.max' => [
+                'seed' => 20,
+                'group' => 'Content',
+                'description' => 'How many unanswered customer questions the Pages screen lists at once.',
+            ],
+
+            'sites.questions.answer_system_prompt' => [
+                'seed' => "Answer ONE customer question in plain language for a local service business. Use ONLY the facts given, include no prices not present, make no promises, and keep the customer's question as asked, tidied for spelling only. Return the question and the answer.",
+                'group' => 'Content',
+                'description' => 'System prompt for answering customer questions on Pages.',
             ],
 
             'reviews.reply.max_recovery_length' => [

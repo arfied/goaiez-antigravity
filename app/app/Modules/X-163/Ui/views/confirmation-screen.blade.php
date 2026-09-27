@@ -11,7 +11,7 @@
         </div>
 
         @if(session()->has('error'))
-            <x-ui.error-panel class="mb-8">
+            <x-ui.error-panel heading="We couldn't confirm that" class="mb-8">
                 {{ session('error') }}
             </x-ui.error-panel>
         @endif

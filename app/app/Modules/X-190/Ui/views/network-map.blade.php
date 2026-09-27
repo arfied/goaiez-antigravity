@@ -5,9 +5,7 @@
         <div>
             <h3>Your listing</h3>
             
-            @if($success)
-                <div>{{ $success }}</div>
-            @endif
+            <x-ui.toast kind="success" :message="$success" />
 
             @if($listing && $listing->is_listed)
                 <p>Listed as {{ $listing->company_name }} &middot; {{ $listing->category }} &middot; {{ $listing->territory_zip }}</p>

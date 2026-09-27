@@ -5,6 +5,7 @@ use App\Jobs\Visibility\SyncCompetitorSignalsJob;
 use App\Models\CompetitorSiteNote;
 use App\Models\Location;
 use App\Models\User;
+use App\Services\Visibility\CompetitorSiteNotes;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -130,4 +131,41 @@ it('does not fetch again inside the freshness window', function () {
 
     Http::assertSent(fn ($r) => str_starts_with($r->url(), 'https://peer-4471.example'));
     expect(collect(Http::recorded())->filter(fn ($pair) => $pair[0]->url() === 'https://peer-4471.example/')->count())->toBe(1);
+});
+
+it('reports what the peers cover without naming them', function () {
+    Http::fake([
+        '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
+        'places.googleapis.com/v1/places:searchNearby' => Http::response([
+            'places' => [
+                ['id' => 'place-4471', 'displayName' => ['text' => 'Distinctive Peer 4471'], 'rating' => 4.6, 'userRatingCount' => 88, 'websiteUri' => 'https://peer-4471.example/'],
+                ['id' => 'place-4472', 'displayName' => ['text' => 'Distinctive Peer 4472'], 'rating' => 4.1],
+            ],
+        ]),
+        'places.googleapis.com/v1/places/*' => Http::response([
+            'id' => 'self-place-1',
+            'displayName' => ['text' => 'My Shop'],
+            'location' => ['latitude' => 34.0, 'longitude' => -118.0],
+            'primaryType' => 'store',
+        ]),
+        'https://peer-4471.example/' => Http::response('<html><head><title>Distinctive Peer Title 4471</title><meta name="description" content="Distinctive peer description 4472"></head><body><h1>Distinctive heading 4473</h1><p>Distinctive body sentence 4474 that must never be stored.</p><h2>Distinctive heading 4475</h2><img src="/distinctive-image-4476.png"></body></html>', 200, ['Content-Type' => 'text/html']),
+    ]);
+
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+    /** @var TestCase $this */
+    $this->actingAs($owner);
+    Tenancy::setUser($owner->id);
+    Tenancy::set((int) $biz->id);
+    config(['credentials.google_places_key' => 'test-key']);
+
+    $location = Location::factory()->create(['business_id' => $biz->id, 'google_place_id' => 'self-place-1']);
+
+    $job = new SyncCompetitorSignalsJob((int) $biz->id, (int) $location->id);
+    $job->handle();
+
+    $t = app(CompetitorSiteNotes::class)->topicsFor((int) $biz->id);
+    expect($t['read'])->toBe(1);
+    expect($t['topics'])->toBe(['Distinctive heading 4473', 'Distinctive heading 4475']);
+    expect(json_encode($t))->not->toContain('4471');
 });

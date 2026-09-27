@@ -18,12 +18,8 @@
 
         <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4 border">
             <h2 class="font-bold text-ink">Make an offer</h2>
-            @if($success)
-                <div class="bg-surface text-ink border rounded p-4 mb-4">{{ $success }}</div>
-            @endif
-            @if($error)
-                <div class="bg-surface text-ink border rounded p-4 mb-4">{{ $error }}</div>
-            @endif
+            <x-ui.toast kind="success" :message="$success" />
+            <x-ui.toast kind="error" :message="$error" />
             <form wire:submit="makeOffer" class="flex flex-col gap-2">
                 <input type="text" wire:model="prospectId" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Prospect ID">
                 <input type="text" wire:model="offeredRateBps" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Offered Rate (bps)">

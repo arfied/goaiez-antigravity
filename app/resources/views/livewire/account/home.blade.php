@@ -88,10 +88,7 @@
                 Not worked out yet — these are the counts we have.
             @endif
         </span>
-        <span class="flex items-center gap-1.5 text-emerald-600 font-semibold">
-            <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-            Autopilot Engine Active
-        </span>
+        @if ($isPaused)<span class="flex items-center gap-1.5 text-ink-2">Paused — nothing runs for you until you resume in Settings</span>@endif
     </div>
 
     <!-- Quick Navigation & Growth Shortcuts -->
@@ -113,11 +110,13 @@
                 <div class="text-xs font-semibold text-ink group-hover:underline">Website Badges</div>
                 <div class="text-[10px] text-ink-3 mt-0.5 hidden xs:block">Live Review Feed</div>
             </a>
-            <a href="{{ route('advanced.citations') }}" class="p-3 sm:p-3.5 rounded-[--radius-control] border border-rule bg-paper hover:border-rule-strong text-center transition group">
-                <div class="text-lg sm:text-xl mb-1">📍</div>
-                <div class="text-xs font-semibold text-ink group-hover:underline">Directory Citations</div>
-                <div class="text-[10px] text-ink-3 mt-0.5 hidden xs:block">NAP Consistency</div>
-            </a>
+            @if ($hasAdvanced)
+                <a href="{{ route('advanced.citations') }}" class="p-3 sm:p-3.5 rounded-[--radius-control] border border-rule bg-paper hover:border-rule-strong text-center transition group">
+                    <div class="text-lg sm:text-xl mb-1">📍</div>
+                    <div class="text-xs font-semibold text-ink group-hover:underline">Directory Citations</div>
+                    <div class="text-[10px] text-ink-3 mt-0.5 hidden xs:block">NAP Consistency</div>
+                </a>
+            @endif
             <a href="{{ route('x-199.invoices') }}" class="p-3 sm:p-3.5 rounded-[--radius-control] border border-rule bg-paper hover:border-rule-strong text-center transition group">
                 <div class="text-lg sm:text-xl mb-1">🧾</div>
                 <div class="text-xs font-semibold text-ink group-hover:underline">Invoices</div>

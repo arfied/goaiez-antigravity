@@ -10,6 +10,7 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.js',
                 'resources/js/widget.js',
+                'resources/js/chat.js',
                 'resources/js/pixel.js',
                 'resources/js/actuate.js',
             ],

@@ -25,7 +25,7 @@ final class FormAdaptiveStepsAction
 
         $applicable = [];
 
-        foreach ($steps as $step) {
+        foreach ($steps as $key => $step) {
             if (! is_array($step)) {
                 continue;
             }
@@ -33,7 +33,7 @@ final class FormAdaptiveStepsAction
             $conditions = $step['show_if'] ?? [];
 
             if (! is_array($conditions) || $conditions === []) {
-                $applicable[] = $step;
+                $applicable[$key] = $step;
 
                 continue;
             }
@@ -70,7 +70,7 @@ final class FormAdaptiveStepsAction
             }
 
             if ($shown) {
-                $applicable[] = $step;
+                $applicable[$key] = $step;
             }
         }
 

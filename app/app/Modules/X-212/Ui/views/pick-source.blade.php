@@ -1,6 +1,28 @@
 <div>
-    <x-surface.sample-state module="⭐⭐ **Bringing a tenant's whole business across from ServiceTitan, Jobber, Housecall Pro — or from a spreadsheet.** *Customers, properties, job history, invoices, payments, estimates, photos, notes, agreements, the pricebook, staff and reviews.* ⛔⛔ **AND IT IS A TRANSLATION, NOT A COPY.** *Their job-status enum is not ours; their pricebook shape is not ours; their custom fields have no home.* ⭐⭐⭐ **A migration that maps 80% and silently drops 20% is worse than no migration — because the tenant finds the hole three months later, on a job, in front of a customer.**" screen="pick_source" />
-    <div class="pick-source-view p-4">
-        <h3 class="text-lg font-bold">Pick Migration Source</h3>
+    <h2>Import from another system</h2>
+    <label>
+        Source
+        <select wire:model="sourceSystem">
+            @foreach (\App\Modules\X212\Ui\PickSource::SOURCES as $key => $label)
+                <option value="{{ $key }}">
+                    {{ $label }}
+                </option>
+            @endforeach
+        </select>
+    </label>
+    <label>
+        Paste the export (first line is the header — phone or email is required per row)
+        <textarea wire:model="csv"></textarea>
+    </label>
+    @error('csv')
+        <div>{{ $message }}</div>
+    @enderror
+    @if (session('status'))
+        <div>{{ session('status') }}</div>
+    @endif
+    <div>
+        <button type="button" wire:click="dryRun">Run a dry run</button>
+        <span>A dry run checks the file and imports nothing.</span>
     </div>
+    <a href="{{ route('x-212.dryrun-preview') }}">See dry runs &rarr;</a>
 </div>

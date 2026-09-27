@@ -24,7 +24,7 @@ class AlertRosterScreenScreenTest extends TestCase
             ->assertSee('Your account')
             ->assertDontSee('Internal Platform Console')
             ->assertDontSee('this screen is planned in')
-            ->assertSee('No alerts broadcasted.');
+            ->assertSee('No alerts recorded.');
 
         Livewire::test(AlertRosterScreen::class)->assertOk();
     }

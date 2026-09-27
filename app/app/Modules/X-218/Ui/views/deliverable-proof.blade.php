@@ -20,13 +20,9 @@
         <div class="mt-8 border p-4 rounded bg-paper">
             <h2 class="font-bold mb-4">Submit Deliverable</h2>
             
-            @if($success)
-                <div class="p-2 border mb-4 rounded bg-paper">{{ $success }}</div>
-            @endif
+            <x-ui.toast kind="success" :message="$success" />
             
-            @if($error)
-                <div class="p-2 border mb-4 rounded bg-paper">{{ $error }}</div>
-            @endif
+            <x-ui.toast kind="error" :message="$error" />
 
             <form wire:submit="submitProof" class="flex flex-col gap-4">
                 <div>
