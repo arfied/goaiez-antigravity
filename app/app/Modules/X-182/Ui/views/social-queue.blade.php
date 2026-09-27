@@ -58,5 +58,25 @@
                 @endforeach
             </ul>
         @endif
+        
+        <h3 class="text-lg font-bold text-ink mt-8">Messages</h3>
+        @if($dmThreads->isEmpty())
+            <p>No Facebook or Instagram messages yet. They appear here when someone messages a connected Page or Instagram account.</p>
+        @else
+            <ul>
+                @foreach($dmThreads as $t)
+                    <li>
+                        {{ $t->contact_label ?? 'Someone' }} · {{ ucfirst($t->channel) }}
+                        <ul class="text-sm text-ink-2">
+                            @foreach($dmTails[$t->id] ?? [] as $m)
+                                <li>{{ $m->direction->value === 'inbound' ? 'They wrote' : 'You wrote' }}: {{ $m->body }}</li>
+                            @endforeach
+                        </ul>
+                        <input type="text" wire:model="dmReply.{{ $t->id }}" maxlength="1000">
+                        <x-ui.button wire:click="replyToDm({{ $t->id }})" size="sm">Reply</x-ui.button>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>
