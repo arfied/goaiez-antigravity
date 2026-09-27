@@ -21,6 +21,7 @@ class Thread extends Component
 {
     public function connect(WhatsappConnectStartAction $action): void
     {
+        abort_unless(auth()->user()?->role->canManageConnections() === true, 403);
         try {
             $url = $action->handle('user:'.(int) auth()->id());
         } catch (GbpRequestFailed) {
@@ -44,6 +45,7 @@ class Thread extends Component
 
     public function disconnect(WhatsappDisconnectAction $action): void
     {
+        abort_unless(auth()->user()?->role->canManageConnections() === true, 403);
         $action->handle('user:'.(int) auth()->id());
     }
 

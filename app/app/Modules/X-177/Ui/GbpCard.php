@@ -64,6 +64,12 @@ class GbpCard extends Component
 
     public array $postContent = [];
 
+    public array $postImage = [];
+
+    public array $postCtaType = [];
+
+    public array $postCtaUrl = [];
+
     public function postUpdate(int $connectionId): void
     {
         if ($this->isSample) {
@@ -73,12 +79,24 @@ class GbpCard extends Component
         Tenancy::set($this->businessId);
 
         $content = $this->postContent[$connectionId] ?? '';
+        $imageUrl = $this->postImage[$connectionId] ?? null;
+        $ctaType = $this->postCtaType[$connectionId] ?? null;
+        $ctaUrl = $this->postCtaUrl[$connectionId] ?? null;
+
         if (trim($content) === '') {
             return;
         }
 
         $action = app(GbpPostAction::class);
-        $result = $action->post($this->businessId, $connectionId, $content);
+        $result = $action->post(
+            $this->businessId,
+            $connectionId,
+            $content,
+            'update',
+            empty(trim($imageUrl ?? '')) ? null : trim($imageUrl),
+            empty(trim($ctaType ?? '')) ? null : trim($ctaType),
+            empty(trim($ctaUrl ?? '')) ? null : trim($ctaUrl)
+        );
 
         $resultStatus = $result['status'] ?? 'failed';
         $toast = $result['message'] ?? 'Failed to post.';
@@ -86,11 +104,16 @@ class GbpCard extends Component
             $toast = 'Posted to your Google profile. It can take up to 48 hours to show on Google.';
         } elseif ($resultStatus === 'publishing') {
             $toast = 'Sent to Google through Zernio — it is still publishing.';
+        } elseif ($resultStatus === 'refused_image' || $resultStatus === 'refused_cta') {
+            $toast = $result['message'];
         }
 
         $this->dispatch('toast', ['message' => $toast, 'type' => ($resultStatus === 'posted' || $resultStatus === 'publishing') ? 'success' : 'error']);
 
         $this->postContent[$connectionId] = '';
+        $this->postImage[$connectionId] = '';
+        $this->postCtaType[$connectionId] = '';
+        $this->postCtaUrl[$connectionId] = '';
     }
 
     public function render()

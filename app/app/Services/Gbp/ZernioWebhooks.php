@@ -15,6 +15,7 @@ use App\Modules\X182\Actions\SocialAccountLookupAction;
 use App\Modules\X182\Actions\SocialPostSettleAction;
 use App\Modules\X182\Domain\SocialConnections;
 use App\Services\Zernio\ZernioWhatsappInbound;
+use App\Services\Zernio\ZernioWhatsappTemplates;
 use App\Support\Tenancy;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
@@ -64,6 +65,13 @@ final class ZernioWebhooks
         private readonly GoogleReviewIngest $ingest,
     ) {}
 
+    private const array WHATSAPP_STATUS_EVENTS = [
+        'message.sent',
+        'message.delivered',
+        'message.read',
+        'message.failed',
+    ];
+
     /**
      * @param  array<string, mixed>  $payload
      * @return 'handled'|'duplicate'|'ignored'|'unbound'|'confirmed'|'mismatched'
@@ -107,6 +115,12 @@ final class ZernioWebhooks
         }
         if ($event === 'message.received') {
             return app(ZernioWhatsappInbound::class)->handle($payload);
+        }
+        if ($event === 'whatsapp.template.status_updated') {
+            return app(ZernioWhatsappTemplates::class)->handle($payload);
+        }
+        if (in_array($event, self::WHATSAPP_STATUS_EVENTS, true)) {
+            return app(\App\Services\Zernio\ZernioWhatsappStatuses::class)->handle($payload);
         }
 
         return 'ignored';

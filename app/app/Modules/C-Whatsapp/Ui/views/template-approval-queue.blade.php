@@ -2,7 +2,7 @@
     <div class="whatsapp-queue-view p-4">
         <h2 class="text-lg font-bold text-ink">Template approval queue</h2>
         @if($pending->isEmpty())
-            <x-ui.empty-state heading="Nothing waiting for approval.">Templates you have recorded wait here. Nothing is submitted to Meta yet.</x-ui.empty-state>
+            <x-ui.empty-state heading="Nothing waiting for approval.">Templates are reviewed by Meta through Zernio, usually within a day. Connect WhatsApp first to submit one.</x-ui.empty-state>
         @else
             <ul class="divide-y divide-rule">
                 @foreach($pending as $p)
