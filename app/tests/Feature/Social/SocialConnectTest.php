@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Social\SocialConnectController;
 use App\Models\GbpProfileBinding;
 use App\Models\Location;
@@ -215,4 +216,36 @@ test('h webhook disconnect', function () {
         'status' => 'disconnected',
         'is_connected' => false,
     ]);
+});
+
+test('i staff cannot start a connect', function () {
+    $staff = User::factory()->create(['role' => UserRole::Staff]);
+    $this->actingAs($staff);
+    Tenancy::setUser($staff->id);
+    Tenancy::set($this->biz->id);
+
+    Livewire::test(ConnectedAccounts::class)->call('connect', 'facebook')->assertForbidden();
+    Http::assertNothingSent();
+    expect(SocialAccount::where('business_id', $this->biz->id)->count())->toBe(0);
+});
+
+test('j staff cannot disconnect a connected page', function () {
+    $conn = SocialAccount::create([
+        'business_id' => $this->biz->id,
+        'platform' => 'facebook',
+        'status' => 'connected',
+        'is_connected' => true,
+        'provider_profile_ref' => 'profile_6001',
+    ]);
+    $conn->account_ref = 'acct_fb_6003';
+    $conn->save();
+
+    $staff = User::factory()->create(['role' => UserRole::Staff]);
+    $this->actingAs($staff);
+    Tenancy::setUser($staff->id);
+    Tenancy::set($this->biz->id);
+
+    Livewire::test(ConnectedAccounts::class)->call('disconnect', $conn->id)->assertForbidden();
+    Http::assertNothingSent();
+    $this->assertDatabaseHas('social_accounts', ['id' => $conn->id, 'status' => 'connected', 'is_connected' => true]);
 });

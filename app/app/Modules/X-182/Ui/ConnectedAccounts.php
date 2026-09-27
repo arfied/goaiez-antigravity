@@ -33,6 +33,8 @@ class ConnectedAccounts extends Component
 
     public function connect(string $platform, SocialConnections $action, ?int $locationId = null): void
     {
+        abort_unless(auth()->user()?->role->canManageConnections() === true, 403);
+
         $resolvedLocationId = $locationId ?? $this->locationId;
 
         if ($resolvedLocationId === null && $platform === 'facebook') {
@@ -70,6 +72,8 @@ class ConnectedAccounts extends Component
 
     public function disconnect(int $id, SocialConnections $action): void
     {
+        abort_unless(auth()->user()?->role->canManageConnections() === true, 403);
+
         $account = SocialAccount::where('id', $id)->where('business_id', $this->businessId)->firstOrFail();
         $action->disconnect($account, 'user:'.(int) auth()->id());
     }
