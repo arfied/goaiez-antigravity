@@ -132,7 +132,7 @@ class PagesScreenTest extends TestCase
         Livewire::test(Pages::class)
             ->call('publish', $page->id)
             ->assertOk()
-            ->assertSee('That page is already published.');
+            ->assertSee('That page is already published, and the draft has no changes.');
 
         $this->assertDatabaseCount('page_versions', 1);
     }
@@ -1574,5 +1574,56 @@ class PagesScreenTest extends TestCase
         Livewire::test(Pages::class)
             ->assertSee('Draft an answer')
             ->assertDontSee('arrives in the next update');
+    }
+
+    public function test_a_published_page_with_a_changed_draft_can_be_published_again_without_unpublishing(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'launch-q9z', 'Launch');
+
+        app(SitePublishAction::class)->handle($biz->id, $page->id, []);
+
+        $page->update(['draft_blocks' => [['type' => 'hero', 'headline' => 'Distinctive changed headline 4945']]]);
+
+        Event::fake([SitePublished::class]);
+
+        Livewire::test(Pages::class)
+            ->call('publish', $page->id)
+            ->assertOk()
+            ->assertDontSee('already published');
+
+        $this->assertEquals(2, PageVersion::where('page_id', $page->id)->count());
+        $this->assertTrue($page->fresh()->is_published);
+        Event::assertDispatched(SitePublished::class);
+    }
+
+    public function test_pages_offers_publish_changes_only_when_the_draft_differs(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $action = app(PageCreateAction::class);
+        $page = $action->handle($biz->id, 'launch-q9z', 'Launch');
+
+        app(SitePublishAction::class)->handle($biz->id, $page->id, []);
+
+        $this->get(route('x-103.pages'))
+            ->assertOk()
+            ->assertDontSee('Publish changes')
+            ->assertSee('Unpublish');
+
+        $page->update(['draft_blocks' => [['type' => 'hero', 'headline' => 'Distinctive changed headline 4945']]]);
+
+        $this->get(route('x-103.pages'))
+            ->assertOk()
+            ->assertSee('Publish changes')
+            ->assertSee('Unpublish');
     }
 }

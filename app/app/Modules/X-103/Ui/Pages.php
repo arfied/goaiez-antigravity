@@ -17,6 +17,7 @@ use App\Modules\X103\Actions\SiteCopyPolishAction;
 use App\Modules\X103\Actions\SiteEditProposeAction;
 use App\Modules\X103\Actions\SitePageProposeAction;
 use App\Modules\X103\Actions\SitePublishAction;
+use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X103\Models\SiteAnsweredQuestion;
@@ -174,8 +175,8 @@ class Pages extends Component
 
         $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
 
-        if ($page->is_published) {
-            $this->error = 'That page is already published.';
+        if ($page->is_published && ! $this->draftDiffersFromPublished($page)) {
+            $this->error = 'That page is already published, and the draft has no changes.';
 
             return;
         }
@@ -612,6 +613,18 @@ class Pages extends Component
         $this->success = 'SEO saved.';
     }
 
+    /** True when the draft differs from what is currently published, ignoring the blocks the engine appends on publish (wave 833). */
+    private function draftDiffersFromPublished(Page $page): bool
+    {
+        $version = $page->current_version_id ? PageVersion::where('business_id', $this->businessId)->find($page->current_version_id) : null;
+        if ($version === null) {
+            return true;
+        }
+        $strip = fn (array $blocks): array => array_values(array_filter($blocks, fn ($b) => ! in_array($b['type'] ?? '', SiteEngine::REQUIRED_BLOCK_TYPES, true)));
+
+        return json_encode($strip($page->draft_blocks ?? [])) !== json_encode($strip(is_array($version->content_blocks) ? $version->content_blocks : []));
+    }
+
     public function render()
     {
         $pages = Page::where('business_id', $this->businessId)->orderByDesc('id')->get();
@@ -638,8 +651,10 @@ class Pages extends Component
             ->groupBy('page_id');
 
         $hasVersions = [];
+        $hasChanges = [];
         foreach ($pages as $page) {
             $hasVersions[$page->id] = isset($versions[$page->id]) && $versions[$page->id]->count() > 0;
+            $hasChanges[$page->id] = $page->is_published && $this->draftDiffersFromPublished($page);
         }
 
         $questions = app(CustomerQuestionsAction::class)->handle($this->businessId);
@@ -649,6 +664,7 @@ class Pages extends Component
             'deployments' => $deployments,
             'versions' => $versions,
             'hasVersions' => $hasVersions,
+            'hasChanges' => $hasChanges,
             'questions' => $questions,
         ]);
     }

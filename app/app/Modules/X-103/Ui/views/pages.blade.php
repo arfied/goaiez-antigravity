@@ -52,6 +52,9 @@
                                     @if(isset($deployments[$page->id]) && $deployments[$page->id]->status === 'deployed')
                                         <a href="{{ url('/sites/'.$businessId.'/'.$deployments[$page->id]->deploy_hash) }}" class="ml-2 text-ink underline">Live link</a>
                                     @endif
+                                    @if(!empty($hasChanges[$page->id]))
+                                        <button wire:click="publish({{ $page->id }})" class="ml-2 bg-paper border border-rule px-2 py-1 text-ink">Publish changes</button>
+                                    @endif
                                     <button wire:click="unpublish({{ $page->id }})" class="ml-2 bg-paper border border-rule px-2 py-1 text-ink">Unpublish</button>
                                 @else
                                     <span class="bg-paper border border-rule px-2 py-1 text-ink-2">Draft</span>
