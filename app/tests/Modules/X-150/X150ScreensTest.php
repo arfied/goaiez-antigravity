@@ -61,7 +61,7 @@ class X150ScreensTest extends TestCase
         Livewire::test(ProviderCostPer::class, ['businessId' => $this->businessId])
             ->assertSee('$0.10')
             ->assertSee('$0.45')
-            ->assertSee('Warm');
+            ->assertSee('In use');
     }
 
     public function test_provider_cost_per_mark_cold(): void

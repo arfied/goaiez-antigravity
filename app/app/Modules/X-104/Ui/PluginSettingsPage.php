@@ -57,7 +57,7 @@ class PluginSettingsPage extends Component
                 apiKey: $this->apiKey
             );
 
-            $this->success = "Activated plugin for site {$this->siteUrl}.";
+            $this->success = "Recorded {$this->siteUrl} — the plugin is not installed on it from here.";
             $this->siteUrl = '';
             $this->apiKey = '';
         } catch (\Throwable $e) {
@@ -71,8 +71,7 @@ class PluginSettingsPage extends Component
 
         $install = $action->deactivate(Tenancy::idOrFail(), $siteUrl);
 
-        $this->deactivateSuccess = 'Plugin deactivated for '.$install->site_url
-            .'. Its injected assets have been removed; switching it back on needs the site URL and the API key again.';
+        $this->deactivateSuccess = 'Recorded as off for '.$install->site_url.'. Nothing on your website changed.';
     }
 
     public function render()

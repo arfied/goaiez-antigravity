@@ -22,7 +22,7 @@ class MarginByJobScreenTest extends TestCase
         // 1. Real GET empty -> empty state
         $this->get(route('x-166.margin-by-job'))
             ->assertOk()
-            ->assertSee('No costed jobs yet. A job is costed when it completes.');
+            ->assertSee('No costed jobs yet. Add one with the form above — costs are not captured automatically.');
 
         // 2. Seed a JobCost
         JobCost::create([

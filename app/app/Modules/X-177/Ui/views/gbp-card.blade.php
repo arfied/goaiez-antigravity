@@ -27,7 +27,7 @@
                             <div class="font-bold">{{ $c->external_label ?? 'Location' }}</div>
                             <div class="mt-1">
                                 <x-ui.status-pill 
-                                    state="{{ $c->profile_status === 'suspended' ? 'alert' : ($c->profile_status === 'active' ? 'ok' : 'unknown') }}" 
+                                    state="{{ $c->profile_status === 'suspended' ? 'alert' : 'unknown' }}" 
                                     label="{{ $c->plain_status ?? $c->profile_status }}" 
                                 />
                             </div>
@@ -51,9 +51,6 @@
                         <div class="mt-4 md:mt-0 flex flex-col space-y-2 items-end">
                             <x-ui.button wire:click="toggleLog({{ $c->id }})" size="default" variant="secondary">
                                 {{ $viewingLogId === $c->id ? 'Hide Log' : 'View State Log' }}
-                            </x-ui.button>
-                            <x-ui.button wire:click="pollState({{ $c->id }})" size="default" variant="primary">
-                                Poll Status
                             </x-ui.button>
                         </div>
                     </div>

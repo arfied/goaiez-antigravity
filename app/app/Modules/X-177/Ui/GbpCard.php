@@ -110,7 +110,7 @@ class GbpCard extends Component
                     ->latest('created_at')
                     ->first();
 
-                $c->plain_status = $c->profile_status === 'suspended' ? 'Profile is suspended' : ($c->profile_status === 'active' ? 'Profile is active' : 'Status unknown');
+                $c->plain_status = $c->profile_status === 'suspended' ? 'Profile is suspended' : 'We are not reading your profile’s status yet';
 
                 if ($c->latest_post) {
                     $c->post_status_text = $c->latest_post->status;

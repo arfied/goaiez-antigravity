@@ -60,7 +60,7 @@
                                     @if(! $p->is_active)
                                         <x-ui.status-pill state="attention" label="Cold" />
                                     @elseif($p->valid > 0)
-                                        <x-ui.status-pill state="ok" label="Warm" />
+                                        <x-ui.status-pill state="ok" label="In use" />
                                     @else
                                         <x-ui.status-pill state="unknown" label="No valid record yet" />
                                     @endif
@@ -68,9 +68,9 @@
                             </div>
                             <div class="mt-4 flex justify-end">
                                 @if($p->is_active)
-                                    <x-ui.button size="default" variant="secondary" wire:click="markCold({{ $p->id }})">Mark cold</x-ui.button>
+                                    <x-ui.button size="default" variant="secondary" wire:click="markCold({{ $p->id }})">Mark as not in use</x-ui.button>
                                 @else
-                                    <x-ui.button size="default" variant="secondary" wire:click="warmUp({{ $p->id }})">Warm up</x-ui.button>
+                                    <x-ui.button size="default" variant="secondary" wire:click="warmUp({{ $p->id }})">Mark as in use</x-ui.button>
                                 @endif
                             </div>
                         </div>

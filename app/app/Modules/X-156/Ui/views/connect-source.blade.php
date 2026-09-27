@@ -30,7 +30,7 @@
                 @error('sourceName') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
             <div>
-                <x-ui.submit target="connect" busy="Connecting..." size="default">Connect</x-ui.submit>
+                <x-ui.submit target="connect" busy="Adding..." size="default">Add a source</x-ui.submit>
             </div>
         </form>
 
@@ -68,7 +68,7 @@
                                     @if(! $s->is_active)
                                         <x-ui.status-pill state="attention" label="Paused" />
                                     @elseif($s->last_run_time)
-                                        <x-ui.status-pill state="ok" label="Synced" />
+                                        <x-ui.status-pill state="ok" label="Has received data" />
                                     @else
                                         <x-ui.status-pill state="unknown" label="Waiting for first sync" />
                                     @endif

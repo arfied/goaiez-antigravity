@@ -71,7 +71,7 @@ class SlotBoard extends Component
     {
         $name = trim((string) ($this->partnerName[$slotId] ?? ''));
         if ($name === '') {
-            $this->addError('partnerName.'.$slotId, 'Name the company you want to invite.');
+            $this->addError('partnerName.'.$slotId, 'Name the company you want to shortlist.');
 
             return;
         }
