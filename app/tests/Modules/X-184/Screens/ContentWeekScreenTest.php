@@ -61,7 +61,7 @@ class ContentWeekScreenTest extends TestCase
             ->set('itemTopicTheme', 'Winter prep')
             ->call('proposePlan')
             ->assertSet('error', '')
-            ->assertSet('success', 'Added 1 item to the plan for Week of October 1. This feeds the calendar view; nothing downstream is wired to it yet.');
+            ->assertSet('success', 'Added 1 item to the plan for Week of October 1. For a Facebook or Instagram item, "Write this post" opens the Social queue with its topic filled in.');
 
         $this->assertDatabaseHas('content_plans', ['week_label' => 'Week of October 1']);
         $this->assertDatabaseHas('plan_items', ['source_event' => 'season.turned', 'topic_theme' => 'Winter prep']);

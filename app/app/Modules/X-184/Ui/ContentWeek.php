@@ -74,7 +74,7 @@ class ContentWeek extends Component
             items: [$item]
         );
 
-        $this->success = 'Added 1 item to the plan for '.$plan->week_label.'. This feeds the calendar view; nothing downstream is wired to it yet.';
+        $this->success = 'Added 1 item to the plan for '.$plan->week_label.'. For a Facebook or Instagram item, "Write this post" opens the Social queue with its topic filled in.';
 
         $this->weekLabel = '';
         $this->itemSourceEvent = '';
