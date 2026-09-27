@@ -107,6 +107,7 @@ final class OwnerNav
 
             OwnerNavItem::make('Messages you sent', 'account.messages'),
             OwnerNavItem::make('Google reviews', 'account.connections', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
+            OwnerNavItem::make('Facebook reviews', 'account.facebook-reviews', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
             OwnerNavItem::make('Your account', 'account.settings', OwnerNavItem::GROUP_MORE, section: 'Your account'),
             OwnerNavItem::make('All screens', 'account.all-screens', OwnerNavItem::GROUP_MORE, section: 'Your account'),
 
