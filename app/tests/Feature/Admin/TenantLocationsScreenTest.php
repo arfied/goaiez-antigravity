@@ -137,3 +137,65 @@ test('an account that is not on a no-card trial is refused', function (): void {
         ->call('extendTrial')
         ->assertHasErrors(['trialUntil' => 'This account is not on a no-card trial, so there is no trial to extend.']);
 });
+
+test('looking up by the owner\'s email opens that business', function (): void {
+    $owner = User::factory()->create(['email' => 'owner4941@example.test']);
+    $business = Business::provision([
+        'owner_user_id' => $owner->id,
+        'name' => 'Distinctive Biz 4941',
+    ]);
+    Tenancy::actingAs($business->id, fn () => Location::factory()->create(['name' => 'Location 4941']));
+
+    $html = Livewire\Livewire::actingAs($this->admin)
+        ->test(TenantLocations::class)
+        ->set('lookup', 'owner4941@example.test')
+        ->call('lookUp')
+        ->assertSet('businessId', $business->id)
+        ->html();
+
+    expect($html)->toContain('Location 4941');
+});
+
+test('an email that owns two businesses lists both and choose opens one', function (): void {
+    $owner = User::factory()->create(['email' => 'owner4942@example.test']);
+    $businessA = Business::provision([
+        'owner_user_id' => $owner->id,
+        'name' => 'Distinctive Biz A 4942',
+    ]);
+    $businessB = Business::provision([
+        'owner_user_id' => $owner->id,
+        'name' => 'Distinctive Biz B 4942',
+    ]);
+
+    $component = Livewire\Livewire::actingAs($this->admin)
+        ->test(TenantLocations::class)
+        ->set('lookup', 'owner4942@example.test')
+        ->call('lookUp')
+        ->assertSet('businessId', null);
+
+    $html = $component->html();
+    expect($html)->toContain('Distinctive Biz A 4942')
+        ->and($html)->toContain('Distinctive Biz B 4942');
+
+    $component->call('choose', $businessB->id)
+        ->assertSet('businessId', $businessB->id);
+});
+
+test('an email nobody owns a business with is refused and shows nothing', function (): void {
+    $owner = User::factory()->create(['email' => 'nobody4943@example.test']);
+    $otherOwner = User::factory()->create(['email' => 'other@example.test']);
+    $otherBusiness = Business::provision([
+        'owner_user_id' => $otherOwner->id,
+        'name' => 'Distinctive Biz Other 4943',
+    ]);
+
+    $component = Livewire\Livewire::actingAs($this->admin)
+        ->test(TenantLocations::class)
+        ->set('lookup', 'nobody4943@example.test')
+        ->call('lookUp')
+        ->assertSet('businessId', null)
+        ->assertSet('ownedChoices', []);
+
+    $html = $component->html();
+    expect($html)->not->toContain('Distinctive Biz Other 4943');
+});

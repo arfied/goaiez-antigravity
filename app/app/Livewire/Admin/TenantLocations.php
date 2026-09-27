@@ -10,6 +10,7 @@ use App\Models\AuditLogEntry;
 use App\Models\Business;
 use App\Models\Location;
 use App\Models\Subscription;
+use App\Models\User;
 use App\Services\AuditService;
 use App\Services\Billing\LocationAllowance;
 use App\Services\Billing\PlanCharges;
@@ -83,6 +84,9 @@ final class TenantLocations extends Component
      */
     public string $lookup = '';
 
+    /** when the email owns more than one business, their ids and names — never anyone else's */
+    public array $ownedChoices = [];
+
     /**
      * ⚠️ `#[Locked]` BECAUSE `lookUp()` IS THE ONLY THING THAT MAY SET IT, AND
      * THE AUDIT ROW IS WRITTEN THERE — `PhiTenants`' reasoning exactly. Without
@@ -132,11 +136,47 @@ final class TenantLocations extends Component
 
         $this->resetErrorBag();
 
-        $id = (int) trim($this->lookup);
+        $typed = trim($this->lookup);
+
+        if ($typed === '') {
+            $this->businessId = null;
+            Toaster::error('Enter a business number or the owner’s email address.');
+
+            return;
+        }
+
+        if (filter_var($typed, FILTER_VALIDATE_EMAIL) !== false) {
+            $owner = User::query()->whereRaw('lower(email) = ?', [strtolower($typed)])->first();
+            $owned = $owner instanceof User
+                ? Tenancy::actingAsUser((int) $owner->id, fn () => Business::withoutGlobalScopes()->where('owner_user_id', (int) $owner->id)->orderBy('id')->get(['id', 'name']))
+                : collect();
+
+            if ($owned->isEmpty()) {
+                $this->businessId = null;
+                $this->ownedChoices = [];
+                Toaster::error('No business is owned by that email address.');
+
+                return;
+            }
+
+            if ($owned->count() > 1) {
+                // The owner has several: show them (they are all this one owner's) and let the operator pick.
+                $this->businessId = null;
+                $this->ownedChoices = $owned->map(fn (Business $b): array => ['id' => (int) $b->id, 'name' => (string) $b->name])->all();
+
+                return;
+            }
+
+            $id = (int) $owned->first()->id;
+        } else {
+            $id = (int) $typed;
+        }
+
+        $this->ownedChoices = [];
 
         if ($id <= 0) {
             $this->businessId = null;
-            Toaster::error('Enter a business number.');
+            Toaster::error('Enter a business number or the owner’s email address.');
 
             return;
         }
@@ -164,6 +204,13 @@ final class TenantLocations extends Component
             $id,
             fn (): int => $allowance->purchased($business),
         );
+    }
+
+    public function choose(int $id): void
+    {
+        $this->lookup = (string) $id;
+        $this->ownedChoices = [];
+        $this->lookUp(app(AuditService::class), app(LocationAllowance::class));
     }
 
     /**
