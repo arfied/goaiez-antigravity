@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Admin;
 
+use App\Enums\SubscriptionStatus;
 use App\Http\Requests\Billing\BillingTermRequest;
 use App\Models\AuditLogEntry;
 use App\Models\Business;
@@ -19,6 +20,7 @@ use App\Support\PlanPricing;
 use App\Support\PlanSelection;
 use App\Support\Tenancy;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Locked;
@@ -100,6 +102,9 @@ final class TenantLocations extends Component
      * message anybody can act on.
      */
     public string $additionalLocations = '';
+
+    /** The date typed into the trial form, `Y-m-d`. */
+    public string $trialUntil = '';
 
     public string $name = '';
 
@@ -214,6 +219,40 @@ final class TenantLocations extends Component
         }
 
         Toaster::success('Recorded — set the matching amount at the gateway if you have not already');
+    }
+
+    public function extendTrial(AuditService $audit, Subscriptions $subscriptions): void
+    {
+        $this->authorize(AdminAccess::GATE);
+
+        $business = $this->inView();
+
+        $this->validate([
+            'trialUntil' => ['required', 'date', 'after:today'],
+        ], [
+            'trialUntil.after' => 'Pick a date after today.',
+        ]);
+
+        $until = Carbon::parse($this->trialUntil)->endOfDay();
+
+        try {
+            Tenancy::actingAs($business->id, function () use ($subscriptions, $business, $until, $audit): void {
+                $subscriptions->extendNoCardTrial($business, $until);
+
+                $audit->record(
+                    'subscription.no_card_trial_extended',
+                    $this->actor(),
+                    $business,
+                    ['until' => $until->toIso8601String()],
+                );
+            });
+        } catch (RuntimeException $refusal) {
+            $this->addError('trialUntil', $refusal->getMessage());
+
+            return;
+        }
+
+        Toaster::success('Trial extended to '.$until->format('j M Y').'.');
     }
 
     /**
@@ -352,6 +391,8 @@ final class TenantLocations extends Component
                 $charges->agreedAdditionalLocationPriceFor($subscription, $selection),
             ),
             'term' => $selection->term,
+            'onNoCardTrial' => $subscription?->status === SubscriptionStatus::PendingCheckout,
+            'noCardTrialEndsAt' => Tenancy::actingAs($business->id, fn (): ?Carbon => (new Subscriptions)->noCardTrialEndsAt($business, $subscription)),
         ]);
     }
 

@@ -164,6 +164,34 @@
         </section>
 
         <section class="rounded-[--radius-panel] border border-rule bg-card p-5">
+            <h2 class="font-display text-lg font-semibold text-ink">No-card trial</h2>
+            @if ($onNoCardTrial && $noCardTrialEndsAt !== null)
+                <p class="mt-1 text-base text-ink-2">Ends {{ $noCardTrialEndsAt->format('j M Y') }}. Extending it moves that date for this account only.</p>
+                <form wire:submit="extendTrial" class="mt-4 flex flex-wrap items-end gap-3">
+                    <label class="block">
+                        <span class="text-sm text-ink-2">New end date</span>
+                        <input wire:model="trialUntil" type="date" class="mt-1 rounded-[--radius-field] border border-rule bg-paper px-3 py-2 text-base text-ink">
+                    </label>
+                    <x-ui.button
+                        type="submit"
+                        variant="secondary"
+                        size="default"
+                        wire:loading.attr="disabled"
+                        wire:target="extendTrial"
+                    >
+                        <span wire:loading.remove wire:target="extendTrial">Extend</span>
+                        <span wire:loading wire:target="extendTrial">Extending…</span>
+                    </x-ui.button>
+                </form>
+                @error('trialUntil')
+                    <p class="mt-3 text-base text-alert" role="alert">{{ $message }}</p>
+                @enderror
+            @else
+                <p class="mt-1 text-base text-ink-2">Not on a no-card trial, so there is nothing to extend here.</p>
+            @endif
+        </section>
+
+        <section class="rounded-[--radius-panel] border border-rule bg-card p-5">
             <h2 class="font-display text-lg font-semibold text-ink">
                 Record what the plan covers
             </h2>
