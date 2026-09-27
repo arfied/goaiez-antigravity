@@ -1709,7 +1709,7 @@ final class MethodCallers
      * A template, a stylesheet or a script - and the three shapes it holds.
      *
      * ⛔ **A QUOTED IDENTIFIER IN A TEMPLATE IS WEAK EVIDENCE AND MEASURING IT
-     * IS WHAT PROVED IT.** Before this split, `GoogleBusinessService::available()`
+     * IS WHAT PROVED IT.** Before this split, the retired direct Google Business client's availability check
      * - the flagship instance of `CLAUDE.md`'s own readerless bullet, verified
      * uncalled by two scouts - was scored **alive** by three occurrences of the
      * word in one support template's status copy, and its sibling

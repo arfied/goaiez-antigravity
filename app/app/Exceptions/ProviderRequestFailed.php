@@ -6,7 +6,6 @@ namespace App\Exceptions;
 
 use App\Enums\OauthProvider;
 use App\Services\Oauth\TokenService;
-use App\Services\Providers\GoogleBusinessService;
 use App\Services\Providers\ProviderClient;
 use Illuminate\Http\Client\Response;
 use RuntimeException;
@@ -42,7 +41,7 @@ use RuntimeException;
  * resource that is gone (404) all arrive as `retryable = false` with their own
  * reason strings and nothing that branches on them. That is deliberate: the two
  * flags have readers ({@see ProviderClient::send()} and
- * {@see GoogleBusinessService::available()}), and a
+ * the retired direct Google Business client), and a
  * third flag with no reader is the shape this codebase has recorded fourteen
  * times. The reconnect prompt is raised from the *refresh* path in
  * {@see TokenService}, not from a 401 here.

@@ -36,7 +36,7 @@ class PerplatformDeliveryHealthScreenTest extends TestCase
         $this->get(route('x-207.perplatform-delivery-health'))
             ->assertOk()
             ->assertSee('web: 1 devices')
-            ->assertSee('delivered: 1')
+            ->assertSee('Recorded as delivered before real sending existed — never sent: 1')
             ->assertDontSee('No devices registered.');
 
         Livewire::test(PerplatformDeliveryHealth::class)->assertOk();
@@ -52,7 +52,7 @@ class PerplatformDeliveryHealthScreenTest extends TestCase
             ->set('deviceToken', 'test-device-token')
             ->set('platform', 'ios')
             ->call('submit')
-            ->assertSet('success', 'Registered device token. This feeds the push list; nothing downstream is wired to it yet.')
+            ->assertSet('success', 'Registered the device token. Only browser alerts are sent today — this device type is recorded as not sent.')
             ->assertSet('deviceToken', '');
 
         $this->assertDatabaseHas((new DeviceToken)->getTable(), [
@@ -81,5 +81,26 @@ class PerplatformDeliveryHealthScreenTest extends TestCase
         $this->get(route('x-207.perplatform-delivery-health.admin'))->assertOk();
 
         Livewire::test(PerplatformDeliveryHealth::class)->assertOk();
+    }
+
+    public function test_screen_maps_statuses_correctly(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::setUser($owner->id);
+        $token1 = DeviceToken::create(['business_id' => $biz->id, 'platform' => 'web', 'device_token' => 'tok_1', 'status' => 'active']);
+        PushDelivery::create(['business_id' => $biz->id, 'device_token_id' => $token1->id, 'payload' => [], 'sanitized' => true, 'status' => 'sent']);
+
+        $token2 = DeviceToken::create(['business_id' => $biz->id, 'platform' => 'ios', 'device_token' => 'tok_2', 'status' => 'active']);
+        PushDelivery::create(['business_id' => $biz->id, 'device_token_id' => $token2->id, 'payload' => [], 'sanitized' => true, 'status' => 'not_sent_no_transport']);
+        Tenancy::forget();
+
+        $this->get(route('x-207.perplatform-delivery-health'))
+            ->assertOk()
+            ->assertSee('Sent to the browser: 1')
+            ->assertSee('Not sent — this device type has no delivery method yet: 1')
+            ->assertDontSee('delivered: 1');
     }
 }
