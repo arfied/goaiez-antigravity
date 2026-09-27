@@ -75,4 +75,28 @@ final class ZernioHttp
             throw GbpRequestFailed::unreachable('connection_failed');
         }
     }
+
+    /**
+     * This is the ONLY method here that reaches a non-Zernio host.
+     * It exists because getMessageAttachment answers with a short-lived Meta CDN link that must be fetched at once.
+     * It sends NO Authorization header.
+     */
+    public function fetchMediaUrl(string $url, array $ips): Response
+    {
+        if (parse_url($url, PHP_URL_SCHEME) !== 'https') {
+            throw GbpRequestFailed::unreadable('media_url_refused');
+        }
+
+        $host = parse_url($url, PHP_URL_HOST);
+        $port = parse_url($url, PHP_URL_PORT) ?: 443;
+
+        try {
+            return VendorLog::timed('zernio', 'GET', $url, fn () => Http::timeout((int) config('gbp.timeout', 10))->withOptions([
+                'allow_redirects' => false,
+                'curl' => [CURLOPT_RESOLVE => ["{$host}:{$port}:{$ips[0]}"]],
+            ])->get($url));
+        } catch (ConnectionException) {
+            throw GbpRequestFailed::unreachable('media_fetch_failed');
+        }
+    }
 }

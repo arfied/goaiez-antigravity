@@ -82,6 +82,19 @@
                         <ul class="text-sm text-ink-2">
                             @foreach($dmTails[$t->id] ?? [] as $m)
                                 <li>{{ $m->direction->value === 'inbound' ? 'They wrote' : 'You wrote' }}: {{ $m->body }}</li>
+                                @foreach (($m->attachments ?? []) as $i => $att)
+                                    @if (($att['status'] ?? '') === 'stored')
+                                        <x-ui.button variant="secondary" size="default" wire:click="downloadDmAttachment({{ $t->id }}, {{ $m->id }}, {{ $i }})">Download the {{ $att['type'] }}</x-ui.button>
+                                    @elseif (($att['status'] ?? '') === 'pending')
+                                        Saving the {{ $att['type'] }}…
+                                    @elseif (($att['status'] ?? '') === 'refused_health_tenant')
+                                        This {{ $att['type'] }} was not saved, because this business handles health information.
+                                    @elseif (($att['status'] ?? '') === 'too_large')
+                                        This {{ $att['type'] }} is too large to save here.
+                                    @else
+                                        This {{ $att['type'] }} could not be saved.
+                                    @endif
+                                @endforeach
                             @endforeach
                         </ul>
                         <input type="text" wire:model="dmReply.{{ $t->id }}" maxlength="1000">

@@ -8,6 +8,7 @@ use App\Enums\AutopilotActionType;
 use App\Exceptions\GbpRequestFailed;
 use App\Jobs\AutopilotJob;
 use App\Services\Conversations\ConversationThreads;
+use App\Services\Zernio\ZernioSocialMedia;
 use App\Services\Zernio\ZernioWhatsappMedia;
 use Illuminate\Support\Facades\Storage;
 
@@ -40,7 +41,11 @@ final class StoreWhatsappMediaJob extends AutopilotJob
         foreach ($attachments as $index => $att) {
             if (($att['status'] ?? null) === 'pending') {
                 try {
-                    $res = app(ZernioWhatsappMedia::class)->download($att['account_ref'], $att['media_id']);
+                    if (($att['source'] ?? 'whatsapp') === 'meta') {
+                        $res = app(ZernioSocialMedia::class)->download($att['account_ref'], $att['conversation_ref'], $att['platform_message_id'], (int) $att['index']);
+                    } else {
+                        $res = app(ZernioWhatsappMedia::class)->download($att['account_ref'], $att['media_id']);
+                    }
                     $bytes = $res['bytes'];
                     $mime = $res['mime'];
                     $path = app(ZernioWhatsappMedia::class)->pathFor((int) $message->business_id, (int) $message->getKey(), (int) $index);
