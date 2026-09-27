@@ -45,4 +45,19 @@ final class ZernioHttp
             throw GbpRequestFailed::unreachable('connection_failed');
         }
     }
+
+    public function get(string $path, array $query = []): Response
+    {
+        $url = self::BASE.'/'.ltrim($path, '/');
+
+        $request = Http::withToken(PlatformCredentials::get('zernio_api_key'))
+            ->timeout((int) config('gbp.timeout', 10))
+            ->acceptJson();
+
+        try {
+            return VendorLog::timed('zernio', 'GET', $url, fn () => $request->get($url, $query));
+        } catch (ConnectionException) {
+            throw GbpRequestFailed::unreachable('connection_failed');
+        }
+    }
 }

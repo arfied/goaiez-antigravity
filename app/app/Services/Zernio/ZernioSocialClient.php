@@ -106,4 +106,48 @@ final class ZernioSocialClient
 
         throw GbpRequestFailed::from($response, accountScoped: true);
     }
+
+    public function facebookReviews(string $accountRef, ?string $cursor = null, int $limit = 25): FacebookReviewPage
+    {
+        $this->http->assertUsable('social.zernio_enabled');
+
+        $response = $this->http->get('/inbox/reviews', array_filter([
+            'accountId' => $accountRef,
+            'platform' => 'facebook',
+            'limit' => max(1, min($limit, 50)),
+            'cursor' => $cursor,
+            'sortBy' => 'date',
+        ], static fn (mixed $v): bool => $v !== null));
+
+        if ($response->failed()) {
+            throw GbpRequestFailed::from($response, accountScoped: true);
+        }
+
+        $payload = $response->json('data');
+
+        if (! is_array($payload)) {
+            $payload = $response->json('reviews');
+        }
+
+        $reviews = [];
+
+        foreach (is_array($payload) ? $payload : [] as $entry) {
+            if (! is_array($entry)) {
+                continue;
+            }
+
+            $review = FacebookReview::fromZernio($entry);
+
+            if ($review !== null) {
+                $reviews[] = $review;
+            }
+        }
+
+        $nextCursor = $response->json('pagination.nextCursor') ?? $response->json('nextCursor');
+
+        return new FacebookReviewPage(
+            reviews: $reviews,
+            nextCursor: is_string($nextCursor) && $nextCursor !== '' ? $nextCursor : null,
+        );
+    }
 }
