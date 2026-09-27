@@ -60,4 +60,17 @@ final class PushBroadcastAction
             ->where('status', 'active')
             ->count();
     }
+
+    public function activeWebUserIds(int $businessId): array
+    {
+        return DeviceToken::where('business_id', $businessId)
+            ->where('platform', 'web')
+            ->where('status', 'active')
+            ->whereNotNull('user_id')
+            ->orderBy('user_id', 'asc')
+            ->distinct()
+            ->pluck('user_id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+    }
 }
