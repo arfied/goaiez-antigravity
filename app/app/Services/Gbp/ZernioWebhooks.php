@@ -6,7 +6,10 @@ namespace App\Services\Gbp;
 
 use App\Enums\GbpConnectionStatus;
 use App\Models\Location;
+use App\Models\ZernioAccountBinding;
 use App\Models\ZernioWebhookEvent;
+use App\Modules\CWhatsapp\Actions\WhatsappConnectionLookupAction;
+use App\Modules\CWhatsapp\Actions\WhatsappDisconnectedExternallyAction;
 use App\Modules\X177\Actions\GbpPostSettleAction;
 use App\Support\Tenancy;
 use Carbon\CarbonInterface;
@@ -201,6 +204,27 @@ final class ZernioWebhooks
         $binding = $this->connections->bindingForAccount($accountRef);
 
         if ($binding === null) {
+            $waBinding = ZernioAccountBinding::where('account_ref', $accountRef)->first();
+
+            if ($waBinding !== null && $waBinding->platform === 'whatsapp') {
+                $businesses = $this->connections->businessesForProfiles([$waBinding->profile_ref]);
+                $businessId = $businesses[$waBinding->profile_ref] ?? null;
+
+                if ($businessId !== null) {
+                    return Tenancy::actingAs($businessId, function () use ($accountRef): string {
+                        $row = app(WhatsappConnectionLookupAction::class)->forAccount($accountRef);
+
+                        if ($row !== null) {
+                            app(WhatsappDisconnectedExternallyAction::class)->handle($row);
+
+                            return 'handled';
+                        }
+
+                        return 'unbound';
+                    });
+                }
+            }
+
             return 'unbound';
         }
 
