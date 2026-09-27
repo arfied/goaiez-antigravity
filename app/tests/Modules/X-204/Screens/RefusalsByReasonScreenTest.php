@@ -7,6 +7,7 @@ namespace Tests\Modules\X204\Screens;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X204\Models\SendPermit;
+use App\Modules\X204\Models\Suppression;
 use App\Modules\X204\Ui\RefusalsByReason;
 use App\Support\Tenancy;
 use Livewire\Livewire;
@@ -51,7 +52,7 @@ class RefusalsByReasonScreenTest extends TestCase
             ->set('decideChannel', 'sms')
             ->call('decide')
             ->assertSet('error', '')
-            ->assertSet('success', 'Check for +15559990001: Granted. This feeds the margin lists; nothing downstream is wired to it yet.');
+            ->assertSet('success', "Check for +15559990001: allowed by this screen's list. Every real text is still checked against the platform's own consent record.");
 
         $this->get(route('x-204.refusals-by-reason'))
             ->assertOk()
@@ -64,9 +65,9 @@ class RefusalsByReasonScreenTest extends TestCase
             ->set('suppressReason', 'opt_out')
             ->call('suppress')
             ->assertSet('error', '')
-            ->assertSet('success', 'Number +15559990001 has been suppressed. This feeds the margin lists; nothing downstream is wired to it yet.');
+            ->assertSet('success', "Added +15559990001 to this screen's refusal list and stopped any follow-up sequence to them. It does not stop other texts: to stop all texts, open their customer profile and choose Never contact them.");
 
-        $this->assertDatabaseHas((new \App\Modules\X204\Models\Suppression)->getTable(), [
+        $this->assertDatabaseHas((new Suppression)->getTable(), [
             'recipient_phone' => '+15559990001',
             'channel' => 'sms',
             'reason' => 'opt_out',
@@ -78,13 +79,13 @@ class RefusalsByReasonScreenTest extends TestCase
             ->set('decideChannel', 'sms')
             ->call('decide')
             ->assertSet('error', '')
-            ->assertSet('success', 'Check for +15559990001: Refused (Reason: SUPPRESSED). This feeds the margin lists; nothing downstream is wired to it yet.');
+            ->assertSet('success', "Check for +15559990001: refused by this screen's list (Reason: SUPPRESSED). Every real text is still checked against the platform's own consent record.");
 
         $this->get(route('x-204.refusals-by-reason'))
             ->assertOk()
             ->assertSee('+15559990001')->assertDontSee('No consent refusals recorded.');
 
-        $this->assertDatabaseHas((new \App\Modules\X204\Models\SendPermit)->getTable(), [
+        $this->assertDatabaseHas((new SendPermit)->getTable(), [
             'recipient_phone' => '+15559990001',
             'permit_status' => 'refused',
         ]);
