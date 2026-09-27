@@ -3,12 +3,8 @@
         <h2>Reorders</h2>
         <p>Stock at its reorder point is flagged on Stock by van; propose the restock there and the supplier prices it.</p>
         
-        @if($error)
-            <div class="mb-4 bg-surface text-ink border p-4 rounded">{{ $error }}</div>
-        @endif
-        @if($success)
-            <div class="mb-4 bg-surface text-ink border p-4 rounded">{{ $success }}</div>
-        @endif
+        <x-ui.toast kind="error" :message="$error" />
+        <x-ui.toast kind="success" :message="$success" />
 
         @if($orders->isEmpty())
             <x-ui.empty-state>No reorders yet. Stock at its reorder point is flagged on Stock by van; propose a restock there and it appears here.</x-ui.empty-state>

@@ -2,9 +2,7 @@
     <div class="matrix-view-container p-4">
         <h3 class="text-lg font-bold">Integration Matrix & Seam Visualizer</h3>
 
-        @if($success)
-            <div class="text-ink-2 bg-surface border p-2 mb-4 rounded">{{ $success }}</div>
-        @endif
+        <x-ui.toast kind="success" :message="$success" />
 
         <form wire:submit="generateMatrix" class="mb-6 bg-surface p-4 rounded mt-4 border">
             <button type="submit" class="bg-surface text-ink border rounded p-2">Generate matrix</button>

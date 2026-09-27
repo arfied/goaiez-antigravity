@@ -4,8 +4,8 @@
 
         <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
             <form wire:submit="submit" class="flex flex-col gap-2">
-                @if($success) <div class="text-ink font-bold">{{ $success }}</div> @endif
-                @if($error) <div class="text-ink font-bold">{{ $error }}</div> @endif
+                <x-ui.toast kind="success" :message="$success" />
+                <x-ui.toast kind="error" :message="$error" />
                 <input type="text" wire:model="topicTitle" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Topic title">
                 <input type="text" wire:model="clusterKey" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Cluster key">
                 <button type="submit" class="bg-surface text-ink border rounded p-2">Submit</button>

@@ -2,12 +2,8 @@
     <div class="retrieval-stats-view p-4">
         <h3 class="text-lg font-bold">Retrieval Latency & Empty-Rate Analytics</h3>
 
-        @if($success)
-            <div class="mb-4 p-2 bg-surface border rounded text-ink">{{ $success }}</div>
-        @endif
-        @if($error)
-            <div class="mb-4 p-2 bg-surface border rounded text-ink">{{ $error }}</div>
-        @endif
+        <x-ui.toast kind="success" :message="$success" />
+        <x-ui.toast kind="error" :message="$error" />
 
         <form wire:submit="indexChunk" class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4 border">
             <h4 class="text-ink font-bold">Index Knowledge Chunk</h4>

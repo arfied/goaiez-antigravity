@@ -1,11 +1,7 @@
 <div>
     <div class="submissions-thread-view p-4">
         <h2 class="text-lg font-bold text-ink">Form submissions</h2>
-        @if($success)
-            <div class="text-ink-2 bg-surface border p-2 mb-4 rounded">
-                {{ $success }}
-            </div>
-        @endif
+        <x-ui.toast kind="success" :message="$success" />
         @if($submissions->isEmpty())
             <p class="text-ink-2">No submissions recorded.</p>
         @else
