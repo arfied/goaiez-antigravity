@@ -13,10 +13,14 @@ use App\Models\Customer;
 use App\Models\Message;
 use App\Modules\X121\Actions\EntityReadAction;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Zernio\ZernioWhatsappMedia;
 use App\Support\Tenancy;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
+use Throwable;
 
 /**
  * The tenant's SMS threads — the store the Inbox (R21, P18) reads and writes.
@@ -572,5 +576,82 @@ final class ConversationThreads
         }
 
         return $message->attachments[$index] ?? null;
+    }
+
+    public function storedMediaTotals(): array
+    {
+        $businessId = Tenancy::idOrFail();
+
+        $rows = Message::query()
+            ->where('business_id', $businessId)
+            ->where('direction', MessageDirection::Inbound->value)
+            ->whereJsonContains('attachments', [['status' => 'stored']])
+            ->get(['attachments']);
+
+        $objects = 0;
+        $bytes = 0;
+        $unmeasured = 0;
+
+        foreach ($rows as $row) {
+            foreach ($row->attachments as $att) {
+                if (($att['status'] ?? null) === 'stored') {
+                    $objects++;
+                    if (isset($att['size']) && is_int($att['size'])) {
+                        $bytes += $att['size'];
+                    } else {
+                        $unmeasured++;
+                    }
+                }
+            }
+        }
+
+        return ['objects' => $objects, 'bytes' => $bytes, 'unmeasured' => $unmeasured];
+    }
+
+    public function pruneStoredMedia(CarbonInterface $cutoff, int $chunk): array
+    {
+        $businessId = Tenancy::idOrFail();
+
+        $pruned = 0;
+        $refused = 0;
+
+        Message::query()
+            ->where('business_id', $businessId)
+            ->where('direction', MessageDirection::Inbound->value)
+            ->whereJsonContains('attachments', [['status' => 'stored']])
+            ->where('created_at', '<', $cutoff)
+            ->orderBy('id')
+            ->chunk($chunk, function ($messages) use (&$pruned, &$refused) {
+                foreach ($messages as $message) {
+                    foreach ($message->attachments as $index => $att) {
+                        if (($att['status'] ?? null) === 'stored') {
+                            $path = $att['path'] ?? null;
+                            if ($path === null) {
+                                $refused++;
+
+                                continue;
+                            }
+
+                            try {
+                                if (Storage::disk(ZernioWhatsappMedia::DISK)->delete($path)) {
+                                    $this->markAttachment($message, $index, [
+                                        'status' => 'pruned',
+                                        'path' => null,
+                                        'size' => null,
+                                        'mime' => null,
+                                    ]);
+                                    $pruned++;
+                                } else {
+                                    $refused++;
+                                }
+                            } catch (Throwable) {
+                                $refused++;
+                            }
+                        }
+                    }
+                }
+            });
+
+        return ['pruned' => $pruned, 'refused' => $refused];
     }
 }
