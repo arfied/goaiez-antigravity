@@ -32,7 +32,7 @@ class GeneratePushKeys extends Command
 
         $this->line("WEBPUSH_VAPID_PUBLIC_KEY={$keys['publicKey']}");
         $this->line("WEBPUSH_VAPID_PRIVATE_KEY={$keys['privateKey']}");
-        $this->line('Put both in .env (or Ops → Platform → Credentials) and run php artisan config:cache. Rotating them signs every browser out of alerts.');
+        $this->line('Put both lines in the .env file or in Ops → Platform → Credentials, then run php artisan config:cache. Rotating them signs every browser out of alerts.');
 
         return 0;
     }
