@@ -34,6 +34,8 @@ class SocialQueue extends Component
 
     public array $commentReply = [];
 
+    public array $privateReply = [];
+
     public array $dmReply = [];
 
     #[Locked]
@@ -266,6 +268,62 @@ class SocialQueue extends Component
 
         $comment->update(['hidden_at' => null]);
         Toaster::success('Shown again to everyone.');
+    }
+
+    public function privateReplyToComment(int $commentId): void
+    {
+        abort_unless(auth()->user()?->role->canConfigureAutomation() === true, 403);
+
+        $comment = Comment::where('business_id', $this->businessId)->find($commentId);
+        if ($comment === null) {
+            Toaster::error('That comment is not here any more.');
+
+            return;
+        }
+
+        if ($comment->private_replied_at !== null) {
+            Toaster::info('You already sent this person a private message.');
+
+            return;
+        }
+
+        if (! app(CommentIngestAction::class)->canReplyPrivately($comment)) {
+            Toaster::error('Facebook and Instagram allow one private message within 7 days of a comment, and this comment cannot get one.');
+
+            return;
+        }
+
+        $post = SocialPost::where('business_id', $this->businessId)->with('account')->find($comment->post_id);
+        if ($post === null || $post->provider_post_id === null || $post->account === null || $post->account->status !== 'connected' || $post->account->account_ref === null || ! in_array($post->account->platform, ['facebook', 'instagram'], true)) {
+            Toaster::error('Connect this account through Zernio first.');
+
+            return;
+        }
+
+        $text = trim((string) ($this->privateReply[$commentId] ?? ''));
+        if ($text === '' || mb_strlen($text) > 1000) {
+            Toaster::error('Write a message of up to 1,000 characters.');
+
+            return;
+        }
+
+        try {
+            app(ZernioSocialClient::class)->privateReplyToComment(
+                $post->account->account_ref,
+                $comment->platform_post_id,
+                $comment->platform_comment_id,
+                $text,
+                'comment-private-reply-'.$comment->id
+            );
+        } catch (GbpRequestFailed $e) {
+            Toaster::error('Zernio did not send it: '.$e->getMessage());
+
+            return;
+        }
+
+        app(CommentIngestAction::class)->recordPrivateReply($comment, $text);
+        Toaster::success('Sent as a private message.');
+        unset($this->privateReply[$commentId]);
     }
 
     public function replyToDm(int $conversationId): void
