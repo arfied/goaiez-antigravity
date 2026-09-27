@@ -27,7 +27,10 @@ final class SocialConnections
         private readonly ZernioAccounts $zernioAccounts,
     ) {}
 
-    public function begin(string $platform, ?int $locationId, string $redirectUrl, string $actor): string
+    /**
+     * @param  callable(string): string  $redirectUrl
+     */
+    public function begin(string $platform, ?int $locationId, callable $redirectUrl, string $actor): string
     {
         $this->impersonation->refuse(ImpersonationCapability::ManageConnections);
 
@@ -64,7 +67,7 @@ final class SocialConnections
         $row->last_error = null;
         $row->save();
 
-        return $this->zernioAccounts->connectUrl($platform, $profile, $redirectUrl);
+        return $this->zernioAccounts->connectUrl($platform, $profile, $redirectUrl($profile));
     }
 
     public function complete(string $platform, ?string $accountRef, string $expectedProfileRef, ?string $profileRef, ?string $label, string $actor): SocialAccount

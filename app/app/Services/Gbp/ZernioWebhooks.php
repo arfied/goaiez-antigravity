@@ -11,6 +11,8 @@ use App\Models\ZernioWebhookEvent;
 use App\Modules\CWhatsapp\Actions\WhatsappConnectionLookupAction;
 use App\Modules\CWhatsapp\Actions\WhatsappDisconnectedExternallyAction;
 use App\Modules\X177\Actions\GbpPostSettleAction;
+use App\Modules\X182\Actions\SocialAccountLookupAction;
+use App\Modules\X182\Domain\SocialConnections;
 use App\Services\Zernio\ZernioWhatsappInbound;
 use App\Support\Tenancy;
 use Carbon\CarbonInterface;
@@ -220,6 +222,25 @@ final class ZernioWebhooks
 
                         if ($row !== null) {
                             app(WhatsappDisconnectedExternallyAction::class)->handle($row);
+
+                            return 'handled';
+                        }
+
+                        return 'unbound';
+                    });
+                }
+            }
+
+            if ($waBinding !== null && in_array($waBinding->platform, ['facebook', 'instagram'], true)) {
+                $businesses = $this->connections->businessesForProfiles([$waBinding->profile_ref]);
+                $businessId = $businesses[$waBinding->profile_ref] ?? null;
+
+                if ($businessId !== null) {
+                    return Tenancy::actingAs($businessId, function () use ($accountRef): string {
+                        $row = app(SocialAccountLookupAction::class)->forAccount($accountRef);
+
+                        if ($row !== null) {
+                            app(SocialConnections::class)->recordExternalDisconnect($row);
 
                             return 'handled';
                         }

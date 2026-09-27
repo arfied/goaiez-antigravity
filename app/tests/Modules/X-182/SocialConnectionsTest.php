@@ -37,7 +37,7 @@ test('d begin creates pending row and returns authUrl', function () {
     $loc = Location::create(['business_id' => $this->biz->id, 'name' => 'Loc1']);
 
     $connections = app(SocialConnections::class);
-    $url = $connections->begin('facebook', $loc->id, 'https://app.test/cb', 'user:1');
+    $url = $connections->begin('facebook', $loc->id, fn() => 'https://app.test/cb', 'user:1');
 
     expect($url)->toBe('https://zernio.com/auth/fb-6002');
 
@@ -50,7 +50,7 @@ test('d begin creates pending row and returns authUrl', function () {
     expect($row->location_id)->toBe($loc->id);
 
     // A second begin updates the same row
-    $connections->begin('facebook', $loc->id, 'https://app.test/cb2', 'user:1');
+    $connections->begin('facebook', $loc->id, fn() => 'https://app.test/cb2', 'user:1');
     $count = SocialAccount::where('business_id', $this->biz->id)->count();
     expect($count)->toBe(1);
 
@@ -62,7 +62,7 @@ test('d begin creates pending row and returns authUrl', function () {
 
     $thrown = false;
     try {
-        $connections->begin('facebook', $loc2->id, 'https://app.test/cb', 'user:1');
+        $connections->begin('facebook', $loc2->id, fn() => 'https://app.test/cb', 'user:1');
     } catch (InvalidArgumentException $e) {
         $thrown = true;
     }
