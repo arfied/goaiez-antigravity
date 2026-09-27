@@ -6,7 +6,11 @@ namespace App\Services\Gbp;
 
 use App\Enums\GbpConnectionStatus;
 use App\Models\Location;
+use App\Models\ZernioAccountBinding;
 use App\Models\ZernioWebhookEvent;
+use App\Modules\CWhatsapp\Actions\WhatsappConnectionLookupAction;
+use App\Modules\CWhatsapp\Actions\WhatsappDisconnectedExternallyAction;
+use App\Modules\X177\Actions\GbpPostSettleAction;
 use App\Support\Tenancy;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
@@ -94,8 +98,50 @@ final class ZernioWebhooks
         if ($event === 'account.connected') {
             return $this->handleAccountConnected($payload);
         }
+        if ($event === 'post.platform.published' || $event === 'post.platform.failed') {
+            return $this->handlePostPlatform($payload, $event === 'post.platform.published');
+        }
 
         return 'ignored';
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     * @return 'handled'|'unbound'|'ignored'|string
+     */
+    private function handlePostPlatform(array $payload, bool $published): string
+    {
+        if (($payload['platform']['name'] ?? null) !== 'googlebusiness') {
+            return 'ignored';
+        }
+
+        $gbpPostId = $payload['post']['metadata']['gbp_post_id'] ?? null;
+        if (! is_numeric($gbpPostId)) {
+            return 'ignored';
+        }
+        $gbpPostId = (int) $gbpPostId;
+
+        $accountRef = $this->accountRefFrom($payload);
+        if ($accountRef === null) {
+            return 'ignored';
+        }
+
+        $binding = $this->connections->bindingForAccount($accountRef);
+        if ($binding === null) {
+            return 'unbound';
+        }
+
+        return Tenancy::actingAs($binding->business_id, function () use ($binding, $gbpPostId, $published, $payload): string {
+            $result = app(GbpPostSettleAction::class)->settle(
+                $binding->business_id,
+                $gbpPostId,
+                $published,
+                is_string($payload['platform']['error'] ?? null) ? $payload['platform']['error'] : null,
+                is_string($payload['post']['_id'] ?? null) ? $payload['post']['_id'] : null
+            );
+
+            return $result === 'settled' ? 'handled' : $result;
+        });
     }
 
     /**
@@ -158,6 +204,27 @@ final class ZernioWebhooks
         $binding = $this->connections->bindingForAccount($accountRef);
 
         if ($binding === null) {
+            $waBinding = ZernioAccountBinding::where('account_ref', $accountRef)->first();
+
+            if ($waBinding !== null && $waBinding->platform === 'whatsapp') {
+                $businesses = $this->connections->businessesForProfiles([$waBinding->profile_ref]);
+                $businessId = $businesses[$waBinding->profile_ref] ?? null;
+
+                if ($businessId !== null) {
+                    return Tenancy::actingAs($businessId, function () use ($accountRef): string {
+                        $row = app(WhatsappConnectionLookupAction::class)->forAccount($accountRef);
+
+                        if ($row !== null) {
+                            app(WhatsappDisconnectedExternallyAction::class)->handle($row);
+
+                            return 'handled';
+                        }
+
+                        return 'unbound';
+                    });
+                }
+            }
+
             return 'unbound';
         }
 

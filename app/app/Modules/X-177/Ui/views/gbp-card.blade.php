@@ -27,7 +27,7 @@
                             <div class="font-bold">{{ $c->external_label ?? 'Location' }}</div>
                             <div class="mt-1">
                                 <x-ui.status-pill 
-                                    state="{{ $c->profile_status === 'suspended' ? 'alert' : ($c->profile_status === 'active' ? 'ok' : 'unknown') }}" 
+                                    state="{{ $c->profile_status === 'suspended' ? 'alert' : 'unknown' }}" 
                                     label="{{ $c->plain_status ?? $c->profile_status }}" 
                                 />
                             </div>
@@ -35,16 +35,22 @@
                             @if($c->latest_post)
                                 <div class="text-xs text-ink-2 border-t pt-2 mt-2">
                                     <span class="font-bold">Latest Post:</span> {{ $c->latest_post->content }}
+                                    <div class="mt-1">{{ $c->post_status_text }}</div>
                                 </div>
+                            @endif
+
+                            @if(!$isSample)
+                                <form wire:submit="postUpdate({{ $c->id }})" class="mt-4 border-t pt-4">
+                                    <label class="block font-bold mb-1">Post an update to Google</label>
+                                    <textarea wire:model="postContent.{{ $c->id }}" maxlength="1500" class="w-full border rounded p-2 mb-2"></textarea>
+                                    <x-ui.submit size="default" target="postUpdate" busy="Posting…">Post to Google</x-ui.submit>
+                                </form>
                             @endif
                         </div>
                         
                         <div class="mt-4 md:mt-0 flex flex-col space-y-2 items-end">
                             <x-ui.button wire:click="toggleLog({{ $c->id }})" size="default" variant="secondary">
                                 {{ $viewingLogId === $c->id ? 'Hide Log' : 'View State Log' }}
-                            </x-ui.button>
-                            <x-ui.button wire:click="pollState({{ $c->id }})" size="default" variant="primary">
-                                Poll Status
                             </x-ui.button>
                         </div>
                     </div>

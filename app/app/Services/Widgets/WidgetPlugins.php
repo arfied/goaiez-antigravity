@@ -7,6 +7,7 @@ namespace App\Services\Widgets;
 use App\Enums\PluginType;
 use App\Models\Location;
 use App\Models\Plugin;
+use App\Modules\X157\Actions\SiteHostsAction;
 use App\Scopes\TenantScope;
 use App\Services\AuditService;
 use App\Support\Tenancy;
@@ -284,6 +285,29 @@ final class WidgetPlugins
     }
 
     /**
+     * @return list<string>
+     */
+    public function siteHosts(): array
+    {
+        $id = Tenancy::id();
+
+        return $id === null ? [] : app(SiteHostsAction::class)->handle((int) $id);
+    }
+
+    /**
+     * Every origin the pixel accepts for the acting tenant: the websites they listed on their feeds plus every host this platform serves their published site on. ⚠️ The platform host is shared by every tenant with a site there, so a pixel key that leaks works from any tenant's page on it — accepted 2026-09-27 (wave 837); this gate narrows browsers, it is not a security control (see `businessAllowsOrigin`).
+     *
+     * @return list<string>
+     */
+    public function acceptedHosts(): array
+    {
+        $hosts = array_values(array_unique(array_merge($this->listedHosts(), $this->siteHosts())));
+        sort($hosts);
+
+        return $hosts;
+    }
+
+    /**
      * Whether the acting tenant has named this origin on any of its feeds.
      *
      * ⚠️ **THE PIXEL COLLECTOR'S ORIGIN GATE, ANSWERED FROM THE ALLOWLIST THAT
@@ -315,7 +339,7 @@ final class WidgetPlugins
             return false;
         }
 
-        // ⚠️ **ANSWERED FROM {@see self::listedHosts()} RATHER THAN BY LOOPING
+        // ⚠️ **ANSWERED FROM {@see self::acceptedHosts()} RATHER THAN BY LOOPING
         // THE FEEDS HERE, SO THE SCREEN THAT REPORTS THIS ANSWER CANNOT DRIFT
         // FROM THE GATE THAT MAKES IT** (7801). The comparison is unchanged —
         // one normalised host against the stored entries, no wildcards — and
@@ -324,7 +348,7 @@ final class WidgetPlugins
         // record; two methods deriving it from two reads is how a screen comes
         // to say *"we are listening to ledger.test"* while the collector
         // refuses it.
-        return in_array($host, $this->listedHosts(), true);
+        return in_array($host, $this->acceptedHosts(), true);
     }
 
     /**

@@ -1398,6 +1398,27 @@ final class GbpConnections
     /**
      * The Zernio profile for this business, made if it is not there yet.
      *
+     * A stored `gbp_profile_bindings` row wins. Without one, asks Zernio
+     * through `profileRefFor()`.
+     */
+    public function zernioProfileForCurrentBusiness(): string
+    {
+        $business = Business::findOrFail(Tenancy::idOrFail());
+        $stored = GbpProfileBinding::query()->where('business_id', $business->id)->value('profile_ref');
+
+        if (is_string($stored) && $stored !== '') {
+            return $stored;
+        }
+
+        $profileRef = $this->profileRefFor($business);
+        $this->recordProfile($profileRef, (int) $business->id);
+
+        return $profileRef;
+    }
+
+    /**
+     * The Zernio profile for this business, made if it is not there yet.
+     *
      * Three sources in order, and the order is what makes it idempotent under a
      * timeout: a ref we already stored, then the vendor's own exact-name lookup,
      * then a create carrying an `Idempotency-Key`. Their documentation names the

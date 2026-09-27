@@ -341,6 +341,61 @@ final class ZernioGbpClient implements GbpClient
     }
 
     /**
+     * @throws GbpRequestFailed
+     */
+    public function publishPost(string $accountRef, string $content, string $idempotencyKey, array $metadata = []): GbpPostReceipt
+    {
+        $this->assertUsable();
+
+        if (trim($content) === '') {
+            throw GbpRequestFailed::unreadable('post_content_empty');
+        }
+
+        $url = self::BASE.'/posts';
+
+        try {
+            $response = VendorLog::timed(
+                'zernio',
+                'POST',
+                $url,
+                fn (): Response => $this->request()->withHeaders(['Idempotency-Key' => $idempotencyKey])->post($url, [
+                    'content' => $content,
+                    'platforms' => [
+                        [
+                            'platform' => self::PLATFORM,
+                            'accountId' => $accountRef,
+                        ],
+                    ],
+                    'publishNow' => true,
+                    'metadata' => (object) $metadata,
+                ]),
+            );
+        } catch (ConnectionException $e) {
+            $failure = self::transportFailure($e);
+
+            VendorLog::failure('zernio', 'POST', $url, $failure->reason);
+
+            throw $failure;
+        }
+
+        if ($response->failed()) {
+            throw GbpRequestFailed::from($response, accountScoped: true);
+        }
+
+        $postId = $response->json('post._id');
+        $status = $response->json('post.status');
+        $platformPostId = $response->json('post.platforms.0.platformPostId');
+        $errorMessage = $response->json('post.platforms.0.errorMessage');
+
+        return new GbpPostReceipt(
+            providerPostId: is_string($postId) && $postId !== '' ? $postId : null,
+            status: is_string($status) ? $status : 'unknown',
+            platformPostId: is_string($platformPostId) && $platformPostId !== '' ? $platformPostId : null,
+            errorMessage: is_string($errorMessage) && $errorMessage !== '' ? $errorMessage : null,
+        );
+    }
+
+    /**
      * The id of the Zernio profile called `$name`, if one exists.
      *
      * Their `name` filter is documented as exact-match, and as the way to

@@ -62,7 +62,7 @@ class ConnectSourceView extends Component
 
         try {
             app(IngestConnectAction::class)->connect($this->businessId, $this->sourceType, $this->sourceName);
-            $this->actionNotice = 'Connected '.$this->sourceName;
+            $this->actionNotice = 'Added '.$this->sourceName.' — nothing connects to it yet.';
             $this->sourceName = '';
         } catch (\Exception $e) {
             $this->actionNotice = $e->getMessage();

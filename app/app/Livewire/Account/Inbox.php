@@ -157,12 +157,16 @@ final class Inbox extends Component
             // detail, so it is safe on the screen and answers the question the
             // owner is about to raise a ticket about.
             //
-            // ⚠️ **`OutreachChannel::Sms`, NAMED EXPLICITLY — 10240, PHASE 2.**
-            // `InboxReplies::send()` decides consent on `OutreachChannel::Sms`
-            // alone (this is the Inbox's own text-message thread), so the
-            // sentence is always correct here; the parameter exists because
-            // `ownerSentence()` is shared with the review-invite path, which
-            // is not SMS-only.
+            // ⚠️ **`OutreachChannel::Sms`, NAMED EXPLICITLY FOR OTHER REFUSALS.**
+            // `InboxReplies::send()` decides consent on the thread's channel, so
+            // the WhatsApp case is handled directly below; the parameter exists
+            // because `ownerSentence()` is shared with the review-invite path.
+            if ($result === SendRefusalReason::ChannelUnavailable && $thread->channel === OutreachChannel::Whatsapp->value) {
+                $this->addError('reply', 'Not sent — replying on WhatsApp is not connected yet, so nothing went out.');
+
+                return;
+            }
+
             $this->addError('reply', 'Not sent — '.$result->ownerSentence(OutreachChannel::Sms).'.');
 
             return;

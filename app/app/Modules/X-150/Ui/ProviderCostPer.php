@@ -48,7 +48,7 @@ class ProviderCostPer extends Component
         Tenancy::set($this->businessId);
         try {
             app(ProviderColdAction::class)->handle($this->businessId, $id, false);
-            $this->actionNotice = 'Provider marked cold';
+            $this->actionNotice = 'Provider marked as not in use. Nothing downstream reads this yet.';
         } catch (\Exception $e) {
             $this->actionNotice = $e->getMessage();
         }
@@ -62,7 +62,7 @@ class ProviderCostPer extends Component
         Tenancy::set($this->businessId);
         try {
             app(ProviderColdAction::class)->handle($this->businessId, $id, true);
-            $this->actionNotice = 'Provider warmed up';
+            $this->actionNotice = 'Provider marked as in use. Nothing downstream reads this yet.';
         } catch (\Exception $e) {
             $this->actionNotice = $e->getMessage();
         }

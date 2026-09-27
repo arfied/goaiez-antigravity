@@ -2,7 +2,7 @@
     <div class="whatsapp-card-view p-4">
         <h2 class="text-lg font-bold text-ink">WhatsApp templates</h2>
         @if($templates->isEmpty())
-            <x-ui.empty-state heading="No templates yet.">A message template has to be approved before it can be sent outside a conversation, and each one's status shows here.</x-ui.empty-state>
+            <x-ui.empty-state heading="No templates yet.">A message template has to be approved before it can be sent outside a conversation. Nothing is submitted to Meta yet, so each one stays pending here.</x-ui.empty-state>
         @else
             <ul class="divide-y divide-rule">
                 @foreach($templates as $t)

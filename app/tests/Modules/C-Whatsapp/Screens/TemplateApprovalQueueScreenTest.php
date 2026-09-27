@@ -63,7 +63,7 @@ class TemplateApprovalQueueScreenTest extends TestCase
             ->set('category', 'marketing')
             ->set('bodyText', 'Hello world')
             ->call('submit')
-            ->assertSet('success', 'Submitted template my_template.')
+            ->assertSet('success', 'Recorded template my_template — we cannot submit templates to Meta yet, so it stays pending.')
             ->assertSet('name', '')
             ->assertSet('category', '')
             ->assertSet('bodyText', '');

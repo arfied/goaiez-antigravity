@@ -674,6 +674,8 @@ function outboundHttpPermittedFiles(): array
         // entry and the inventory row are one change. That coupling is the point:
         // the only way to reach a new vendor is to name it.
         'Services/Gbp/ZernioGbpClient.php',
+        // Zernio (same host) — WhatsApp, H2 wave 839
+        'Services/Zernio/ZernioWhatsappClient.php',
 
         // Stripe — payments (X-198). A documented vendor JSON API with a
         // credential and an idempotency key, like the entries above; it never

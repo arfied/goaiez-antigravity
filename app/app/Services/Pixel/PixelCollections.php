@@ -136,7 +136,7 @@ final class PixelCollections
      */
     public function status(): PixelCollectionStatus
     {
-        $listed = $this->plugins->listedHosts();
+        $listed = $this->plugins->acceptedHosts();
 
         [$shown, $others] = $this->refusals();
 

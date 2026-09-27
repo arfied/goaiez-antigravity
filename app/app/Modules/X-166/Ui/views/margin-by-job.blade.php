@@ -28,7 +28,7 @@
         @endif
 
         @if($costs->isEmpty())
-            <x-ui.empty-state>No costed jobs yet. A job is costed when it completes.</x-ui.empty-state>
+            <x-ui.empty-state>No costed jobs yet. Add one with the form above — costs are not captured automatically.</x-ui.empty-state>
         @else
             <table class="w-full text-left">
                 <thead>
