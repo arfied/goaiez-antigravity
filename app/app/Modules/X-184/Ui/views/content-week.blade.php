@@ -66,6 +66,9 @@
                                                     <div class="font-medium text-ink">{{ $item->channel }} - {{ $item->topic_theme }}</div>
                                                     <div class="text-sm text-ink-2">Source: {{ $item->source_event }}</div>
                                                     <div class="text-sm text-ink-2">Date: {{ $item->scheduled_date->toFormattedDateString() }}</div>
+                                                    @if(in_array($item->channel, ['facebook', 'instagram'], true))
+                                                        <a href="{{ route('x-182.social-queue', ['topic' => $item->topic_theme]) }}" class="text-sm underline">Write this post</a>
+                                                    @endif
                                                 </div>
                                                 <div>
                                                     @if($item->is_scheduled)

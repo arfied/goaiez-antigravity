@@ -36,6 +36,9 @@
                                 <div class="text-xs text-ink-2 border-t pt-2 mt-2">
                                     <span class="font-bold">Latest Post:</span> {{ $c->latest_post->content }}
                                     <div class="mt-1">{{ $c->post_status_text }}</div>
+                                    @if(! $isSample && $c->latest_post->status === 'publishing')
+                                        <x-ui.button wire:click="checkAgain({{ $c->latest_post->id }})" size="sm" variant="secondary">Check again</x-ui.button>
+                                    @endif
                                 </div>
                             @endif
 
