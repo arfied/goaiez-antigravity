@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Zernio;
 
 use App\Modules\CWhatsapp\Actions\WhatsappConnectionLookupAction;
-use App\Modules\CWhatsapp\Models\WhatsappMessage;
+use App\Modules\CWhatsapp\Models\WhatsappDelivery;
 use App\Services\Gbp\GbpConnections;
 use App\Support\Tenancy;
 
@@ -42,7 +42,7 @@ final class ZernioWhatsappStatuses
                 return 'ignored';
             }
 
-            $message = WhatsappMessage::where('provider_message_ref', $wamid)->first();
+            $message = WhatsappDelivery::where('provider_message_ref', $wamid)->first();
             if ($message === null) {
                 return 'ignored';
             }

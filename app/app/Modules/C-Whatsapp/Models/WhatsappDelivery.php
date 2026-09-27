@@ -6,9 +6,11 @@ use App\Concerns\BelongsToTenant;
 use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class WhatsappMessage extends Model implements TenantScoped
+class WhatsappDelivery extends Model implements TenantScoped
 {
     use BelongsToTenant;
+
+    protected $table = 'whatsapp_deliveries';
 
     protected $guarded = ['id', 'business_id'];
 }

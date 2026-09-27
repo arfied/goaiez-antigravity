@@ -9,8 +9,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (! Schema::hasTable('whatsapp_messages')) {
-            Schema::create('whatsapp_messages', function (Blueprint $table) {
+        if (! Schema::hasTable('whatsapp_deliveries')) {
+            Schema::create('whatsapp_deliveries', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
                 $table->foreignId('whatsapp_session_id')->nullable()->constrained('whatsapp_sessions')->nullOnDelete();
@@ -25,7 +25,7 @@ return new class extends Migration
             });
         }
 
-        $tables = ['whatsapp_messages'];
+        $tables = ['whatsapp_deliveries'];
 
         foreach ($tables as $table) {
             if (Schema::hasColumn($table, 'business_id')) {
@@ -44,6 +44,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('whatsapp_messages');
+        Schema::dropIfExists('whatsapp_deliveries');
     }
 };

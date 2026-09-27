@@ -12,12 +12,15 @@ use App\Modules\CWhatsapp\Domain\WhatsappEngine;
 use App\Modules\CWhatsapp\Events\TemplateApproved;
 use App\Modules\CWhatsapp\Events\WhatsappSent;
 use App\Modules\CWhatsapp\Events\WhatsappSessionOpened;
+use App\Modules\CWhatsapp\Models\WhatsappConnection;
 use App\Modules\CWhatsapp\Models\WhatsappSession;
 use App\Modules\X121\Models\Person;
 use App\Modules\X204\Domain\ConsentService;
+use App\Services\Config\DefaultsRegistry;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class CWhatsappTest extends TestCase
@@ -63,16 +66,17 @@ class CWhatsappTest extends TestCase
             'zernio_conversation_id' => 'conv_6202',
         ]);
 
-        app(\App\Services\Config\DefaultsRegistry::class)->set('whatsapp.zernio_enabled', true, 'test');
+        app(DefaultsRegistry::class)->set('whatsapp.zernio_enabled', true, 'test');
         config(['credentials.zernio_api_key' => 'test_key']);
-        \App\Modules\CWhatsapp\Models\WhatsappConnection::forceCreate([
+        WhatsappConnection::forceCreate([
             'business_id' => $biz->id,
             'account_ref' => 'acct_wa_6201',
             'status' => 'connected',
         ]);
-        \Illuminate\Support\Facades\Http::fake([
-            'zernio.com/api/v1/inbox/conversations/conv_6202/messages' => \Illuminate\Support\Facades\Http::response(['success' => true, 'data' => ['messageId' => 'wamid.OUT6203', 'conversationId' => 'conv_6202']]),
-            'zernio.com/api/v1/inbox/conversations' => \Illuminate\Support\Facades\Http::response(['success' => true, 'data' => ['messageId' => 'wamid.T6204', 'conversationId' => 'conv_6205', 'participantId' => '15558889999']], 201)
+        Http::fake([
+            'zernio.com/api/v1/whatsapp/templates' => Http::response(['success' => true, 'template' => ['id' => 'tpl_6206', 'status' => 'PENDING']], 200),
+            'zernio.com/api/v1/inbox/conversations/conv_6202/messages' => Http::response(['success' => true, 'data' => ['messageId' => 'wamid.OUT6203', 'conversationId' => 'conv_6202']]),
+            'zernio.com/api/v1/inbox/conversations' => Http::response(['success' => true, 'data' => ['messageId' => 'wamid.T6204', 'conversationId' => 'conv_6205', 'participantId' => '15558889999']], 201),
         ]);
 
         $freeFormRes = $this->sendAction->handle(
@@ -100,7 +104,7 @@ class CWhatsappTest extends TestCase
 
         $this->assertEquals('refused', $refusedRes['status']);
         $this->assertEquals('OUTSIDE_24H_WINDOW_TEMPLATE_REQUIRED', $refusedRes['refusal_code']);
-        \Illuminate\Support\Facades\Http::assertNothingSent();
+        Http::assertSentCount(1); // the one request is step 1's free-form reply; the refusal sent nothing
 
         // 3. Outside 24h window WITH approved template -> Succeeds via template
         $template = $this->templateAction->handle(
@@ -145,7 +149,7 @@ class CWhatsappTest extends TestCase
 
         $this->assertEquals('refused', $refusedRes['status']);
         $this->assertEquals('SUPPRESSED', $refusedRes['refusal_code']);
-        \Illuminate\Support\Facades\Http::assertNothingSent();
+        Http::assertNothingSent();
 
         $this->engine->recordInbound($biz->id, $customerPhone);
 
@@ -157,7 +161,7 @@ class CWhatsappTest extends TestCase
 
         $this->assertEquals('refused', $refusedRes2['status']);
         $this->assertEquals('SUPPRESSED', $refusedRes2['refusal_code']);
-        \Illuminate\Support\Facades\Http::assertNothingSent();
+        Http::assertNothingSent();
     }
 
     /**

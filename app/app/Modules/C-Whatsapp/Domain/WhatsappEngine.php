@@ -8,7 +8,7 @@ use App\Modules\CWhatsapp\Actions\WhatsappConnectionLookupAction;
 use App\Modules\CWhatsapp\Events\TemplateApproved;
 use App\Modules\CWhatsapp\Events\WhatsappSent;
 use App\Modules\CWhatsapp\Events\WhatsappSessionOpened;
-use App\Modules\CWhatsapp\Models\WhatsappMessage;
+use App\Modules\CWhatsapp\Models\WhatsappDelivery;
 use App\Modules\CWhatsapp\Models\WhatsappSession;
 use App\Modules\CWhatsapp\Models\WhatsappTemplate;
 use App\Modules\X204\Domain\ConsentService;
@@ -129,7 +129,7 @@ final class WhatsappEngine
                 ];
             }
 
-            $row = WhatsappMessage::create([
+            $row = WhatsappDelivery::create([
                 'business_id' => $businessId,
                 'whatsapp_session_id' => $session->id,
                 'mode' => 'free_form',
@@ -169,7 +169,7 @@ final class WhatsappEngine
             ];
         }
 
-        $row = WhatsappMessage::create([
+        $row = WhatsappDelivery::create([
             'business_id' => $businessId,
             'whatsapp_session_id' => $session?->id,
             'mode' => 'template',
@@ -194,7 +194,7 @@ final class WhatsappEngine
 
     private function processReceipt(
         ZernioSendReceipt $receipt,
-        WhatsappMessage $row,
+        WhatsappDelivery $row,
         ?WhatsappSession $session,
         string $recipientPhone,
         string $mode,

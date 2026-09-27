@@ -60,9 +60,6 @@ final class TemplateSubmitAction
                 'status_reason' => null,
             ]);
         } catch (GbpRequestFailed $e) {
-            if ($e->reason === 'unknown_error') {
-                dump('Trace:', $e->getTraceAsString());
-            }
             $template->update([
                 'status' => 'submit_failed',
                 'status_reason' => $e->reason,

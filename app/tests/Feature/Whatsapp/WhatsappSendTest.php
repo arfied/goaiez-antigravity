@@ -9,7 +9,7 @@ use App\Modules\CWhatsapp\Actions\WhatsappSendAction;
 use App\Modules\CWhatsapp\Domain\WhatsappEngine;
 use App\Modules\CWhatsapp\Events\WhatsappSent;
 use App\Modules\CWhatsapp\Models\WhatsappConnection;
-use App\Modules\CWhatsapp\Models\WhatsappMessage;
+use App\Modules\CWhatsapp\Models\WhatsappDelivery;
 use App\Modules\CWhatsapp\Models\WhatsappSession;
 use App\Modules\CWhatsapp\Models\WhatsappTemplate;
 use App\Services\Config\DefaultsRegistry;
@@ -81,7 +81,7 @@ class WhatsappSendTest extends TestCase
 
         $this->sendAction->handle($this->biz->id, '+15558889999', 'hello');
 
-        $row = WhatsappMessage::where('business_id', $this->biz->id)->first();
+        $row = WhatsappDelivery::where('business_id', $this->biz->id)->first();
 
         Http::assertSent(function (Request $request) use ($row) {
             return $request->url() === 'https://zernio.com/api/v1/inbox/conversations/conv_6202/messages' &&
@@ -189,7 +189,7 @@ class WhatsappSendTest extends TestCase
     public function test_h_status_forward_only()
     {
         $this->setupConnection();
-        WhatsappMessage::forceCreate([
+        WhatsappDelivery::forceCreate([
             'business_id' => $this->biz->id,
             'mode' => 'free_form',
             'status' => 'sent',
@@ -205,7 +205,7 @@ class WhatsappSendTest extends TestCase
             'message' => ['platform' => 'whatsapp', 'platformMessageId' => "wamid_h_{$this->accountRef}"],
         ]);
 
-        $row = WhatsappMessage::where('provider_message_ref', "wamid_h_{$this->accountRef}")->first();
+        $row = WhatsappDelivery::where('provider_message_ref', "wamid_h_{$this->accountRef}")->first();
         $this->assertEquals('delivered', $row->status);
 
         // try sent again
@@ -215,7 +215,7 @@ class WhatsappSendTest extends TestCase
             'message' => ['platform' => 'whatsapp', 'platformMessageId' => "wamid_h_{$this->accountRef}"],
         ]);
 
-        $row = WhatsappMessage::where('provider_message_ref', "wamid_h_{$this->accountRef}")->first();
+        $row = WhatsappDelivery::where('provider_message_ref', "wamid_h_{$this->accountRef}")->first();
         $this->assertEquals('delivered', $row->status); // stays delivered
     }
 
@@ -234,7 +234,7 @@ class WhatsappSendTest extends TestCase
     public function test_j_message_failed_with_code()
     {
         $this->setupConnection();
-        WhatsappMessage::forceCreate([
+        WhatsappDelivery::forceCreate([
             'business_id' => $this->biz->id,
             'mode' => 'free_form',
             'status' => 'sent',
@@ -249,7 +249,7 @@ class WhatsappSendTest extends TestCase
             'message' => ['platform' => 'whatsapp', 'platformMessageId' => "wamid_j_{$this->accountRef}", 'error' => ['code' => '131026']],
         ]);
 
-        $row = WhatsappMessage::where('provider_message_ref', "wamid_j_{$this->accountRef}")->first();
+        $row = WhatsappDelivery::where('provider_message_ref', "wamid_j_{$this->accountRef}")->first();
         $this->assertEquals('failed', $row->status);
         $this->assertEquals('131026', $row->error_code);
     }
