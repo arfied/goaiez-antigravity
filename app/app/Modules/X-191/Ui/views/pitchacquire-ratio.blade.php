@@ -7,13 +7,9 @@
             <p class="text-ink-2 tabular-nums">{{ $pitches }} pitches sent · {{ $earned }} links earned · {{ $pitches > 0 ? (int) round($earned / $pitches * 100) : 0 }}% acquired</p>
         @endif
 
-        @if($success)
-            <div class="p-2 bg-surface border text-ink mt-4 rounded">{{ $success }}</div>
-        @endif
+        <x-ui.toast kind="success" :message="$success" />
         
-        @if($error)
-            <div class="p-2 bg-surface border text-ink mt-4 rounded">{{ $error }}</div>
-        @endif
+        <x-ui.toast kind="error" :message="$error" />
 
         <div class="mt-8 bg-surface p-4 rounded border">
             <h3 class="font-bold text-ink mb-4">Prospect Target</h3>

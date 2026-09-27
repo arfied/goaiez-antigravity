@@ -1,12 +1,8 @@
 <div>
     <x-surface.sample-state module="⭐⭐⭐ **The one queue every `L1` decision in the platform lands in — from all 114 modules.** *A refund proposal, a domino collision, a renewal with an ambiguous clause, a migration run, an offer post, an agency impersonation request.* ⛔⛔ **THE LAW OF THIS MODULE: IT ROUTES AND NEVER DECIDES.** *The item's own `P-195` floor governs the outcome; `X-202` decides only WHO SEES IT and WHEN.* ⭐⭐⭐ **Every item is a RECOMMENDATION PAYLOAD — *"the human is a reviewer, not a researcher."*** *An item with no pre-calculated proposed action FAILS THE WRITE.*" screen="mobile" />
 
-@if($success)
-    <div class="bg-surface text-ink border rounded p-4 mb-4">{{ $success }}</div>
-@endif
-@if($error)
-    <div class="bg-surface text-ink border rounded p-4 mb-4">{{ $error }}</div>
-@endif
+<x-ui.toast kind="success" :message="$success" />
+<x-ui.toast kind="error" :message="$error" />
 
 @if($items->isEmpty())
     <p class="text-ink-2">Nothing is waiting on you.</p>

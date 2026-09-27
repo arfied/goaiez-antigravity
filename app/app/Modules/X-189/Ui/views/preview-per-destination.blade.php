@@ -4,12 +4,8 @@
 
         <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4 border border-rule">
             <h3 class="font-bold text-ink">Brand asset</h3>
-            @if($success)
-                <div class="bg-surface text-ink border rounded p-4 mb-4">{{ $success }}</div>
-            @endif
-            @if($error)
-                <div class="bg-surface text-ink border rounded p-4 mb-4">{{ $error }}</div>
-            @endif
+            <x-ui.toast kind="success" :message="$success" />
+            <x-ui.toast kind="error" :message="$error" />
             <form wire:submit="brandAsset" class="flex flex-col gap-2">
                 <input type="text" wire:model="sourceAssetUrl" class="border rounded p-2 text-ink bg-surface" placeholder="Source Asset URL">
                 <input type="text" wire:model="licenseSource" class="border rounded p-2 text-ink bg-surface" placeholder="License Source">
