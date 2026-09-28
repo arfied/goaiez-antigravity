@@ -1,5 +1,14 @@
 <section class="site-editor-assistant-panel p-4">
     <h2 class="text-lg font-bold text-ink">Site editor</h2>
+    <div class="mb-6">
+        <h3 class="text-base font-bold text-ink">Edit your site by asking</h3>
+        <p class="text-sm text-ink-2">Open a page, say what to change, see it on the right, then apply or undo.</p>
+        @forelse($pages as $p)
+            <div class="mt-2"><a class="underline" href="{{ route('x-103.pages') }}?edit={{ $p->id }}">Open {{ $p->title }} in the editor</a></div>
+        @empty
+            <div class="mt-2"><a class="underline" href="{{ route('x-103.pages') }}">Add your first page</a></div>
+        @endforelse
+    </div>
     @if($undoSuccess)
         <div class="text-ink bg-surface border rounded p-2 mb-4">{{ $undoSuccess }}</div>
     @endif

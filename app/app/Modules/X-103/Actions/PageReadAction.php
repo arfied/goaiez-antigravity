@@ -34,4 +34,11 @@ class PageReadAction
             ->whereIn(DB::raw("trim(both '/' from slug)"), $normalisedSlugs)
             ->get();
     }
+
+    public function allFor(int $businessId): Collection
+    {
+        return Page::where('business_id', $businessId)
+            ->orderBy('title')
+            ->get();
+    }
 }

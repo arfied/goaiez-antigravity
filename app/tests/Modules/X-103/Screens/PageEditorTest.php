@@ -249,4 +249,29 @@ class PageEditorTest extends TestCase
 
         Http::assertSent(fn ($r) => str_contains(json_encode($r->data(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 'Prices you may use (never any other price):') && str_contains(json_encode($r->data(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 'Service 1'));
     }
+
+    public function test_make_page_opens_in_editor(): void
+    {
+        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Make Page Editor', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [
+                    ['message' => ['content' => json_encode(['title' => 'Distinctive spring offer 4471', 'slug' => 'Spring Offer!', 'blocks' => [['type' => 'hero', 'headline' => 'Distinctive headline 4472', 'subline' => 'Book before the rain.'], ['type' => 'faq', 'items' => [['question' => 'When?', 'answer' => 'All spring.']]], ['type' => 'marquee', 'text' => 'x']], 'explanation' => 'A page for the spring offer.'])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        $lw = Livewire::actingAs($owner)->test(Pages::class)
+            ->set('pageRequest', 'make a page for our spring gutter offer')
+            ->call('makePage');
+
+        $page = Page::where('business_id', $biz->id)->where('slug', 'spring-offer')->first();
+        $lw->assertSet('editingPageId', $page->id);
+    }
 }

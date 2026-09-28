@@ -149,4 +149,44 @@ class SiteImageTest extends TestCase
         $this->assertSame('Added photo.', $meta['explanation']);
         $this->assertStringContainsString('Could not generate picture', $meta['image_notes']);
     }
+
+    public function test_non_image_bytes_are_rejected(): void
+    {
+        Storage::fake('local');
+        $business = Business::factory()->create();
+        Tenancy::set($business->id);
+
+        $page = Page::create([
+            'business_id' => $business->id, 'slug' => 'test', 'title' => 'Test', 'is_published' => false,
+            'draft_blocks' => [['type' => 'hero', 'headline' => 'test']],
+        ]);
+
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $business->update(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Http::fake([
+            'api.openai.com/v1/chat/completions' => Http::response([
+                'choices' => [['message' => ['content' => json_encode([
+                    'blocks' => [['type' => 'hero', 'headline' => 'test']],
+                    'explanation' => 'Added photo.',
+                    'images' => [['block_index' => 0, 'description' => 'A shiny van']],
+                ])]]],
+            ], 200),
+            'api.openai.com/v1/images/generations' => Http::response([
+                'data' => [['b64_json' => 'PGh0bWw+aGk8L2h0bWw+']],
+            ], 200),
+        ]);
+
+        Livewire::test(Pages::class, ['businessId' => $business->id])
+            ->set("editRequest.{$page->id}", 'add a photo')
+            ->call('askEdit', $page->id);
+
+        $page->refresh();
+        $meta = $page->draft_meta['pending_edit'];
+
+        $this->assertSame('Added photo.', $meta['explanation']);
+        $this->assertStringContainsString('Could not generate picture', $meta['image_notes']);
+        $this->assertEmpty(Storage::disk('local')->allFiles("site-inventory/{$business->id}"));
+    }
 }

@@ -29,8 +29,20 @@ final readonly class SiteImageGenerateAction
             ];
         }
 
+        $mime = (new \finfo(FILEINFO_MIME_TYPE))->buffer($response->bytes);
+        $ext = match (true) {
+            $mime === 'image/jpeg' => 'jpg',
+            $mime === 'image/png' => 'png',
+            $mime === 'image/webp' => 'webp',
+            default => null,
+        };
+
+        if ($ext === null) {
+            return ['status' => 'refused', 'reason' => 'not_an_image'];
+        }
+
         $ulid = Str::ulid()->toString();
-        $path = "site-inventory/{$businessId}/ai-{$ulid}.jpg";
+        $path = "site-inventory/{$businessId}/ai-{$ulid}.{$ext}";
 
         Storage::disk('local')->put($path, $response->bytes);
 

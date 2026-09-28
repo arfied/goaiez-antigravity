@@ -529,7 +529,8 @@ class Pages extends Component
             if ($res['status'] === 'refused') {
                 $this->success = $res['reason'];
             } else {
-                $this->success = "Made a draft page \"{$res['title']}\" at /{$res['slug']} with {$res['blocks']} blocks using {$res['model']} — it is in the list above, unpublished. Publish it when you are happy, or delete it.";
+                $this->editingPageId = (int) $res['page_id'];
+                $this->success = "Made a draft page \"{$res['title']}\" at /{$res['slug']} with {$res['blocks']} blocks using {$res['model']}. It is open in the editor — change it by asking, then publish when you are happy.";
                 $this->pageRequest = '';
             }
         } catch (Throwable $e) {
