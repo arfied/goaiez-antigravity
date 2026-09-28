@@ -962,19 +962,19 @@ Route::middleware('auth')
 | there is no by-id read anywhere in this slice, so there is no door through
 | which another tenant's row could be named.
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/activity', AccountActivity::class)
     ->name('account.activity');
 
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/visibility', AccountVisibility::class)
     ->name('account.visibility');
 
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account', AccountSettings::class)
     ->name('account.settings');
 
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/settings', AccountSettings::class);
 
 /*
@@ -1000,11 +1000,11 @@ Route::middleware('auth')
 | stop the billing — so a suspended tenant is still being charged and both of
 | these are on that middleware's exemption list.
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/plan', AccountPlan::class)
     ->name('account.plan');
 
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->post('/account/plan/cancel', CancelSubscriptionController::class)
     ->name('account.plan.cancel');
 
@@ -1029,11 +1029,11 @@ Route::middleware('auth')
 | suspended tenant belongs at `/account/on-hold`, and creating new billable
 | surface is the opposite of the case decision 820 keeps reachable.
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/locations', AccountLocations::class)
     ->name('account.locations');
 
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/all-screens', AccountAllScreens::class)
     ->name('account.all-screens');
 
@@ -1061,7 +1061,7 @@ Route::middleware('auth')
 | never travels in a URL (decision 396's rule), and the two query flags the
 | payment page hands back carry no amount, no reference and no identifier.
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/credit', AccountCredit::class)
     ->name('account.credit');
 
@@ -1095,7 +1095,7 @@ Route::middleware('auth')
 | never travels in a URL (decision 396's rule), and neither does a change set
 | id: the id the Undo acts on is `#[Locked]` component state, never a segment.
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/site-changes', AccountSiteChanges::class)
     ->name('account.site-changes');
 
@@ -1112,7 +1112,7 @@ Route::middleware('auth')
 | makes, and it is what lets the on-hold page carry the control at all. See the
 | controller's docblock.
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->post('/account/exports', TenantExportRequestController::class)
     ->name('account.data-export.request');
 
@@ -1125,7 +1125,7 @@ Route::middleware('auth')
 | minted by ExportBuilder::downloadUrl() from the row's own expires_at rather
 | than a second `now()->addDays()` that could drift from it.
 */
-Route::middleware(['auth', 'signed'])
+Route::middleware(['auth', 'signed', 'tenant.role'])
     ->get('/account/exports/{export}/download', TenantExportDownloadController::class)
     ->whereNumber('export')
     ->name('account.data-export.download');
@@ -1200,7 +1200,7 @@ Route::middleware('auth')
 | thread opens in place, so no ticket id ever travels in a URL (decision 396's
 | rule, and one less thing to authorise).
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/support', AccountSupport::class)
     ->name('account.support');
 
@@ -1212,7 +1212,7 @@ Route::middleware('auth')
 | fails closed for a signed-in user with no business. No route parameter: the
 | tenant is never in the URL (decision 396's rule).
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/customers/import', ImportCustomers::class)
     ->name('account.customers.import');
 
@@ -1229,7 +1229,7 @@ Route::middleware('auth')
 | fails closed for a signed-in user with no business. No route parameter — the
 | tenant is never in the URL (decision 396's rule).
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/knowledge', AccountKnowledge::class)
     ->name('account.knowledge');
 
@@ -1289,7 +1289,7 @@ Route::middleware('auth')
 | closed for a signed-in user with no business. No route parameter — the tenant is
 | never in the URL (decision 396's rule).
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/assistant-links', AccountAssistantLinks::class)
     ->name('account.assistant-links');
 
@@ -1307,7 +1307,7 @@ Route::middleware('auth')
 | closed for a signed-in user with no business. No route parameter — the tenant is
 | never in the URL (decision 396's rule).
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/assistant-answers', AccountAssistantAnswers::class)
     ->name('account.assistant-answers');
 
@@ -1365,7 +1365,7 @@ Route::middleware('auth')
 | closed for a signed-in user with no business. No route parameter — the
 | conversation id travels in the Livewire action, never in the URL (396's rule).
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/win-back', AccountWinBack::class)
     ->name('account.win-back');
 
@@ -1383,7 +1383,7 @@ Route::middleware('auth')
 | Advanced Dashboard Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', EnsureAdvancedDashboard::class])
+Route::middleware(['auth', 'tenant.role', EnsureAdvancedDashboard::class])
     ->prefix('advanced')
     ->name('advanced.')
     ->group(function () {
@@ -1429,7 +1429,7 @@ Route::middleware(['auth', EnsureAdvancedDashboard::class])
 | 396's rule — Laravel splices container-resolved arguments into the positional
 | list, and this action takes two of them before the parameter.
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/connections', AccountConnections::class)
     ->name('account.connections');
 
@@ -1471,7 +1471,7 @@ Route::middleware(SocialConnectController::middleware())
 | `redirect_uri_mismatch`, whose message names neither this file nor that
 | setting.
 */
-Route::middleware('auth')->group(function (): void {
+Route::middleware(['auth', 'tenant.role'])->group(function (): void {
     Route::get('/account/search-console/connect', [SearchConsoleConnectController::class, 'redirect'])
         ->name('gsc.connect.redirect');
 
@@ -1535,7 +1535,7 @@ Route::post('/webhooks/stripe', StripeWebhookController::class)->name('webhooks.
 Route::post('/webhooks/authorize-net', AuthorizeNetWebhookController::class)
     ->name('webhooks.authorize-net');
 
-Route::middleware('auth')->prefix('billing')->name('billing.')->group(function (): void {
+Route::middleware(['auth', 'tenant.role'])->prefix('billing')->name('billing.')->group(function (): void {
     Route::get('/', [BillingController::class, 'index'])->name('index');
 
     // A GET that opens a Checkout Session — see the controller for why, and for
@@ -1558,10 +1558,10 @@ Route::middleware('auth')->prefix('billing')->name('billing.')->group(function (
 Route::middleware('auth')->prefix('setup')->name('setup.')->group(function (): void {
     Route::get('/', SetupController::class)->name('index');
 
-    Route::get('welcome', Welcome::class)->name('welcome');
-    Route::get('find-business', FindBusiness::class)->name('find-business');
-    Route::get('how-customers-reach', HowCustomersReach::class)->name('how-customers-reach');
-    Route::get('review-rules', ReviewRules::class)->name('review-rules');
+    Route::get('welcome', Welcome::class)->middleware('tenant.role')->name('welcome');
+    Route::get('find-business', FindBusiness::class)->middleware('tenant.role')->name('find-business');
+    Route::get('how-customers-reach', HowCustomersReach::class)->middleware('tenant.role')->name('how-customers-reach');
+    Route::get('review-rules', ReviewRules::class)->middleware('tenant.role')->name('review-rules');
     Route::get('done', Done::class)->name('done');
 });
 
@@ -2056,7 +2056,7 @@ Route::post('/webhooks/gmail', GmailPushController::class)
 | `[A-Za-z0-9]{12}` cannot match a name containing a dot.
 |
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/website', AccountWidgetInstall::class)
     ->name('account.website');
 
@@ -2140,15 +2140,15 @@ Route::get('/s/{key}.js', [T3InjectionController::class, 'module'])
 | This is a screen, not an ingest path, and its URI says so.
 |
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/tracking', AccountPixelInstall::class)
     ->name('account.pixel-install');
 
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/facts', AccountFacts::class)
     ->name('account.facts');
 
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/maps-key', AccountPlacesKey::class)
     ->name('account.places-key');
 /*
@@ -2179,7 +2179,7 @@ Route::middleware('auth')
 | are finding out whether they can text their own customers yet.
 |
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/texting', AccountTexting::class)
     ->name('account.texting');
 

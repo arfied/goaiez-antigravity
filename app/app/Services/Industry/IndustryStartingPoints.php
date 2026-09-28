@@ -133,9 +133,25 @@ class IndustryStartingPoints
     public function forBusiness(int $businessId): array
     {
         $family = $this->industryResolver->for($businessId)['family'];
-        $variantLetter = Business::query()->whereKey($businessId)->value('site_variant') ?? 'a';
+        $variantLetter = Business::whereKey($businessId)->value('site_variant') ?? 'a';
 
-        return $this->variant($this->for($family), $variantLetter);
+        $result = $this->variant($this->for($family), $variantLetter);
+
+        $tokens = Business::whereKey($businessId)->value('site_tokens');
+        if (is_string($tokens)) {
+            $tokens = json_decode($tokens, true);
+        }
+
+        if (is_array($tokens)) {
+            if (isset($tokens['palette']) && is_array($tokens['palette'])) {
+                $result['palette'] = array_replace($result['palette'], $tokens['palette']);
+            }
+            if (isset($tokens['type_pairing']) && is_array($tokens['type_pairing'])) {
+                $result['type_pairing'] = array_replace($result['type_pairing'], $tokens['type_pairing']);
+            }
+        }
+
+        return $result;
     }
 
     private function mix(string $hex, string $toward, float $t): string

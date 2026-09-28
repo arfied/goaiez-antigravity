@@ -9,6 +9,7 @@
             <form wire:submit="invite" class="flex flex-col gap-2">
                 <input type="text" wire:model="name" placeholder="Name" class="border rounded p-2 text-ink flex-1 bg-surface">
                 <input type="email" wire:model="email" placeholder="Email" class="border rounded p-2 text-ink flex-1 bg-surface">
+                <select wire:model="inviteRole" class="border rounded p-2 text-ink flex-1 bg-surface"><option value="staff">Staff — does the day-to-day work</option><option value="manager">Manager — also changes settings</option></select>
                 <button type="submit" class="bg-surface text-ink border rounded p-2">Submit</button>
             </form>
         </div>
@@ -58,6 +59,7 @@
                             <div>
                                 <span class="font-semibold">{{ $m['name'] }}</span> &middot;
                                 <span class="text-sm text-ink-2">{{ $m['email'] }}</span> &middot;
+                                <span class="text-sm text-ink-2">Access: {{ $m['role'] === 'manager' ? 'Manager' : 'Staff' }}</span> &middot;
                                 <span class="text-sm text-ink-2">@if($m['status'] === 'pending') Pending @elseif($m['status'] === 'active') Active @elseif($m['status'] === 'revoked') Removed @endif</span>
                             </div>
                             <div class="flex gap-2">

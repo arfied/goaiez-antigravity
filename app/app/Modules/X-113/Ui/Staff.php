@@ -25,6 +25,8 @@ class Staff extends Component
 
     public string $email = '';
 
+    public string $inviteRole = 'staff';
+
     public ?string $success = null;
 
     public ?string $error = null;
@@ -79,7 +81,17 @@ class Staff extends Component
             return;
         }
 
-        $result = app(TeamInvites::class)->invite($businessId, $email, $name, auth()->user());
+        if ($this->inviteRole === 'manager') {
+            $mappedRole = UserRole::Manager;
+        } elseif ($this->inviteRole === 'staff') {
+            $mappedRole = UserRole::Staff;
+        } else {
+            $this->error = 'Choose Staff or Manager.';
+
+            return;
+        }
+
+        $result = app(TeamInvites::class)->invite($businessId, $email, $name, auth()->user(), $mappedRole);
 
         if ($result['ok'] === false) {
             $this->error = $result['message'];
@@ -93,6 +105,7 @@ class Staff extends Component
 
         $this->name = '';
         $this->email = '';
+        $this->inviteRole = 'staff';
     }
 
     public function assignRole(RoleAssignAction $action): void

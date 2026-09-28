@@ -104,6 +104,6 @@ class CreditsScreenTest extends TestCase
         [$owner, $business] = $this->createTenant(advanced: true);
         $staff = User::factory()->create(['role' => UserRole::Staff]);
         $response = $this->actingAs($staff)->get(route('advanced.credits'));
-        $response->assertStatus(302);
+        $response->assertStatus(403);
     }
 }

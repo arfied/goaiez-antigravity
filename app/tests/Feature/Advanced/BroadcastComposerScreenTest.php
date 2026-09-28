@@ -63,7 +63,7 @@ class BroadcastComposerScreenTest extends TestCase
         [$owner, $business] = $this->createTenant(advanced: true);
         $staff = User::factory()->create(['role' => UserRole::Staff]);
         $response = $this->actingAs($staff)->get(route('advanced.broadcasts.compose'));
-        $response->assertStatus(302);
+        $response->assertStatus(403);
     }
 
     public function test_saving_creates_a_draft_and_sends_nothing(): void

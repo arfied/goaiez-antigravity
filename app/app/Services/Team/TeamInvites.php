@@ -23,8 +23,15 @@ final class TeamInvites
     /**
      * @return array{ok: bool, message: string}
      */
-    public function invite(int $businessId, string $email, string $name, User $actor): array
+    public function invite(int $businessId, string $email, string $name, User $actor, UserRole $role = UserRole::Staff): array
     {
+        if ($role !== UserRole::Staff && $role !== UserRole::Manager) {
+            return [
+                'ok' => false,
+                'message' => 'Choose Staff or Manager.',
+            ];
+        }
+
         $email = trim(strtolower($email));
         $user = User::where('email', $email)->first();
         if ($user !== null) {
@@ -52,19 +59,29 @@ final class TeamInvites
                     'message' => 'That person already belongs to a business, so they cannot join yours.',
                 ];
             }
+
+            if (! in_array($user->role, [UserRole::Staff, UserRole::Manager], true)) {
+                return [
+                    'ok' => false,
+                    'message' => 'That email already has an account that cannot join a business as a teammate.',
+                ];
+            }
+
+            $user->role = $role;
+            $user->save();
         } else {
             $user = new User;
             $user->name = $name;
             $user->email = $email;
             $user->password = Hash::make(Str::random(64));
-            $user->role = UserRole::Staff;
+            $user->role = $role;
             $user->save();
         }
 
         $membership = BusinessMembership::create([
             'business_id' => $businessId,
             'user_id' => $user->id,
-            'role' => 'staff',
+            'role' => $role->value,
             'invited_at' => now(),
         ]);
 
@@ -76,7 +93,7 @@ final class TeamInvites
             'team.invited',
             'user:'.$actor->id,
             $membership,
-            ['email_domain' => $emailDomain]
+            ['email_domain' => $emailDomain, 'role' => $role->value]
         );
 
         return [
@@ -130,6 +147,7 @@ final class TeamInvites
                 'name' => $user->name ?? 'Unknown',
                 'email' => $user->email ?? 'unknown',
                 'status' => $status,
+                'role' => $user->role->value ?? 'staff',
             ];
         });
     }

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Support\Account;
 
+use App\Enums\UserRole;
+use Illuminate\Support\Facades\Route;
+
 /**
  * The owner's navigation — one declaration for every screen an owner reaches.
  *
@@ -712,10 +715,10 @@ final class OwnerNav
      */
     public static function primary(): array
     {
-        return array_values(array_filter(
+        return self::visible(array_values(array_filter(
             self::all(),
             fn (OwnerNavItem $item): bool => $item->group === OwnerNavItem::GROUP_PRIMARY,
-        ));
+        )));
     }
 
     /**
@@ -723,10 +726,10 @@ final class OwnerNav
      */
     public static function more(): array
     {
-        return array_values(array_filter(
+        return self::visible(array_values(array_filter(
             self::all(),
             fn (OwnerNavItem $item): bool => $item->group === OwnerNavItem::GROUP_MORE,
-        ));
+        )));
     }
 
     /**
@@ -751,10 +754,31 @@ final class OwnerNav
      */
     public static function catalog(): array
     {
-        return array_values(array_filter(
+        return self::visible(array_values(array_filter(
             self::all(),
             fn (OwnerNavItem $item): bool => $item->group === OwnerNavItem::GROUP_CATALOG,
-        ));
+        )));
+    }
+
+    /**
+     * @param  array<int, OwnerNavItem>  $items
+     * @return array<int, OwnerNavItem>
+     */
+    private static function visible(array $items): array
+    {
+        if (! auth()->user() || auth()->user()->hasRole(UserRole::Owner, UserRole::Manager)) {
+            return $items;
+        }
+
+        return array_values(array_filter($items, function (OwnerNavItem $item): bool {
+            $route = Route::getRoutes()->getByName($item->route);
+
+            if (! $route) {
+                return true;
+            }
+
+            return ! in_array('tenant.role', $route->gatherMiddleware(), true);
+        }));
     }
 
     public static function moreIsCurrent(): bool
