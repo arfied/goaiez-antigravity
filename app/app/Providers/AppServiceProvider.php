@@ -579,6 +579,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        \Illuminate\Support\Facades\Event::listen(\Illuminate\Auth\Events\PasswordReset::class, \App\Listeners\ActivateMembershipOnPasswordReset::class);
         $this->routeSchemaCommandsToTheOwnerRole();
         $this->forbidLiveVendorCallsInTests();
         $this->registerNestableLivewireComponents();

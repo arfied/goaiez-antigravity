@@ -9,6 +9,8 @@ use App\Modules\X113\Actions\StaffInviteAction;
 use App\Modules\X113\Models\Role;
 use App\Modules\X113\Models\StaffUser;
 use App\Support\Tenancy;
+use App\Enums\UserRole;
+use App\Services\Team\TeamInvites;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -42,6 +44,8 @@ class Staff extends Component
 
     public function invite(StaffInviteAction $action): void
     {
+        abort_unless(auth()->user()?->hasRole(UserRole::Owner) === true, 403);
+
         $this->success = null;
         $this->error = null;
 
@@ -75,9 +79,16 @@ class Staff extends Component
             return;
         }
 
-        $user = $action->handle($businessId, $email, $name, null);
+        $result = app(TeamInvites::class)->invite($businessId, $email, $name, auth()->user());
 
-        $this->success = 'Invited '.$user->name.'. This feeds the staff list; nothing downstream is wired to it yet.';
+        if ($result['ok'] === false) {
+            $this->error = $result['message'];
+            return;
+        }
+
+        $action->handle($businessId, $email, $name, null);
+
+        $this->success = $result['message'];
 
         $this->name = '';
         $this->email = '';
