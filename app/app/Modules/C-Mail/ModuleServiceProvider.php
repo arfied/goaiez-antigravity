@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Modules\CMail;
 
+use App\Modules\CMail\Actions\EmailSendAction;
 use App\Modules\CMail\Domain\SystemTxtRecords;
 use App\Modules\CMail\Domain\TxtRecords;
 use App\Modules\CMail\Ui\ComplaintbounceBoard;
 use App\Modules\CMail\Ui\DnsCard;
 use App\Modules\CMail\Ui\SequenceView;
 use App\Modules\CMail\Ui\WarmupCalendarsPer;
+use App\Modules\X204\Domain\ConsentService;
+use App\Services\Mail\PlatformMailer;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -18,6 +21,12 @@ final class ModuleServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(TxtRecords::class, SystemTxtRecords::class);
+        $this->app->bind(EmailSendAction::class, function ($app) {
+            return new EmailSendAction(
+                $app->make(ConsentService::class),
+                $app->make(PlatformMailer::class)
+            );
+        });
     }
 
     public function boot(): void

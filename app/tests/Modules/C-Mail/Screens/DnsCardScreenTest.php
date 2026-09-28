@@ -6,6 +6,7 @@ namespace Tests\Modules\CMail\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\CMail\Domain\SystemTxtRecords;
 use App\Modules\CMail\Domain\TxtRecords;
 use App\Modules\CMail\Models\MailDomain;
 use App\Modules\CMail\Ui\DnsCard;
@@ -220,5 +221,10 @@ class DnsCardScreenTest extends TestCase
         $this->get(route('c-mail.dns-card'))
             ->assertSee('navigator.clipboard.writeText', false)
             ->assertDontSee('copy-affordance');
+    }
+
+    public function test_the_container_binds_the_real_lookup(): void
+    {
+        $this->assertInstanceOf(SystemTxtRecords::class, app(TxtRecords::class));
     }
 }

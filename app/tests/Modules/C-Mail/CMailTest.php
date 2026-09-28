@@ -50,6 +50,7 @@ class CMailTest extends TestCase
         $this->warmupAction = new EmailWarmupAction(app(DefaultsRegistry::class));
         $this->unsubscribeAction = new EmailUnsubscribeAction($consentService);
         $this->haltSeedAction = new EmailHaltSeedAction;
+        customerMailIsPermitted();
     }
 
     /**

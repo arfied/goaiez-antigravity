@@ -13,6 +13,12 @@ use Tests\TestCase;
 
 final class G143Test extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        customerMailIsPermitted();
+    }
+
     #[Test]
     #[Group('G1-43')]
     public function refuses_marketing_but_delivers_invoice_when_unsubscribed(): void

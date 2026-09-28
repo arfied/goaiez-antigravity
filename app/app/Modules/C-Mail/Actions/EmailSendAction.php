@@ -9,16 +9,15 @@ use App\Modules\CMail\Models\MailDomain;
 use App\Modules\CMail\Models\MailEvent;
 use App\Modules\CMail\Models\WarmupCalendar;
 use App\Modules\X204\Domain\ConsentService;
+use App\Services\Mail\PlatformMailer;
 use Illuminate\Support\Facades\Event;
 
 final class EmailSendAction
 {
-    private ConsentService $consentService;
-
-    public function __construct(ConsentService $consentService)
-    {
-        $this->consentService = $consentService;
-    }
+    public function __construct(
+        private ConsentService $consentService,
+        private ?PlatformMailer $mailer = null,
+    ) {}
 
     /**
      * Send email with warmup calendar limits & marketing complaint pause enforcement (TEST ANCHOR).
@@ -31,6 +30,16 @@ final class EmailSendAction
         string $sendType = 'marketing',
         int $requestedCount = 1
     ): array {
+        $refusal = $this->mailer?->customerMailRefusal();
+
+        if ($refusal !== null) {
+            return [
+                'status' => 'refused_no_feedback_signal',
+                'refusal_code' => 'CUSTOMER_MAIL_NOT_DELIVERABLE',
+                'message' => $refusal->getMessage(),
+            ];
+        }
+
         $domain = MailDomain::where('business_id', $businessId)->findOrFail($mailDomainId);
 
         // 1. Complaint rate check: a complaint rate crossing 0.10% pauses every marketing send, but pauses no conversational reply (TEST ANCHOR)
