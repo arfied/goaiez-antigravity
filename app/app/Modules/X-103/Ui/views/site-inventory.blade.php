@@ -1,9 +1,9 @@
 <div>
     <div class="mb-4 flex items-center justify-between">
         <p class="text-sm text-ink-2">Your current website inventory.</p>
-        <button wire:click="crawl" class="btn btn-primary">
+        <x-ui.button wire:click="crawl" size="default">
             Crawl Website
-        </button>
+        </x-ui.button>
     </div>
 
     @if($pages->isEmpty())
@@ -22,6 +22,7 @@
                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">URL</th>
                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Images</th>
                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Fetched At</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-rule bg-paper">
@@ -39,6 +40,26 @@
                             <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">
                                 {{ $page->fetched_at ? $page->fetched_at->diffForHumans() : 'Never' }}
                             </td>
+                            <td class="px-3 py-4 text-sm text-ink-2">
+                                @if($page->status === 'fetched')
+                                    Fetched
+                                @else
+                                    @php
+                                        $pageReason = $page->refusal_reason ? \App\Enums\FetchRefusalReason::tryFrom($page->refusal_reason) : null;
+                                    @endphp
+                                    @if($pageReason && $pageReason->namesTheOriginsOwnRule())
+                                        Not fetched — your website's own robots.txt refuses this page.
+                                    @elseif($pageReason && $pageReason->isThisPlatformsOwnDoing())
+                                        Not fetched — this platform held back ({{ $page->refusal_reason }}); nothing about your website was consulted.
+                                    @elseif($pageReason)
+                                        Not fetched — your website's robots.txt could not be read, so no rule of yours was consulted.
+                                    @elseif($page->refusal_reason === 'blocked_by_site')
+                                        Not fetched — your website's security service blocked our request (a firewall or bot protection such as Cloudflare). Ask whoever looks after your site to allow the user agent <code>{{ \App\Services\Fetch\RobotsPolicy::userAgentToken() }}</code> — in Cloudflare: Security, WAF, Custom rules, then a rule that skips bot protection when the user agent contains <code>{{ \App\Services\Fetch\RobotsPolicy::userAgentToken() }}</code> — then press Crawl again.
+                                    @else
+                                        Not fetched — the request failed ({{ $page->refusal_reason ?? 'unknown' }}).
+                                    @endif
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -48,9 +69,9 @@
 
     <div class="mt-8 mb-4 flex items-center justify-between">
         <p class="text-sm text-ink-2">Images found on your website.</p>
-        <button wire:click="copyImages" class="btn btn-primary">
+        <x-ui.button wire:click="copyImages" size="default">
             Copy Images
-        </button>
+        </x-ui.button>
     </div>
 
     @if($images->isEmpty())
@@ -89,8 +110,22 @@
                                 } else {
                                     $reasonText = 'The origin\'s robots.txt could not be obtained or parsed, so no rule of theirs was read at all.';
                                 }
-                            } elseif ($first->status === 'failed') {
-                                $reasonText = 'Failed: ' . $first->refusal_reason;
+                            } else {
+                                if ($first->refusal_reason === 'oversize') {
+                                    $reasonText = 'Too large to copy — the source served more than the size limit.';
+                                } elseif ($first->refusal_reason === 'non_image') {
+                                    $reasonText = 'Not an image — the source answered with something else.';
+                                } elseif ($first->refusal_reason === 'blocked') {
+                                    $reasonText = 'The source blocked the fetch.';
+                                } elseif ($first->refusal_reason === 'challenge') {
+                                    $reasonText = 'The source asked for a human check (a challenge page).';
+                                } elseif ($first->refusal_reason === 'empty') {
+                                    $reasonText = 'The source answered with an empty body.';
+                                } elseif ($first->refusal_reason === 'store_failed') {
+                                    $reasonText = 'Failed: the copy could not be stored.';
+                                } else {
+                                    $reasonText = 'Failed: ' . $first->refusal_reason;
+                                }
                             }
                         @endphp
                         <tr>
@@ -128,7 +163,7 @@
                         <tr wire:key="alt-{{ $img->id }}">
                             <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-ink">{{ basename(parse_url($img->source_url, PHP_URL_PATH) ?? $img->source_url) }}</td>
                             <td class="px-3 py-4 text-sm text-ink-2"><label class="sr-only" for="alt-{{ $img->id }}">Description for {{ basename(parse_url($img->source_url, PHP_URL_PATH) ?? $img->source_url) }}</label><input id="alt-{{ $img->id }}" type="text" maxlength="160" wire:model="alts.{{ $img->id }}" class="w-full rounded border border-rule px-2 py-1 text-sm"></td>
-                            <td class="whitespace-nowrap px-3 py-4 text-sm"><button type="button" wire:click="saveAlt({{ $img->id }})" class="btn btn-primary">Save</button></td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm"><x-ui.button type="button" wire:click="saveAlt({{ $img->id }})" size="default">Save</x-ui.button></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -138,9 +173,9 @@
 
     <div class="mt-8 mb-4 flex items-center justify-between">
         <p class="text-sm text-ink-2">Your draft pages.</p>
-        <button wire:click="draftSite" class="btn btn-primary">
+        <x-ui.button wire:click="draftSite" size="default">
             Draft Site
-        </button>
+        </x-ui.button>
     </div>
 
     @if($draftPages->isEmpty())
@@ -202,7 +237,7 @@
             </tbody>
         </table>
         <div class="mt-4">
-            <button wire:click="saveHours" class="btn btn-primary">Save hours</button>
+            <x-ui.button wire:click="saveHours" size="default">Save hours</x-ui.button>
             <p class="text-sm text-ink-2 mt-2">Shown in the contact section of every drafted page.</p>
         </div>
     </div>

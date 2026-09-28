@@ -1,10 +1,32 @@
 <div>
-    @if ($error)
-        <div class="text-ink mb-4">{{ $error }}</div>
-    @endif
-    @if ($success)
-        <div class="text-ink mb-4">{{ $success }}</div>
-    @endif
+    <x-ui.toast kind="error" :message="$error" />
+    <x-ui.toast kind="success" :message="$success" />
+
+    <details class="mb-4">
+        <summary class="cursor-pointer">Questions customers asked ({{ count($questions) }})</summary>
+        <div class="p-2 mt-2 bg-paper border border-rule">
+            @if (count($questions) === 0)
+                <p class="text-sm text-ink-2">Nothing waiting — every question typed into your site chat or your contact form in the last while has been answered on a page, or none has been asked yet.</p>
+            @else
+                <p class="text-sm text-ink-2 mb-2">Typed by visitors into your site chat or your contact form. Shown to you only — nothing here is on a page until you answer it and place the answer.</p>
+                <ul class="list-disc pl-5">
+                    @foreach ($questions as $q)
+                        <li class="mb-1"><span class="font-medium">{{ $q['question'] }}</span> <span class="text-sm text-ink-2">— from your {{ $q['source'] === 'chat' ? 'site chat' : 'contact form' }}</span>
+    <div class="mt-1">
+        <select wire:model="answerPage.{{ $q['key'] }}" class="px-2 py-1 border border-rule">
+            <option value="">Choose a page</option>
+            @foreach($pages as $p)
+                <option value="{{ $p->id }}">{{ $p->slug }}</option>
+            @endforeach
+        </select>
+        <button wire:click="draftAnswer('{{ $q['key'] }}')" class="px-2 py-1 bg-surface-2 border border-rule hover:bg-surface-3">Draft an answer</button>
+    </div>
+</li>
+                    @endforeach
+                </ul>
+            @endif
+        </div>
+    </details>
 
     <div class="mb-8">
         @if($pages->isEmpty())
@@ -29,6 +51,9 @@
                                     <span class="bg-paper border border-rule px-2 py-1 text-ink">Published</span>
                                     @if(isset($deployments[$page->id]) && $deployments[$page->id]->status === 'deployed')
                                         <a href="{{ url('/sites/'.$businessId.'/'.$deployments[$page->id]->deploy_hash) }}" class="ml-2 text-ink underline">Live link</a>
+                                    @endif
+                                    @if(!empty($hasChanges[$page->id]))
+                                        <button wire:click="publish({{ $page->id }})" class="ml-2 bg-paper border border-rule px-2 py-1 text-ink">Publish changes</button>
                                     @endif
                                     <button wire:click="unpublish({{ $page->id }})" class="ml-2 bg-paper border border-rule px-2 py-1 text-ink">Unpublish</button>
                                 @else
@@ -64,6 +89,85 @@
                                         </form>
                                     </div>
                                 </details>
+                                <details class="mb-2">
+                                    <summary class="cursor-pointer">Ask the AI to change this page</summary>
+                                    <div class="p-2 mt-2 bg-paper border border-rule">
+                                        @if(!isset($page->draft_meta['pending_edit']))
+                                            <input type="text" wire:model="editRequest.{{ $page->id }}" placeholder="Say what to change, e.g. add a page section about emergency call-outs" class="w-full bg-paper border border-rule text-ink p-1 mb-1">
+                                            <button wire:click="askEdit({{ $page->id }})" class="bg-paper border border-rule px-2 py-1 text-ink mb-2">Ask</button>
+                                        @else
+                                            <div class="mt-2 p-2 bg-paper border border-rule">
+                                                <strong>Proposed change</strong>
+                                                <p>{{ $page->draft_meta['pending_edit']['explanation'] }}</p>
+                                                
+                                                <div class="grid grid-cols-2 gap-4 my-2">
+                                                    <div>
+                                                        <strong>Now</strong>
+                                                        <ul class="list-disc ml-4">
+                                                            @foreach($page->draft_blocks ?? [] as $b)
+                                                                <li>{{ $b['type'] }}: {{ $b['headline'] ?? $b['text'] ?? $b['label'] ?? '' }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </div>
+                                                    <div>
+                                                        <strong>Proposed</strong>
+                                                        <ul class="list-disc ml-4">
+                                                            @php
+                                                                $nowLines = collect($page->draft_blocks ?? [])->map(fn($b) => ($b['type'] ?? '') . ': ' . ($b['headline'] ?? $b['text'] ?? $b['label'] ?? ''))->toArray();
+                                                            @endphp
+                                                            @foreach($page->draft_meta['pending_edit']['blocks'] as $i => $b)
+                                                                @php
+                                                                    $line = ($b['type'] ?? '') . ': ' . ($b['headline'] ?? $b['text'] ?? $b['label'] ?? '');
+                                                                    $leftLine = $nowLines[$i] ?? null;
+                                                                    $isDiff = $line !== $leftLine;
+                                                                @endphp
+                                                                <li>@if($isDiff)→ @endif{{ $line }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </div>
+                                                </div>
+
+                                                <div class="mt-4">
+                                                    @foreach($page->draft_meta['pending_edit']['thread'] ?? [] as $t)
+                                                        <div class="mb-1"><strong>You asked:</strong> {{ $t['request'] ?? '' }}</div>
+                                                    @endforeach
+                                                </div>
+
+                                                <div class="mt-4 mb-4">
+                                                    <label class="block mb-1">Not quite? Say what to change</label>
+                                                    <input type="text" wire:model="editRequest.{{ $page->id }}" class="w-full bg-paper border border-rule text-ink p-1 mb-1">
+                                                    <button wire:click="askEdit({{ $page->id }})" class="bg-paper border border-rule px-2 py-1 text-ink mb-2">Ask</button>
+                                                </div>
+
+                                                <button wire:click="applyEdit({{ $page->id }})" class="bg-paper border border-rule px-2 py-1 text-ink mr-2">Apply to draft</button>
+                                                <button wire:click="discardEdit({{ $page->id }})" class="bg-paper border border-rule px-2 py-1 text-ink">Discard</button>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </details>
+                                <details class="mb-2">
+                                    <summary class="cursor-pointer">Ask the AI for questions and answers</summary>
+                                    <div class="p-2 mt-2 bg-paper border border-rule">
+                                        @if(!isset($page->draft_meta['pending_faq']))
+                                            <p class="text-sm text-ink-2 mb-1">It writes plain questions a customer would ask, using only your confirmed prices and the reviews you show — nothing it cannot back up. You place them or discard them.</p>
+                                            <button wire:click="draftFaq({{ $page->id }})" class="bg-paper border border-rule px-2 py-1 text-ink mb-2">Ask</button>
+                                        @else
+                                            <div class="mt-2 p-2 bg-paper border border-rule">
+                                                <strong>Proposed questions</strong>
+                                                <ul class="list-disc pl-5 my-2">
+                                                    @foreach($page->draft_meta['pending_faq']['items'] ?? [] as $item)
+                                                        <li><span class="font-medium">{{ $item['question'] ?? '' }}</span> — {{ $item['answer'] ?? '' }}</li>
+                                                    @endforeach
+                                                </ul>
+                                                <span class="text-sm text-ink-2">written by {{ $page->draft_meta['pending_faq']['model'] ?? 'the AI' }}</span>
+                                                <div class="mt-2">
+                                                    <button wire:click="placeFaq({{ $page->id }})" class="bg-paper border border-rule px-2 py-1 text-ink mr-2">Place on this page</button>
+                                                    <button wire:click="discardFaq({{ $page->id }})" class="bg-paper border border-rule px-2 py-1 text-ink">Discard</button>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </details>
                                 <details>
                                     <summary class="cursor-pointer">Edit content</summary>
                                     <div class="p-2 mt-2 bg-paper border border-rule">
@@ -71,9 +175,18 @@
                                             @foreach($page->draft_blocks as $idx => $block)
                                                 <div class="mb-2 border-b border-rule pb-2">
                                                     @if(($block['type'] ?? '') === 'faq')
-                                                        <div><strong>FAQ:</strong> {{ $block['question'] ?? '' }} / {{ $block['answer'] ?? '' }}</div>
+                                                        @if(isset($block['items']) && is_array($block['items']))
+                                                            <div><strong>FAQ:</strong> {{ count($block['items']) }} {{ count($block['items']) === 1 ? 'question' : 'questions' }} — {{ $block['items'][0]['question'] ?? '' }}@if(count($block['items']) > 1) …@endif</div>
+                                                        @else
+                                                            <div><strong>FAQ:</strong> {{ $block['question'] ?? '' }} / {{ $block['answer'] ?? '' }}</div>
+                                                        @endif
                                                     @elseif(($block['type'] ?? '') === 'video_embed')
                                                         <div><strong>Video:</strong> {{ $block['name'] ?? '' }} / {{ $block['contentUrl'] ?? '' }} / {{ $block['uploadDate'] ?? '' }}</div>
+                                                    @else
+                                                        <div><strong>{{ ucfirst($block['type'] ?? 'Block') }}:</strong> {{ $block['headline'] ?? $block['text'] ?? $block['label'] ?? '' }}</div>
+                                                    @endif
+                                                    @if(($block['source'] ?? '') === 'ai')
+                                                        <span class="text-sm text-ink-2">— written by {{ $block['model'] ?? 'the AI' }} @if(!empty($block['peers'])), with {{ $block['peers'] }} nearby {{ $block['peers'] === 1 ? 'business' : 'businesses' }} as reference @endif</span>
                                                     @endif
                                                     <button wire:click="removeBlock({{ $page->id }}, {{ $idx }})" class="text-ink underline text-sm mt-1">Remove</button>
                                                 </div>
@@ -127,6 +240,15 @@
                 </tbody>
             </table>
         @endif
+    </div>
+
+    <div class="bg-paper border border-rule p-4 mb-4">
+        <form wire:submit="makePage">
+            <label class="block text-ink mb-1">Make me a page</label>
+            <p class="text-ink-2 mb-2">Say what the page is for, in your own words. It lands as an unpublished draft you can publish or delete.</p>
+            <input type="text" wire:model="pageRequest" placeholder="e.g. a page about our emergency call-out service" class="w-full bg-paper border border-rule text-ink p-2 mb-2">
+            <button type="submit" class="bg-paper border border-rule text-ink px-4 py-2">Make it</button>
+        </form>
     </div>
 
     <div class="bg-paper border border-rule p-4">

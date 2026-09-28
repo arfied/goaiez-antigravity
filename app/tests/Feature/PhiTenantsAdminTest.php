@@ -96,13 +96,6 @@ function publishedBaaForAdmin(string $version = '1.0', ?CarbonInterface $publish
  *
  * @return callable(string, array<string, mixed>): bool
  */
-function toastCarrying(string $type, string $contains): callable
-{
-    return fn (string $name, array $params): bool => ($params['type'] ?? null) === $type
-        && is_string($params['message'] ?? null)
-        && str_contains($params['message'], $contains);
-}
-
 test('an admin raises a business to health information and its agreement opens', function (): void {
     Livewire::actingAs($this->admin)
         ->test(PhiTenants::class)

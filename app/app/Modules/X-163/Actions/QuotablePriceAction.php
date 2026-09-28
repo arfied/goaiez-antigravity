@@ -28,6 +28,7 @@ final class QuotablePriceAction
                 'id' => $item->id,
                 'service_name' => $item->service_name,
                 'price_cents' => $item->price_cents,
+                'price_max_cents' => $item->price_max_cents !== null && (int) $item->price_max_cents > (int) $item->price_cents ? (int) $item->price_max_cents : null,
             ];
         }
 

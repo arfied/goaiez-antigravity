@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\FetchRefusalReason;
 use App\Enums\UserRole;
 use App\Exceptions\TenantNotResolved;
 use App\Models\Location;
@@ -513,4 +514,147 @@ it('weighs each drafted page and says it is a weight not a load time', function 
         ->assertSee('w3.jpg (43.0 KB)')
         ->assertSee('the visitor pixel')
         ->assertDontSee('Nothing to weigh yet');
+});
+
+it('rejected pictures explain themselves in words', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+    Tenancy::set($biz->id);
+
+    $page = SiteInventoryPage::create([
+        'business_id' => $biz->id,
+        'location_id' => Location::factory()->create(['business_id' => $biz->id])->id,
+        'url' => 'https://example.com',
+    ]);
+
+    SiteInventoryImage::updateOrCreate(
+        ['business_id' => $biz->id, 'source_url' => 'https://example.com/oversize.png'],
+        [
+            'page_id' => $page->id,
+            'path' => null,
+            'mime' => null,
+            'bytes' => null,
+            'status' => 'refused',
+            'refusal_reason' => 'oversize',
+            'attribution' => 'example.com',
+        ]
+    );
+
+    SiteInventoryImage::updateOrCreate(
+        ['business_id' => $biz->id, 'source_url' => 'https://example.com/nonimage.png'],
+        [
+            'page_id' => $page->id,
+            'path' => null,
+            'mime' => null,
+            'bytes' => null,
+            'status' => 'refused',
+            'refusal_reason' => 'non_image',
+            'attribution' => 'example.com',
+        ]
+    );
+
+    SiteInventoryImage::updateOrCreate(
+        ['business_id' => $biz->id, 'source_url' => 'https://example.com/robots.png'],
+        [
+            'page_id' => $page->id,
+            'path' => null,
+            'mime' => null,
+            'bytes' => null,
+            'status' => 'refused',
+            'refusal_reason' => FetchRefusalReason::RobotsDisallow->value,
+            'attribution' => 'example.com',
+        ]
+    );
+
+    $this->actingAs($owner)->get(route('x-103.site-inventory'))
+        ->assertSee('Too large to copy')
+        ->assertSee('Not an image')
+        ->assertDontSee('>oversize<', false)
+        ->assertSee('robots.txt');
+});
+
+it('test_the_inventory_screen_uses_the_house_button', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+    $this->actingAs($owner);
+
+    Livewire::test(SiteInventory::class)
+        ->assertSeeHtml('wire:click="crawl"')
+        ->assertDontSeeHtml('class="btn');
+});
+
+it('shows why a page was not fetched', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+    $loc = Location::where('business_id', $biz->id)->first() ?? Location::factory()->create(['business_id' => $biz->id]);
+
+    SiteInventoryPage::create([
+        'business_id' => $biz->id,
+        'location_id' => $loc->id,
+        'url' => 'https://distinctive-4861.example/',
+        'status' => 'refused',
+        'refusal_reason' => FetchRefusalReason::RobotsDisallow->value,
+        'fetched_at' => now(),
+    ]);
+
+    $this->actingAs($owner)
+        ->get(route('x-103.site-inventory'))
+        ->assertOk()
+        ->assertSee('distinctive-4861.example')
+        ->assertSee("your website's own robots.txt refuses this page", false);
+});
+
+it('records a block by the site as blocked_by_site', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+    Location::where('business_id', $biz->id)->update([
+        'website_url' => 'https://example.com',
+        'website_confirmed_at' => now(),
+    ]);
+
+    $this->actingAs($owner);
+    Tenancy::set($biz->id);
+
+    Http::fake([
+        '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
+        'https://example.com' => Http::response('<html><title>Attention Required! | Cloudflare</title></html>', 403, ['Content-Type' => 'text/html']),
+    ]);
+
+    $result = app(SiteCrawlAction::class)->handle($biz->id, Location::where('business_id', $biz->id)->first()->id);
+    expect($result['refused'])->toBe(1);
+
+    $row = SiteInventoryPage::where('business_id', $biz->id)->where('url', 'https://example.com')->first();
+    expect($row->status)->toBe('failed')
+        ->and($row->refusal_reason)->toBe('blocked_by_site');
+});
+
+it('tells the owner what to allow when the site blocked us', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+    $loc = Location::where('business_id', $biz->id)->first() ?? Location::factory()->create(['business_id' => $biz->id]);
+
+    SiteInventoryPage::create([
+        'business_id' => $biz->id,
+        'location_id' => $loc->id,
+        'url' => 'https://distinctive-4891.example/',
+        'status' => 'failed',
+        'refusal_reason' => 'blocked_by_site',
+        'fetched_at' => now(),
+    ]);
+
+    $this->actingAs($owner)
+        ->get(route('x-103.site-inventory'))
+        ->assertOk()
+        ->assertSee('distinctive-4891.example')
+        ->assertSee('security service blocked our request')
+        ->assertSee('GoAiEzBot')
+        ->assertSee('Custom rules');
+});
+
+test('a platform admin with no tenant sees an empty site inventory not a 500', function () {
+    $admin = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+    $this->actingAs($admin)
+        ->get(route('x-103.site-inventory.admin'))
+        ->assertOk();
 });

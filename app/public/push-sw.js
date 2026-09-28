@@ -1,0 +1,53 @@
+self.addEventListener('push', function(event) {
+    if (!event.data) {
+        return;
+    }
+
+    try {
+        const payload = event.data.json();
+        let title = 'GO AI EZ';
+        let body = 'Something needs you in your account.';
+        let url = payload.deep_link || '/account';
+
+        if (payload.event_type === 'test_alert') {
+            body = 'Alerts are working on this browser.';
+        } else if (payload.event_type === 'lead_assigned') {
+            body = 'A lead was assigned to you.';
+        } else if (payload.event_type === 'inbound_message') {
+            body = 'A customer wrote to you.';
+        } else if (payload.event_type === 'new_review') {
+            body = 'You have a new review.';
+        } else if (payload.event_type === 'team_alert') {
+            body = 'Your team has a new alert.';
+        }
+
+        event.waitUntil(
+            self.registration.showNotification(title, {
+                body: body,
+                data: { url: url }
+            })
+        );
+    } catch (e) {
+        // invalid json or payload
+    }
+});
+
+self.addEventListener('notificationclick', function(event) {
+    event.notification.close();
+
+    const urlToOpen = event.notification.data && event.notification.data.url ? event.notification.data.url : '/account';
+
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(windowClients) {
+            for (let i = 0; i < windowClients.length; i++) {
+                let client = windowClients[i];
+                if (client.url === urlToOpen && 'focus' in client) {
+                    return client.focus();
+                }
+            }
+            if (clients.openWindow) {
+                return clients.openWindow(urlToOpen);
+            }
+        })
+    );
+});

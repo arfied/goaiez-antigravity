@@ -43,8 +43,10 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\Sms\InfobipDeliveryController;
 use App\Http\Controllers\Sms\InfobipInboundController;
 use App\Http\Controllers\SmsOptInController;
+use App\Http\Controllers\Social\SocialConnectController;
 use App\Http\Controllers\SuspendedAccountController;
 use App\Http\Controllers\Voice\InfobipVoiceController;
+use App\Http\Controllers\Whatsapp\WhatsappConnectController;
 use App\Http\Controllers\WidgetScriptController;
 use App\Http\Middleware\EnsureAdvancedDashboard;
 use App\Http\Middleware\RequireIndustryPages;
@@ -58,6 +60,7 @@ use App\Livewire\Account\Connections as AccountConnections;
 use App\Livewire\Account\Credit as AccountCredit;
 use App\Livewire\Account\CustomerProfile as AccountCustomerProfile;
 use App\Livewire\Account\Customers as AccountCustomers;
+use App\Livewire\Account\FacebookReviews as AccountFacebookReviews;
 use App\Livewire\Account\Facts as AccountFacts;
 use App\Livewire\Account\FollowUps as AccountFollowUps;
 use App\Livewire\Account\Home as AccountHome;
@@ -67,15 +70,16 @@ use App\Livewire\Account\Knowledge as AccountKnowledge;
 use App\Livewire\Account\Locations as AccountLocations;
 use App\Livewire\Account\Messages as AccountMessages;
 use App\Livewire\Account\PixelInstall as AccountPixelInstall;
+use App\Livewire\Account\PlacesKey as AccountPlacesKey;
 use App\Livewire\Account\Plan as AccountPlan;
-use App\Livewire\Account\ReplyQueue as AccountReplyQueue;
 // Aliased for the reason `Support` below is: `App\Services\Actuation\SiteChanges`
 // is the change log this screen reads, and the two names differ only by
 // namespace.
-use App\Livewire\Account\Settings as AccountSettings;
+use App\Livewire\Account\ReplyQueue as AccountReplyQueue;
 // Aliased: `Support` unqualified in this file would sit beside the whole
 // `App\Livewire\Support` console namespace, and the two are opposite ends of
 // one desk.
+use App\Livewire\Account\Settings as AccountSettings;
 use App\Livewire\Account\SiteChanges as AccountSiteChanges;
 use App\Livewire\Account\Support as AccountSupport;
 use App\Livewire\Account\Texting as AccountTexting;
@@ -83,21 +87,22 @@ use App\Livewire\Account\Visibility as AccountVisibility;
 use App\Livewire\Account\WidgetInstall as AccountWidgetInstall;
 use App\Livewire\Account\WinBack as AccountWinBack;
 use App\Livewire\Admin\AccountAudit;
-use App\Livewire\Admin\AutomationRuns;
 // Aliased for the same reason as LegalDocuments below: `Credentials` next to
 // `CredentialStore` and `PlatformCredentials` in one file is three names for
 // three different things, and the ambiguity is only ever resolved by luck.
+use App\Livewire\Admin\AutomationRuns;
 use App\Livewire\Admin\Credentials as CredentialsAdmin;
 use App\Livewire\Admin\GbpGrantRevocations;
-use App\Livewire\Admin\InternalUsers;
 // Aliased: the component and the service it calls share a name, and the two
 // appearing unqualified in one file is how the wrong one gets injected.
+use App\Livewire\Admin\IndustryStartingPoints;
+use App\Livewire\Admin\InternalUsers;
 use App\Livewire\Admin\LegalDocumentIndex;
-use App\Livewire\Admin\LegalDocuments as LegalDocumentsAdmin;
-use App\Livewire\Admin\LocationSettings;
 // Named for the screen rather than for the table, and deliberately not
 // `OperatorAlerts`: the service that raises them already owns that name, and
 // the two appearing unqualified in one file is how the wrong one gets injected.
+use App\Livewire\Admin\LegalDocuments as LegalDocumentsAdmin;
+use App\Livewire\Admin\LocationSettings;
 use App\Livewire\Admin\MailSending;
 use App\Livewire\Admin\NumberLookup;
 use App\Livewire\Admin\OperatorAlertBoard;
@@ -106,24 +111,24 @@ use App\Livewire\Admin\OwnerNotifyConsents;
 use App\Livewire\Admin\PhiTenants;
 use App\Livewire\Admin\PlatformSettings;
 use App\Livewire\Admin\ReviewQueue;
-use App\Livewire\Admin\SendingControls;
-use App\Livewire\Admin\StaffActivity;
 // Aliased for the same reason as LegalDocuments above: the screen and the
 // service it reads through share a name, and the two appearing unqualified in
 // one file is how the wrong one gets injected.
+use App\Livewire\Admin\SendingControls;
+use App\Livewire\Admin\StaffActivity;
 use App\Livewire\Admin\TenantLocations;
 use App\Livewire\Admin\TermsAcceptances as TermsAcceptancesAdmin;
 use App\Livewire\Advanced\BroadcastComposer;
 use App\Livewire\Advanced\Broadcasts;
 use App\Livewire\Advanced\Changes;
-use App\Livewire\Advanced\Citations;
-use App\Livewire\Advanced\Competitors;
 // Aliased for the same reason as LegalDocuments above: `Accounts` alone says
 // nothing about which console it belongs to.
-use App\Livewire\Advanced\Credits;
+use App\Livewire\Advanced\Citations;
 // Aliased for the same reason as the two above: `Tickets` alone says nothing
 // about which desk it belongs to, and `Account\Support` is a screen with the
 // same word in its name one namespace over.
+use App\Livewire\Advanced\Competitors;
+use App\Livewire\Advanced\Credits;
 use App\Livewire\Advanced\Defense;
 use App\Livewire\Advanced\Home;
 use App\Livewire\Advanced\Integrations;
@@ -648,6 +653,9 @@ Route::middleware(['auth', 'can:'.AdminAccess::GATE])
         Route::get('settings', PlatformSettings::class)
             ->name('platform-settings');
 
+        Route::get('industry-starting-points', IndustryStartingPoints::class)
+            ->name('industry-starting-points');
+
         // The Credentials Manager (`38` Part 1, D-149). Sits behind the same one
         // gate as everything else here — see the component for why the
         // `support_agent` split `38` describes is not built alongside it.
@@ -954,19 +962,19 @@ Route::middleware('auth')
 | there is no by-id read anywhere in this slice, so there is no door through
 | which another tenant's row could be named.
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/activity', AccountActivity::class)
     ->name('account.activity');
 
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/visibility', AccountVisibility::class)
     ->name('account.visibility');
 
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account', AccountSettings::class)
     ->name('account.settings');
 
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/settings', AccountSettings::class);
 
 /*
@@ -992,11 +1000,11 @@ Route::middleware('auth')
 | stop the billing — so a suspended tenant is still being charged and both of
 | these are on that middleware's exemption list.
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/plan', AccountPlan::class)
     ->name('account.plan');
 
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->post('/account/plan/cancel', CancelSubscriptionController::class)
     ->name('account.plan.cancel');
 
@@ -1021,11 +1029,11 @@ Route::middleware('auth')
 | suspended tenant belongs at `/account/on-hold`, and creating new billable
 | surface is the opposite of the case decision 820 keeps reachable.
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/locations', AccountLocations::class)
     ->name('account.locations');
 
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/all-screens', AccountAllScreens::class)
     ->name('account.all-screens');
 
@@ -1053,7 +1061,7 @@ Route::middleware('auth')
 | never travels in a URL (decision 396's rule), and the two query flags the
 | payment page hands back carry no amount, no reference and no identifier.
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/credit', AccountCredit::class)
     ->name('account.credit');
 
@@ -1087,7 +1095,7 @@ Route::middleware('auth')
 | never travels in a URL (decision 396's rule), and neither does a change set
 | id: the id the Undo acts on is `#[Locked]` component state, never a segment.
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/site-changes', AccountSiteChanges::class)
     ->name('account.site-changes');
 
@@ -1104,7 +1112,7 @@ Route::middleware('auth')
 | makes, and it is what lets the on-hold page carry the control at all. See the
 | controller's docblock.
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->post('/account/exports', TenantExportRequestController::class)
     ->name('account.data-export.request');
 
@@ -1117,7 +1125,7 @@ Route::middleware('auth')
 | minted by ExportBuilder::downloadUrl() from the row's own expires_at rather
 | than a second `now()->addDays()` that could drift from it.
 */
-Route::middleware(['auth', 'signed'])
+Route::middleware(['auth', 'signed', 'tenant.role'])
     ->get('/account/exports/{export}/download', TenantExportDownloadController::class)
     ->whereNumber('export')
     ->name('account.data-export.download');
@@ -1192,7 +1200,7 @@ Route::middleware('auth')
 | thread opens in place, so no ticket id ever travels in a URL (decision 396's
 | rule, and one less thing to authorise).
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/support', AccountSupport::class)
     ->name('account.support');
 
@@ -1204,7 +1212,7 @@ Route::middleware('auth')
 | fails closed for a signed-in user with no business. No route parameter: the
 | tenant is never in the URL (decision 396's rule).
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/customers/import', ImportCustomers::class)
     ->name('account.customers.import');
 
@@ -1221,7 +1229,7 @@ Route::middleware('auth')
 | fails closed for a signed-in user with no business. No route parameter — the
 | tenant is never in the URL (decision 396's rule).
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/knowledge', AccountKnowledge::class)
     ->name('account.knowledge');
 
@@ -1281,7 +1289,7 @@ Route::middleware('auth')
 | closed for a signed-in user with no business. No route parameter — the tenant is
 | never in the URL (decision 396's rule).
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/assistant-links', AccountAssistantLinks::class)
     ->name('account.assistant-links');
 
@@ -1299,7 +1307,7 @@ Route::middleware('auth')
 | closed for a signed-in user with no business. No route parameter — the tenant is
 | never in the URL (decision 396's rule).
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/assistant-answers', AccountAssistantAnswers::class)
     ->name('account.assistant-answers');
 
@@ -1341,6 +1349,10 @@ Route::middleware('auth')
     ->get('/account/replies', AccountReplyQueue::class)
     ->name('account.replies');
 
+Route::middleware('auth')
+    ->get('/account/facebook-reviews', AccountFacebookReviews::class)
+    ->name('account.facebook-reviews');
+
 /*
 | The recovery queue (`17` TRIAGE-03/04, decision 2689) — where a below-threshold
 | customer's conversation is actually worked. Decision 114's surviving half had a
@@ -1353,7 +1365,7 @@ Route::middleware('auth')
 | closed for a signed-in user with no business. No route parameter — the
 | conversation id travels in the Livewire action, never in the URL (396's rule).
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/win-back', AccountWinBack::class)
     ->name('account.win-back');
 
@@ -1371,7 +1383,7 @@ Route::middleware('auth')
 | Advanced Dashboard Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', EnsureAdvancedDashboard::class])
+Route::middleware(['auth', 'tenant.role', EnsureAdvancedDashboard::class])
     ->prefix('advanced')
     ->name('advanced.')
     ->group(function () {
@@ -1417,7 +1429,7 @@ Route::middleware(['auth', EnsureAdvancedDashboard::class])
 | 396's rule — Laravel splices container-resolved arguments into the positional
 | list, and this action takes two of them before the parameter.
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/connections', AccountConnections::class)
     ->name('account.connections');
 
@@ -1425,6 +1437,15 @@ Route::middleware(GbpConnectController::middleware())
     ->get('/account/connections/google/callback/{location}', GbpConnectController::class)
     ->whereNumber('location')
     ->name('gbp.connect.callback');
+
+Route::middleware(WhatsappConnectController::middleware())
+    ->get('/account/connections/whatsapp/callback', WhatsappConnectController::class)
+    ->name('whatsapp.connect.callback');
+
+Route::middleware(SocialConnectController::middleware())
+    ->get('/account/connections/social/{platform}/callback', SocialConnectController::class)
+    ->whereIn('platform', ['facebook', 'instagram'])
+    ->name('social.connect.callback');
 
 /*
 |--------------------------------------------------------------------------
@@ -1450,7 +1471,7 @@ Route::middleware(GbpConnectController::middleware())
 | `redirect_uri_mismatch`, whose message names neither this file nor that
 | setting.
 */
-Route::middleware('auth')->group(function (): void {
+Route::middleware(['auth', 'tenant.role'])->group(function (): void {
     Route::get('/account/search-console/connect', [SearchConsoleConnectController::class, 'redirect'])
         ->name('gsc.connect.redirect');
 
@@ -1514,7 +1535,7 @@ Route::post('/webhooks/stripe', StripeWebhookController::class)->name('webhooks.
 Route::post('/webhooks/authorize-net', AuthorizeNetWebhookController::class)
     ->name('webhooks.authorize-net');
 
-Route::middleware('auth')->prefix('billing')->name('billing.')->group(function (): void {
+Route::middleware(['auth', 'tenant.role'])->prefix('billing')->name('billing.')->group(function (): void {
     Route::get('/', [BillingController::class, 'index'])->name('index');
 
     // A GET that opens a Checkout Session — see the controller for why, and for
@@ -1537,10 +1558,10 @@ Route::middleware('auth')->prefix('billing')->name('billing.')->group(function (
 Route::middleware('auth')->prefix('setup')->name('setup.')->group(function (): void {
     Route::get('/', SetupController::class)->name('index');
 
-    Route::get('welcome', Welcome::class)->name('welcome');
-    Route::get('find-business', FindBusiness::class)->name('find-business');
-    Route::get('how-customers-reach', HowCustomersReach::class)->name('how-customers-reach');
-    Route::get('review-rules', ReviewRules::class)->name('review-rules');
+    Route::get('welcome', Welcome::class)->middleware('tenant.role')->name('welcome');
+    Route::get('find-business', FindBusiness::class)->middleware('tenant.role')->name('find-business');
+    Route::get('how-customers-reach', HowCustomersReach::class)->middleware('tenant.role')->name('how-customers-reach');
+    Route::get('review-rules', ReviewRules::class)->middleware('tenant.role')->name('review-rules');
     Route::get('done', Done::class)->name('done');
 });
 
@@ -2035,7 +2056,7 @@ Route::post('/webhooks/gmail', GmailPushController::class)
 | `[A-Za-z0-9]{12}` cannot match a name containing a dot.
 |
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/website', AccountWidgetInstall::class)
     ->name('account.website');
 
@@ -2119,13 +2140,17 @@ Route::get('/s/{key}.js', [T3InjectionController::class, 'module'])
 | This is a screen, not an ingest path, and its URI says so.
 |
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/tracking', AccountPixelInstall::class)
     ->name('account.pixel-install');
 
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/facts', AccountFacts::class)
     ->name('account.facts');
+
+Route::middleware(['auth', 'tenant.role'])
+    ->get('/account/maps-key', AccountPlacesKey::class)
+    ->name('account.places-key');
 /*
 |--------------------------------------------------------------------------
 | Where a tenant's own texting registration has got to (5329, 5420–5439)
@@ -2154,7 +2179,7 @@ Route::middleware('auth')
 | are finding out whether they can text their own customers yet.
 |
 */
-Route::middleware('auth')
+Route::middleware(['auth', 'tenant.role'])
     ->get('/account/texting', AccountTexting::class)
     ->name('account.texting');
 

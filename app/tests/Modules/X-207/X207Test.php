@@ -88,14 +88,14 @@ class X207Test extends TestCase
 
         // 3. With push consent -> Successfully delivered sanitized payload
         $deliveredRes = $this->sendAction->handle($biz->id, $device->id, $rawDangerousPayload, hasPushConsent: true);
-        $this->assertEquals('delivered', $deliveredRes['status']);
+        $this->assertEquals('not_sent_no_transport', $deliveredRes['status']);
 
         $delivery = PushDelivery::where('business_id', $biz->id)->find($deliveredRes['delivery_id']);
         $this->assertTrue($delivery->sanitized);
         $this->assertArrayNotHasKey('customer_name', $delivery->payload);
         $this->assertArrayNotHasKey('amount', $delivery->payload);
 
-        Event::assertDispatched(SendRequested::class);
+        Event::assertNotDispatched(SendRequested::class);
 
         // 4. Retire device
         $this->retireAction->handle($biz->id, 'apns_token_xyz123', 'app_uninstalled');

@@ -3,12 +3,8 @@
         <h2 class="text-lg font-bold text-ink">RBAC Permission Matrix</h2>
 
         <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
-            @if($success)
-                <div class="text-green-600 mb-2">{{ $success }}</div>
-            @endif
-            @if($error)
-                <div class="text-red-600 mb-2">{{ $error }}</div>
-            @endif
+            <x-ui.toast kind="success" :message="$success" />
+            <x-ui.toast kind="error" :message="$error" />
             <form wire:submit.prevent="grantPermission" class="flex flex-col gap-2">
                 <select wire:model="roleId" class="border rounded p-2 text-ink flex-1 bg-surface">
                     <option value="0">Select Role</option>

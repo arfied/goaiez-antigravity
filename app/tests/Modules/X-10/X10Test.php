@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X10;
 
+use App\Models\User;
 use App\Modules\X01\Events\ContactCreated;
 use App\Modules\X10\Actions\LeadAssignAction;
 use App\Modules\X10\Actions\LeadReassignAction;
@@ -14,16 +15,19 @@ use App\Modules\X10\Enums\RoutingRuleType;
 use App\Modules\X10\Events\LeadAssigned;
 use App\Modules\X10\Events\LeadReassigned;
 use App\Modules\X10\Events\TerritoryChanged;
+use App\Modules\X10\Mail\LeadAssignedNotification;
 use App\Modules\X10\Models\Assignment;
 use App\Modules\X10\Models\RoutingRule;
 use App\Modules\X10\Models\Territory;
 use App\Modules\X10\Ui\RoutingRules;
 use App\Modules\X10\Ui\UnassignedCount;
 use App\Modules\X113\Models\StaffUser;
+use App\Modules\X121\Actions\PersonUpsertAction;
 use App\Modules\X121\Models\Person;
 use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
@@ -301,5 +305,38 @@ class X10Test extends TestCase
 
         Livewire::test(UnassignedCount::class, ['businessId' => $biz->id])
             ->assertSee('1 unassigned leads');
+    }
+
+    public function test_the_assigned_person_is_emailed_when_a_lead_is_routed(): void
+    {
+        Mail::fake();
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->artisan('defaults:sync');
+        $ensureAction = new RoutingRulesEnsureAction(new DefaultsRegistry);
+        $ensureAction->handle($biz->id);
+
+        $upsert = app(PersonUpsertAction::class)->upsertByPhone($biz->id, '+15125567731', ['first_name' => 'Distinctive', 'email' => null], false);
+        Event::dispatch(new ContactCreated($biz->id, (int) $upsert['id'], 'Distinctive'));
+
+        Mail::assertSentCount(1);
+        Mail::assertSent(LeadAssignedNotification::class, function ($mail) use ($biz) {
+            return $mail->hasTo(User::query()->whereKey($biz->owner_user_id)->value('email')) && $mail->leadName === 'Distinctive';
+        });
+    }
+
+    public function test_no_email_when_the_assignee_has_no_address(): void
+    {
+        Mail::fake();
+        $biz = TestCase::provisionTenant(['name' => 'Listener Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->artisan('defaults:sync');
+        $ensureAction = new RoutingRulesEnsureAction(new DefaultsRegistry);
+        $ensureAction->handle($biz->id);
+
+        Event::dispatch(new LeadAssigned($biz->id, 999, 999999, 'default_staff'));
+        Mail::assertNothingSent();
     }
 }

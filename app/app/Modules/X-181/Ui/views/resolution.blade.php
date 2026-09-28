@@ -28,7 +28,7 @@
                             @endif
                         @endif
 
-                        @if ($ticket->csat_requested_at)
+                        @if (in_array($ticket->id, $awaitingCsat, true))
                             <x-ui.status-pill state="unknown" label="Awaiting CSAT" />
                         @endif
                     </div>

@@ -308,9 +308,7 @@ final class SupportDesk
      * Close a thread — by the tenant, on their own screen.
      *
      * ⚠️ **THE TENANT MAY CLOSE THEIR OWN AND MAY NOT REOPEN IT BY BUTTON.**
-     * Replying is what reopens a thread, which is the same act in the language
-     * the person is already using — a Reopen control beside a reply box is two
-     * ways to say one thing, and `CLAUDE.md` refuses the second.
+     * A resolved ticket is not reopened by the tenant: `requireLiveTicket()` refuses a reply and an inbound mail opens a new thread through `record()`.
      *
      * @throws InvalidArgumentException when the ticket is gone or already closed
      */

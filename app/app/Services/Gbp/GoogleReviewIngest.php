@@ -7,10 +7,12 @@ namespace App\Services\Gbp;
 use App\Enums\AutopilotActionType;
 use App\Enums\ReviewSource;
 use App\Enums\ReviewStatus;
+use App\Events\ReviewIngested;
 use App\Jobs\Reviews\GenerateReplyJob;
 use App\Models\AutopilotSettings;
 use App\Models\Location;
 use App\Models\Review;
+use App\Modules\X207\Jobs\SendPushToUserJob;
 use App\Services\ActivityService;
 use App\Services\Reviews\ReviewReplies;
 use App\Support\Tenancy;
@@ -133,8 +135,9 @@ final class GoogleReviewIngest
          * inserted has never had a reply of ours.
          */
         $reconcile = null;
+        $insertedRowId = null;
 
-        $outcome = DB::transaction(function () use ($location, $review, &$draftReplyFor, &$reconcile): string {
+        $outcome = DB::transaction(function () use ($location, $review, &$draftReplyFor, &$reconcile, &$insertedRowId): string {
             $existing = Review::query()
                 ->where('location_id', $location->id)
                 ->where('google_review_id', $review->externalId)
@@ -183,6 +186,8 @@ final class GoogleReviewIngest
                     }
                 }
 
+                $insertedRowId = (int) $row->id;
+
                 return 'inserted';
             }
 
@@ -224,6 +229,32 @@ final class GoogleReviewIngest
                 $review->ownerReplyReported,
                 $observedAt,
             );
+        }
+
+        if ($outcome === 'inserted') {
+            $ownerUserId = Tenancy::actingAs(
+                (int) $location->business_id,
+                fn () => DB::table('businesses')->where('id', $location->business_id)->value('owner_user_id')
+            );
+
+            if ($ownerUserId !== null) {
+                SendPushToUserJob::dispatch(
+                    (int) $location->business_id,
+                    (int) $ownerUserId,
+                    'new_review',
+                    '/account'
+                );
+            }
+
+            if ($insertedRowId !== null) {
+                event(new ReviewIngested(
+                    businessId: (int) $location->business_id,
+                    reviewId: $insertedRowId,
+                    platform: 'google',
+                    rating: $review->rating,
+                    locationId: (int) $location->id,
+                ));
+            }
         }
 
         return $outcome;

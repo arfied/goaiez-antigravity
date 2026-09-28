@@ -15,12 +15,8 @@
         @endif
 
         <div class="mt-8 bg-surface p-4 border rounded">
-            @if($success)
-                <div class="text-ink bg-surface border rounded p-2 mb-4">{{ $success }}</div>
-            @endif
-            @if($error)
-                <div class="text-ink bg-surface border rounded p-2 mb-4">{{ $error }}</div>
-            @endif
+            <x-ui.toast kind="success" :message="$success" />
+            <x-ui.toast kind="error" :message="$error" />
 
             <h3 class="text-lg font-bold text-ink">Check whether a number may be messaged</h3>
             <form wire:submit="decide" class="flex flex-col gap-4 mt-4 mb-8">

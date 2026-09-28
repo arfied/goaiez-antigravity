@@ -56,7 +56,10 @@ class ConsentAssertionTest extends TestCase
         $violators = [];
         $modules = array_filter(glob($modulesPath.'/*'), 'is_dir');
 
-        $operatorAlertSenders = ['X-123' => 'dead-letter mail to the Business owner — operator alert, outside P-060 (R245 X-123)'];
+        $operatorAlertSenders = [
+            'X-123' => 'dead-letter mail to the Business owner — operator alert, outside P-060 (R245 X-123)',
+            'X-10' => 'lead-assigned mail to the ASSIGNED STAFF MEMBER — an operator alert to staff, not a customer channel, outside P-060 (owner ruling 2026-09-24, option A; SIXTY-37)',
+        ];
 
         foreach ($modules as $moduleDir) {
             $moduleName = basename($moduleDir);

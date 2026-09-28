@@ -38,6 +38,7 @@ final class OwnerDigest
     public function __construct(
         private readonly TenantSuspension $suspension,
         private readonly Subscriptions $subscriptions,
+        private readonly SiteDigest $site,
     ) {}
 
     /**
@@ -213,6 +214,7 @@ final class OwnerDigest
         Tenancy::idOrFail();
 
         $since = $this->windowStart($business);
+        $siteLines = $this->site->lines((int) $business->id, $since);
 
         $rows = ActivityFeedItem::query()
             ->where('created_at', '>=', $since)
@@ -221,7 +223,7 @@ final class OwnerDigest
             ->get()
             ->sortByDesc(fn (ActivityFeedItem $row): int => (int) $row->getAttribute('total'));
 
-        if ($rows->isEmpty()) {
+        if ($rows->isEmpty() && $siteLines === []) {
             return null;
         }
 
@@ -242,6 +244,9 @@ final class OwnerDigest
             $title = $row->action_type->title();
             $lines[] = $count > 1 ? "{$title} ({$count} times)" : $title;
         }
+
+        // MAX_DISTINCT_LINES governs autopilot lines only
+        $lines = [...$lines, ...$siteLines];
 
         return [
             'since' => $since,

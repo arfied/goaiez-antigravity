@@ -49,7 +49,7 @@ class CalendarViewScreenTest extends TestCase
             ->assertSee('Winter Promo')
             ->assertSee('Furnace Tune-Up Reminder')
             ->assertSee('proposed')
-            ->assertSee('scheduled')
+            ->assertSee('planned')
             ->assertDontSee('No content is planned yet');
 
         Livewire::test(CalendarView::class)->assertOk();

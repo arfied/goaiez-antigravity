@@ -3,7 +3,7 @@
         
         
         @if($deliverables->isEmpty())
-            <x-ui.empty-state heading="No deliverables submitted.">A deliverable is verified here and its proof link stored.</x-ui.empty-state>
+            <x-ui.empty-state heading="No deliverables submitted.">You record a deliverable here: its live link, the status you saw and a proof hash. The app does not check the page itself.</x-ui.empty-state>
         @else
             <ul class="mt-4 space-y-4">
                 @foreach($deliverables as $deliverable)
@@ -11,7 +11,7 @@
                         <p><strong>Live URL:</strong> {{ $deliverable->live_url }}</p>
                         <p><strong>Status:</strong> {{ $deliverable->http_status }}</p>
                         <p><strong>Artifact Hash:</strong> {{ $deliverable->artifact_hash }}</p>
-                        <p><strong>Verified At:</strong> {{ $deliverable->verified_at }}</p>
+                        <p><strong>Recorded at:</strong> {{ $deliverable->verified_at }}</p>
                     </li>
                 @endforeach
             </ul>
@@ -20,13 +20,9 @@
         <div class="mt-8 border p-4 rounded bg-paper">
             <h2 class="font-bold mb-4">Submit Deliverable</h2>
             
-            @if($success)
-                <div class="p-2 border mb-4 rounded bg-paper">{{ $success }}</div>
-            @endif
+            <x-ui.toast kind="success" :message="$success" />
             
-            @if($error)
-                <div class="p-2 border mb-4 rounded bg-paper">{{ $error }}</div>
-            @endif
+            <x-ui.toast kind="error" :message="$error" />
 
             <form wire:submit="submitProof" class="flex flex-col gap-4">
                 <div>

@@ -1,11 +1,7 @@
 <div>
     <div class="impersonation-log-view p-4">
-        @if($success)
-            <div class="bg-surface text-ink border rounded p-2 mb-4">{{ $success }}</div>
-        @endif
-        @if($error)
-            <div class="bg-surface text-ink border rounded p-2 mb-4">{{ $error }}</div>
-        @endif
+        <x-ui.toast kind="success" :message="$success" />
+        <x-ui.toast kind="error" :message="$error" />
 
         <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
             <h2 class="text-lg font-bold">Start Impersonation</h2>

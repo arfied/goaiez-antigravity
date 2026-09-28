@@ -4,6 +4,7 @@
     @endif
     <ul>
         @foreach($block['items'] ?? [] as $item)
+            @continue(str_starts_with((string) ($item['name'] ?? ''), 'demo·'))
             @if(isset($item['name']) && is_scalar($item['name']) && trim((string)$item['name']) !== '')
                 <li>
                     <strong>{{ $item['name'] }}</strong>

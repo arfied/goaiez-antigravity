@@ -8,9 +8,11 @@ use App\Contracts\PlacesClient;
 use App\Enums\CompetitorAbsenceReason;
 use App\Exceptions\PlacesBudgetExhausted;
 use App\Exceptions\PlacesRequestFailed;
+use App\Models\Business;
 use App\Models\Competitor;
 use App\Models\CompetitorSnapshot;
 use App\Models\Location;
+use App\Services\Industry\PlacesTypeToIndustry;
 use App\Services\Places\PlaceSummary;
 use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
@@ -30,6 +32,7 @@ final class CompetitorSignals
         private readonly PlacesClient $places,
         private readonly VisibilitySyncHistory $history,
         private readonly ReviewLossDetection $reviewLoss,
+        private readonly PlacesTypeToIndustry $industries,
     ) {}
 
     /**
@@ -98,6 +101,13 @@ final class CompetitorSignals
             return 0;
         }
 
+        if (Business::query()->whereKey($location->business_id)->value('industry') === null) {
+            $family = $this->industries->fromCategories($subject->categories());
+            if ($family !== null) {
+                Business::query()->whereKey($location->business_id)->update(['industry' => $family->value]);
+            }
+        }
+
         $nearby = $this->places->nearby(
             $subject->latitude,
             $subject->longitude,
@@ -154,6 +164,9 @@ final class CompetitorSignals
                 }
 
                 $competitor->name = $name;
+                // Google's listed website, refreshed with the name. Null stays null:
+                // a peer with no site is a fact, not a blank to fill.
+                $competitor->website_url = $peer->websiteUri;
                 $competitor->save();
 
                 // ⛔ **`$peer->userRatingCount ?? 0` UNTIL 2026-08-26, AND THE

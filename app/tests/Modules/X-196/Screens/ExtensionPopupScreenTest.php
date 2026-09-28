@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Modules\X196\Models\ExtensionInjection;
 use App\Modules\X196\Models\ExtensionSession;
 use App\Modules\X196\Ui\ExtensionPopup;
+use App\Services\Pixel\PixelKeys;
 use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -62,5 +63,20 @@ class ExtensionPopupScreenTest extends TestCase
         $this->get(route('x-196.extension-popup.admin'))->assertOk();
 
         Livewire::test(ExtensionPopup::class)->assertOk();
+    }
+
+    public function test_a_session_opened_through_the_api_lists_on_the_screen(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $keys = app(PixelKeys::class);
+        $key = $keys->ensureFor($biz);
+        Tenancy::forgetAll();
+
+        $this->postJson("/api/extension/{$key}/session")->assertStatus(201);
+
+        $this->get(route('x-196.extension-popup'))->assertOk()->assertSee('Session #')->assertSee('Active');
     }
 }

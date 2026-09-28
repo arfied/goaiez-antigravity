@@ -25,6 +25,7 @@ class WebhooksViewScreenTest extends TestCase
             ->assertSee('Your account')
             ->assertDontSee('Internal Platform Console')
             ->assertDontSee('this screen is planned in')
+            ->assertDontSee('Sends:')
             ->assertSee('No webhooks yet.');
 
         Tenancy::setUser($owner->id);
@@ -41,6 +42,7 @@ class WebhooksViewScreenTest extends TestCase
             ->assertOk()
             ->assertSee('https://distinctive-4628.example/hooks')
             ->assertSee('Distinctive event 4628')
+            ->assertSee('Sends: Distinctive event 4628')
             ->assertDontSee('sec_distinctive4628')
             ->assertDontSee('No webhooks yet.');
 
@@ -55,22 +57,22 @@ class WebhooksViewScreenTest extends TestCase
 
         Livewire::test(WebhooksView::class, ['businessId' => $biz->id])
             ->set('url', 'https://example.com/webhook')
-            ->set('events', 'event1,event2')
+            ->set('events', 'contact.created')
             ->call('submit')
-            ->assertSet('success', 'Webhook subscribed. This feeds the webhook list; nothing downstream is wired to it yet.')
+            ->assertSet('success', 'Webhook added. We sign every delivery with the secret below in the X-Goaiez-Signature header (sha256 HMAC of the body). Copy it now.')
             ->assertSet('url', '')
             ->assertSet('events', '');
 
         $this->assertDatabaseHas((new WebhookSubscription)->getTable(), [
             'business_id' => $biz->id,
             'target_url' => 'https://example.com/webhook',
-            'event_filter' => 'event1,event2',
+            'event_filter' => 'contact.created',
             'is_active' => true,
         ]);
 
         $this->get(route('x-142.webhooks'))
             ->assertSee('https://example.com/webhook')
-            ->assertSee('event1,event2')
+            ->assertSee('Sends: contact.created')
             ->assertDontSee('No webhooks yet.');
 
         Livewire::test(WebhooksView::class, ['businessId' => $biz->id])

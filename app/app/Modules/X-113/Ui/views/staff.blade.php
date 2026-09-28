@@ -4,12 +4,8 @@
 
         <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
             <h3 class="text-md font-bold text-ink">Invite crew member</h3>
-            @if($success)
-                <div class="text-sm bg-paper p-2 text-ink">{{ $success }}</div>
-            @endif
-            @if($error)
-                <div class="text-sm text-ink-2 bg-paper p-2 border">{{ $error }}</div>
-            @endif
+            <x-ui.toast kind="success" :message="$success" />
+            <x-ui.toast kind="error" :message="$error" />
             <form wire:submit="invite" class="flex flex-col gap-2">
                 <input type="text" wire:model="name" placeholder="Name" class="border rounded p-2 text-ink flex-1 bg-surface">
                 <input type="email" wire:model="email" placeholder="Email" class="border rounded p-2 text-ink flex-1 bg-surface">
@@ -47,5 +43,35 @@
                 @endforeach
             </ul>
         @endif
+
+        <div class="mt-8 bg-surface p-4 rounded">
+            <h3 class="text-md font-bold text-ink mb-4">Sign-in access</h3>
+            <x-ui.toast kind="success" :message="$accessSuccess" />
+            <x-ui.toast kind="error" :message="$accessError" />
+
+            @if($members->isEmpty())
+                <div class="text-sm text-ink-2">No one else can sign in yet.</div>
+            @else
+                <ul class="divide-y divide-rule">
+                    @foreach($members as $m)
+                        <li class="py-2 flex justify-between items-center" wire:key="member-{{ $m['membership_id'] }}">
+                            <div>
+                                <span class="font-semibold">{{ $m['name'] }}</span> &middot;
+                                <span class="text-sm text-ink-2">{{ $m['email'] }}</span> &middot;
+                                <span class="text-sm text-ink-2">@if($m['status'] === 'pending') Pending @elseif($m['status'] === 'active') Active @elseif($m['status'] === 'revoked') Removed @endif</span>
+                            </div>
+                            <div class="flex gap-2">
+                                @if($m['status'] === 'pending')
+                                    <button wire:click="resendInvite({{ $m['membership_id'] }})" class="text-sm border rounded px-2 py-1 bg-surface">Resend invite</button>
+                                @endif
+                                @if($m['status'] === 'pending' || $m['status'] === 'active')
+                                    <button wire:click="revokeAccess({{ $m['membership_id'] }})" class="text-sm border rounded px-2 py-1 bg-surface">Remove access</button>
+                                @endif
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+        </div>
     </div>
 </div>

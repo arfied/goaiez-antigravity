@@ -76,6 +76,7 @@ function schedulingOverlapWindows(): array
         'reviews:remind' => 30,
         'agent:nudge' => 30,
         'gbp:sync' => 30,
+        'facebook:sync-reviews' => 30,
         'reviews:retry-stranded-replies' => 30,
         'campaigns:run-due' => 30,
         'messaging:watch-platform-complaint-rate' => 30,
@@ -114,6 +115,7 @@ function schedulingOverlapWindows(): array
         'review-loss:prune-snapshots' => 180,
         'owner-channel:prune' => 180,
         'x211:detect-overdue' => 180,
+        'x103:recommend-sites' => 180,
         'x199:mark-due' => 180,
         'x136:decay-signals' => 180,
 
@@ -127,6 +129,7 @@ function schedulingOverlapWindows(): array
         'actuation:judge-speed-fixes' => 360,
         'billing:send-renewal-reminders' => 360,
         'owners:send-weekly-digest' => 360,
+        'owners:send-monthly-site-digest' => 360,
     ];
 }
 

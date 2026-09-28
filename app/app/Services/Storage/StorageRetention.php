@@ -15,6 +15,7 @@ use App\Models\InboundMedia;
 use App\Models\KnowledgeSource;
 use App\Models\Voicemail;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Conversations\ConversationThreads;
 use App\Support\Tenancy;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
@@ -220,7 +221,20 @@ final class StorageRetention
             StoredObjectKind::VoicemailRecording => $this->pruneVoicemails($cutoff),
             StoredObjectKind::KnowledgeUpload => $this->pruneKnowledgeUploads($cutoff),
             StoredObjectKind::CampaignMedia => $this->pruneCampaignMedia($cutoff),
+            StoredObjectKind::WhatsappMedia => $this->pruneWhatsappMedia($cutoff),
         };
+    }
+
+    private function pruneWhatsappMedia(CarbonInterface $cutoff): StorageSweep
+    {
+        $r = app(ConversationThreads::class)->pruneStoredMedia($cutoff, $this->chunk());
+
+        return new StorageSweep(
+            kind: StoredObjectKind::WhatsappMedia,
+            pruned: $r['pruned'],
+            refused: $r['refused'],
+            skipped: false
+        );
     }
 
     /**

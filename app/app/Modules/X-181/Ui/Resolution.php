@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X181\Ui;
 
+use App\Modules\X181\Actions\QaTicketReadAction;
 use App\Modules\X181\Actions\QaTicketReopenAction;
 use App\Modules\X181\Models\QaTicket;
 use App\Support\Tenancy;
@@ -79,6 +80,7 @@ class Resolution extends Component
 
         return view('x-181::resolution', [
             'tickets' => $tickets,
+            'awaitingCsat' => $this->isSample ? collect($tickets)->filter(fn ($t) => $t->csat_requested_at !== null)->pluck('id')->all() : app(QaTicketReadAction::class)->awaitingCsatIds($this->businessId, $tickets->pluck('id')->all()),
         ]);
     }
 }

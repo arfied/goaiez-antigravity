@@ -2,18 +2,16 @@
     <div class="carrier-health-container p-4">
         <h3 class="text-lg font-bold">Carrier Roster & Network Health</h3>
 
-        @if($error)
-            <div class="bg-surface text-ink border rounded p-4 mb-4">{{ $error }}</div>
-        @endif
-        @if($success)
-            <div class="bg-surface text-ink border rounded p-4 mb-4">{{ $success }}</div>
-        @endif
+        <x-ui.toast kind="error" :message="$error" />
+        <x-ui.toast kind="success" :message="$success" />
 
         <form wire:submit="recordHealth" class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
             <input type="text" wire:model="carrierName" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Carrier Name">
             <select wire:model="status" class="border rounded p-2 text-ink flex-1 bg-surface">
                 <option value="healthy">healthy</option>
-                <option value="unhealthy">unhealthy</option>
+                <option value="cold">cold</option>
+                <option value="degraded">degraded</option>
+                <option value="down">down</option>
             </select>
             <button type="submit" class="bg-surface text-ink border rounded p-2">Submit</button>
         </form>

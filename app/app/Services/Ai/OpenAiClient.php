@@ -37,7 +37,7 @@ use Illuminate\Support\Facades\Http;
  *   ceiling     `max_completion_tokens`, not `max_tokens`
  *   schema      `response_format.json_schema`, nested one level deeper, and
  *               `strict: true` additionally requires `additionalProperties:
- *               false` with every property listed in `required`
+ *               false` with every property listed in `required` — and the client claims strict only for a schema that qualifies (wave 831)
  *   refusal     a `refusal` string on the message, not a `stop_reason`
  *   usage       `prompt_tokens` / `completion_tokens`, not `input_tokens` /
  *               `output_tokens`
@@ -73,12 +73,50 @@ final class OpenAiClient implements AiClient
         }
 
         if ($response->failed()) {
-            VendorLog::failure('openai', 'POST', self::ENDPOINT, 'http_'.$response->status(), Tenancy::id());
+            $detail = (string) data_get($response->json(), 'error.message', '');
+            VendorLog::failure('openai', 'POST', self::ENDPOINT, 'http_'.$response->status().($detail !== '' ? ': '.mb_substr($detail, 0, 300) : ''), Tenancy::id());
 
             return AiResponse::failed($this->model, 'http_'.$response->status());
         }
 
         return $this->interpret($response, $request);
+    }
+
+    /**
+     * OpenAI's strict structured output accepts a schema only if EVERY object in
+     * it sets `additionalProperties: false` and lists every property as required.
+     *
+     * @param  array<string, mixed>|null  $schema
+     */
+    private static function qualifiesForStrict(?array $schema): bool
+    {
+        if (! is_array($schema)) {
+            return false;
+        }
+
+        if (($schema['type'] ?? null) === 'object') {
+            if (($schema['additionalProperties'] ?? null) !== false) {
+                return false;
+            }
+            $properties = is_array($schema['properties'] ?? null) ? array_keys($schema['properties']) : [];
+            $required = is_array($schema['required'] ?? null) ? $schema['required'] : [];
+            sort($properties);
+            sort($required);
+            if ($properties !== $required) {
+                return false;
+            }
+            foreach ($schema['properties'] ?? [] as $child) {
+                if (is_array($child) && ! self::qualifiesForStrict($child)) {
+                    return false;
+                }
+            }
+        }
+
+        if (($schema['type'] ?? null) === 'array' && is_array($schema['items'] ?? null) && ! self::qualifiesForStrict($schema['items'])) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -107,12 +145,14 @@ final class OpenAiClient implements AiClient
                 'type' => 'json_schema',
                 'json_schema' => [
                     'name' => $request->task->value,
-                    // `strict` additionally constrains the schema itself: every
-                    // property must be listed in `required` and
-                    // `additionalProperties` must be false. Callers build schemas
-                    // that satisfy that, because the alternative is structured
-                    // output that silently is not structured.
-                    'strict' => true,
+                    // `strict` constrains the schema itself: every object must set
+                    // `additionalProperties: false` and list every property in
+                    // `required`. Some callers build open schemas on purpose (a site
+                    // block's keys depend on its `type`), so strict is claimed only
+                    // when the schema qualifies — claiming it for one that does not is
+                    // a 400 before any model runs, which is what every OpenAI call in
+                    // production had been getting (wave 831).
+                    'strict' => self::qualifiesForStrict($request->jsonSchema),
                     'schema' => $request->jsonSchema,
                 ],
             ];

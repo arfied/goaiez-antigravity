@@ -34,7 +34,7 @@
                             <tr>
                                 <td>{{ $invoice['invoice_number'] }}</td>
                                 <td>
-                                    <select wire:model="reasonCode_{{ $invoice['invoice_id'] }}">
+                                    <select>
                                         @foreach($reasons as $code => $label)
                                             <option value="{{ $code }}">{{ $label }}</option>
                                         @endforeach

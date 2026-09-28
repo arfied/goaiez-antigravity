@@ -9,8 +9,10 @@ use App\Enums\OutreachPurpose;
 use App\Models\Customer;
 use App\Modules\CSms\Actions\SmsSendAction;
 use App\Modules\CSms\Events\SendRequested;
+use App\Modules\CSms\Events\SendSettled;
 use App\Modules\X204\Actions\ConsentDecideAction;
 use App\Services\Consent\ConsentService;
+use Illuminate\Support\Facades\Event;
 
 final class SendRequestedListener
 {
@@ -43,10 +45,12 @@ final class SendRequestedListener
                 }
             }
 
+            Event::dispatch(new SendSettled($event->businessId, $event->compositionId, $event->source, 'refused', (string) ($decision['reason'] ?? 'CONSENT_NOT_GRANTED')));
+
             return;
         }
 
-        $this->sendAction->handle(
+        $result = $this->sendAction->handle(
             $event->businessId,
             $event->recipientPhone,
             $event->body,
@@ -55,5 +59,13 @@ final class SendRequestedListener
             $decision['permit_id'] ?? 0,
             'csms:'.$event->compositionId
         );
+
+        Event::dispatch(new SendSettled(
+            $event->businessId,
+            $event->compositionId,
+            $event->source,
+            ($result['status'] ?? '') === 'accepted' ? 'sent' : 'refused',
+            ($result['status'] ?? '') === 'accepted' ? null : (string) ($result['reason'] ?? $result['status'] ?? 'UNKNOWN'),
+        ));
     }
 }

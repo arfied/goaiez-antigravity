@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace App\Modules\X177\Ui;
 
+use App\Exceptions\GbpRequestFailed;
+use App\Modules\X177\Actions\GbpPostAction;
+use App\Modules\X177\Actions\GbpPostSettleAction;
 use App\Modules\X177\Actions\GbpStateAction;
 use App\Modules\X177\Models\GbpConnection;
 use App\Modules\X177\Models\GbpPost;
 use App\Modules\X177\Models\GbpStateLog;
+use App\Services\Gbp\ZernioGbpClient;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Masmerise\Toaster\Toaster;
 
 #[Layout('components.account.layout', ['heading' => 'Google profile'])]
 class GbpCard extends Component
@@ -61,6 +66,101 @@ class GbpCard extends Component
         $action->pollState($this->businessId, $connectionId);
     }
 
+    public array $postContent = [];
+
+    public array $postImage = [];
+
+    public array $postCtaType = [];
+
+    public array $postCtaUrl = [];
+
+    public function checkAgain(int $postId): void
+    {
+        abort_unless(auth()->user()?->role->canConfigureAutomation() === true, 403);
+
+        $post = GbpPost::where('business_id', $this->businessId)
+            ->where('status', 'publishing')
+            ->find($postId);
+
+        if (! $post) {
+            Toaster::info('Nothing to check — that post is not waiting on Zernio.');
+
+            return;
+        }
+
+        if (! $post->zernio_dispatch_id) {
+            Toaster::error('That post never reached Zernio, so there is nothing to check.');
+
+            return;
+        }
+
+        try {
+            $receipt = app(ZernioGbpClient::class)->getPost($post->zernio_dispatch_id);
+        } catch (GbpRequestFailed) {
+            Toaster::error('We could not reach Zernio. Try again shortly.');
+
+            return;
+        }
+
+        if ($receipt->status === 'published') {
+            app(GbpPostSettleAction::class)->settle($this->businessId, $post->id, true, null, $receipt->providerPostId);
+            Toaster::success('Posted on Google.');
+        } elseif ($receipt->status === 'failed' || $receipt->status === 'partial') {
+            app(GbpPostSettleAction::class)->settle($this->businessId, $post->id, false, $receipt->errorMessage, $receipt->providerPostId);
+            Toaster::error('Google refused it: '.($receipt->errorMessage ?? 'no reason given').'.');
+        } else {
+            Toaster::info('Zernio is still publishing it.');
+        }
+    }
+
+    public function postUpdate(int $connectionId): void
+    {
+        abort_unless(auth()->user()?->role->canConfigureAutomation() === true, 403);
+
+        if ($this->isSample) {
+            return;
+        }
+
+        Tenancy::set($this->businessId);
+
+        $content = $this->postContent[$connectionId] ?? '';
+        $imageUrl = $this->postImage[$connectionId] ?? null;
+        $ctaType = $this->postCtaType[$connectionId] ?? null;
+        $ctaUrl = $this->postCtaUrl[$connectionId] ?? null;
+
+        if (trim($content) === '') {
+            return;
+        }
+
+        $action = app(GbpPostAction::class);
+        $result = $action->post(
+            $this->businessId,
+            $connectionId,
+            $content,
+            'update',
+            empty(trim($imageUrl ?? '')) ? null : trim($imageUrl),
+            empty(trim($ctaType ?? '')) ? null : trim($ctaType),
+            empty(trim($ctaUrl ?? '')) ? null : trim($ctaUrl)
+        );
+
+        $resultStatus = $result['status'] ?? 'failed';
+        $toast = $result['message'] ?? 'Failed to post.';
+        if ($resultStatus === 'posted') {
+            $toast = 'Posted to your Google profile. It can take up to 48 hours to show on Google.';
+        } elseif ($resultStatus === 'publishing') {
+            $toast = 'Sent to Google through Zernio — it is still publishing.';
+        } elseif ($resultStatus === 'refused_image' || $resultStatus === 'refused_cta') {
+            $toast = $result['message'];
+        }
+
+        $this->dispatch('toast', ['message' => $toast, 'type' => ($resultStatus === 'posted' || $resultStatus === 'publishing') ? 'success' : 'error']);
+
+        $this->postContent[$connectionId] = '';
+        $this->postImage[$connectionId] = '';
+        $this->postCtaType[$connectionId] = '';
+        $this->postCtaUrl[$connectionId] = '';
+    }
+
     public function render()
     {
         Tenancy::set($this->businessId);
@@ -78,7 +178,20 @@ class GbpCard extends Component
                     ->latest('created_at')
                     ->first();
 
-                $c->plain_status = $c->profile_status === 'suspended' ? 'Profile is suspended' : ($c->profile_status === 'active' ? 'Profile is active' : 'Status unknown');
+                $c->plain_status = $c->profile_status === 'suspended' ? 'Profile is suspended' : 'We are not reading your profile’s status yet';
+
+                if ($c->latest_post) {
+                    $c->post_status_text = $c->latest_post->status;
+                    if ($c->latest_post->status === 'posted') {
+                        $c->post_status_text = 'Posted';
+                    } elseif ($c->latest_post->status === 'publishing') {
+                        $c->post_status_text = 'Still publishing';
+                    } elseif ($c->latest_post->status === 'not_connected') {
+                        $c->post_status_text = 'Not sent — connect your profile';
+                    } elseif ($c->latest_post->status === 'failed') {
+                        $c->post_status_text = 'Google refused it: '.($c->latest_post->failure_reason ?? 'unknown');
+                    }
+                }
 
                 return $c;
             });
@@ -89,7 +202,8 @@ class GbpCard extends Component
                     'external_label' => 'Sample Location',
                     'profile_status' => 'suspended',
                     'plain_status' => 'Profile is suspended',
-                    'latest_post' => (object) ['content' => 'Summer sale started today'],
+                    'latest_post' => (object) ['content' => 'Summer sale started today', 'status' => 'posted'],
+                    'post_status_text' => 'Posted',
                     'latest_log' => (object) ['event_type' => 'state_read', 'details' => ['old' => 'active', 'new' => 'suspended'], 'created_at' => now()],
                 ],
             ]);

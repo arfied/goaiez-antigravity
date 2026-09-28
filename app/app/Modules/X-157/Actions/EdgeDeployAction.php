@@ -12,6 +12,7 @@ use App\Modules\X108\Actions\AppointmentListAction;
 use App\Modules\X155\Actions\FormReadAction;
 use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
+use App\Modules\X157\Models\CustomDomainRequest;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
 use App\Modules\X163\Actions\QuotablePriceAction;
@@ -20,7 +21,10 @@ use App\Modules\X176\Actions\LlmsTxtRenderAction;
 use App\Modules\X176\Actions\SchemaRenderAction;
 use App\Modules\X176\Actions\SeoRenderAction;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Industry\IndustryStartingPoints;
 use App\Services\Pixel\PixelKeys;
+use App\Support\Money;
+use App\Support\PlanPricing;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
@@ -47,11 +51,12 @@ JS;
         ?int $speedBudgetMs = null,
         ?int $pageId = null,
         ?string $commitId = null,
-        ?string $businessName = null
+        ?string $businessName = null,
+        ?int $pageVariantId = null
     ): array {
         $speedBudgetMs ??= $this->defaults->int('sites.deploy.speed_budget_ms');
 
-        return DB::transaction(function () use ($businessId, $edgeZoneId, $measuredTtfbMs, $speedBudgetMs, $commitId, $pageId, $businessName) {
+        return DB::transaction(function () use ($businessId, $edgeZoneId, $measuredTtfbMs, $speedBudgetMs, $commitId, $pageId, $businessName, $pageVariantId) {
             $zone = EdgeZone::where('business_id', $businessId)->findOrFail($edgeZoneId);
 
             if ($commitId) {
@@ -90,6 +95,7 @@ JS;
                 'business_id' => $businessId,
                 'edge_zone_id' => $zone->id,
                 'page_id' => $pageId,
+                'page_variant_id' => $pageVariantId,
                 'deploy_hash' => $deployHash,
                 'status' => 'deploying',
                 'speed_index' => ($measuredTtfbMs <= $speedBudgetMs) ? 100 : 40,
@@ -140,6 +146,9 @@ JS;
                 ];
             }
 
+            $stored = $this->defaults->value('billing.currency');
+            $currency = is_string($stored) && trim($stored) !== '' ? strtoupper(trim($stored)) : 'USD';
+
             $productOffers = [];
             $priceBookItems = app(QuotablePriceAction::class)->options($businessId);
             // The old code did ->limit(20), so we do array_slice
@@ -152,10 +161,15 @@ JS;
                 $productOffers[] = [
                     'name' => $item['service_name'],
                     'price' => $item['price_cents'] / 100,
+                    'price_max' => isset($item['price_max_cents']) ? $item['price_max_cents'] / 100 : null,
+                    'currency' => $currency,
+                    'price_text' => PlanPricing::format(Money::of((int) $item['price_cents'], $currency)),
+                    'price_max_text' => isset($item['price_max_cents']) ? PlanPricing::format(Money::of((int) $item['price_max_cents'], $currency)) : null,
                 ];
             }
 
-            $html = '<html><head>';
+            $html = '<!doctype html><html lang="en"><head>';
+            $html .= "<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n";
             $html .= "<meta name=\"ssl\" content=\"valid\">\n";
 
             $x176Usable = false;
@@ -247,15 +261,15 @@ JS;
                             ];
                         }
                         if (($block['type'] ?? '') === 'faq') {
-                            if (! is_scalar($block['question'] ?? '') || ! is_scalar($block['answer'] ?? '')
-                                || trim((string) ($block['question'] ?? '')) === '' || trim((string) ($block['answer'] ?? '')) === '') {
-                                continue;
-                            }
                             // FAQPage schema injected on publish (TEST ANCHOR, G8-16, ruling 41)
-                            $faqs[] = [
-                                'question' => $block['question'],
-                                'answer' => $block['answer'],
-                            ];
+                            $pairs = isset($block['items']) && is_array($block['items']) ? $block['items'] : [$block];
+                            foreach ($pairs as $pair) {
+                                if (! is_array($pair) || ! is_scalar($pair['question'] ?? '') || ! is_scalar($pair['answer'] ?? '')
+                                    || trim((string) ($pair['question'] ?? '')) === '' || trim((string) ($pair['answer'] ?? '')) === '') {
+                                    continue;
+                                }
+                                $faqs[] = ['question' => $pair['question'], 'answer' => $pair['answer']];
+                            }
                         }
                     }
 
@@ -270,7 +284,7 @@ JS;
                             // No form defined yet: the marker stays so the site law can see the slot, but nothing pretends to be a form.
                             $html .= "<div class=\"form-capture-x155\"></div>\n";
                         } else {
-                            $formActionBase = route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: true);
+                            $formActionBase = route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false);
                             $html .= "<div class=\"form-capture-x155\">\n";
                             $html .= View::make('x-103::site.blocks.form', [
                                 'block' => [
@@ -291,6 +305,13 @@ JS;
                     }
                 }
             }
+            $verified = CustomDomainRequest::withoutGlobalScopes()->where('business_id', $businessId)->where('status', 'verified')->orderByDesc('id')->value('domain');
+            $canonicalHost = $verified !== null && $verified !== '' ? strtolower($verified) : $zone->domain_name;
+
+            // Where this page's siblings live. On a verified custom domain a root-relative
+            // slug is right; at the platform address (the `platform` zone) it would resolve against the platform's
+            // own routes, so links go through the stable per-page route (wave 821).
+            $linkBase = ($zone->provider === 'platform' && ($verified === null || $verified === '')) ? "/sites/{$businessId}/p" : '';
 
             if ($x176Usable) {
                 $seoResult = app(SeoRenderAction::class)->handle(
@@ -298,7 +319,8 @@ JS;
                     $pageId,
                     $businessName,
                     $commitId,
-                    $zone->domain_name
+                    $canonicalHost,
+                    pathPrefix: $linkBase
                 );
 
                 $escapedTitle = e($seoResult['title']);
@@ -320,13 +342,14 @@ JS;
                     $pageId,
                     $businessName,
                     $commitId,
-                    $zone->domain_name,
+                    $canonicalHost,
                     productOffers: $productOffers ?: null,
                     videos: $videos ?: null,
                     events: $events ?: null,
                     address: $address ?: null,
                     breadcrumbs: $breadcrumbs ?: null,
-                    faqs: $faqs ?: null
+                    faqs: $faqs ?: null,
+                    pathPrefix: $linkBase
                 );
 
                 if (isset($schemaResult['json_ld'])) {
@@ -350,7 +373,8 @@ JS;
                         'businessName' => $businessName,
                         'deployHash' => $deployHash,
                         'tenant_storage_url_prefix' => route('x-157.site.media', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false).'/',
-                        'form_action_base' => route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: true),
+                        'form_action_base' => route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false),
+                        'tokens' => app(IndustryStartingPoints::class)->forBusiness($businessId),
                     ];
                     $html .= app(SiteBlockRenderer::class)->render($contentBlocks, $context);
                 }
@@ -359,7 +383,7 @@ JS;
             if (! empty($breadcrumbs)) {
                 $html .= "<nav id=\"breadcrumb-x176\">\n";
                 foreach ($breadcrumbs as $crumb) {
-                    $html .= '  <a href="/'.e($crumb['slug']).'">'.e($crumb['name'])."</a>\n";
+                    $html .= '  <a href="'.e($linkBase).'/'.e($crumb['slug']).'">'.e($crumb['name'])."</a>\n";
                 }
                 $html .= "</nav>\n";
             }
@@ -367,7 +391,8 @@ JS;
             if (! empty($productOffers)) {
                 $html .= "<div id=\"offers-x176\">\n";
                 foreach ($productOffers as $offer) {
-                    $html .= '  <div class="offer-item" data-name="'.e($offer['name']).'">'.e($offer['name']).' - $'.e((string) $offer['price'])."</div>\n";
+                    $priceText = e($offer['price_text']).(isset($offer['price_max_text']) ? ' to '.e($offer['price_max_text']) : '');
+                    $html .= '  <div class="offer-item" data-name="'.e($offer['name']).'">'.e($offer['name']).' - '.$priceText."</div>\n";
                 }
                 $html .= "</div>\n";
             }
@@ -400,7 +425,7 @@ JS;
                 $html .= "</div>\n";
             }
 
-            $internalLinksHtml = app(InternalLinkRenderAction::class)->handle($businessId);
+            $internalLinksHtml = app(InternalLinkRenderAction::class)->handle($businessId, $linkBase);
             if ($internalLinksHtml !== '') {
                 $html .= $internalLinksHtml;
             }
@@ -420,9 +445,11 @@ JS;
             // DeployCompleted all follow the write, because ModuleServiceProvider's route
             // serves a `deployed` row by reading that exact file. A deploy supersedes only
             // the previous deploy of the same page (R245, 2026-09-05).
+            // an arm never supersedes the other arm; the owner's stop (X-103) is what retires a variant.
             Deployment::where('business_id', $businessId)
                 ->where('edge_zone_id', $zone->id)
                 ->where('page_id', $pageId)
+                ->when($pageVariantId === null, fn ($q) => $q->whereNull('page_variant_id'), fn ($q) => $q->where('page_variant_id', $pageVariantId))
                 ->where('status', 'deployed')
                 ->where('id', '!=', $deployment->id)
                 ->update(['status' => 'superseded']);
@@ -435,7 +462,7 @@ JS;
             Event::dispatch(new DeployCompleted(
                 businessId: $businessId,
                 deploymentId: $deployment->id,
-                domainName: $zone->domain_name,
+                domainName: $canonicalHost,
                 deployHash: $deployHash
             ));
 

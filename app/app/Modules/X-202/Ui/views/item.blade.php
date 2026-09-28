@@ -3,12 +3,8 @@
     <div class="item-view p-4">
         <h2 class="text-lg font-bold">{{ $item->subject }}</h2>
 
-        @if($success)
-            <div class="bg-surface text-ink border rounded p-4 mb-4">{{ $success }}</div>
-        @endif
-        @if($error)
-            <div class="bg-surface text-ink border rounded p-4 mb-4">{{ $error }}</div>
-        @endif
+        <x-ui.toast kind="success" :message="$success" />
+        <x-ui.toast kind="error" :message="$error" />
 
         <div class="my-4 p-4 border rounded">
             <p><strong>Item Type:</strong> {{ $item->item_type }}</p>

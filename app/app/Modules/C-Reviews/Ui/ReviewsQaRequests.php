@@ -121,7 +121,12 @@ class ReviewsQaRequests extends Component
                 $this->actionNotice = "🚫 REFUSAL [{$res['refusal_code']}]: {$res['message']}";
             } else {
                 $this->noticeType = 'success';
-                $this->actionNotice = "✅ Review request dispatched via {$this->platform}.";
+                $this->actionNotice = match ($res['request_status'] ?? '') {
+                    'sent' => "✅ Review request sent via {$this->platform}.",
+                    'refused' => "⚠️ Review request recorded but not sent via {$this->platform} — the sender refused it (consent, credit or quiet hours). See the QA report.",
+                    'no_phone' => '⚠️ Review request recorded, nothing sent — this customer has no phone number on file.',
+                    default => "✅ Review request queued via {$this->platform} — the sender will settle it.",
+                };
             }
         } catch (\Exception $e) {
             $this->noticeType = 'error';
@@ -142,6 +147,14 @@ class ReviewsQaRequests extends Component
 
         $action = app(ReviewRequestAction::class);
         $res = $action->handle($this->businessId, $req->customer_id, $this->promptTemplate, $req->platform, csatScore: null, jobAgeDays: (int) $req->created_at->diffInDays(now()));
+
+        if (($res['status'] ?? null) === 'suppressed') {
+            $this->noticeType = 'warning';
+            $this->actionNotice = '🛡️ Not sent: an open QA ticket for this customer suppresses review asks (P-205). Resolve the ticket first.';
+
+            return;
+        }
+
         if ($res['status'] === 'refused') {
             $this->noticeType = 'error';
             $this->actionNotice = "🚫 REFUSAL [{$res['refusal_code']}]: ".($res['message'] ?? '');

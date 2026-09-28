@@ -50,4 +50,28 @@ class NetworkMapScreenTest extends TestCase
 
         Livewire::test(NetworkMap::class)->assertOk();
     }
+
+    public function test_owner_lists_and_hides_their_business(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(NetworkMap::class)
+            ->set('companyName', 'Distinctive Partner Co 4471')
+            ->set('category', 'plumbing')
+            ->set('territoryZip', '75002')
+            ->call('listBusiness')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('referral_listings', ['business_id' => $biz->id, 'company_name' => 'Distinctive Partner Co 4471', 'is_listed' => true]);
+
+        $this->get(route('x-190.network-map'))->assertOk()->assertSee('Listed as');
+
+        Livewire::test(NetworkMap::class)
+            ->call('unlist');
+
+        $this->assertDatabaseHas('referral_listings', ['business_id' => $biz->id, 'is_listed' => false]);
+    }
 }

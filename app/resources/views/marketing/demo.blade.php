@@ -6,6 +6,7 @@
     every deployment today this page renders without the instruction — deliberately,
     and not as a degraded state. "Text TRADES to —" is the placeholder the whole
     rule exists to refuse.
+    The title, description and h1 follow the same guard (wave 814): "live" is said only when the number exists.
 
     ⚠️ THE SAMPLE CHROME IS A SIGNAL COLOUR AND NEVER THE ONLY ONE. Every element
     that shows sample data also carries the word "Sample", so the page says what it
@@ -13,13 +14,20 @@
     from grey — the impersonation banner's rule (`22`).
 --}}
 
+@php $demoIsLive = $demoNumber !== null && $demoKeyword !== null; @endphp
 <x-marketing.layout
-    :title="'Watch it answer '.$family->article().' '.$family->label().' business'"
-    :description="'A live demo you run from your own phone: text a word and watch a '.$family->label().' front desk answer in seconds.'"
+    :title="($demoIsLive ? 'Watch it answer ' : 'See how it answers ').$family->article().' '.$family->label().' business'"
+    :description="$demoIsLive
+        ? 'A live demo you run from your own phone: text a word and watch a '.$family->label().' front desk answer in seconds.'
+        : 'What a '.$family->label().' front desk says when a customer texts: answers in seconds, every figure from a price list, and a hand-off to a person when it should not decide.'"
 >
     <section class="mx-auto w-full max-w-3xl px-4 pt-16 pb-8 text-center">
         <h1 class="font-display text-4xl font-semibold tracking-tight text-balance text-ink sm:text-5xl">
-            Watch it answer {{ $family->article() }} {{ $family->label() }} business — live.
+            @if ($demoIsLive)
+                Watch it answer {{ $family->article() }} {{ $family->label() }} business — live.
+            @else
+                See how it answers {{ $family->article() }} {{ $family->label() }} business.
+            @endif
         </h1>
 
         @if ($demoNumber !== null && $demoKeyword !== null)

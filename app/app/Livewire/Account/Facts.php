@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Livewire\Account;
 
+use App\Enums\IndustryFamily;
 use App\Services\Facts\BusinessFactKey;
 use App\Services\Facts\BusinessFacts;
+use App\Services\Industry\IndustryResolver;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -20,31 +22,52 @@ final class Facts extends Component
     public function mount(BusinessFacts $store): void
     {
         abort_if(Tenancy::id() === null, 403);
-        $stored = $store->all(Tenancy::idOrFail());
-        foreach (array_keys(BusinessFactKey::all()) as $key) {
+        $biz = Tenancy::idOrFail();
+        $defs = BusinessFactKey::forBusiness($biz);
+        $stored = $store->all($biz);
+        foreach (array_keys($defs) as $key) {
             $this->facts[$key] = $stored[$key] ?? '';
         }
     }
 
     public function save(BusinessFacts $store): void
     {
+        $biz = Tenancy::idOrFail();
+        $defs = BusinessFactKey::forBusiness($biz);
+
         $rules = [];
-        foreach (BusinessFactKey::all() as $key => $def) {
+        foreach ($defs as $key => $def) {
             $rules["facts.{$key}"] = ['nullable', 'string', 'max:'.$def['max']];
         }
         $rules['facts.'.BusinessFactKey::YEARS_IN_BUSINESS] = ['nullable', 'integer', 'min:0', 'max:200'];
+        $rules['facts.'.BusinessFactKey::INDUSTRY] = ['nullable', 'in:'.implode(',', IndustryFamily::values())];
         $this->validate($rules);
 
-        $biz = Tenancy::idOrFail();
-        foreach (array_keys(BusinessFactKey::all()) as $key) {
-            $store->set($biz, $key, (string) ($this->facts[$key] ?? ''));
+        $store->set($biz, BusinessFactKey::INDUSTRY, (string) ($this->facts[BusinessFactKey::INDUSTRY] ?? ''));
+
+        $defs = BusinessFactKey::forBusiness($biz);
+
+        foreach (array_keys($defs) as $key) {
+            if ($key !== BusinessFactKey::INDUSTRY) {
+                $store->set($biz, $key, (string) ($this->facts[$key] ?? ''));
+            }
         }
 
         Toaster::success('Saved — your site reads these the next time it drafts.');
     }
 
-    public function render()
+    public function render(IndustryResolver $resolver)
     {
-        return view('livewire.account.facts', ['defs' => BusinessFactKey::all()]);
+        $biz = Tenancy::idOrFail();
+        $defs = BusinessFactKey::all();
+        $allDefs = BusinessFactKey::forBusiness($biz);
+        $industryDefs = array_diff_key($allDefs, $defs);
+        $industryLabel = $resolver->for($biz)['family']?->label();
+
+        return view('livewire.account.facts', [
+            'defs' => $defs,
+            'industryDefs' => $industryDefs,
+            'industryLabel' => $industryLabel,
+        ]);
     }
 }

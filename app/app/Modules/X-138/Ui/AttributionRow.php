@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X138\Ui;
 
+use App\Modules\X138\Actions\PageEarningsAction;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
@@ -36,6 +37,7 @@ class AttributionRow extends Component
         return view('x-138::attribution-row', [
             'queries' => $queries,
             'snapshots' => $snapshots,
+            'earnings' => $this->businessId > 0 ? app(PageEarningsAction::class)->handle($this->businessId) : null,
         ]);
     }
 }

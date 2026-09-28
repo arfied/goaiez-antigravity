@@ -13,7 +13,9 @@ class FormReadAction
 
     public function firstDefinitionForBusiness(int $businessId): ?array
     {
-        $form = FormDefinition::where('business_id', $businessId)->orderBy('id')->first();
+        $definitions = FormDefinition::where('business_id', $businessId)->orderBy('id')->get();
+        $form = $definitions->first(fn (FormDefinition $f) => ! empty($f->schema['fields'] ?? []))
+            ?? $definitions->first();
 
         if (! $form) {
             return null;

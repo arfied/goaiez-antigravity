@@ -13,12 +13,8 @@
 
         <div class="mt-8 p-4 bg-surface border rounded">
             <h3 class="text-md font-bold text-ink">Teach Fact</h3>
-            @if($success)
-                <div class="mb-4 text-ink">{{ $success }}</div>
-            @endif
-            @if($error)
-                <div class="mb-4 text-ink-2">{{ $error }}</div>
-            @endif
+            <x-ui.toast kind="success" :message="$success" />
+            <x-ui.toast kind="error" :message="$error" />
             <form wire:submit="teachAgent" class="flex flex-col gap-2 mt-4">
                 <input type="text" wire:model="key" placeholder="Key" class="border rounded p-2 text-ink bg-paper">
                 <input type="text" wire:model="value" placeholder="Value" class="border rounded p-2 text-ink bg-paper">

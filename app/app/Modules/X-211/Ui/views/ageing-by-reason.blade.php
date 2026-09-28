@@ -7,9 +7,7 @@
         </x-ui.error-panel>
     @endif
 
-    @if($success)
-        <p>{{ $success }}</p>
-    @endif
+    <x-ui.toast kind="success" :message="$success" />
 
     @if($refused)
         <x-ui.attention-card state="attention" :heading="$refusedHeading ?? 'Late fee not applied'">

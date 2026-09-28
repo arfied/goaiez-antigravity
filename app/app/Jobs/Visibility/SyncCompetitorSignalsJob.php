@@ -11,6 +11,7 @@ use App\Exceptions\PlacesRequestFailed;
 use App\Jobs\AutopilotJob;
 use App\Models\Location;
 use App\Services\Visibility\CompetitorSignals;
+use App\Services\Visibility\CompetitorSiteNotes;
 
 /**
  * Refresh one location's Places competitor set and snapshots (`28` §5.5).
@@ -74,6 +75,7 @@ final class SyncCompetitorSignalsJob extends AutopilotJob
         // impossible to do on only one side.
         try {
             $kept = app(CompetitorSignals::class)->refresh($location);
+            $noted = app(CompetitorSiteNotes::class)->refreshForLocation($location);
         } catch (PlacesBudgetExhausted) {
             return [
                 'outcome' => 'unavailable',
@@ -86,7 +88,7 @@ final class SyncCompetitorSignalsJob extends AutopilotJob
             ];
         }
 
-        return ['outcome' => 'refreshed', 'competitors' => $kept];
+        return ['outcome' => 'refreshed', 'competitors' => $kept, 'site_notes' => $noted];
     }
 
     protected function handoff(): array

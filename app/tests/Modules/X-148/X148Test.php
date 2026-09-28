@@ -86,7 +86,6 @@ class X148Test extends TestCase
     /**
      * [G5-46] the documents are X-160's
      */
-
     public function test_component_renders_empty_state(): void
     {
         $biz = TestCase::provisionTenant();
@@ -94,5 +93,27 @@ class X148Test extends TestCase
 
         Livewire::test(RetrievalLatencyEmptyrate::class, ['businessId' => $biz->id])
             ->assertOk();
+    }
+
+    public function test_a_search_without_an_embedding_service_marks_the_trace(): void
+    {
+        Event::fake([RetrievalCompleted::class, RetrievalEmpty::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Tenant 4914', 'currency' => 'USD']);
+
+        Tenancy::set((int) $biz->id);
+        $this->indexAction->indexChunk(
+            businessId: $biz->id,
+            title: 'Test Chunk 4914',
+            chunkText: 'Distinctive retrieval 4914'
+        );
+
+        $res = $this->searchAction->search(
+            businessId: $biz->id,
+            query: 'retrieval 4914'
+        );
+
+        $this->assertEquals('completed', $res['status']);
+        $this->assertEquals('embedding_unavailable', $res['trace']['fallback']);
     }
 }

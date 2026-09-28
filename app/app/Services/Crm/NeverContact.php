@@ -12,6 +12,7 @@ use App\Models\Customer;
 use App\Models\SuppressionListEntry;
 use App\Models\User;
 use App\Services\Consent\ConsentService;
+use App\Support\Identifier;
 use App\Support\Tenancy;
 use RuntimeException;
 
@@ -119,6 +120,30 @@ final class NeverContact
                 scope: OptOutScope::Tenant,
             );
         }
+    }
+
+    /**
+     * Resolves an existing customer by their phone number and never creates one.
+     */
+    public function applyToNumber(string $phone, User $actor): ?Customer
+    {
+        Tenancy::idOrFail();
+
+        $normalised = Identifier::normalise($phone, OutreachChannel::Sms);
+
+        if ($normalised === null) {
+            return null;
+        }
+
+        $customer = Customer::query()->where('phone', $normalised)->first();
+
+        if (! $customer instanceof Customer) {
+            return null;
+        }
+
+        $this->apply($customer, $actor);
+
+        return $customer;
     }
 
     /**

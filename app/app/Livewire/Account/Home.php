@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Livewire\Account;
 
+use App\Models\Business;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Gbp\GbpConnections;
 use App\Services\Proof\ProofNumbers;
+use App\Services\Tenant\TenantPause;
 use App\Services\Visibility\VisibilitySyncHistory;
 use App\Support\Tenancy;
 use Illuminate\Contracts\View\View;
@@ -82,6 +84,7 @@ final class Home extends Component
         GbpConnections $connections,
         DefaultsRegistry $defaults,
         VisibilitySyncHistory $history,
+        TenantPause $pause,
     ): View {
         // Refused rather than resolved when there is no tenant — `Settings`' own
         // reasoning: internal staff belong to no business by design (`28` §9.1),
@@ -117,6 +120,8 @@ final class Home extends Component
                 ),
             ),
             'isThisMonth' => $this->period !== ProofNumbers::ALL,
+            'isPaused' => $pause->isCurrentTenantPaused(),
+            'hasAdvanced' => Business::query()->find(Tenancy::idOrFail())?->hasAdvancedDashboard() ?? false,
         ]);
     }
 }

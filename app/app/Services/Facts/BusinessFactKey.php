@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Facts;
 
+use App\Services\Industry\IndustryQuestions;
+
 /**
  * The owner-stated facts the website, and later the assistants, read from ONE
  * place. Each has a label the owner sees and a ceiling the screen enforces from
@@ -23,6 +25,10 @@ final class BusinessFactKey
 
     public const string YEARS_IN_BUSINESS = 'years_in_business';
 
+    public const string INDUSTRY = 'industry';
+
+    public const string INDUSTRY_PREFIX = 'industry.';
+
     /** @return array<string, array{label: string, hint: string, max: int}> */
     public static function all(): array
     {
@@ -33,6 +39,12 @@ final class BusinessFactKey
             self::INSURANCE => ['label' => 'Insurance', 'hint' => 'For example "Insured and bonded". We never add a claim you did not make.', 'max' => 160],
             self::SERVICE_AREA => ['label' => 'Where you work', 'hint' => 'Towns, counties or a radius, in words.', 'max' => 240],
             self::YEARS_IN_BUSINESS => ['label' => 'Years in business', 'hint' => 'A number, or leave it empty.', 'max' => 4],
+            self::INDUSTRY => ['label' => 'Your industry', 'hint' => 'The closest of six; it picks the starting point for your site. Leave it empty to use what Google says about you.', 'max' => 16],
         ];
+    }
+
+    public static function forBusiness(int $businessId): array
+    {
+        return self::all() + app(IndustryQuestions::class)->forBusiness($businessId);
     }
 }

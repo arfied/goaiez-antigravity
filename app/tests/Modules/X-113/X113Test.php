@@ -458,4 +458,23 @@ class X113Test extends TestCase
         // Assert on the real surface that the thing is genuinely not there
         $this->get('/app/x-113/pto')->assertNotFound();
     }
+
+    public function test_roster_excludes_demo_people(): void
+    {
+        $ownerA = User::factory()->create();
+        $bizA = TestCase::provisionTenant(['name' => 'Biz A', 'currency' => 'USD', 'owner_user_id' => $ownerA->id]);
+
+        Tenancy::setUser($ownerA->id);
+        Tenancy::set((int) $bizA->id);
+        $roleA = Role::create(['business_id' => $bizA->id, 'name' => 'Role A']);
+        $activeA = $this->inviteAction->handle($bizA->id, 'a@ex.com', 'Staff A', $roleA->id);
+
+        $this->inviteAction->handle($bizA->id, 'ghost@ex.com', 'demo·Ghost 4911', $roleA->id);
+
+        $action = new StaffRosterAction;
+        $roster = $action->handle($bizA->id);
+
+        $this->assertCount(1, $roster);
+        $this->assertEquals('Staff A', $roster[0]['name']);
+    }
 }

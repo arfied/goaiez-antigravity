@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Gbp;
 
 use App\Models\GbpAccountBinding;
+use App\Models\ZernioAccountBinding;
 use App\Models\ZernioAccountDay;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Places\PlacesSpend;
@@ -226,7 +227,7 @@ final class ZernioSpend
      */
     public function connectedAccounts(): int
     {
-        return GbpAccountBinding::query()->count();
+        return GbpAccountBinding::query()->count() + ZernioAccountBinding::query()->count();
     }
 
     /**
@@ -238,6 +239,10 @@ final class ZernioSpend
      * retried cron or an operator invoking it by hand adds nothing: an
      * account-day counted twice overstates the bill by the amount that would
      * make somebody raise a ceiling that was never breached.
+     *
+     * Zernio bills every connected account, and `connectedAccounts()` already counts
+     * both tables, so the accrual must too. The shared `(account_ref, on_day)` key
+     * keeps an account present in both tables from being counted twice.
      *
      * @return int Rows written by this call — 0 on a second run the same day.
      */
@@ -257,6 +262,36 @@ final class ZernioSpend
                         ],
                         [
                             'business_id' => $binding->business_id,
+                            'recorded_at' => Carbon::now(),
+                        ],
+                    );
+
+                    if ($created->wasRecentlyCreated) {
+                        $written++;
+                    }
+                }
+            });
+
+        ZernioAccountBinding::query()
+            ->orderBy('id')
+            ->chunkById(500, function ($bindings) use ($onDay, &$written): void {
+                $refs = [];
+                foreach ($bindings as $binding) {
+                    if ($binding->profile_ref !== null && $binding->profile_ref !== '') {
+                        $refs[] = $binding->profile_ref;
+                    }
+                }
+
+                $map = empty($refs) ? [] : app(GbpConnections::class)->businessesForProfiles(array_unique($refs));
+
+                foreach ($bindings as $binding) {
+                    $created = ZernioAccountDay::query()->firstOrCreate(
+                        [
+                            'account_ref' => $binding->account_ref,
+                            'on_day' => $onDay->toDateString(),
+                        ],
+                        [
+                            'business_id' => $map[$binding->profile_ref] ?? null,
                             'recorded_at' => Carbon::now(),
                         ],
                     );

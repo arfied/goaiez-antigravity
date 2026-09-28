@@ -2,12 +2,8 @@
     <div class="p-4">
         <h2 class="text-xl font-bold text-ink">Every estimate, newest first</h2>
 
-        @if($error)
-            <div class="text-ink-2 bg-surface border p-2 mb-4 rounded">{{ $error }}</div>
-        @endif
-        @if($success)
-            <div class="text-ink-2 bg-surface border p-2 mb-4 rounded">{{ $success }}</div>
-        @endif
+        <x-ui.toast kind="error" :message="$error" />
+        <x-ui.toast kind="success" :message="$success" />
 
         <form wire:submit="draftEstimate" class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4 border">
             <input type="text" wire:model="serviceName" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Service name">
@@ -36,6 +32,15 @@
                         @endif
                         @if($est->status === 'expired')
                             <button type="button" wire:click="refreshEstimate({{ $est->id }})" class="bg-surface text-ink border rounded px-2 py-1 ml-2">Refresh</button>
+                        @endif
+                        @if($est->status !== 'draft')
+                            <button type="button" wire:click="portalLink({{ $est->id }})" class="bg-surface text-ink border rounded px-2 py-1 ml-2">Copy portal link</button>
+                        @endif
+                        @if(isset($portalUrl[$est->id]))
+                            <div class="mt-2">
+                                <input type="text" readonly value="{{ $portalUrl[$est->id] }}" onclick="this.select()" class="border rounded p-1 text-ink bg-surface w-full">
+                                <span class="text-sm">Send this link to your customer. It works for {{ $portalTtlHours }} hours without a login.</span>
+                            </div>
                         @endif
                     </li>
                 @endforeach

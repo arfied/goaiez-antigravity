@@ -2,7 +2,7 @@
 <h2 class="text-lg font-bold text-ink">Reconciliation discrepancies</h2>
 <x-ui.attention-card state="attention" heading="One account at a time">the cross-account roll-up is an operator read behind row-level security and no cross-account read path is built in this checkout yet; what follows is this account's runs.</x-ui.attention-card>
 @if($error) <x-ui.error-panel heading="We couldn't mark that run">{{ $error }}</x-ui.error-panel> @endif
-@if($success) <p>{{ $success }}</p> @endif
+<x-ui.toast kind="success" :message="$success" />
 <div wire:loading><x-ui.skeleton label="Reading the runs…" /></div>
 @if($runs->isEmpty())
 <x-ui.empty-state heading="No payouts have been imported yet.">Reconciliation compares what the processor paid out against what we expected. Importing payouts from the gateway is not connected yet, so there is nothing to compare — this screen fills in the moment it is.</x-ui.empty-state>

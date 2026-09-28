@@ -21,12 +21,8 @@
                 <input type="password" wire:model="secret" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Secret">
                 <button type="submit" class="bg-surface text-ink border rounded p-2">Submit</button>
             </form>
-            @if($success)
-                <div class="text-ink bg-surface p-2 mt-2">{{ $success }}</div>
-            @endif
-            @if($error)
-                <div class="text-ink-2 bg-surface p-2 mt-2">{{ $error }}</div>
-            @endif
+            <x-ui.toast kind="success" :message="$success" />
+            <x-ui.toast kind="error" :message="$error" />
         </div>
     </div>
 </div>

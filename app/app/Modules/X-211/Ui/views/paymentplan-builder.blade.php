@@ -9,9 +9,7 @@
         </x-ui.error-panel>
     @endif
 
-    @if($success)
-        <p>{{ $success }}</p>
-    @endif
+    <x-ui.toast kind="success" :message="$success" />
 
     @if($financing)
         <x-ui.attention-card state="attention" heading="This one is credit, not a schedule">

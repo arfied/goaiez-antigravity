@@ -7,7 +7,9 @@ namespace Tests\Modules\X181\Screens;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\CReviews\Actions\QaTicketAction;
+use App\Modules\CReviews\Models\CsatAnswer;
 use App\Modules\CReviews\Models\ReviewRequest;
+use App\Modules\X121\Models\Person;
 use App\Modules\X181\Actions\QaTicketResolveAction;
 use App\Modules\X181\Models\QaTicket;
 use App\Modules\X181\Ui\Resolution;
@@ -95,5 +97,49 @@ class ResolutionScreenTest extends TestCase
         $ticket->refresh();
         $this->assertNotNull($ticket->resolved_at); // Should remain resolved
         $this->assertEquals('resolved', $ticket->status);
+    }
+
+    public function test_the_awaiting_csat_pill_turns_off_once_the_customer_answered(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $p1 = Person::create(['business_id' => $biz->id, 'phone' => '+15555555551']);
+        $p2 = Person::create(['business_id' => $biz->id, 'phone' => '+15555555552']);
+
+        $req1 = ReviewRequest::create(['business_id' => $biz->id, 'customer_id' => $p1->id, 'rating' => 2]);
+        $req2 = ReviewRequest::create(['business_id' => $biz->id, 'customer_id' => $p2->id, 'rating' => 2]);
+        app(QaTicketAction::class)->handle($biz->id, $req1->id);
+        app(QaTicketAction::class)->handle($biz->id, $req2->id);
+
+        $t1 = QaTicket::where('business_id', $biz->id)->where('review_request_id', $req1->id)->first();
+        $t2 = QaTicket::where('business_id', $biz->id)->where('review_request_id', $req2->id)->first();
+        $t1->update(['subject' => 'Distinctive ticket A 4661']);
+        $t2->update(['subject' => 'Distinctive ticket B 4662']);
+
+        app(QaTicketResolveAction::class)->handle($biz->id, $t1->id, 'notes');
+        app(QaTicketResolveAction::class)->handle($biz->id, $t2->id, 'notes');
+
+        $t1->refresh();
+        $t2->refresh();
+        $this->assertNotNull($t1->csat_requested_at);
+        $this->assertNotNull($t2->csat_requested_at);
+
+        CsatAnswer::query()->create([
+            'business_id' => $biz->id,
+            'person_id' => $p1->id,
+            'qa_ticket_id' => $t1->id,
+            'score' => 5,
+            'body' => '5',
+            'is_valid' => true,
+            'received_at' => now(),
+        ]);
+
+        Livewire::test(Resolution::class)
+            ->assertSeeInOrder(['Distinctive ticket B 4662', 'Awaiting CSAT']);
+
+        $html = Livewire::test(Resolution::class)->html();
+        $this->assertEquals(1, substr_count($html, 'Awaiting CSAT'));
     }
 }

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int|null $page_id
+ * @property int|null $page_variant_id
  */
 class Deployment extends Model
 {
@@ -18,6 +19,8 @@ class Deployment extends Model
 
     protected $casts = [
         'page_id' => 'integer',
+        'page_variant_id' => 'integer',
+        'served_count' => 'integer',
         'speed_index' => 'integer',
         'speed_budget_ms' => 'integer',
         'measured_ttfb_ms' => 'integer',

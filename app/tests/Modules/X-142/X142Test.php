@@ -106,7 +106,7 @@ class X142Test extends TestCase
         Event::assertDispatched(TokenRevoked::class);
 
         // 6. Webhook subscription
-        $sub = $this->webhookAction->subscribe($biz->id, 'https://example.com/webhooks/grs', 'job.*');
+        $sub = $this->webhookAction->subscribe($biz->id, 'https://example.com/webhooks/grs', 'contact.created');
         $this->assertNotNull($sub->id);
     }
 
@@ -186,7 +186,7 @@ class X142Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Webhook Secret Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
 
-        $sub = $this->webhookAction->subscribe($biz->id, 'https://example.com/webhooks/enc', 'event.*');
+        $sub = $this->webhookAction->subscribe($biz->id, 'https://example.com/webhooks/enc', 'contact.created');
 
         $this->assertNotNull($sub->secret);
         $this->assertStringStartsWith('sec_', $sub->secret);
@@ -273,7 +273,7 @@ class X142Test extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $this->actingAs($owner);
 
-        $sub = $this->webhookAction->subscribe($biz->id, 'https://example.com/webhooks/list', 'event.test.*');
+        $sub = $this->webhookAction->subscribe($biz->id, 'https://example.com/webhooks/list', 'contact.created');
 
         Livewire::test(WebhooksView::class)
             ->assertSeeHtml('data-active="yes"')

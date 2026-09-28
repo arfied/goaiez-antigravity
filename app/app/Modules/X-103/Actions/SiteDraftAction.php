@@ -7,6 +7,7 @@ namespace App\Modules\X103\Actions;
 use App\Models\Business;
 use App\Models\Location;
 use App\Models\Review;
+use App\Modules\X103\Domain\SectionOrder;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\SiteInventoryImage;
 use App\Modules\X103\Models\SiteInventoryPage;
@@ -16,6 +17,8 @@ use App\Services\Assistant\PriceBook;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Facts\BusinessFactKey;
 use App\Services\Facts\BusinessFacts;
+use App\Services\Industry\IndustryQuestions;
+use App\Services\Industry\IndustryStartingPoints;
 use App\Services\Links\TenantLinks;
 use App\Support\PlanPricing;
 use Illuminate\Support\Str;
@@ -26,7 +29,9 @@ final class SiteDraftAction
         private readonly PriceBook $priceBook,
         private readonly TenantLinks $tenantLinks,
         private readonly DefaultsRegistry $registry,
-        private readonly BusinessFacts $facts
+        private readonly BusinessFacts $facts,
+        private readonly IndustryStartingPoints $startingPoints,
+        private readonly IndustryQuestions $questions
     ) {}
 
     public function handle(int $businessId, int $locationId): array
@@ -65,6 +70,7 @@ final class SiteDraftAction
         $reviewsMinRating = $this->registry->int('sites.draft.reviews_min_rating');
         $galleryMax = $this->registry->int('sites.draft.gallery_max');
         $teamMin = $this->registry->int('sites.draft.team_min');
+        $order = $this->startingPoints->forBusiness($businessId)['section_order'];
 
         // Existing FAQs
         $allPages = Page::where('business_id', $businessId)->get();
@@ -104,7 +110,7 @@ final class SiteDraftAction
             $contactPhoneSource = 'business';
         }
 
-        $buildContactBlock = function () use ($location, $address, $contactPhone, $contactPhoneSource, $contactEmail, $contactEmailSource, &$blocksGenerated, &$sourcesUsed, $stated) {
+        $buildContactBlock = function () use ($businessId, $location, $address, $contactPhone, $contactPhoneSource, $contactEmail, $contactEmailSource, &$blocksGenerated, &$sourcesUsed, $stated) {
             $contactSource = 'location';
             if ($contactPhone) {
                 $contactSource .= ", phone: {$contactPhoneSource}";
@@ -143,6 +149,18 @@ final class SiteDraftAction
                 $contactSource .= ', facts: owner';
                 $block['source'] = $contactSource;
             }
+
+            $industryQuestions = $this->questions->forBusiness($businessId);
+            $industryFactsBlock = [];
+            foreach ($industryQuestions as $key => $def) {
+                if (($stated[$key] ?? '') !== '') {
+                    $industryFactsBlock[] = ['label' => $def['label'], 'value' => $stated[$key]];
+                }
+            }
+            if ($industryFactsBlock !== []) {
+                $block['industry_facts'] = $industryFactsBlock;
+            }
+
             $blocksGenerated++;
             $sourcesUsed[] = $contactSource;
 
@@ -218,6 +236,13 @@ final class SiteDraftAction
             if ($subline === '' && ($stated[BusinessFactKey::TAGLINE] ?? '') !== '') {
                 $subline = $stated[BusinessFactKey::TAGLINE];
                 $heroSource = 'inventory, tagline: facts';
+            }
+            if ($subline === '') {
+                $heroKey = $this->questions->heroKeyFor($businessId);
+                if ($heroKey !== null && ($stated[$heroKey] ?? '') !== '') {
+                    $subline = $stated[$heroKey];
+                    $heroSource = 'inventory, subline: industry fact';
+                }
             }
             $hero = [
                 'type' => 'hero',
@@ -325,6 +350,21 @@ final class SiteDraftAction
                 $sourcesUsed[] = 'links';
             }
 
+            $firstServiceName = '';
+            if ($servicesBlock && count($servicesBlock['items']) > 0) {
+                $firstServiceName = $servicesBlock['items'][0]['name'];
+            }
+
+            $homeBlocks[] = [
+                'type' => 'booking_form',
+                'heading' => 'Request a time',
+                'label' => 'Request a time',
+                'service' => $firstServiceName,
+                'source' => 'scheduler',
+            ];
+            $blocksGenerated++;
+            $sourcesUsed[] = 'scheduler';
+
             foreach ($faqBlocks as $faqBlock) {
                 $homeBlocks[] = $faqBlock;
                 $blocksGenerated++;
@@ -336,6 +376,8 @@ final class SiteDraftAction
             if ($formBlock) {
                 $homeBlocks[] = $formBlock;
             }
+
+            $homeBlocks = SectionOrder::apply($homeBlocks, $order);
 
             Page::create([
                 'business_id' => $businessId,
@@ -384,15 +426,19 @@ final class SiteDraftAction
             if ($servicesBlock) {
                 $servicesPageBlocks[] = $servicesBlock;
             }
-            Page::create([
-                'business_id' => $businessId,
-                'slug' => 'services',
-                'title' => 'Services',
-                'is_tenant_edited' => false,
-                'is_published' => false,
-                'draft_blocks' => $servicesPageBlocks,
-            ]);
-            $pagesCreated++;
+            if ($servicesPageBlocks !== []) {
+                Page::create([
+                    'business_id' => $businessId,
+                    'slug' => 'services',
+                    'title' => 'Services',
+                    'is_tenant_edited' => false,
+                    'is_published' => false,
+                    'draft_blocks' => $servicesPageBlocks,
+                ]);
+                $pagesCreated++;
+            } else {
+                $sourcesWithoutData[] = 'pricebook';
+            }
         }
 
         // 3. CONTACT

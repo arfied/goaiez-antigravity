@@ -234,6 +234,7 @@ final class Subscription extends Model implements TenantScoped
             'sms_credits_used' => 'integer',
             'current_period_end' => 'datetime',
             'trial_ends_at' => 'datetime',
+            'no_card_trial_extended_until' => 'datetime',
             'ends_at' => 'datetime',
             'stripe_synced_at' => 'datetime',
             'term' => BillingTerm::class,

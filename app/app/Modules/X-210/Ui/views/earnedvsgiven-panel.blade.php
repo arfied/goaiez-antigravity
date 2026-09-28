@@ -9,12 +9,8 @@
 
         <div class="mt-8 bg-surface p-4 border rounded">
             <h3 class="text-lg font-bold text-ink">Redeem Promotion</h3>
-            @if($success)
-                <div class="text-ink bg-surface border rounded p-2 mb-4">{{ $success }}</div>
-            @endif
-            @if($error)
-                <div class="text-ink bg-surface border rounded p-2 mb-4">{{ $error }}</div>
-            @endif
+            <x-ui.toast kind="success" :message="$success" />
+            <x-ui.toast kind="error" :message="$error" />
             <form wire:submit="redeem" class="flex flex-col gap-4 mt-4">
                 <input type="text" wire:model="code" placeholder="Code" class="border rounded p-2 text-ink bg-surface">
                 <input type="number" wire:model="customerId" placeholder="Customer ID" class="border rounded p-2 text-ink bg-surface">

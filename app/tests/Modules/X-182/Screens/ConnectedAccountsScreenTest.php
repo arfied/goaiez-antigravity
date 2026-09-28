@@ -25,7 +25,7 @@ class ConnectedAccountsScreenTest extends TestCase
             ->assertSee('Your account')
             ->assertDontSee('Internal Platform Console')
             ->assertDontSee('this screen is planned in')
-            ->assertSee('not built here yet');
+            ->assertSee('Connect a Facebook Page or an Instagram account to post through Zernio.');
 
         Tenancy::set((int) $biz->id);
         SocialAccount::create([
@@ -41,7 +41,7 @@ class ConnectedAccountsScreenTest extends TestCase
             ->assertSee('@distinctive_handle_4473')
             ->assertSee('instagram')
             ->assertSee('connected')
-            ->assertDontSee('not built here yet');
+            ->assertDontSee('No social accounts connected');
 
         Livewire::actingAs($owner)->test(ConnectedAccounts::class, ['businessId' => $biz->id])->assertOk();
     }

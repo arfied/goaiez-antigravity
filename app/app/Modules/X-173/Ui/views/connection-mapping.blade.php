@@ -6,9 +6,7 @@
         <x-ui.error-panel :heading="$errorHeading ?? 'Could not save that mapping'">{{ $error }}</x-ui.error-panel>
     @endif
     
-    @if($success)
-        <p>{{ $success }}</p>
-    @endif
+    <x-ui.toast kind="success" :message="$success" />
     
     @if($waiting)
         <x-ui.attention-card state="attention" heading="Waiting on the ledger">{{ $waiting }}</x-ui.attention-card>

@@ -39,4 +39,16 @@ final class PixelEventsAction
             'payload' => $payload,
         ]);
     }
+
+    public function abandonedFormsSince(int $businessId, \DateTimeInterface $since): array
+    {
+        return PixelEvent::where('business_id', $businessId)
+            ->where('event_name', 'form.abandoned')
+            ->where('created_at', '>=', $since)
+            ->get()
+            ->map(fn (PixelEvent $event) => [
+                'abandoned_field' => $event->payload['abandoned_field'] ?? null,
+            ])
+            ->toArray();
+    }
 }

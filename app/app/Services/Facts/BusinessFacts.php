@@ -10,6 +10,7 @@ use App\Models\BusinessFact;
  * The one reader and writer of business_facts at business level (location_id
  * null). A fact the owner typed is verified_by_owner by construction; an empty
  * box deletes the row — an absent fact is a fact, not a blank to fill.
+ * Answers of a previous family stay on disk and out of sight until that industry is picked again.
  */
 final class BusinessFacts
 {
@@ -19,7 +20,7 @@ final class BusinessFacts
         return BusinessFact::query()
             ->where('business_id', $businessId)
             ->whereNull('location_id')
-            ->whereIn('key', array_keys(BusinessFactKey::all()))
+            ->whereIn('key', array_keys(BusinessFactKey::forBusiness($businessId)))
             ->whereNotNull('value')
             ->pluck('value', 'key')
             ->all();
@@ -32,7 +33,7 @@ final class BusinessFacts
 
     public function set(int $businessId, string $key, ?string $value): void
     {
-        if (! array_key_exists($key, BusinessFactKey::all())) {
+        if (! array_key_exists($key, BusinessFactKey::forBusiness($businessId))) {
             throw new \InvalidArgumentException("Unknown business fact key: {$key}");
         }
         $value = $value === null ? null : trim($value);

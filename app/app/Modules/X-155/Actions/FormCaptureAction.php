@@ -25,10 +25,11 @@ final class FormCaptureAction
     ): array {
         // P-148 (GOAIEZ-MASTER-PLAN.md:625, row 30484): an under-18 signal at ingest
         // prevents the contact row. Asserted at the write, not at the reply.
-        if ($this->isUnderEighteen($payload)) {
+        $signal = $this->ageSignal($payload);
+        if ($signal !== null) {
             return [
                 'status' => 'rejected',
-                'reason' => 'under_18',
+                'reason' => $signal,
             ];
         }
 
@@ -123,26 +124,29 @@ final class FormCaptureAction
         });
     }
 
-    private function isUnderEighteen(array $payload): bool
+    /** @return 'under_18'|'dob_unreadable'|null */
+    private function ageSignal(array $payload): ?string
     {
         if (isset($payload['age']) && is_numeric($payload['age']) && $payload['age'] < 18) {
-            return true;
+            return 'under_18';
         }
 
         foreach (['date_of_birth', 'dob'] as $key) {
             if (is_scalar($payload[$key] ?? '') && trim((string) ($payload[$key] ?? '')) !== '') {
                 try {
                     $dob = Carbon::parse($payload[$key]);
-                    if ($dob->diffInYears(now()) < 18) {
-                        return true;
-                    }
                 } catch (\Exception $e) {
-                    // unparseable value is not a signal
+                    // A value that is present but unreadable is refused and named, never
+                    // counted as an adult (wave 819).
+                    return 'dob_unreadable';
+                }
+                if ($dob->diffInYears(now()) < 18) {
+                    return 'under_18';
                 }
             }
         }
 
-        return false;
+        return null;
     }
 
     /**

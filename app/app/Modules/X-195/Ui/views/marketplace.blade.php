@@ -1,11 +1,7 @@
 <div>
     <div class="marketplace-view p-4">
-        @if($success)
-            <div class="bg-surface p-4 border rounded mb-4 text-ink">{{ $success }}</div>
-        @endif
-        @if($error)
-            <div class="bg-surface p-4 border rounded mb-4 text-ink">{{ $error }}</div>
-        @endif
+        <x-ui.toast kind="success" :message="$success" />
+        <x-ui.toast kind="error" :message="$error" />
 
         <form wire:submit="publish" class="flex flex-col gap-4 bg-surface p-4 border rounded mb-6">
             <input type="text" wire:model="itemName" class="border rounded p-2 text-ink bg-surface" placeholder="Item Name">

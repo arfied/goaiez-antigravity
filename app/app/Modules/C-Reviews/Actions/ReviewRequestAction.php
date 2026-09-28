@@ -132,23 +132,28 @@ final class ReviewRequestAction
             ];
         }
 
+        $person = app(EntityReadAction::class)->handle('people', $customerId, $businessId);
+        $hasPhone = $person !== null && ! empty($person['phone']);
+
+        // `queued` until C-Sms settles it to `sent` or `refused` (SendSettled); a
+        // customer with no phone is `no_phone` and nothing is dispatched (wave 818).
         $req = ReviewRequest::create([
             'business_id' => $businessId,
             'customer_id' => $customerId,
             'platform' => $platform,
-            'status' => 'sent',
+            'status' => $hasPhone ? 'queued' : 'no_phone',
             'gbp_suspended' => false,
         ]);
 
-        $person = app(EntityReadAction::class)->handle('people', $customerId, $businessId);
-        if ($person !== null && ! empty($person['phone'])) {
+        if ($hasPhone) {
             Event::dispatch(new SendRequested(
                 businessId: $businessId,
                 compositionId: $req->id,
                 recipientPhone: $person['phone'],
                 messageClass: self::MESSAGE_CLASS,
                 body: $promptTemplate,
-                segmentsCount: 1
+                segmentsCount: 1,
+                source: 'review_request'
             ));
         }
 
@@ -160,7 +165,8 @@ final class ReviewRequestAction
         ));
 
         return [
-            'status' => 'sent',
+            'status' => 'requested',
+            'request_status' => (string) $req->fresh()->status,
             'review_request_id' => $req->id,
             'platform' => $platform,
         ];

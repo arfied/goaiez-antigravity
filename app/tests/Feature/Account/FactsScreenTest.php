@@ -8,6 +8,8 @@ use App\Enums\UserRole;
 use App\Livewire\Account\Facts;
 use App\Models\Business;
 use App\Models\User;
+use App\Services\Facts\BusinessFactKey;
+use App\Services\Facts\BusinessFacts;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
@@ -80,6 +82,59 @@ class FactsScreenTest extends TestCase
             ->set('facts.years_in_business', 'twelve')
             ->call('save')
             ->assertHasErrors(['facts.years_in_business']);
+    }
+
+    public function test_saves_and_validates_industry(): void
+    {
+        Livewire::actingAs($this->owner)
+            ->test(Facts::class)
+            ->set('facts.industry', 'care')
+            ->call('save');
+
+        $this->assertEquals('care', app(BusinessFacts::class)->get($this->biz->id, BusinessFactKey::INDUSTRY));
+
+        Livewire::actingAs($this->owner)
+            ->test(Facts::class)
+            ->set('facts.industry', 'plumbing')
+            ->call('save')
+            ->assertHasErrors(['facts.industry']);
+
+        $this->assertEquals('care', app(BusinessFacts::class)->get($this->biz->id, BusinessFactKey::INDUSTRY));
+    }
+
+    public function test_industry_questions_appear_and_save(): void
+    {
+        Livewire::actingAs($this->owner)
+            ->test(Facts::class)
+            ->set('facts.industry', 'trades')
+            ->call('save')
+            ->assertSeeHtml('industry.emergency_callouts')
+            ->set('facts', ['industry' => 'trades', 'industry.emergency_callouts' => 'Distinctive 24/7 4591'])
+            ->call('save');
+
+        $this->assertDatabaseHas('business_facts', [
+            'business_id' => $this->biz->id,
+            'key' => 'industry.emergency_callouts',
+            'value' => 'Distinctive 24/7 4591',
+            'verified_by_owner' => true,
+        ]);
+
+        $this->assertEquals('Distinctive 24/7 4591', app(BusinessFacts::class)->get($this->biz->id, 'industry.emergency_callouts'));
+
+        Livewire::actingAs($this->owner)
+            ->test(Facts::class)
+            ->set('facts.industry', 'food')
+            ->call('save');
+
+        $this->assertDatabaseHas('business_facts', [
+            'business_id' => $this->biz->id,
+            'key' => 'industry.emergency_callouts',
+            'value' => 'Distinctive 24/7 4591',
+        ]);
+        $this->assertNull(app(BusinessFacts::class)->get($this->biz->id, 'industry.emergency_callouts'));
+
+        $this->expectException(\InvalidArgumentException::class);
+        app(BusinessFacts::class)->set($this->biz->id, 'industry.nope', 'x');
     }
 
     public function test_refuses_staff_with_no_tenant_on_get(): void

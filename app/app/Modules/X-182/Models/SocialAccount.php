@@ -10,11 +10,18 @@ class SocialAccount extends Model
 {
     protected $table = 'social_accounts';
 
-    protected $guarded = [];
+    protected $guarded = ['id', 'account_ref'];
 
     protected $casts = [
         'is_connected' => 'boolean',
+        'connected_at' => 'datetime',
+        'disconnected_at' => 'datetime',
     ];
+
+    public function isUsable(): bool
+    {
+        return $this->status === 'connected' && $this->account_ref !== null;
+    }
 
     public function posts()
     {

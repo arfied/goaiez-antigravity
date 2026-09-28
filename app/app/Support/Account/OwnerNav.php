@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Support\Account;
 
+use App\Enums\UserRole;
+use Illuminate\Support\Facades\Route;
+
 /**
  * The owner's navigation — one declaration for every screen an owner reaches.
  *
@@ -107,6 +110,7 @@ final class OwnerNav
 
             OwnerNavItem::make('Messages you sent', 'account.messages'),
             OwnerNavItem::make('Google reviews', 'account.connections', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
+            OwnerNavItem::make('Facebook reviews', 'account.facebook-reviews', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
             OwnerNavItem::make('Your account', 'account.settings', OwnerNavItem::GROUP_MORE, section: 'Your account'),
             OwnerNavItem::make('All screens', 'account.all-screens', OwnerNavItem::GROUP_MORE, section: 'Your account'),
 
@@ -137,6 +141,7 @@ final class OwnerNav
             OwnerNavItem::make('Pages', 'x-103.pages', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
             OwnerNavItem::make('Build my site', 'x-103.site-build', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
             OwnerNavItem::make('Site Inventory', 'x-103.site-inventory', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
+            OwnerNavItem::make('Forms', 'x-155.forms', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
 
             // The widget install (2950). Under More on the same distinction —
             // paste one line, name your website, never think about it again.
@@ -159,6 +164,7 @@ final class OwnerNav
             // mint a key for a tenant who predates the collector.
             OwnerNavItem::make('Let us see your website', 'account.pixel-install', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
             OwnerNavItem::make('Your business facts', 'account.facts', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
+            OwnerNavItem::make('Use your own Google Maps key', 'account.places-key', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
 
             // Under More on the same distinction, and the label is the outcome
             // rather than the mechanism (`22`): an owner is not managing a
@@ -553,7 +559,6 @@ final class OwnerNav
             OwnerNavItem::make('Schema status', 'x-176.seo-tab-website', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Chat leads', 'x-102.offline-form-inbox', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Retired devices', 'x-207.retirement-reasons', OwnerNavItem::GROUP_CATALOG),
-            OwnerNavItem::make('Forms', 'x-155.forms', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Plugin sites', 'x-104.plugin-settings-page', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Migration status', 'x-129.migration-card', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Edge deployments', 'x-157.edge-status-per', OwnerNavItem::GROUP_CATALOG),
@@ -710,10 +715,10 @@ final class OwnerNav
      */
     public static function primary(): array
     {
-        return array_values(array_filter(
+        return self::visible(array_values(array_filter(
             self::all(),
             fn (OwnerNavItem $item): bool => $item->group === OwnerNavItem::GROUP_PRIMARY,
-        ));
+        )));
     }
 
     /**
@@ -721,10 +726,10 @@ final class OwnerNav
      */
     public static function more(): array
     {
-        return array_values(array_filter(
+        return self::visible(array_values(array_filter(
             self::all(),
             fn (OwnerNavItem $item): bool => $item->group === OwnerNavItem::GROUP_MORE,
-        ));
+        )));
     }
 
     /**
@@ -749,10 +754,31 @@ final class OwnerNav
      */
     public static function catalog(): array
     {
-        return array_values(array_filter(
+        return self::visible(array_values(array_filter(
             self::all(),
             fn (OwnerNavItem $item): bool => $item->group === OwnerNavItem::GROUP_CATALOG,
-        ));
+        )));
+    }
+
+    /**
+     * @param  array<int, OwnerNavItem>  $items
+     * @return array<int, OwnerNavItem>
+     */
+    private static function visible(array $items): array
+    {
+        if (! auth()->user() || auth()->user()->hasRole(UserRole::Owner, UserRole::Manager)) {
+            return $items;
+        }
+
+        return array_values(array_filter($items, function (OwnerNavItem $item): bool {
+            $route = Route::getRoutes()->getByName($item->route);
+
+            if (! $route) {
+                return true;
+            }
+
+            return ! in_array('tenant.role', $route->gatherMiddleware(), true);
+        }));
     }
 
     public static function moreIsCurrent(): bool

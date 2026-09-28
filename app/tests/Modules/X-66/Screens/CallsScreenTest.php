@@ -62,9 +62,9 @@ class CallsScreenTest extends TestCase
     {
         $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
         $this->actingAs($user);
-        $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
 
         $this->get(route('x-66.calls.admin'))->assertOk();
+        $this->get(route('x-66.calls.admin'))->assertSee('No business is in view');
 
         Livewire::test(Calls::class)->assertOk();
     }
@@ -111,7 +111,7 @@ class CallsScreenTest extends TestCase
             ->set('callSid', '')
             ->call('recordCall')
             ->assertSet('error', 'Call SID is required.');
-        
+
         $this->assertDatabaseMissing($table, [
             'from_phone' => '+123',
         ]);

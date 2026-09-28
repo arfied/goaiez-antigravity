@@ -26,7 +26,8 @@ final class SchemaRenderAction
         ?array $events = null,
         ?array $address = null,
         ?array $breadcrumbs = null,
-        ?array $faqs = null
+        ?array $faqs = null,
+        string $pathPrefix = ''
     ): array {
         if ($entityType === null) {
             $vertical = strtolower(trim((string) (Business::find($businessId)->vertical ?? '')));
@@ -44,7 +45,7 @@ final class SchemaRenderAction
         }
 
         $canonical = app(SeoRenderAction::class)
-            ->handle($businessId, $pageId, $businessName, $commitId, $domainName)['canonical'];
+            ->handle($businessId, $pageId, $businessName, $commitId, $domainName, $pathPrefix)['canonical'];
 
         // Build valid schema.org structure (G8-32)
         $jsonLd = [
@@ -59,15 +60,26 @@ final class SchemaRenderAction
             $jsonLd['hasOfferCatalog'] = [
                 '@type' => 'OfferCatalog',
                 'name' => 'Services Pricebook',
-                'itemListElement' => array_map(fn ($p) => [
-                    '@type' => 'Offer',
-                    'itemOffered' => [
-                        '@type' => 'Service',
-                        'name' => $p['name'],
-                    ],
-                    'price' => $p['price'] ?? null,
-                    'priceCurrency' => 'USD',
-                ], $productOffers),
+                'itemListElement' => array_map(fn ($p) => isset($p['price_max'])
+                    ? [
+                        '@type' => 'AggregateOffer',
+                        'itemOffered' => [
+                            '@type' => 'Service',
+                            'name' => $p['name'],
+                        ],
+                        'lowPrice' => $p['price'] ?? null,
+                        'highPrice' => $p['price_max'],
+                        'priceCurrency' => $p['currency'] ?? 'USD',
+                    ]
+                    : [
+                        '@type' => 'Offer',
+                        'itemOffered' => [
+                            '@type' => 'Service',
+                            'name' => $p['name'],
+                        ],
+                        'price' => $p['price'] ?? null,
+                        'priceCurrency' => $p['currency'] ?? 'USD',
+                    ], $productOffers),
             ];
         }
 
@@ -129,7 +141,7 @@ final class SchemaRenderAction
                     '@type' => 'ListItem',
                     'position' => $position,
                     'name' => $crumb['name'],
-                    'item' => 'https://'.$domainName.'/'.$crumb['slug'],
+                    'item' => 'https://'.$domainName.$pathPrefix.'/'.$crumb['slug'],
                 ];
                 $position++;
             }
@@ -217,10 +229,17 @@ final class SchemaRenderAction
                 return false;
             }
             foreach ($catalog['itemListElement'] as $item) {
-                if (($item['@type'] ?? '') !== 'Offer' || ($item['itemOffered']['@type'] ?? '') !== 'Service') {
+                $type = $item['@type'] ?? '';
+                if (! in_array($type, ['Offer', 'AggregateOffer'], true) || ($item['itemOffered']['@type'] ?? '') !== 'Service') {
                     return false;
                 }
-                if (! array_key_exists('price', $item) || $item['price'] === null || ! isset($item['priceCurrency'])) {
+                if (! isset($item['priceCurrency'])) {
+                    return false;
+                }
+                if ($type === 'Offer' && (! array_key_exists('price', $item) || $item['price'] === null)) {
+                    return false;
+                }
+                if ($type === 'AggregateOffer' && (! isset($item['lowPrice'], $item['highPrice']) || $item['lowPrice'] > $item['highPrice'])) {
                     return false;
                 }
             }

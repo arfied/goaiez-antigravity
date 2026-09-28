@@ -6,7 +6,9 @@ namespace Tests\Modules\CTelephony\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\CTelephony\Actions\CarrierSendAction;
 use App\Modules\CTelephony\Ui\CarrierRosterHealth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -63,5 +65,44 @@ class CarrierRosterHealthScreenTest extends TestCase
         $this->assertDatabaseMissing('carrier_health', [
             'business_id' => $biz->id,
         ]);
+    }
+
+    public function test_a_carrier_marked_cold_on_the_screen_refuses_rcs_the_way_the_router_promises(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Livewire::test(CarrierRosterHealth::class)
+            ->set('carrierName', 'sinch')
+            ->set('status', 'cold')
+            ->call('recordHealth');
+
+        $this->assertDatabaseHas('carrier_health', [
+            'carrier_name' => 'sinch',
+            'status' => 'cold',
+        ]);
+
+        DB::table('carrier_credentials')->insert([
+            ['business_id' => $biz->id, 'carrier_name' => 'telnyx', 'api_key' => 'key_telnyx', 'created_at' => now(), 'updated_at' => now()],
+            ['business_id' => $biz->id, 'carrier_name' => 'infobip', 'api_key' => 'key_infobip', 'created_at' => now(), 'updated_at' => now()],
+            ['business_id' => $biz->id, 'carrier_name' => 'sinch', 'api_key' => 'key_sinch', 'created_at' => now(), 'updated_at' => now()],
+        ]);
+
+        $rcsRes = app(CarrierSendAction::class)->handle(
+            businessId: $biz->id,
+            threadKey: 'rcs-thread-sinch-cold',
+            toPhone: '+15125550188',
+            body: 'Rich RCS card payload',
+            isRcs: true,
+            preferredCarrier: 'sinch'
+        );
+
+        $this->assertEquals('refused', $rcsRes['status']);
+        $this->assertEquals('sinch', $rcsRes['carrier']);
+        $this->assertEquals('RCS_CARRIER_COLD', $rcsRes['reason']);
+
+        $this->get(route('c-telephony.carrier-roster-health'))
+            ->assertSeeInOrder(['sinch', '[cold]']);
     }
 }

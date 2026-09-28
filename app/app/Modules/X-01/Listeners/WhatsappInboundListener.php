@@ -24,7 +24,8 @@ final class WhatsappInboundListener
             'whatsapp',
             $event->recipientPhone,
             $event->senderName,
-            $event->body
+            $event->body,
+            $event->attachments
         );
     }
 }

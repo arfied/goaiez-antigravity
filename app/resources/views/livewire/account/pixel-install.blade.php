@@ -160,7 +160,7 @@
             websites needs to see which of them is written down — that is the
             difference between "your tracking is broken" and a job that takes
             two minutes. Rendered exactly as stored, because that is the string
-            the gate compares (`WidgetPlugins::listedHosts()`).
+            the gate compares (`WidgetPlugins::acceptedHosts()`).
 
             empty-state: absent because the four states above already say what
             an empty list means, in a sentence with the action beside it — a

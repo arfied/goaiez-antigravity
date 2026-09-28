@@ -7,6 +7,9 @@ namespace App\Support;
 use App\Enums\AiTask;
 use App\Enums\Plan;
 use App\Enums\StoredObjectKind;
+use App\Jobs\AutopilotJob;
+use App\Jobs\PublicAuditJob;
+use App\Jobs\RunCampaignJob;
 use App\Modules\CBilling\Domain\BillingLedgerEngine;
 use App\Modules\CMail\Actions\EmailWarmupAction;
 use App\Modules\CReviews\Actions\ReviewRequestAction;
@@ -27,9 +30,6 @@ use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X202\Domain\ApprovalDeskEngine;
 use App\Modules\X205\Domain\AffiliateEngine;
 use App\Modules\X219\Actions\ProviderHealthAction;
-use App\Jobs\AutopilotJob;
-use App\Jobs\PublicAuditJob;
-use App\Jobs\RunCampaignJob;
 use App\Services\Activity\ActivityFeed;
 use App\Services\Actuation\SiteChanges;
 use App\Services\Actuation\SiteMeasurements;
@@ -77,22 +77,22 @@ use App\Services\Mail\GooglePushTokenVerifier;
 use App\Services\Mail\MailDrivers;
 use App\Services\Mail\MailQuota;
 use App\Services\Mail\MailSendRate;
+use App\Services\Mail\SnsMessageVerifier;
+use App\Services\Mail\SnsSubscriptions;
 use App\Services\Messaging\Composer\NameNormaliser;
 use App\Services\Messaging\MessageLog;
 use App\Services\Messaging\PlatformComplaintRate;
 use App\Services\Messaging\RecoveryCheckInSender;
 use App\Services\Messaging\SendingHealth;
-use App\Services\Mail\SnsMessageVerifier;
-use App\Services\Mail\SnsSubscriptions;
 use App\Services\Ops\OperatorAlerts;
 use App\Services\Ops\PlatformHealthChecks;
 use App\Services\Ops\ScheduledRunMeter;
 use App\Services\Pixel\IngestRejects;
+use App\Services\Places\GooglePlacesClient;
 use App\Services\Reviews\ReplyGenerator;
 use App\Services\Reviews\ResponseTemplates;
 use App\Services\Reviews\ReviewHubPages;
 use App\Services\Reviews\ReviewReplies;
-use App\Services\Places\GooglePlacesClient;
 use App\Services\Sms\InboundMediaFetcher;
 use App\Services\Sms\InfobipClient;
 use App\Services\Sms\InfobipWebhookVerifier;
@@ -107,6 +107,8 @@ use App\Services\Warehouse\PixelSightings;
 use App\Services\Warehouse\Replayer;
 use App\Services\Warehouse\WarehouseRetention;
 use App\Services\Widgets\WidgetInstalls;
+use App\Services\Zernio\ZernioSocialMedia;
+use App\Services\Zernio\ZernioWhatsappMedia;
 
 /**
  * THE SEED MANIFEST — doc `38` Part 2's "one reviewed file", CFG1.
@@ -306,10 +308,30 @@ final class DefaultsManifest
                 'group' => 'Content',
                 'description' => 'The model router\'s per-task override for site_copy (seed = the same model the Conversation task seeds).',
             ],
+            'social.zernio_enabled' => [
+                'seed' => false,
+                'group' => 'Content',
+                'description' => 'Whether Facebook Page and Instagram posts go out through Zernio. Off until the owner connects an account. The first connection for a business creates its Zernio profile through the Google Business integration, so gbp.zernio_enabled must be on for that step.',
+            ],
             'sites.copy.system_prompt' => [
-                'seed' => 'Rewrite this text for a small local service business. Keep every fact and number, use plain words, and output at most {max_chars} characters.',
+                'seed' => 'Rewrite this text for a small local service business. Keep every fact and number, use plain words, and output at most {max_chars} characters. If notes about nearby businesses are included, they are reference only: cover what they cover if it fits, in this business\'s own words; never reuse a name, sentence or phrase from them.',
                 'group' => 'Content',
                 'description' => 'The system prompt used to polish drafted site copy.',
+            ],
+            'sites.edit.system_prompt' => [
+                'seed' => 'You edit a small business website. You receive the page as a JSON list of blocks and a request from the owner. Return ONLY JSON with two keys: "blocks" — the full new block list, same shape as the input, keeping every key you did not change — and "explanation" — two or three plain sentences saying what you changed and why. Rules: never invent a price, a year, a licence number, a review count or any claim; keep the owner\'s own wording of what they do unless the request is about wording; you may reorder, add or remove blocks only of these types: hero, about, services, reviews_strip, booking_button, contact, faq, video_embed, gallery, team, form.',
+                'group' => 'Content',
+                'description' => 'System prompt for the talk-to-your-site editor: the AI rewrites a page\'s block list from an owner\'s plain-words request and explains what it changed',
+            ],
+            'sites.page.system_prompt' => [
+                'seed' => 'You make ONE new page for a small business website from the owner\'s plain-words request. Return ONLY JSON with four keys: "title" — the page title in the owner\'s words; "slug" — a short lowercase URL word or two with hyphens; "blocks" — a list of blocks, each an object with a "type" and the fields that type needs; "explanation" — two or three plain sentences saying what the page contains. Rules: never invent a price, a date, a year, a licence number, a review count or any claim the owner did not state; if the request names an offer, describe it only in the owner\'s terms; use only these block types: hero (headline, subline), about (text), services (items: name, description), faq (items: question, answer), booking_button (label, url), contact. If notes about nearby businesses are included, they are reference only: cover what they cover if it fits, in this business\'s own words; never reuse a name, sentence or phrase from them.',
+                'group' => 'Content',
+                'description' => 'System prompt for "Make me a page": the AI proposes a new page (title, slug, blocks) from an owner\'s plain-words request; the page lands as an unpublished draft the owner publishes or deletes',
+            ],
+            'sites.variant.system_prompt' => [
+                'seed' => 'Write exactly two alternative headlines for the top of a local service business\'s home page. Plain words, at most 70 characters each, no prices, no claims the facts do not support, no business names of any kind. Return them as a list.',
+                'group' => 'Content',
+                'description' => 'System prompt for proposing variant headlines: the AI proposes two alternative headlines for the home page.',
             ],
             'sites.copy.max_chars' => [
                 'seed' => 600,
@@ -568,6 +590,28 @@ final class DefaultsManifest
                 'seed' => false,
                 'group' => 'Google Business Profile',
                 'description' => 'Whether Google Business reads route through Zernio while our own GBP API application is pending. Off until a tenant-scoped account mapping exists — the client cannot verify that an account id belongs to the tenant it is called for. Retire this key when direct access is approved; the swap re-authorises every tenant and is a commercial decision, not a deploy.',
+            ],
+
+            'whatsapp.zernio_enabled' => [
+                'seed' => false,
+                'group' => 'Messaging',
+                'description' => 'Whether WhatsApp routes through Zernio. Off until the owner connects a number. The first connection for a business creates its Zernio profile through the Google Business integration, so gbp.zernio_enabled must be on for that step.',
+            ],
+
+            'whatsapp.zernio_onboarding' => [
+                'seed' => 'api',
+                'group' => 'Messaging',
+                'description' => 'Zernio onboarding mode for connecting a number. api is Cloud API only; business_app keeps the number usable in the WhatsApp Business phone app but caps throughput at 20 messages a second and disables groups and calling.',
+            ],
+            'whatsapp.media_max_bytes' => [
+                'seed' => ZernioWhatsappMedia::MAX_BYTES,
+                'group' => 'Messaging',
+                'description' => 'Largest WhatsApp photo, voice note or file saved from an incoming message, in bytes.',
+            ],
+            'social.dm_media_max_bytes' => [
+                'seed' => ZernioSocialMedia::MAX_BYTES,
+                'group' => 'Messaging',
+                'description' => 'Largest photo or file saved from an incoming Facebook or Instagram message, in bytes.',
             ],
 
             /*
@@ -2129,6 +2173,12 @@ final class DefaultsManifest
                 'description' => 'Whether the weekly wins digest is emailed to account holders at all (automation #109, `16` §12). On by default — every send is account-holder email through PlatformMailer, needing no consent record. Turn it off to stop the whole sweep without a deploy; no week is lost, because the cursor moves only on a delivery and the next digest widens to cover the gap.',
             ],
 
+            'owner_digest.monthly_enabled' => [
+                'seed' => true,
+                'group' => 'Trust',
+                'description' => 'Whether the monthly "what your website did" email is sent to account holders at all. On by default — account-holder email through PlatformMailer, no consent record needed. Off stops the sweep without a deploy; the cursor moves only on a delivery, so the next email widens to cover the gap.',
+            ],
+
             /*
              * The domain every platform email is sent from (5500).
              *
@@ -3582,6 +3632,24 @@ final class DefaultsManifest
                 'seed' => 'Write at most 6 plain-language question and answer pairs a customer of a local service business would ask. Use ONLY the facts given, include no prices not present, and make no promises.',
                 'group' => 'Content',
                 'description' => 'System prompt for generating the FAQ block.',
+            ],
+
+            'sites.questions.recent_days' => [
+                'seed' => 90,
+                'group' => 'Content',
+                'description' => 'How many days back the Pages screen looks for questions customers typed into the site chat or the contact form.',
+            ],
+
+            'sites.questions.max' => [
+                'seed' => 20,
+                'group' => 'Content',
+                'description' => 'How many unanswered customer questions the Pages screen lists at once.',
+            ],
+
+            'sites.questions.answer_system_prompt' => [
+                'seed' => "Answer ONE customer question in plain language for a local service business. Use ONLY the facts given, include no prices not present, make no promises, and keep the customer's question as asked, tidied for spelling only. Return the question and the answer.",
+                'group' => 'Content',
+                'description' => 'System prompt for answering customer questions on Pages.',
             ],
 
             'reviews.reply.max_recovery_length' => [

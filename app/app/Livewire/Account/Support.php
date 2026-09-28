@@ -128,7 +128,7 @@ final class Support extends Component
             return;
         }
 
-        Toaster::success('Closed — replying opens it again');
+        Toaster::success('Closed — ask a new question and we will pick it up there');
     }
 
     public function render(SupportDesk $desk): View

@@ -16,10 +16,12 @@ use App\Modules\X171\Models\DeviceSyncQueue;
 use App\Support\Tenancy;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class StafffacingApp extends Component
 {
+    #[Locked]
     public $deviceId = 'device_default'; // the default until the app sends a device id
 
     public $errorMessage = null;

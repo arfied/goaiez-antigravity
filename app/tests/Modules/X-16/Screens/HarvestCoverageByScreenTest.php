@@ -9,6 +9,8 @@ use App\Models\User;
 use App\Modules\X16\Models\PlacesRecord;
 use App\Modules\X16\Models\ServicePolygon;
 use App\Modules\X16\Ui\HarvestCoverageBy;
+use App\Modules\X206\Actions\CredentialStoreAction;
+use App\Services\Places\GooglePlacesClient;
 use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -74,5 +76,27 @@ class HarvestCoverageByScreenTest extends TestCase
         $this->get(route('x-16.harvest-coverage-by.admin'))->assertOk();
 
         Livewire::test(HarvestCoverageBy::class)->assertOk();
+    }
+
+    public function test_the_places_key_card_disappears_once_the_tenant_connects_a_key(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $this->get(route('x-16.harvest-coverage-by'))
+            ->assertOk()
+            ->assertSee('no key is connected yet');
+
+        app(CredentialStoreAction::class)->handle(
+            $biz->id,
+            GooglePlacesClient::TENANT_SERVICE,
+            str_repeat('k', 39)
+        );
+
+        $this->get(route('x-16.harvest-coverage-by'))
+            ->assertOk()
+            ->assertDontSee('no key is connected yet')
+            ->assertSee('harvested');
     }
 }

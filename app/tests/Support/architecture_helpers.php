@@ -674,6 +674,9 @@ function outboundHttpPermittedFiles(): array
         // entry and the inventory row are one change. That coupling is the point:
         // the only way to reach a new vendor is to name it.
         'Services/Gbp/ZernioGbpClient.php',
+        // Zernio (same host) — WhatsApp, H2 wave 839
+        'Services/Zernio/ZernioWhatsappClient.php',
+        'Services/Zernio/ZernioHttp.php', // Zernio (same host) — shared transport for social posting, H3
 
         // Stripe — payments (X-198). A documented vendor JSON API with a
         // credential and an idempotency key, like the entries above; it never
@@ -682,6 +685,12 @@ function outboundHttpPermittedFiles(): array
         // client the lint would have to be weakened for.
         'Modules/X-198/Domain/StripeGatewayClient.php',
 
+        // Google Places key validation (X-206, SIXTY-40). One autocomplete POST
+        // to places.googleapis.com with the CANDIDATE key — the same host
+        // GooglePlacesClient reaches, sent outside that client on purpose: the
+        // client resolves the stored key, and this call must not. A vendor JSON
+        // API with a credential, never a page fetch.
+        'Modules/X-206/Actions/PlacesKeyValidateAction.php',
         // IndexNow (row 9 slice E). One POST to the protocol's shared
         // endpoint, which the protocol itself requires: "You may submit your
         // request to only one of the following participating endpoints … your
@@ -985,6 +994,10 @@ function outboundHttpPermittedFiles(): array
         // the gateway's: an allowlist checked before any socket, three hops, and
         // a private-address rejection on every one.
         'Services/Places/ShortLinkResolver.php',
+
+        // Owner ruling 2026-09-28 (main REVIEWS): outbound webhooks to a tenant's own
+        // https URL, guarded by PublicAddressGuard, pinned, no redirects.
+        'Services/Webhooks/TenantWebhookClient.php',
     ];
 }
 /**
