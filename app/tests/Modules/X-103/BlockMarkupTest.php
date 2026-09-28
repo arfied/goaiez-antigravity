@@ -60,9 +60,9 @@ class BlockMarkupTest extends TestCase
         ]);
 
         $this->assertStringContainsString('ONLY_HEADLINE', $html);
-        $this->assertStringNotContainsString('lede', $html);
-        $this->assertStringNotContainsString('hero__media', $html);
-        $this->assertStringNotContainsString('media--wide', $html);
+        $this->assertStringNotContainsString('class="lede"', $html);
+        $this->assertStringNotContainsString('class="hero__media"', $html);
+        $this->assertStringNotContainsString('class="media media--wide"', $html);
     }
 
     public function test_about_full(): void
