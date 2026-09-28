@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Middleware;
 
 use App\Models\Business;
+use App\Models\BusinessMembership;
 use App\Support\Tenancy;
 use Closure;
 use Illuminate\Http\Request;
@@ -27,6 +28,10 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * Runs before SubstituteBindings, which is not optional: route model binding
  * resolves tenant-scoped models, and binding one before the tenant exists throws.
+ *
+ * Membership is the second way in, it reads its own table through member_lookup,
+ * it is not a third businesses policy (decision 800), and it is one business
+ * per person.
  */
 final class ResolveTenant
 {
@@ -84,6 +89,16 @@ final class ResolveTenant
             ->first();
 
         if ($business === null) {
+            $membership = BusinessMembership::withoutGlobalScopes()
+                ->where('user_id', $userId)
+                ->whereNotNull('accepted_at')
+                ->whereNull('revoked_at')
+                ->first();
+
+            if ($membership !== null) {
+                Tenancy::set((int) $membership->business_id);
+            }
+
             return $next($request);
         }
 
