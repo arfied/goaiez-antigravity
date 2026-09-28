@@ -28,6 +28,10 @@ final class SiteInventory extends Component
 
     public function mount(): void
     {
+        // A platform admin arrives here with no tenant (staff own no business); this
+        // screen works on ONE business's website, so refuse plainly rather than render
+        // controls that throw on use — the same ruling as SiteBuild (wave 834).
+        abort_unless(Tenancy::check(), 403, 'Your current website works on one business — open it from Tenant locations first.');
         $tenantId = Tenancy::id();
         $location = $tenantId ? Location::where('business_id', $tenantId)->first() : null;
         $stored = $location && is_array($location->opening_hours) ? $location->opening_hours : [];
@@ -55,6 +59,7 @@ final class SiteInventory extends Component
 
     public function saveHours(): void
     {
+
         $tenantId = Tenancy::idOrFail();
         $location = Location::where('business_id', $tenantId)->first();
         if ($location === null) {
@@ -92,6 +97,7 @@ final class SiteInventory extends Component
 
     public function saveAlt(int $imageId): void
     {
+
         Tenancy::idOrFail();
         $image = SiteInventoryImage::where('status', 'stored')->find($imageId);
         if ($image === null) {
@@ -112,6 +118,7 @@ final class SiteInventory extends Component
 
     public function crawl(SiteCrawlAction $action): void
     {
+
         try {
             $tenantId = Tenancy::idOrFail();
             $location = Location::where('business_id', $tenantId)->first();
@@ -134,6 +141,7 @@ final class SiteInventory extends Component
 
     public function copyImages(SiteImagesCopyAction $action): void
     {
+
         try {
             $tenantId = Tenancy::idOrFail();
             $location = Location::where('business_id', $tenantId)->first();
@@ -149,6 +157,7 @@ final class SiteInventory extends Component
 
     public function draftSite(SiteDraftAction $action): void
     {
+
         try {
             $tenantId = Tenancy::idOrFail();
             $location = Location::where('business_id', $tenantId)->first();

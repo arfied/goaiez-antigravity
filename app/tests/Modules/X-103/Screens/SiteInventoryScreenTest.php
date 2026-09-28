@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\Enums\FetchRefusalReason;
 use App\Enums\UserRole;
-use App\Exceptions\TenantNotResolved;
 use App\Models\Location;
 use App\Models\User;
 use App\Modules\X103\Actions\SiteCrawlAction;
@@ -12,12 +11,13 @@ use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\SiteInventoryImage;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Modules\X103\Ui\SiteInventory;
+use App\Exceptions\TenantNotResolved;
 use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Http;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 it('renders for a tenant', function () {
     $owner = User::factory()->create(['role' => UserRole::Owner]);
@@ -659,5 +659,5 @@ test('a platform admin with no tenant sees an empty site inventory not a 500', f
     $admin = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
     $this->actingAs($admin)
         ->get(route('x-103.site-inventory.admin'))
-        ->assertOk();
+        ->assertForbidden();
 });
