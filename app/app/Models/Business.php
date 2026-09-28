@@ -133,6 +133,7 @@ final class Business extends Model implements TenantScoped
             'suspended_at' => 'datetime',
             'owner_digest_sent_at' => 'datetime',
             'owner_monthly_digest_sent_at' => 'datetime',
+            'site_tokens' => 'array',
         ];
     }
 

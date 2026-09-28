@@ -24,7 +24,8 @@ class ChatScriptTest extends TestCase
 
         $content = $response->getContent();
         $this->assertStringContainsString('Tick "You may contact me about this" first', $content);
-        $this->assertStringContainsString('ensureSession(', $content);
-        $this->assertTrue(substr_count($content, 'consentCheckbox.checked') >= 2);
+        $source = file_get_contents(resource_path('js/chat.js'));
+        $this->assertStringContainsString('ensureSession(', $source);
+        $this->assertTrue(substr_count($source, 'consentCheckbox.checked') >= 2);
     }
 }

@@ -210,7 +210,7 @@ final class AiSpend
 
             if ($assignment !== null) {
                 $model = AiModel::tryFrom($assignment);
-                if ($model !== null && $model->isEmbedding() === $task->producesEmbedding()) {
+                if ($model !== null && $model->isEmbedding() === $task->producesEmbedding() && $model->isImage() === $task->producesImage()) {
                     return $model;
                 }
             }
@@ -238,7 +238,7 @@ final class AiSpend
         // Degrading to the tier's default is the same answer this method already
         // gives a typo, for the same reason: a queued job should not die of a
         // settings row.
-        if ($model->isEmbedding() !== $task->producesEmbedding()) {
+        if ($model->isEmbedding() !== $task->producesEmbedding() || $model->isImage() !== $task->producesImage()) {
             return $task->defaultModel();
         }
 
@@ -490,6 +490,30 @@ final class AiSpend
         // this application — knowledge ingest — so an unmetered embedding path is
         // the one most likely to be the whole bill. `record()`'s reasoning above
         // applies unchanged.
+        $this->credits->debitForCall($retail, $call);
+
+        return $call;
+    }
+
+    public function recordImage(AiTask $task, ImageResponse $response, int $promptId, int $promptVersion): AiCall
+    {
+        $cost = $response->costInHundredthsOfCents();
+        $retail = $this->credits->retailFor($cost);
+
+        $call = AiCall::query()->create([
+            'task' => $task,
+            'provider' => $response->model->provider(),
+            'model' => $response->model,
+            'input_tokens' => $response->inputTokens,
+            'output_tokens' => $response->outputTokens,
+            'cost_hundredths_cents' => $cost,
+            'retail_hundredths_cents' => $retail,
+            'refused' => false,
+            'failure_reason' => $response->failureReason,
+            'prompt_id' => $promptId,
+            'prompt_version' => $promptVersion,
+        ]);
+
         $this->credits->debitForCall($retail, $call);
 
         return $call;

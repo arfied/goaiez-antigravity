@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X178\Ui;
 
 use App\Enums\UserRole;
+use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X178\Actions\DesignUndoAction;
 use App\Modules\X178\Actions\FormGenerateAction;
 use App\Modules\X178\Models\DesignChange;
@@ -73,8 +74,13 @@ class SiteEditorAssistant extends Component
             ? DesignChange::where('business_id', $this->businessId)->latest()->get()
             : collect();
 
+        $pages = ($this->businessId > 0)
+            ? app(PageReadAction::class)->allFor($this->businessId)
+            : collect();
+
         return view('x-178::site-editor-assistant', [
             'changes' => $changes,
+            'pages' => $pages,
         ]);
     }
 }

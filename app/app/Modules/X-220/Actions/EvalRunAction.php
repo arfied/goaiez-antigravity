@@ -78,6 +78,7 @@ final class EvalRunAction
                 AiTask::Conversation => AiTask::Conversation,
                 AiTask::KnowledgeEmbedding => AiTask::KnowledgeEmbedding,
                 AiTask::SiteCopy => AiTask::SiteCopy,
+                AiTask::SiteImage => AiTask::SiteImage,
             };
         }
 

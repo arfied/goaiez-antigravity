@@ -95,6 +95,8 @@ enum AiTask: string
      */
     case Conversation = 'conversation';
 
+    case SiteImage = 'site_image';
+
     /**
      * The `platform_settings` key an operator overrides to move this tier.
      */
@@ -114,6 +116,7 @@ enum AiTask: string
             self::Conversation,
             self::SiteCopy => AiModel::Gpt4oMini,
             self::KnowledgeEmbedding => AiModel::TextEmbedding3Small,
+            self::SiteImage => AiModel::GptImage25Flare,
         };
     }
 
@@ -132,6 +135,11 @@ enum AiTask: string
     public function producesEmbedding(): bool
     {
         return $this === self::KnowledgeEmbedding;
+    }
+
+    public function producesImage(): bool
+    {
+        return $this === self::SiteImage;
     }
 
     /**
@@ -164,6 +172,7 @@ enum AiTask: string
             // embedding tier outright, which is the guard that makes this arm
             // unreachable rather than merely unused.
             self::KnowledgeEmbedding => 0,
+            self::SiteImage => 0,
         };
     }
 
