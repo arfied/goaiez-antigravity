@@ -113,7 +113,7 @@ class PagesScreenTest extends TestCase
 
         $this->get(route('x-103.pages'))
             ->assertOk()
-            ->assertSee('Published')
+            ->assertSee('Live')
             ->assertDontSee('Draft');
     }
 
@@ -181,7 +181,7 @@ class PagesScreenTest extends TestCase
             ->assertHeader('Content-Type', 'text/html; charset=utf-8')
             ->assertSee('Launch Platform');
 
-        $this->get(route('x-103.pages'))
+        $this->get(route('x-103.pages').'?edit='.$page->id)
             ->assertOk()
             ->assertSee($deployment->deploy_hash);
     }
@@ -545,11 +545,12 @@ class PagesScreenTest extends TestCase
         $v2 = PageVersion::where('page_id', $page->id)->latest('id')->first();
 
         Livewire::test(Pages::class)
+            ->call('openEditor', $page->id)
             ->call('toggleHistory', $page->id)
             ->assertSee($v2->commit_id)
             ->assertSee($v1->commit_id)
             ->assertSeeInOrder([$v2->commit_id, $v1->commit_id]) // newest first
-            ->assertSee('(Current)'); // marks current (v2)
+            ->assertSee('Current version'); // marks current (v2)
     }
 
     public function test_restoring_a_previous_version_publishes_its_blocks_again(): void
@@ -926,7 +927,7 @@ class PagesScreenTest extends TestCase
             'is_published' => false,
         ]);
 
-        $this->actingAs($owner)->get(route('x-103.pages'))
+        $this->actingAs($owner)->get(route('x-103.pages').'?edit='.$page->id)
             ->assertOk()
             ->assertSee('Ask the AI for questions and answers');
 
@@ -938,7 +939,7 @@ class PagesScreenTest extends TestCase
 
         $page->update(['draft_meta' => ['pending_faq' => ['items' => [['question' => 'Distinctive question 4491?', 'answer' => 'Distinctive answer 4492.']], 'model' => 'openai-4o-mini']]]);
 
-        $this->actingAs($owner)->get(route('x-103.pages'))
+        $this->actingAs($owner)->get(route('x-103.pages').'?edit='.$page->id)
             ->assertSee('Proposed questions')
             ->assertSee('Distinctive question 4491?')
             ->assertSee('Place on this page');
@@ -946,7 +947,7 @@ class PagesScreenTest extends TestCase
         Livewire::actingAs($owner)->test(Pages::class)
             ->call('placeFaq', $page->id);
 
-        $this->actingAs($owner)->get(route('x-103.pages'))
+        $this->actingAs($owner)->get(route('x-103.pages').'?edit='.$page->id)
             ->assertDontSee('Proposed questions')
             ->assertSee('1 question — Distinctive question 4491?');
 
@@ -1421,13 +1422,13 @@ class PagesScreenTest extends TestCase
         Livewire::actingAs($owner)->test(Pages::class)
             ->call('polish', $page->id);
 
-        $this->actingAs($owner)->get(route('x-103.pages'))
+        $this->actingAs($owner)->get(route('x-103.pages').'?edit='.$page->id)
             ->assertSee('with 1 nearby business as reference');
 
         Livewire::actingAs($owner)->test(Pages::class)
             ->call('restoreOriginal', $page->id);
 
-        $this->actingAs($owner)->get(route('x-103.pages'))
+        $this->actingAs($owner)->get(route('x-103.pages').'?edit='.$page->id)
             ->assertDontSee('as reference');
 
         $page->refresh();
@@ -1440,9 +1441,18 @@ class PagesScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'questions-page-4521',
+            'title' => 'Questions',
+            'draft_blocks' => [],
+            'is_published' => false,
+        ]);
+
         $this->get(route('x-103.pages').'?edit='.$page->id)
             ->assertOk()
-            ->assertDontSee('Customer questions');
+            ->assertSee('Questions customers asked (0)')
+            ->assertSee('Nothing waiting');
 
         Tenancy::setUser($owner->id);
         $session = ChatSession::create([
@@ -1462,10 +1472,10 @@ class PagesScreenTest extends TestCase
 
         $this->get(route('x-103.pages').'?edit='.$page->id)
             ->assertOk()
-            ->assertSee('Customer questions')
+            ->assertSee('Questions customers asked (1)')
             ->assertSee('&lt;b&gt;Distinctive 4521&lt;/b&gt;?', false)
             ->assertDontSee('<b>Distinctive 4521</b>', false)
-            ->assertSee('From site chat');
+            ->assertSee('from your site chat');
     }
 
     public function test_customer_question_panel_draft_answer(): void
@@ -1531,6 +1541,7 @@ class PagesScreenTest extends TestCase
         ]);
 
         Livewire::test(Pages::class)
+            ->call('openEditor', $page->id)
             ->assertSee('Draft an answer')
             ->assertSee('Choose a page')
             ->set('answerPage.chat:'.$turn->id, $page->id)
@@ -1568,9 +1579,17 @@ class PagesScreenTest extends TestCase
             'created_at' => now()->subMinutes(10),
         ]);
 
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'test-page-draft',
+            'title' => 'Test Draft',
+            'is_published' => false,
+        ]);
+
         $this->actingAs($owner);
 
         Livewire::test(Pages::class)
+            ->call('openEditor', $page->id)
             ->assertSee('Draft an answer')
             ->assertDontSee('arrives in the next update');
     }

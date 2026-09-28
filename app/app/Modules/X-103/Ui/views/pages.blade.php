@@ -9,7 +9,7 @@
         
         <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
             <div class="flex items-center gap-4">
-                <h2 class="font-display text-2xl font-semibold text-ink">{{ $editing->title }}</h2>
+                <h2 class="font-display text-2xl font-semibold text-ink">Editing {{ $editing->title }}</h2>
                 <span class="font-mono text-sm text-ink-2">{{ $editing->slug }}</span>
                 
                 @if($editing->is_published)
@@ -34,7 +34,11 @@
                 @endif
                 <x-ui.button variant="secondary" size="default" wire:click="duplicatePage({{ $editing->id }})">Duplicate</x-ui.button>
                 <x-ui.button variant="secondary" size="default" wire:click="closeEditor">Close editor</x-ui.button>
-                <x-ui.button variant="primary" size="default" wire:click="publish({{ $editing->id }})">Publish</x-ui.button>
+                @if(! $editing->is_published)
+                    <x-ui.button variant="primary" size="default" wire:click="publish({{ $editing->id }})">Publish</x-ui.button>
+                @elseif($hasChanges)
+                    <x-ui.button variant="primary" size="default" wire:click="publish({{ $editing->id }})">Publish changes</x-ui.button>
+                @endif
             </div>
         </div>
 
@@ -93,9 +97,20 @@
                                     <div class="text-xs font-semibold text-ink-2 uppercase tracking-wide">{{ $block['type'] ?? 'Block' }}</div>
                                     <button wire:click="removeBlock({{ $editing->id }}, {{ $idx }})" class="text-xs text-ink-2 hover:text-ink">Remove</button>
                                 </div>
-                                <div class="text-sm text-ink mt-1 truncate">
-                                    {{ $block['headline'] ?? $block['text'] ?? $block['label'] ?? $block['question'] ?? $block['name'] ?? '' }}
-                                </div>
+                                    @if(($block['type'] ?? '') === 'faq')
+                                        @if(isset($block['items']) && is_array($block['items']))
+                                            <div><strong>FAQ:</strong> {{ count($block['items']) }} {{ count($block['items']) === 1 ? 'question' : 'questions' }} — {{ $block['items'][0]['question'] ?? '' }}@if(count($block['items']) > 1) …@endif</div>
+                                        @else
+                                            <div><strong>FAQ:</strong> {{ $block['question'] ?? '' }} / {{ $block['answer'] ?? '' }}</div>
+                                        @endif
+                                    @elseif(($block['type'] ?? '') === 'video_embed')
+                                        <div><strong>Video:</strong> {{ $block['name'] ?? '' }} / {{ $block['contentUrl'] ?? '' }} / {{ $block['uploadDate'] ?? '' }}</div>
+                                    @else
+                                        <div><strong>{{ ucfirst($block['type'] ?? 'Block') }}:</strong> {{ $block['headline'] ?? $block['text'] ?? $block['label'] ?? '' }}</div>
+                                    @endif
+                                    @if(($block['source'] ?? '') === 'ai')
+                                        <span class="text-sm text-ink-2">— written by {{ $block['model'] ?? 'the AI' }} @if(!empty($block['peers'])), with {{ $block['peers'] }} nearby {{ $block['peers'] === 1 ? 'business' : 'businesses' }} as reference @endif</span>
+                                    @endif
                             </div>
                         @endforeach
                     </div>
@@ -105,7 +120,7 @@
                     <h3 class="font-semibold text-ink">Add</h3>
                     
                     <details class="group">
-                        <summary class="cursor-pointer text-sm font-medium text-ink bg-card border border-rule rounded-[--radius-control] px-3 py-2">Add FAQ</summary>
+                        <summary class="cursor-pointer text-sm font-medium text-ink bg-card border border-rule rounded-[--radius-control] px-3 py-2">Ask the AI for questions and answers</summary>
                         <div class="p-3 mt-2 bg-card border border-rule rounded-[--radius-card]">
                             <form wire:submit="addFaq({{ $editing->id }})" class="space-y-2">
                                 <input type="text" wire:model="faqQuestion" placeholder="Question" class="w-full rounded-[--radius-control] border border-rule bg-paper px-3 py-2 text-sm text-ink">
@@ -117,7 +132,14 @@
                                 @if(!isset($editing->draft_meta['pending_faq']))
                                     <x-ui.button variant="secondary" size="default" wire:click="draftFaq({{ $editing->id }})">Draft FAQ</x-ui.button>
                                 @else
-                                    <div class="space-y-2">
+                                    <strong>Proposed questions</strong>
+                                    <ul class="list-disc pl-5 my-2">
+                                        @foreach($editing->draft_meta['pending_faq']['items'] ?? [] as $item)
+                                            <li><span class="font-medium">{{ $item['question'] ?? '' }}</span> — {{ $item['answer'] ?? '' }}</li>
+                                        @endforeach
+                                    </ul>
+                                    <span class="text-sm text-ink-2">written by {{ $editing->draft_meta['pending_faq']['model'] ?? 'the AI' }}</span>
+                                    <div class="space-y-2 mt-4">
                                         <x-ui.button variant="primary" size="default" class="w-full" wire:click="placeFaq({{ $editing->id }})">Place on this page</x-ui.button>
                                         <x-ui.button variant="secondary" size="default" class="w-full" wire:click="discardFaq({{ $editing->id }})">Discard</x-ui.button>
                                     </div>
@@ -164,13 +186,14 @@
                     </div>
                 </details>
 
-                @if(count($questions) > 0)
                     <div>
                         <div class="flex items-center gap-2 mb-2">
-                            <h3 class="font-semibold text-ink">Customer questions</h3>
-                            <span class="inline-flex items-center justify-center bg-ink text-paper rounded-full text-xs font-bold px-2 py-0.5">{{ count($questions) }}</span>
+                            <h3 class="font-semibold text-ink">Questions customers asked ({{ count($questions) }})</h3>
                         </div>
                         <div class="space-y-3 bg-card border border-rule rounded-[--radius-card] p-3">
+                        @if(count($questions) === 0)
+                            <p class="text-sm text-ink-2">Nothing waiting — every question typed into your site chat or your contact form in the last while has been answered on a page, or none has been asked yet.</p>
+                        @else
                             @foreach ($questions as $q)
                                 <div class="text-sm">
                                     <div class="font-medium text-ink">{{ $q['question'] }}</div>
@@ -182,13 +205,13 @@
                                                 <option value="{{ $p->id }}">{{ $p->slug }}</option>
                                             @endforeach
                                         </select>
-                                        <x-ui.button variant="secondary" size="default" class="!px-2 !py-1 !min-h-0 text-xs" wire:click="draftAnswer('{{ $q['key'] }}')">Draft</x-ui.button>
+                                        <x-ui.button variant="secondary" size="default" class="!px-2 !py-1 !min-h-0 text-xs" wire:click="draftAnswer('{{ $q['key'] }}')">Draft an answer</x-ui.button>
                                     </div>
                                 </div>
                             @endforeach
+                        @endif
                         </div>
                     </div>
-                @endif
                 
                 @if(!empty($showHistory[$editing->id]) && isset($versions[$editing->id]))
                     <div class="bg-card border border-rule rounded-[--radius-card] p-4 mt-6">
@@ -199,7 +222,7 @@
                                     <div class="flex items-center gap-2 mb-1">
                                         <span class="font-medium text-ink">{{ \Carbon\Carbon::parse($version->created_at)->diffForHumans() }}</span>
                                         @if($editing->current_version_id === $version->id)
-                                            <x-ui.status-pill state="ok" label="Current" />
+                                            <x-ui.status-pill state="ok" label="Current version" />
                                         @endif
                                     </div>
                                     <div class="font-mono text-xs text-ink-2 mb-2">id: {{ $version->id }}</div>
@@ -279,29 +302,6 @@
                             <x-ui.button variant="primary" size="default" wire:click="openEditor({{ $page->id }})">Open</x-ui.button>
                         </div>
                         
-                        {{-- Preserved bindings for page list that we don't strictly display visually but must remain in DOM --}}
-                        <div style="display:none;" aria-hidden="true">
-                            <button wire:click="publish({{ $page->id }})"></button>
-                            <button wire:click="unpublish({{ $page->id }})"></button>
-                            <form wire:submit="rename({{ $page->id }})"></form>
-                            <input type="text" wire:model="renameSlug.{{ $page->id }}">
-                            <input type="text" wire:model="renameTitle.{{ $page->id }}">
-                            <button wire:click="draftSeo({{ $page->id }})"></button>
-                            <form wire:submit="saveSeo({{ $page->id }})"></form>
-                            <input type="text" wire:model="seoTitle.{{ $page->id }}">
-                            <textarea wire:model="seoDescription.{{ $page->id }}"></textarea>
-                            <input type="text" wire:model="editRequest.{{ $page->id }}">
-                            <button wire:click="askEdit({{ $page->id }})"></button>
-                            <button wire:click="applyEdit({{ $page->id }})"></button>
-                            <button wire:click="discardEdit({{ $page->id }})"></button>
-                            <button wire:click="draftFaq({{ $page->id }})"></button>
-                            <button wire:click="placeFaq({{ $page->id }})"></button>
-                            <button wire:click="discardFaq({{ $page->id }})"></button>
-                            <form wire:submit="addFaq({{ $page->id }})"></form>
-                            <form wire:submit="addVideo({{ $page->id }})"></form>
-                            <button wire:click="removeBlock({{ $page->id }}, {{ $page->id }})"></button>
-                        </div>
-
                         @if(!empty($showHistory[$page->id]) && isset($versions[$page->id]))
                             <div class="w-full mt-4 pt-4 border-t border-rule space-y-4">
                                 @foreach($versions[$page->id] as $version)
@@ -324,7 +324,7 @@
                         @endif
                     </div>
                 @empty
-                    <div class="text-ink-2">No pages yet.</div>
+                    <div class="text-ink-2">No pages yet. Add one below.</div>
                 @endforelse
             </div>
             
