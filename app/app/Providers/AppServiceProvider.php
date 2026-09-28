@@ -22,6 +22,7 @@ use App\Contracts\VoiceProvider;
 use App\Enums\OauthProvider;
 use App\Enums\OutreachChannel;
 use App\Http\Middleware\TenantRole;
+use App\Listeners\ActivateMembershipOnPasswordReset;
 use App\Livewire\Account\ReplyExamples as AccountReplyExamples;
 use App\Livewire\Account\ReviewRules as AccountReviewRules;
 use App\Services\ActivityService;
@@ -84,6 +85,7 @@ use App\Support\ShortLinkRateLimits;
 use App\Support\UnsubscribeRateLimits;
 use App\Support\WidgetRateLimits;
 use Closure;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Console\Events\ScheduledBackgroundTaskFinished;
 use Illuminate\Console\Events\ScheduledTaskFailed;
 use Illuminate\Console\Events\ScheduledTaskFinished;
@@ -579,6 +581,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Event::listen(PasswordReset::class, ActivateMembershipOnPasswordReset::class);
         $this->routeSchemaCommandsToTheOwnerRole();
         $this->forbidLiveVendorCallsInTests();
         $this->registerNestableLivewireComponents();

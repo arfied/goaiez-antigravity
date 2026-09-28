@@ -43,5 +43,35 @@
                 @endforeach
             </ul>
         @endif
+
+        <div class="mt-8 bg-surface p-4 rounded">
+            <h3 class="text-md font-bold text-ink mb-4">Sign-in access</h3>
+            <x-ui.toast kind="success" :message="$accessSuccess" />
+            <x-ui.toast kind="error" :message="$accessError" />
+
+            @if($members->isEmpty())
+                <div class="text-sm text-ink-2">No one else can sign in yet.</div>
+            @else
+                <ul class="divide-y divide-rule">
+                    @foreach($members as $m)
+                        <li class="py-2 flex justify-between items-center" wire:key="member-{{ $m['membership_id'] }}">
+                            <div>
+                                <span class="font-semibold">{{ $m['name'] }}</span> &middot;
+                                <span class="text-sm text-ink-2">{{ $m['email'] }}</span> &middot;
+                                <span class="text-sm text-ink-2">@if($m['status'] === 'pending') Pending @elseif($m['status'] === 'active') Active @elseif($m['status'] === 'revoked') Removed @endif</span>
+                            </div>
+                            <div class="flex gap-2">
+                                @if($m['status'] === 'pending')
+                                    <button wire:click="resendInvite({{ $m['membership_id'] }})" class="text-sm border rounded px-2 py-1 bg-surface">Resend invite</button>
+                                @endif
+                                @if($m['status'] === 'pending' || $m['status'] === 'active')
+                                    <button wire:click="revokeAccess({{ $m['membership_id'] }})" class="text-sm border rounded px-2 py-1 bg-surface">Remove access</button>
+                                @endif
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+        </div>
     </div>
 </div>
