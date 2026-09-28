@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X142;
 
+use App\Events\ReviewIngested;
 use App\Modules\X01\Events\ContactCreated;
 use App\Modules\X01\Events\ConversationUpdated;
 use App\Modules\X10\Events\LeadAssigned;
@@ -31,6 +32,7 @@ final class ModuleServiceProvider extends ServiceProvider
         Event::listen(LeadAssigned::class, [DispatchWebhooksForDomainEvents::class, 'onLeadAssigned']);
         Event::listen(EstimateSent::class, [DispatchWebhooksForDomainEvents::class, 'onEstimateSent']);
         Event::listen(EstimateAccepted::class, [DispatchWebhooksForDomainEvents::class, 'onEstimateAccepted']);
+        Event::listen(ReviewIngested::class, [DispatchWebhooksForDomainEvents::class, 'onReviewIngested']);
 
         $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
 
