@@ -21,10 +21,21 @@ class WebhookSubscribeAction
             throw new \InvalidArgumentException('Webhook URLs must be public https addresses.');
         }
 
+        $normalizedEvents = array_filter(array_map('trim', explode(',', $events)));
+        if (empty($normalizedEvents)) {
+            throw new \InvalidArgumentException('Choose events from: '.implode(', ', WebhookDispatchAction::EVENTS).'.');
+        }
+
+        foreach ($normalizedEvents as $event) {
+            if (! in_array($event, WebhookDispatchAction::EVENTS, true)) {
+                throw new \InvalidArgumentException('Choose events from: '.implode(', ', WebhookDispatchAction::EVENTS).'.');
+            }
+        }
+
         return WebhookSubscription::create([
             'business_id' => $businessId,
             'target_url' => $url,
-            'event_filter' => $events,
+            'event_filter' => implode(',', $normalizedEvents),
             'secret' => 'sec_'.bin2hex(random_bytes(16)),
             'is_active' => true,
         ]);

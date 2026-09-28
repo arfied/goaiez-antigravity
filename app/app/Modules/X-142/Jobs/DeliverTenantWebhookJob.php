@@ -72,18 +72,18 @@ final class DeliverTenantWebhookJob implements ShouldQueue
                     $delivery->update([
                         'status' => 'failed',
                         'last_status_code' => $result['status'],
-                        'last_error' => $result['error'],
+                        'last_error' => mb_substr((string) $result['error'], 0, 255),
                     ]);
                 } elseif ($result['outcome'] === 'refused') {
                     $delivery->update([
                         'status' => 'refused',
                         'last_status_code' => $result['status'],
-                        'last_error' => $result['error'],
+                        'last_error' => mb_substr((string) $result['error'], 0, 255),
                     ]);
                 } elseif ($result['outcome'] === 'retry') {
                     $delivery->update([
                         'last_status_code' => $result['status'],
-                        'last_error' => $result['error'],
+                        'last_error' => mb_substr((string) $result['error'], 0, 255),
                     ]);
 
                     if ($this->attempts() >= $this->tries) {

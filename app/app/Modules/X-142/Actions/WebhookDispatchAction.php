@@ -10,6 +10,8 @@ use App\Modules\X142\Models\WebhookSubscription;
 
 final class WebhookDispatchAction
 {
+    public const array EVENTS = ['contact.created', 'message.received', 'lead.assigned', 'estimate.sent', 'estimate.accepted'];
+
     public function dispatch(int $businessId, string $event, array $payload): int
     {
         $subscriptions = WebhookSubscription::where('business_id', $businessId)
