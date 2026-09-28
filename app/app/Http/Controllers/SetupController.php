@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRole;
 use App\Enums\WizardStep;
 use App\Services\Setup\SetupFlow;
 use App\Support\Tenancy;
@@ -50,6 +51,12 @@ final class SetupController extends Controller
         // be inventing a destination for an account the wizard has nothing to
         // say to.
         abort_if(Tenancy::id() === null, 403);
+
+        // A teammate signed in through a business membership never ran the
+        // setup wizard and has no progress row; the wizard is the owner's.
+        if (! $user->hasRole(UserRole::Owner)) {
+            return redirect()->route('account.home');
+        }
 
         $progress = $flow->progressFor($user);
 

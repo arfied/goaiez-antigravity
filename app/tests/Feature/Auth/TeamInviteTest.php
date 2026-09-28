@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Modules\X113\Ui\Staff;
 use App\Support\Tenancy;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -171,7 +172,7 @@ final class TeamInviteTest extends TestCase
 
         Tenancy::forgetAll();
         $this->actingAs($user);
-        $this->get('/account')->assertOk();
+        $this->get('/account/inbox')->assertOk();
     }
 
     public function test_revoked_membership_not_reactivated(): void
@@ -366,14 +367,14 @@ final class TeamInviteTest extends TestCase
             Livewire::test(Staff::class)
                 ->call('revokeAccess', $membership1->id);
             $this->fail('Should have thrown ModelNotFoundException');
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             // Passed
         }
 
-        $revokedAt = \Illuminate\Support\Facades\DB::table('business_memberships')
+        $revokedAt = DB::table('business_memberships')
             ->where('id', $membership1->id)
             ->value('revoked_at');
-        
+
         $this->assertNull($revokedAt);
     }
 

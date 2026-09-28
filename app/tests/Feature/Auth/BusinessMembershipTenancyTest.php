@@ -37,7 +37,7 @@ class BusinessMembershipTenancyTest extends TestCase
         Tenancy::forget();
 
         $this->actingAs($staff)
-            ->get(route('account.settings'))
+            ->get(route('account.inbox'))
             ->assertOk()
             ->assertSee('Membership Test Business');
     }
@@ -59,7 +59,7 @@ class BusinessMembershipTenancyTest extends TestCase
         Tenancy::forget();
 
         $this->actingAs($staff)
-            ->get(route('account.settings'))
+            ->get(route('account.inbox'))
             ->assertForbidden();
     }
 
@@ -82,7 +82,7 @@ class BusinessMembershipTenancyTest extends TestCase
         Tenancy::forget();
 
         $this->actingAs($staff)
-            ->get(route('account.settings'))
+            ->get(route('account.inbox'))
             ->assertForbidden();
     }
 
@@ -152,7 +152,7 @@ class BusinessMembershipTenancyTest extends TestCase
         ]);
 
         $this->actingAs($owner)
-            ->get(route('account.settings'))
+            ->get(route('account.inbox'))
             ->assertOk()
             ->assertSee('Owner Biz');
     }
