@@ -9,7 +9,7 @@
             @foreach($subscriptions as $sub)
                 <div class="p-4 border border-rule rounded-[--radius-card] mb-2" data-active="{{ $sub->is_active ? 'yes' : 'no' }}">
                     <p class="font-bold text-ink">{{ $sub->target_url }}</p>
-                    <p class="text-sm">{{ $sub->event_filter }}</p>
+                    <p class="text-sm">Sends: {{ $sub->event_filter }}</p>
                     <div class="mt-2 text-sm flex gap-4">
                         <span>{{ $sub->is_active ? 'Active' : 'Paused' }}</span>
                         <button type="button" wire:click="toggleActive({{ $sub->id }})" class="text-blue-600 hover:underline">{{ $sub->is_active ? 'Pause' : 'Resume' }}</button>

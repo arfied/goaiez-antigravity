@@ -25,6 +25,7 @@ class WebhooksViewScreenTest extends TestCase
             ->assertSee('Your account')
             ->assertDontSee('Internal Platform Console')
             ->assertDontSee('this screen is planned in')
+            ->assertDontSee('Sends:')
             ->assertSee('No webhooks yet.');
 
         Tenancy::setUser($owner->id);
@@ -41,6 +42,7 @@ class WebhooksViewScreenTest extends TestCase
             ->assertOk()
             ->assertSee('https://distinctive-4628.example/hooks')
             ->assertSee('Distinctive event 4628')
+            ->assertSee('Sends: Distinctive event 4628')
             ->assertDontSee('sec_distinctive4628')
             ->assertDontSee('No webhooks yet.');
 
@@ -70,7 +72,7 @@ class WebhooksViewScreenTest extends TestCase
 
         $this->get(route('x-142.webhooks'))
             ->assertSee('https://example.com/webhook')
-            ->assertSee('contact.created')
+            ->assertSee('Sends: contact.created')
             ->assertDontSee('No webhooks yet.');
 
         Livewire::test(WebhooksView::class, ['businessId' => $biz->id])
