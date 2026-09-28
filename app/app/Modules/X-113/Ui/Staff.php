@@ -122,6 +122,42 @@ class Staff extends Component
         $this->assignRoleId = '';
     }
 
+    public ?string $accessSuccess = null;
+
+    public ?string $accessError = null;
+
+    public function resendInvite(int $membershipId): void
+    {
+        abort_unless(auth()->user()?->hasRole(UserRole::Owner) === true, 403);
+
+        $this->accessSuccess = null;
+        $this->accessError = null;
+
+        $result = app(TeamInvites::class)->resend($membershipId, auth()->user());
+
+        if ($result['ok']) {
+            $this->accessSuccess = $result['message'];
+        } else {
+            $this->accessError = $result['message'];
+        }
+    }
+
+    public function revokeAccess(int $membershipId): void
+    {
+        abort_unless(auth()->user()?->hasRole(UserRole::Owner) === true, 403);
+
+        $this->accessSuccess = null;
+        $this->accessError = null;
+
+        $result = app(TeamInvites::class)->revoke($membershipId, auth()->user());
+
+        if ($result['ok']) {
+            $this->accessSuccess = $result['message'];
+        } else {
+            $this->accessError = $result['message'];
+        }
+    }
+
     public function render()
     {
         $staff = ($this->businessId > 0)
@@ -132,9 +168,13 @@ class Staff extends Component
             ? Role::where('business_id', $this->businessId)->orderBy('name')->get()
             : collect();
 
+        $isOwner = auth()->user()?->hasRole(UserRole::Owner) === true;
+        $members = $isOwner ? app(TeamInvites::class)->members() : collect();
+
         return view('x-113::staff', [
             'staff' => $staff,
             'roles' => $roles,
+            'members' => $members,
         ]);
     }
 }
