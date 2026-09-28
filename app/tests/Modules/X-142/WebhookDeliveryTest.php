@@ -22,6 +22,7 @@ use App\Services\Fetch\PublicAddressGuard;
 use App\Services\Webhooks\TenantWebhookClient;
 use App\Support\Tenancy;
 use Illuminate\Contracts\Queue\Job;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Request;
@@ -290,8 +291,9 @@ class WebhookDeliveryTest extends TestCase
     public function test_screen_actions(): void
     {
         $biz = Business::factory()->create();
-        $user = User::factory()->create(["role" => \App\Enums\UserRole::Owner]);
-        $biz->owner_user_id = $user->id; $biz->save();
+        $user = User::factory()->create(['role' => UserRole::Owner]);
+        $biz->owner_user_id = $user->id;
+        $biz->save();
         $this->actingAs($user);
 
         Tenancy::set($biz->id);
@@ -301,9 +303,8 @@ class WebhookDeliveryTest extends TestCase
             ->set('events', 'contact.created')
             ->call('submit');
 
-
-        echo "ERROR IS: " . $component->get("error") . "
-"; 
+        echo 'ERROR IS: '.$component->get('error').'
+';
 
         $sub = WebhookSubscription::first();
         $component->assertSet('newSecret', $sub->secret)
@@ -321,14 +322,20 @@ class WebhookDeliveryTest extends TestCase
         $biz2 = Business::factory()->create();
         $sub2 = Tenancy::actingAs($biz2->id, fn () => (new WebhookSubscribeAction)->subscribe($biz2->id, 'https://hooks.example-8381.test/in', 'contact.created'));
 
-        try { $component->call('revealSecret', $sub2->id); $this->fail(); } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) { $this->assertTrue(true); }
+        try {
+            $component->call('revealSecret', $sub2->id);
+            $this->fail();
+        } catch (ModelNotFoundException $e) {
+            $this->assertTrue(true);
+        }
     }
 
     public function test_delivery_list_renders(): void
     {
         $biz = Business::factory()->create();
-        $user = User::factory()->create(["role" => \App\Enums\UserRole::Owner]);
-        $biz->owner_user_id = $user->id; $biz->save();
+        $user = User::factory()->create(['role' => UserRole::Owner]);
+        $biz->owner_user_id = $user->id;
+        $biz->save();
         $this->actingAs($user);
 
         Tenancy::set($biz->id);
