@@ -225,7 +225,7 @@
                                             <x-ui.status-pill state="ok" label="Current version" />
                                         @endif
                                     </div>
-                                    <div class="font-mono text-xs text-ink-2 mb-2">id: {{ $version->id }}</div>
+                                    <div class="font-mono text-xs text-ink-2 mb-2">{{ $version->commit_id }}</div>
                                     @if($editing->current_version_id !== $version->id)
                                         <x-ui.button variant="secondary" size="default" wire:click="restore({{ $editing->id }}, {{ $version->id }})">Restore</x-ui.button>
                                     @endif

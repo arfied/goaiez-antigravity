@@ -1475,7 +1475,7 @@ class PagesScreenTest extends TestCase
             ->assertSee('Questions customers asked (1)')
             ->assertSee('&lt;b&gt;Distinctive 4521&lt;/b&gt;?', false)
             ->assertDontSee('<b>Distinctive 4521</b>', false)
-            ->assertSee('from your site chat');
+            ->assertSee('From site chat');
     }
 
     public function test_customer_question_panel_draft_answer(): void
