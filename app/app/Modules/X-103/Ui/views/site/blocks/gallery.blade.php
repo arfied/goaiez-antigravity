@@ -1,4 +1,4 @@
-<div class="site-block gallery">
+<div class="site-block gallery {{ $band ?? '' }}">
     @if(isset($block['heading']) && is_scalar($block['heading']) && trim((string)$block['heading']) !== '')
         <h2>{{ $block['heading'] }}</h2>
     @endif

@@ -76,7 +76,6 @@ class BlockMarkupTest extends TestCase
         $this->assertStringContainsString('DISTINCT_ABOUT_HEADING', $html);
         $this->assertStringContainsString('DISTINCT_ABOUT_TEXT', $html);
 
-        $this->assertStringContainsString('site-block--band', $html);
         $this->assertStringContainsString('site-block__inner', $html);
     }
 
@@ -148,7 +147,6 @@ class BlockMarkupTest extends TestCase
         $this->assertStringContainsString('DISTINCT_TEAM_NAME', $html);
         $this->assertStringContainsString('DISTINCT_TEAM_ROLE', $html);
 
-        $this->assertStringContainsString('site-block--band', $html);
         $this->assertStringContainsString('site-block__inner', $html);
         $this->assertStringContainsString('card', $html);
     }
@@ -232,7 +230,6 @@ class BlockMarkupTest extends TestCase
         $this->assertStringContainsString('DISTINCT_AUTHOR', $html);
         $this->assertStringContainsString('DISTINCT_SOURCE', $html);
 
-        $this->assertStringContainsString('site-block--band', $html);
         $this->assertStringContainsString('site-block__inner', $html);
         $this->assertStringContainsString('card', $html);
     }
@@ -254,5 +251,86 @@ class BlockMarkupTest extends TestCase
         $this->assertStringNotContainsString('<h2>', $html);
         $this->assertStringNotContainsString('by ', $html);
         $this->assertStringNotContainsString('on <', $html); // This avoids matching button CSS
+    }
+
+    public function test_booking_button_with_label_and_url(): void
+    {
+        $html = $this->renderBlock([
+            'type' => 'booking_button',
+            'label' => 'DISTINCT_BOOKING_LABEL',
+            'url' => 'DISTINCT_BOOKING_URL',
+        ]);
+
+        $this->assertStringContainsString('DISTINCT_BOOKING_LABEL', $html);
+        $this->assertStringContainsString('DISTINCT_BOOKING_URL', $html);
+        $this->assertStringContainsString('<a ', $html);
+    }
+
+    public function test_booking_button_with_label_and_no_url(): void
+    {
+        $html = $this->renderBlock([
+            'type' => 'booking_button',
+            'label' => 'DISTINCT_BOOKING_LABEL_NO_URL',
+        ]);
+
+        $this->assertStringContainsString('DISTINCT_BOOKING_LABEL_NO_URL', $html);
+        $this->assertStringContainsString('aria-disabled="true"', $html);
+        $this->assertStringContainsString('site-cta--off', $html);
+        $this->assertStringNotContainsString('<a ', $html);
+    }
+
+    public function test_booking_button_with_no_label_renders_nothing(): void
+    {
+        $html = $this->renderBlock([
+            'type' => 'booking_button',
+            'url' => 'DISTINCT_BOOKING_URL_NO_LABEL',
+        ]);
+
+        $this->assertStringNotContainsString('DISTINCT_BOOKING_URL_NO_LABEL', $html);
+        $this->assertStringNotContainsString('class="actions"', $html);
+    }
+
+    public function test_faq_items()
+    {
+        $tokens = app(IndustryStartingPoints::class)->for(null);
+        $block = [
+            'type' => 'faq',
+            'items' => [
+                ['question' => 'Q1', 'answer' => 'A1'],
+                ['question' => 'Q2', 'answer' => 'A2'],
+            ],
+        ];
+        $html = app(SiteBlockRenderer::class)->render([$block], ['tokens' => $tokens] + self::CONTEXT);
+
+        $this->assertStringContainsString('class="faq-item" data-question="Q1"', $html);
+        $this->assertStringContainsString('<h3>Q1</h3>', $html);
+        $this->assertStringContainsString('<p>A1</p>', $html);
+        $this->assertStringContainsString('class="faq-item" data-question="Q2"', $html);
+        $this->assertStringNotContainsString('Q1 - A1', $html);
+        $this->assertStringNotContainsString('Q2 - A2', $html);
+
+        $blockEmpty = [
+            'type' => 'faq',
+            'items' => [
+                ['question' => 'Q3', 'answer' => ''],
+            ],
+        ];
+        $htmlEmpty = app(SiteBlockRenderer::class)->render([$blockEmpty], ['tokens' => $tokens] + self::CONTEXT);
+        $this->assertStringNotContainsString('Q3', $htmlEmpty);
+    }
+
+    public function test_bands_alternate()
+    {
+        $tokens = app(IndustryStartingPoints::class)->for(null);
+        $blocks = [
+            ['type' => 'hero', 'headline' => 'H'],
+            ['type' => 'about', 'text' => 'A'],
+            ['type' => 'services', 'items' => [['name' => 'S']]],
+            ['type' => 'team', 'items' => [['name' => 'T']]],
+        ];
+        $html = app(SiteBlockRenderer::class)->render($blocks, ['tokens' => $tokens] + self::CONTEXT);
+
+        preg_match_all('/class="site-block ([a-z_]+(?: site-block--band)?)[^"]*"/', $html, $matches);
+        $this->assertEquals(['hero', 'about', 'services site-block--band', 'team'], $matches[1]);
     }
 }

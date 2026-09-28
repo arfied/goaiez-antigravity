@@ -1,11 +1,29 @@
-<div id="faq-x176" class="site-block--band">
+<div id="faq-x176" class="site-block faq {{ $band ?? '' }}">
   <div class="site-block__inner">
     @if (isset($block['items']) && is_array($block['items']))
       @foreach ($block['items'] as $item)
-        <div class="faq-item" data-question="{{ $item['question'] }}">{{ $item['question'] }} - {{ $item['answer'] }}</div>
+        @php
+          $q = isset($item['question']) && is_scalar($item['question']) ? trim((string)$item['question']) : '';
+          $a = isset($item['answer']) && is_scalar($item['answer']) ? trim((string)$item['answer']) : '';
+        @endphp
+        @if ($q !== '' && $a !== '')
+          <div class="faq-item" data-question="{{ $q }}">
+            <h3>{{ $q }}</h3>
+            <p>{{ $a }}</p>
+          </div>
+        @endif
       @endforeach
     @elseif (isset($block['question']))
-      <div class="faq-item" data-question="{{ $block['question'] }}">{{ $block['question'] }} - {{ $block['answer'] }}</div>
+      @php
+        $q = isset($block['question']) && is_scalar($block['question']) ? trim((string)$block['question']) : '';
+        $a = isset($block['answer']) && is_scalar($block['answer']) ? trim((string)$block['answer']) : '';
+      @endphp
+      @if ($q !== '' && $a !== '')
+        <div class="faq-item" data-question="{{ $q }}">
+          <h3>{{ $q }}</h3>
+          <p>{{ $a }}</p>
+        </div>
+      @endif
     @endif
   </div>
 </div>
