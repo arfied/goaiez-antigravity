@@ -113,7 +113,7 @@ enum AiTask: string
         return match ($this) {
             self::ReviewAnalysis, self::Moderation,
             self::ReplyGeneration,
-            self::Conversation,
+            self::Conversation => AiModel::Gpt4oMini,
             self::SiteCopy => AiModel::Gpt4oMini,
             self::KnowledgeEmbedding => AiModel::TextEmbedding3Small,
             self::SiteImage => AiModel::GptImage25Flare,

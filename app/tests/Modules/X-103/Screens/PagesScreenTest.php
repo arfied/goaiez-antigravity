@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103\Screens;
 
+use App\Enums\AiModel;
 use App\Enums\UserRole;
 use App\Models\Competitor;
 use App\Models\CompetitorSiteNote;
@@ -616,6 +617,7 @@ class PagesScreenTest extends TestCase
 
         $this->actingAs($ownerA);
         Tenancy::set($bizA->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $pageA = $action->handle($bizA->id, 'page-a', 'Page A');
 
         Livewire::test(Pages::class)
@@ -628,6 +630,7 @@ class PagesScreenTest extends TestCase
 
         $this->actingAs($ownerB);
         Tenancy::set($bizB->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $pageB = $action->handle($bizB->id, 'page-b', 'Page B');
 
         Livewire::test(Pages::class)
@@ -800,10 +803,12 @@ class PagesScreenTest extends TestCase
         $action = app(PageCreateAction::class);
         $this->actingAs($ownerA);
         Tenancy::set($bizA->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $pageA = $action->handle($bizA->id, 'page-a', 'Page A');
 
         $this->actingAs($ownerB);
         Tenancy::set($bizB->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Livewire::test(Pages::class)
             ->call('duplicatePage', $pageA->id)
             ->assertNotFound();
@@ -829,7 +834,9 @@ class PagesScreenTest extends TestCase
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Pages Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -871,7 +878,9 @@ class PagesScreenTest extends TestCase
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Pages Test Subline Restore', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -916,7 +925,9 @@ class PagesScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Faq Controls Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -964,7 +975,9 @@ class PagesScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Faq Controls Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -1020,6 +1033,7 @@ class PagesScreenTest extends TestCase
         PlatformSetting::write('sites.seo.description_max_chars', 155, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'SEO Screen', 'owner_user_id' => $owner->id]);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $page = Page::create([
@@ -1061,7 +1075,9 @@ class PagesScreenTest extends TestCase
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Pages Test Edit', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -1111,7 +1127,9 @@ class PagesScreenTest extends TestCase
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Pages Test Edit Discard', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -1152,7 +1170,9 @@ class PagesScreenTest extends TestCase
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Pages Test Edit Invalid', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -1197,7 +1217,9 @@ class PagesScreenTest extends TestCase
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Pages Test Converse', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -1252,7 +1274,9 @@ class PagesScreenTest extends TestCase
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Pages Test Side By Side', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -1290,7 +1314,9 @@ class PagesScreenTest extends TestCase
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Pages Test Edit', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         Http::fake([
             'api.openai.com/*' => Http::response([
@@ -1319,7 +1345,9 @@ class PagesScreenTest extends TestCase
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Pages Test Edit', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         Page::create(['business_id' => $biz->id, 'slug' => 'spring-offer', 'title' => 'Existing', 'is_published' => false]);
 
@@ -1348,7 +1376,9 @@ class PagesScreenTest extends TestCase
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Pages Test Edit', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         Http::fake([
             'api.openai.com/*' => Http::response([
@@ -1377,7 +1407,9 @@ class PagesScreenTest extends TestCase
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Pages Test Peer Polish', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -1471,6 +1503,7 @@ class PagesScreenTest extends TestCase
 
     public function test_customer_question_panel_draft_answer(): void
     {
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
@@ -1553,6 +1586,7 @@ class PagesScreenTest extends TestCase
 
         Tenancy::setUser($owner->id);
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $session = ChatSession::create([
             'business_id' => $biz->id,

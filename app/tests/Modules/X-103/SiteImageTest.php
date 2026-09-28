@@ -2,8 +2,10 @@
 
 namespace Tests\Modules\X103;
 
+use App\Enums\AiModel;
 use App\Enums\UserRole;
 use App\Models\Business;
+use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Modules\X103\Domain\PagePreview;
 use App\Modules\X103\Models\Page;
@@ -22,6 +24,7 @@ class SiteImageTest extends TestCase
 
         $business = Business::factory()->create();
         Tenancy::set($business->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $business->id, 'slug' => 'test', 'title' => 'Test', 'is_published' => false,
@@ -69,6 +72,7 @@ class SiteImageTest extends TestCase
         Storage::fake('local');
         $business = Business::factory()->create();
         Tenancy::set($business->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $business->id, 'slug' => 'test', 'title' => 'Test', 'is_published' => false,
@@ -116,6 +120,7 @@ class SiteImageTest extends TestCase
         Storage::fake('local');
         $business = Business::factory()->create();
         Tenancy::set($business->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $business->id, 'slug' => 'test', 'title' => 'Test', 'is_published' => false,
@@ -155,6 +160,7 @@ class SiteImageTest extends TestCase
         Storage::fake('local');
         $business = Business::factory()->create();
         Tenancy::set($business->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $business->id, 'slug' => 'test', 'title' => 'Test', 'is_published' => false,

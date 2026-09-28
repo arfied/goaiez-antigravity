@@ -2,8 +2,10 @@
 
 namespace Tests\Modules\X103;
 
+use App\Enums\AiModel;
 use App\Enums\UserRole;
 use App\Enums\VitalSampleState;
+use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Modules\X103\Actions\PageVariantResultAction;
 use App\Modules\X103\Actions\PageVariantStartAction;
@@ -36,6 +38,8 @@ class PageVariantTest extends TestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         parent::setUp();
 
         Storage::fake('local');

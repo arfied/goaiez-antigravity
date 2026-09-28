@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103;
 
+use App\Enums\AiModel;
 use App\Models\Location;
+use App\Models\PlatformSetting;
 use App\Models\Review;
 use App\Models\User;
 use App\Modules\X103\Actions\SiteRecommendAction;
@@ -19,6 +21,12 @@ use Tests\TestCase;
 
 class SiteRecommendActionTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
+    }
+
     use RefreshesTenantDatabase;
 
     public function test_computes_recommendations(): void
@@ -26,6 +34,8 @@ class SiteRecommendActionTest extends TestCase
         $owner = User::factory()->create();
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $location = Location::where('business_id', $biz->id)->first();
         if (! $location) {
@@ -84,6 +94,8 @@ class SiteRecommendActionTest extends TestCase
         $owner = User::factory()->create();
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $location = Location::where('business_id', $biz->id)->first();
         if (! $location) {

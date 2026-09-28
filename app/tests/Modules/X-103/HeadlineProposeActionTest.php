@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103;
 
+use App\Enums\AiModel;
 use App\Enums\UserRole;
 use App\Models\Competitor;
 use App\Models\CompetitorSiteNote;
@@ -25,6 +26,7 @@ class HeadlineProposeActionTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         Http::fake([
             'api.openai.com/*' => Http::response(
@@ -76,6 +78,7 @@ class HeadlineProposeActionTest extends TestCase
     {
         $biz = $this->provisionTenant();
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         Http::fake();
 
@@ -93,6 +96,7 @@ class HeadlineProposeActionTest extends TestCase
     {
         $biz = $this->provisionTenant();
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         Http::fake();
 
