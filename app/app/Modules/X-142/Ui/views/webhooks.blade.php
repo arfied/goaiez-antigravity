@@ -9,7 +9,7 @@
             @foreach($subscriptions as $sub)
                 <div class="p-4 border border-rule rounded-[--radius-card] mb-2" data-active="{{ $sub->is_active ? 'yes' : 'no' }}">
                     <p class="font-bold text-ink">{{ $sub->target_url }}</p>
-                    <p class="text-sm">{{ $sub->event_filter }}</p>
+                    <p class="text-sm">Sends: {{ $sub->event_filter }}</p>
                     <div class="mt-2 text-sm flex gap-4">
                         <span>{{ $sub->is_active ? 'Active' : 'Paused' }}</span>
                         <button type="button" wire:click="toggleActive({{ $sub->id }})" class="text-blue-600 hover:underline">{{ $sub->is_active ? 'Pause' : 'Resume' }}</button>
@@ -43,7 +43,7 @@
         <form wire:submit="submit" class="flex flex-col gap-2">
             <input type="text" wire:model="url" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="URL">
             <input type="text" wire:model="events" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Events (comma-separated)">
-            <p class="text-sm text-subtle">Events you can choose: contact.created, message.received, lead.assigned, estimate.sent, estimate.accepted</p>
+            <p class="text-sm text-subtle">Events you can choose: contact.created, message.received, lead.assigned, estimate.sent, estimate.accepted, review.received</p>
             <button type="submit" class="bg-surface text-ink border rounded p-2">Submit</button>
         </form>
         <x-ui.toast kind="success" :message="$success" />

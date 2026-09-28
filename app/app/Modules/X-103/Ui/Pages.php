@@ -3,6 +3,7 @@
 namespace App\Modules\X103\Ui;
 
 use App\Enums\UserRole;
+use App\Models\Business;
 use App\Modules\X103\Actions\CustomerQuestionsAction;
 use App\Modules\X103\Actions\FaqDraftAction;
 use App\Modules\X103\Actions\PageCreateAction;
@@ -17,6 +18,7 @@ use App\Modules\X103\Actions\SiteCopyPolishAction;
 use App\Modules\X103\Actions\SiteEditProposeAction;
 use App\Modules\X103\Actions\SitePageProposeAction;
 use App\Modules\X103\Actions\SitePublishAction;
+use App\Modules\X103\Domain\PagePreview;
 use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
@@ -26,6 +28,7 @@ use App\Modules\X157\Actions\PlatformSiteAddressAction;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Throwable;
 
@@ -34,6 +37,11 @@ class Pages extends Component
 {
     #[Locked]
     public int $businessId;
+
+    #[Url(as: 'edit')]
+    public ?int $editingPageId = null;
+
+    public bool $previewProposed = true;
 
     public string $newSlug = '';
 
@@ -59,6 +67,22 @@ class Pages extends Component
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager), 403);
         $this->businessId = Tenancy::id();
+    }
+
+    public function openEditor(int $pageId): void
+    {
+        Page::where('business_id', $this->businessId)->findOrFail($pageId);
+        $this->editingPageId = $pageId;
+    }
+
+    public function closeEditor(): void
+    {
+        $this->editingPageId = null;
+    }
+
+    public function showProposed(bool $on): void
+    {
+        $this->previewProposed = $on;
     }
 
     public function addPage(PageCreateAction $action): void
@@ -382,7 +406,11 @@ class Pages extends Component
             if ($res['status'] === 'refused') {
                 $this->success = $res['reason'];
             } else {
-                $this->success = "Proposed {$res['blocks']} blocks with {$res['model']} — review it below, then Apply or Discard.";
+                $msg = "Proposed {$res['blocks']} blocks with {$res['model']} — review it below, then Apply or Discard.";
+                if (($res['images'] ?? 0) > 0) {
+                    $msg .= " Made {$res['images']} picture(s) for it.";
+                }
+                $this->success = $msg;
                 unset($this->editRequest[$pageId]);
             }
         } catch (Throwable $e) {
@@ -404,13 +432,75 @@ class Pages extends Component
             return;
         }
 
-        $page->draft_blocks = $pending['blocks'];
         $meta = $page->draft_meta;
+        if (! isset($meta['undo'])) {
+            $meta['undo'] = [];
+        }
+
+        $previousSiteTokens = Business::whereKey($this->businessId)->value('site_tokens');
+        if (is_string($previousSiteTokens)) {
+            $previousSiteTokens = json_decode($previousSiteTokens, true);
+        }
+
+        $meta['undo'][] = [
+            'blocks' => $page->draft_blocks ?? [],
+            'site_tokens' => $previousSiteTokens,
+        ];
+        if (count($meta['undo']) > 20) {
+            array_shift($meta['undo']);
+        }
+
+        $page->draft_blocks = $pending['blocks'];
+
+        if (isset($pending['style'])) {
+            $tokens = is_array($previousSiteTokens) ? $previousSiteTokens : [];
+            if (isset($pending['style']['palette'])) {
+                $tokens['palette'] = array_replace($tokens['palette'] ?? [], $pending['style']['palette']);
+            }
+            if (isset($pending['style']['type_pairing'])) {
+                $tokens['type_pairing'] = array_replace($tokens['type_pairing'] ?? [], $pending['style']['type_pairing']);
+            }
+            Business::whereKey($this->businessId)->update(['site_tokens' => $tokens]);
+            $this->success = 'Applied. The new colours and fonts show on every page the next time you publish it.';
+        } else {
+            $this->success = 'Applied to the draft. Publish when you are ready — History keeps the version before this one.';
+        }
+
         unset($meta['pending_edit']);
         $page->draft_meta = $meta;
         $page->save();
+    }
 
-        $this->success = 'Applied to the draft. Publish when you are ready — History keeps the version before this one.';
+    public function undoEdit(int $pageId): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
+        $meta = $page->draft_meta ?? [];
+        $undo = $meta['undo'] ?? [];
+
+        if (empty($undo)) {
+            $this->error = 'Nothing to undo.';
+
+            return;
+        }
+
+        $entry = array_pop($undo);
+
+        if (is_array($entry) && isset($entry['blocks']) && array_key_exists('site_tokens', $entry)) {
+            $page->draft_blocks = $entry['blocks'];
+            Business::whereKey($this->businessId)->update(['site_tokens' => $entry['site_tokens']]);
+        } else {
+            $page->draft_blocks = $entry;
+        }
+
+        $meta['undo'] = $undo;
+        $page->draft_meta = $meta;
+        $page->save();
+
+        $this->success = 'Undone. Your draft is back to how it was before the last change.';
     }
 
     public function discardEdit(int $pageId): void
@@ -439,7 +529,8 @@ class Pages extends Component
             if ($res['status'] === 'refused') {
                 $this->success = $res['reason'];
             } else {
-                $this->success = "Made a draft page \"{$res['title']}\" at /{$res['slug']} with {$res['blocks']} blocks using {$res['model']} — it is in the list above, unpublished. Publish it when you are happy, or delete it.";
+                $this->editingPageId = (int) $res['page_id'];
+                $this->success = "Made a draft page \"{$res['title']}\" at /{$res['slug']} with {$res['blocks']} blocks using {$res['model']}. It is open in the editor — change it by asking, then publish when you are happy.";
                 $this->pageRequest = '';
             }
         } catch (Throwable $e) {
@@ -659,6 +750,14 @@ class Pages extends Component
 
         $questions = app(CustomerQuestionsAction::class)->handle($this->businessId);
 
+        $editing = null;
+        $previewHtml = null;
+
+        if ($this->editingPageId !== null) {
+            $editing = Page::where('business_id', $this->businessId)->findOrFail($this->editingPageId);
+            $previewHtml = app(PagePreview::class)->html($editing, $this->previewProposed);
+        }
+
         return view('x-103::pages', [
             'pages' => $pages,
             'deployments' => $deployments,
@@ -666,6 +765,8 @@ class Pages extends Component
             'hasVersions' => $hasVersions,
             'hasChanges' => $hasChanges,
             'questions' => $questions,
+            'editing' => $editing,
+            'previewHtml' => $previewHtml,
         ]);
     }
 }

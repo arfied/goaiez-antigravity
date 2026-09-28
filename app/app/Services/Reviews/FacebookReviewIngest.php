@@ -6,6 +6,7 @@ namespace App\Services\Reviews;
 
 use App\Enums\ReviewSource;
 use App\Enums\ReviewStatus;
+use App\Events\ReviewIngested;
 use App\Models\Location;
 use App\Models\Review;
 use App\Services\Zernio\FacebookReview;
@@ -38,7 +39,9 @@ final class FacebookReviewIngest
                 continue;
             }
 
-            $outcome = DB::transaction(function () use ($location, $review): string {
+            $insertedRowId = null;
+
+            $outcome = DB::transaction(function () use ($location, $review, &$insertedRowId): string {
                 $existing = Review::query()
                     ->where('location_id', $location->id)
                     ->where('source', ReviewSource::Facebook)
@@ -48,7 +51,7 @@ final class FacebookReviewIngest
                 $payload = $this->reducedPayload($review);
 
                 if ($existing === null) {
-                    Review::query()->create([
+                    $row = Review::query()->create([
                         'location_id' => $location->id,
                         'business_id' => $location->business_id,
                         'source' => ReviewSource::Facebook,
@@ -67,6 +70,8 @@ final class FacebookReviewIngest
                         'approved_by' => 'system:facebook_sync',
                         'raw_payload' => $payload,
                     ]);
+
+                    $insertedRowId = (int) $row->id;
 
                     return 'inserted';
                 }
@@ -89,6 +94,15 @@ final class FacebookReviewIngest
 
             if ($outcome === 'inserted') {
                 $inserted++;
+                if ($insertedRowId !== null) {
+                    event(new ReviewIngested(
+                        businessId: (int) $location->business_id,
+                        reviewId: $insertedRowId,
+                        platform: 'facebook',
+                        rating: $review->rating,
+                        locationId: (int) $location->id,
+                    ));
+                }
             } else {
                 $updated++;
             }

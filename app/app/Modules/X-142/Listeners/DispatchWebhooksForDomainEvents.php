@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X142\Listeners;
 
+use App\Events\ReviewIngested;
 use App\Modules\X01\Events\ContactCreated;
 use App\Modules\X01\Events\ConversationUpdated;
 use App\Modules\X10\Events\LeadAssigned;
@@ -54,6 +55,16 @@ class DispatchWebhooksForDomainEvents
         app(WebhookDispatchAction::class)->dispatch($e->businessId, 'estimate.accepted', [
             'estimate_id' => $e->estimateId,
             'signed_by' => $e->signedBy,
+        ]);
+    }
+
+    public function onReviewIngested(ReviewIngested $e): void
+    {
+        app(WebhookDispatchAction::class)->dispatch($e->businessId, 'review.received', [
+            'review_id' => $e->reviewId,
+            'platform' => $e->platform,
+            'rating' => $e->rating,
+            'location_id' => $e->locationId,
         ]);
     }
 }
