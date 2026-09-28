@@ -99,6 +99,42 @@ class X190Test extends TestCase
         $this->assertFalse($shippedUnbought->partner_bought);
     }
 
+    public function test_slot_can_be_declined_and_reopened(): void
+    {
+        Event::fake([ApprovalRequested::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Decline Test Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $slot = ReferralSlot::create([
+            'business_id' => $biz->id,
+            'category' => 'plumbing',
+            'territory_zip' => '10001',
+            'is_network_enabled' => true,
+            'status' => 'open',
+        ]);
+
+        $board = \Livewire\Livewire::test(\App\Modules\X190\Ui\SlotBoard::class, ['businessId' => $biz->id]);
+
+        $board->set('partnerName.'.$slot->id, 'Plumbing Pros')
+              ->call('proposePartner', $slot->id)
+              ->assertSee('Plumbing Pros')
+              ->assertSee('proposed');
+
+        $board->call('decline', $slot->id)
+              ->assertSee('plumbing')
+              ->assertSee('declined');
+
+        $declinedPartner = PartnerPool::where('business_id', $biz->id)
+            ->where('category', 'plumbing')
+            ->where('territory_zip', '10001')
+            ->first();
+        $this->assertNotNull($declinedPartner);
+        $this->assertTrue($declinedPartner->is_declined);
+
+        $board->assertSee('Find partners');
+    }
+
     /**
      * [G7-25], [G7-43], [G9-24], [G12-01], [G12-33]
      */

@@ -25,7 +25,7 @@ class PoolDepthPer extends Component
     public function render()
     {
         $count = ($this->businessId > 0)
-            ? PartnerPool::where('business_id', $this->businessId)->count()
+            ? PartnerPool::where('business_id', $this->businessId)->where('is_declined', false)->count()
             : 0;
 
         return view('x-190::pool-depth-per', [

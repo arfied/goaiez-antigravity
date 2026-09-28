@@ -21,7 +21,11 @@
                 @foreach($referralSlots as $slot)
                     <li>
                         {{ $slot->category }} {{ $slot->territory_zip }} {{ $slot->status }}
-                        @if($slot->status === 'open')
+                        @if($slot->status === 'proposed')
+                            {{ $pool->where('category', $slot->category)->where('territory_zip', $slot->territory_zip)->where('is_declined', false)->first()?->company_name }}
+                            <button type="button" wire:click="decline({{ $slot->id }})">Decline</button>
+                        @endif
+                        @if(in_array($slot->status, ['open', 'declined'], true))
                             <input wire:model="partnerName.{{ $slot->id }}" placeholder="Company to shortlist">
                             <button type="button" wire:click="proposePartner({{ $slot->id }})">Propose partner</button>
                             @error('partnerName.'.$slot->id) <span>{{ $message }}</span> @enderror

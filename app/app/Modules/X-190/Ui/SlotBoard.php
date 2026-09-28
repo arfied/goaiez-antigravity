@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\X190\Ui;
 
+use App\Modules\X190\Actions\SlotDeclineAction;
 use App\Modules\X190\Actions\SlotProposeAction;
+use App\Modules\X190\Models\PartnerPool;
 use App\Modules\X190\Models\ReferralListing;
 use App\Modules\X190\Models\ReferralSlot;
 use App\Support\Tenancy;
@@ -81,6 +83,25 @@ class SlotBoard extends Component
         unset($this->partnerName[$slotId]);
     }
 
+    public function decline(int $slotId, SlotDeclineAction $action): void
+    {
+        $slot = ReferralSlot::where('business_id', $this->businessId)->findOrFail($slotId);
+        $partner = PartnerPool::where('business_id', $this->businessId)
+            ->where('category', $slot->category)
+            ->where('territory_zip', $slot->territory_zip)
+            ->where('is_declined', false)
+            ->first();
+
+        if ($partner === null) {
+            $this->addError('decline.'.$slotId, 'There is nothing to decline on this slot.');
+
+            return;
+        }
+
+        $action->decline($this->businessId, (int) $slot->id, (int) $partner->id);
+        $this->success = 'Declined. The slot is open again and that company will not be suggested for it.';
+    }
+
     public function mount(int $businessId = 0): void
     {
         $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
@@ -93,8 +114,13 @@ class SlotBoard extends Component
             ? ReferralSlot::where('business_id', $this->businessId)->get()
             : collect();
 
+        $pool = ($this->businessId > 0)
+            ? PartnerPool::where('business_id', $this->businessId)->get()
+            : collect();
+
         return view('x-190::slot-board', [
             'referralSlots' => $referralSlots,
+            'pool' => $pool,
         ]);
     }
 }
