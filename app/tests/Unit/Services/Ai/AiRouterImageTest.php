@@ -3,11 +3,14 @@
 namespace Tests\Unit\Services\Ai;
 
 use App\Enums\AiTask;
+use App\Enums\CreditKind;
+use App\Enums\CreditProduct;
 use App\Models\AiCall;
 use App\Models\Business;
 use App\Services\Ai\AiCredits;
 use App\Services\Ai\AiRouter;
 use App\Services\Ai\ImageRequest;
+use App\Services\Billing\CreditLedger;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -48,7 +51,7 @@ class AiRouterImageTest extends TestCase
 
         $credits = app(AiCredits::class);
         // Grant credits to ensure it has enough balance
-        app(\App\Services\Billing\CreditLedger::class)->record(\App\Enums\CreditProduct::Ai, \App\Enums\CreditKind::Grant, 50000, 'test');
+        app(CreditLedger::class)->record(CreditProduct::Ai, CreditKind::Grant, 50000, 'test');
         $balanceBefore = $credits->balanceHundredths();
 
         Http::fake([

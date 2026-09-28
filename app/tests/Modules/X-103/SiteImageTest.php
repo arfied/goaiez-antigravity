@@ -2,8 +2,10 @@
 
 namespace Tests\Modules\X103;
 
+use App\Enums\UserRole;
 use App\Models\Business;
 use App\Models\User;
+use App\Modules\X103\Domain\PagePreview;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Ui\Pages;
 use App\Support\Tenancy;
@@ -26,7 +28,7 @@ class SiteImageTest extends TestCase
             'draft_blocks' => [['type' => 'hero', 'headline' => 'Old']],
         ]);
 
-        $owner = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
         $business->update(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
@@ -49,9 +51,6 @@ class SiteImageTest extends TestCase
             ->set("editRequest.{$page->id}", 'add a photo')
             ->call('askEdit', $page->id);
 
-
-
-
         $page->refresh();
         $blocks = $page->draft_meta['pending_edit']['blocks'];
 
@@ -61,7 +60,7 @@ class SiteImageTest extends TestCase
         Storage::disk('local')->assertExists($blocks[0]['image_path']);
 
         $lw = $lw = Livewire::test(Pages::class, ['businessId' => $business->id]);
-        $html = app(\App\Modules\X103\Domain\PagePreview::class)->html($page, true);
+        $html = app(PagePreview::class)->html($page, true);
         $this->assertStringContainsString('data:image/jpeg;base64,', $html);
     }
 
@@ -80,7 +79,7 @@ class SiteImageTest extends TestCase
             ],
         ]);
 
-        $owner = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
         $business->update(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
@@ -109,9 +108,6 @@ class SiteImageTest extends TestCase
             ->set("editRequest.{$page->id}", 'add photos')
             ->call('askEdit', $page->id);
 
-
-
-
         Http::assertSentCount(3); // 1 chat + 2 image calls
     }
 
@@ -126,7 +122,7 @@ class SiteImageTest extends TestCase
             'draft_blocks' => [['type' => 'hero', 'headline' => 'test']],
         ]);
 
-        $owner = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
         $business->update(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
@@ -146,9 +142,6 @@ class SiteImageTest extends TestCase
         $lw = Livewire::test(Pages::class, ['businessId' => $business->id])
             ->set("editRequest.{$page->id}", 'add a photo')
             ->call('askEdit', $page->id);
-
-
-
 
         $page->refresh();
         $meta = $page->draft_meta['pending_edit'];
