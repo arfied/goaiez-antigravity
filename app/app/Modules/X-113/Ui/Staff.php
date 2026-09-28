@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\X113\Ui;
 
+use App\Enums\UserRole;
 use App\Modules\X113\Actions\RoleAssignAction;
 use App\Modules\X113\Actions\StaffInviteAction;
 use App\Modules\X113\Models\Role;
 use App\Modules\X113\Models\StaffUser;
-use App\Support\Tenancy;
-use App\Enums\UserRole;
 use App\Services\Team\TeamInvites;
+use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -83,6 +83,7 @@ class Staff extends Component
 
         if ($result['ok'] === false) {
             $this->error = $result['message'];
+
             return;
         }
 

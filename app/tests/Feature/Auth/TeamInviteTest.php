@@ -8,7 +8,6 @@ use App\Enums\UserRole;
 use App\Jobs\DeliverPlatformMail;
 use App\Models\BusinessMembership;
 use App\Models\User;
-use App\Modules\X113\Models\StaffUser;
 use App\Modules\X113\Ui\Staff;
 use App\Support\Tenancy;
 use Illuminate\Auth\Events\PasswordReset;
@@ -127,7 +126,7 @@ final class TeamInviteTest extends TestCase
             ->set('email', 'staff-try@example.test')
             ->call('invite')
             ->assertForbidden();
-            
+
         Bus::assertNotDispatched(DeliverPlatformMail::class);
     }
 

@@ -24,7 +24,6 @@ final class TeamInvites
     public function invite(int $businessId, string $email, string $name, User $actor): array
     {
         $email = trim(strtolower($email));
-        \Illuminate\Support\Facades\Log::info('TEAM INVITE EMAIL: ' . $email . ' / User found: ' . (User::where('email', $email)->first() ? 'yes' : 'no'));
         $user = User::where('email', $email)->first();
         if ($user !== null) {
             $previousUserId = Tenancy::userId();
@@ -52,7 +51,7 @@ final class TeamInvites
                 ];
             }
         } else {
-            $user = new User();
+            $user = new User;
             $user->name = $name;
             $user->email = $email;
             $user->password = Hash::make(Str::random(64));
@@ -73,7 +72,7 @@ final class TeamInvites
         );
 
         $token = Password::broker()->createToken($user);
-        
+
         $businessName = Business::find($businessId)->name ?? 'The Business';
 
         app(PlatformMailer::class)->send(

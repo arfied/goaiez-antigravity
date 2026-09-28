@@ -24,7 +24,7 @@ final class ActivateMembershipOnPasswordReset
         if ($membership !== null) {
             Tenancy::actingAs($membership->business_id, function () use ($membership, $event) {
                 $membership->forceFill(['accepted_at' => now()])->save();
-                
+
                 if ($event->user->email_verified_at === null) {
                     $event->user->forceFill(['email_verified_at' => now()])->save();
                 }
