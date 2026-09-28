@@ -570,4 +570,92 @@ final class TeamInviteTest extends TestCase
             ->assertSee('Access: Manager')
             ->assertSee('Access: Staff');
     }
+
+    public function test_invite_refuses_super_admin(): void
+    {
+        Bus::fake();
+
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $superAdmin = User::factory()->create(['role' => UserRole::SuperAdmin, 'email' => 'super@example.test']);
+
+        Livewire::test(Staff::class)
+            ->set('name', 'Super Admin')
+            ->set('email', 'super@example.test')
+            ->call('invite')
+            ->assertSet('error', 'That email already has an account that cannot join a business as a teammate.');
+
+        $this->assertEquals(UserRole::SuperAdmin, $superAdmin->fresh()->role);
+        $this->assertDatabaseMissing((new BusinessMembership)->getTable(), [
+            'user_id' => $superAdmin->id,
+        ]);
+        Bus::assertNotDispatched(DeliverPlatformMail::class);
+    }
+
+    public function test_invite_refuses_support_agent_and_owner_without_business(): void
+    {
+        Bus::fake();
+
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $supportAgent = User::factory()->create(['role' => UserRole::SupportAgent, 'email' => 'support@example.test']);
+
+        Livewire::test(Staff::class)
+            ->set('name', 'Support Agent')
+            ->set('email', 'support@example.test')
+            ->call('invite')
+            ->assertSet('error', 'That email already has an account that cannot join a business as a teammate.');
+
+        $this->assertEquals(UserRole::SupportAgent, $supportAgent->fresh()->role);
+        $this->assertDatabaseMissing((new BusinessMembership)->getTable(), [
+            'user_id' => $supportAgent->id,
+        ]);
+
+        $otherOwner = User::factory()->create(['role' => UserRole::Owner, 'email' => 'otherowner@example.test']);
+
+        Livewire::test(Staff::class)
+            ->set('name', 'Other Owner')
+            ->set('email', 'otherowner@example.test')
+            ->call('invite')
+            ->assertSet('error', 'That email already has an account that cannot join a business as a teammate.');
+
+        $this->assertEquals(UserRole::Owner, $otherOwner->fresh()->role);
+        $this->assertDatabaseMissing((new BusinessMembership)->getTable(), [
+            'user_id' => $otherOwner->id,
+        ]);
+
+        Bus::assertNotDispatched(DeliverPlatformMail::class);
+    }
+
+    public function test_invite_staff_can_be_upgraded_to_manager(): void
+    {
+        Bus::fake();
+
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $staff = User::factory()->create(['role' => UserRole::Staff, 'email' => 'staff@example.test']);
+
+        Livewire::test(Staff::class)
+            ->set('name', 'Staff Member')
+            ->set('email', 'staff@example.test')
+            ->set('inviteRole', 'manager')
+            ->call('invite')
+            ->assertSet('error', null);
+
+        $this->assertEquals(UserRole::Manager, $staff->fresh()->role);
+        $this->assertDatabaseHas((new BusinessMembership)->getTable(), [
+            'business_id' => $biz->id,
+            'user_id' => $staff->id,
+            'role' => 'manager',
+            'accepted_at' => null,
+            'revoked_at' => null,
+        ]);
+        Bus::assertDispatched(DeliverPlatformMail::class, 1);
+    }
 }

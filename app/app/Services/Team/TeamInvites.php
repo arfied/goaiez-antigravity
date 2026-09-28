@@ -60,6 +60,13 @@ final class TeamInvites
                 ];
             }
 
+            if (! in_array($user->role, [UserRole::Staff, UserRole::Manager], true)) {
+                return [
+                    'ok' => false,
+                    'message' => 'That email already has an account that cannot join a business as a teammate.',
+                ];
+            }
+
             $user->role = $role;
             $user->save();
         } else {
