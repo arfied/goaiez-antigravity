@@ -43,6 +43,8 @@ class Pages extends Component
 
     public bool $previewProposed = true;
 
+    public string $deviceWidth = 'desktop';
+
     public string $newSlug = '';
 
     public string $newTitle = '';
@@ -83,6 +85,11 @@ class Pages extends Component
     public function showProposed(bool $on): void
     {
         $this->previewProposed = $on;
+    }
+
+    public function setDeviceWidth(string $width): void
+    {
+        $this->deviceWidth = $width;
     }
 
     public function addPage(PageCreateAction $action): void
