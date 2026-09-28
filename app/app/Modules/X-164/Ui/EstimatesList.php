@@ -7,11 +7,11 @@ namespace App\Modules\X164\Ui;
 use App\Modules\X164\Actions\EstimateAcceptAction;
 use App\Modules\X164\Actions\EstimateDraftAction;
 use App\Modules\X164\Actions\EstimateRefreshAction;
-use App\Modules\X164\Actions\EstimateSendAction;
 use App\Modules\X164\Models\Estimate;
 use App\Modules\X164\Models\EstimateLine;
 use App\Modules\X172\Actions\PortalLinkAction;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Messaging\EstimateEmailSender;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -79,15 +79,20 @@ class EstimatesList extends Component
         $this->unitPriceCents = 0;
     }
 
-    public function sendEstimate(int $estimateId, EstimateSendAction $action): void
+    public function sendEstimate(int $estimateId): void
     {
+        abort_unless(auth()->user()?->role->canConfigureAutomation() === true, 403);
+
         $this->error = null;
         $this->success = null;
 
-        $estimate = $action->handle(Tenancy::idOrFail(), $estimateId);
+        $out = app(EstimateEmailSender::class)->send($estimateId);
 
-        $this->success = 'Estimate '.$estimate->estimate_number.' is marked sent. Nothing is delivered '
-            .'to the customer yet — this records the status only.';
+        if ($out['sent']) {
+            $this->success = $out['message'];
+        } else {
+            $this->error = $out['message'];
+        }
     }
 
     public function acceptEstimate(int $estimateId, EstimateAcceptAction $action): void
