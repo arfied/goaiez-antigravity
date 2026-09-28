@@ -2,6 +2,52 @@
     <x-ui.toast kind="error" :message="$error" />
     <x-ui.toast kind="success" :message="$success" />
 
+    @if($editing)
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold">Editing {{ $editing->title }}</h2>
+                <button wire:click="closeEditor" class="bg-paper border border-rule px-4 py-2">Close editor</button>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div>
+                    @if(isset($editing->draft_meta['pending_edit']['thread']))
+                        <div class="mb-4">
+                            @foreach($editing->draft_meta['pending_edit']['thread'] as $t)
+                                <div class="mb-2">
+                                    <strong>You asked:</strong> {{ $t['request'] ?? '' }}
+                                    <div class="text-ink-2">{{ $t['explanation'] ?? '' }}</div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                    <div class="mb-4">
+                        <input type="text" wire:model="editRequest.{{ $editing->id }}" placeholder="Say what to change" class="w-full bg-paper border border-rule text-ink p-2 mb-2">
+                        <button wire:click="askEdit({{ $editing->id }})" class="bg-paper border border-rule px-4 py-2 mr-2">Ask</button>
+                        @if(isset($editing->draft_meta['pending_edit']))
+                            <button wire:click="applyEdit({{ $editing->id }})" class="bg-paper border border-rule px-4 py-2 mr-2">Apply to draft</button>
+                            <button wire:click="discardEdit({{ $editing->id }})" class="bg-paper border border-rule px-4 py-2">Discard</button>
+                        @endif
+                    </div>
+                    @if(!empty($editing->draft_meta['undo']))
+                        <button wire:click="undoEdit({{ $editing->id }})" class="bg-paper border border-rule px-4 py-2 mb-4 block">Undo last change</button>
+                    @endif
+                    <div>
+                        <button wire:click="publish({{ $editing->id }})" class="bg-paper border border-rule px-4 py-2 text-ink">Publish</button>
+                    </div>
+                </div>
+                <div>
+                    @if(isset($editing->draft_meta['pending_edit']))
+                        <div class="mb-2 flex gap-2">
+                            <button wire:click="showProposed(true)" class="bg-paper border border-rule px-4 py-2 {{ $previewProposed ? 'font-bold' : '' }}">Proposed</button>
+                            <button wire:click="showProposed(false)" class="bg-paper border border-rule px-4 py-2 {{ !$previewProposed ? 'font-bold' : '' }}">Current draft</button>
+                        </div>
+                    @endif
+                    <iframe title="Page preview" sandbox="" class="w-full h-[70vh] border border-rule rounded" srcdoc="{{ $previewHtml }}"></iframe>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <details class="mb-4">
         <summary class="cursor-pointer">Questions customers asked ({{ count($questions) }})</summary>
         <div class="p-2 mt-2 bg-paper border border-rule">
@@ -66,6 +112,7 @@
                                     @endif
                                 @endif
                                 <button wire:click="duplicatePage({{ $page->id }})" class="ml-2 bg-paper border border-rule px-2 py-1 text-ink">Duplicate</button>
+                                <button wire:click="openEditor({{ $page->id }})" class="ml-2 bg-paper border border-rule px-2 py-1 text-ink">Open editor</button>
                             </td>
                             <td class="py-2 text-ink">
                                 <details class="mb-2">
@@ -98,7 +145,7 @@
                                         @else
                                             <div class="mt-2 p-2 bg-paper border border-rule">
                                                 <strong>Proposed change</strong>
-                                                <p>{{ $page->draft_meta['pending_edit']['explanation'] }}</p>
+                                                <p>{{ $page->draft_meta['pending_edit']['explanation'] ?? '' }}</p>
                                                 
                                                 <div class="grid grid-cols-2 gap-4 my-2">
                                                     <div>

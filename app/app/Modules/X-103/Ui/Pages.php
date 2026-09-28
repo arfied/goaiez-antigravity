@@ -17,6 +17,7 @@ use App\Modules\X103\Actions\SiteCopyPolishAction;
 use App\Modules\X103\Actions\SiteEditProposeAction;
 use App\Modules\X103\Actions\SitePageProposeAction;
 use App\Modules\X103\Actions\SitePublishAction;
+use App\Modules\X103\Domain\PagePreview;
 use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
@@ -26,6 +27,7 @@ use App\Modules\X157\Actions\PlatformSiteAddressAction;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Throwable;
 
@@ -34,6 +36,11 @@ class Pages extends Component
 {
     #[Locked]
     public int $businessId;
+
+    #[Url(as: 'edit')]
+    public ?int $editingPageId = null;
+
+    public bool $previewProposed = true;
 
     public string $newSlug = '';
 
@@ -59,6 +66,22 @@ class Pages extends Component
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager), 403);
         $this->businessId = Tenancy::id();
+    }
+
+    public function openEditor(int $pageId): void
+    {
+        Page::where('business_id', $this->businessId)->findOrFail($pageId);
+        $this->editingPageId = $pageId;
+    }
+
+    public function closeEditor(): void
+    {
+        $this->editingPageId = null;
+    }
+
+    public function showProposed(bool $on): void
+    {
+        $this->previewProposed = $on;
     }
 
     public function addPage(PageCreateAction $action): void
@@ -404,13 +427,45 @@ class Pages extends Component
             return;
         }
 
-        $page->draft_blocks = $pending['blocks'];
         $meta = $page->draft_meta;
+        if (! isset($meta['undo'])) {
+            $meta['undo'] = [];
+        }
+        $meta['undo'][] = $page->draft_blocks ?? [];
+        if (count($meta['undo']) > 20) {
+            array_shift($meta['undo']);
+        }
+
+        $page->draft_blocks = $pending['blocks'];
         unset($meta['pending_edit']);
         $page->draft_meta = $meta;
         $page->save();
 
         $this->success = 'Applied to the draft. Publish when you are ready — History keeps the version before this one.';
+    }
+
+    public function undoEdit(int $pageId): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
+        $meta = $page->draft_meta ?? [];
+        $undo = $meta['undo'] ?? [];
+
+        if (empty($undo)) {
+            $this->error = 'Nothing to undo.';
+
+            return;
+        }
+
+        $page->draft_blocks = array_pop($undo);
+        $meta['undo'] = $undo;
+        $page->draft_meta = $meta;
+        $page->save();
+
+        $this->success = 'Undone. Your draft is back to how it was before the last change.';
     }
 
     public function discardEdit(int $pageId): void
@@ -659,6 +714,14 @@ class Pages extends Component
 
         $questions = app(CustomerQuestionsAction::class)->handle($this->businessId);
 
+        $editing = null;
+        $previewHtml = null;
+
+        if ($this->editingPageId !== null) {
+            $editing = Page::where('business_id', $this->businessId)->findOrFail($this->editingPageId);
+            $previewHtml = app(PagePreview::class)->html($editing, $this->previewProposed);
+        }
+
         return view('x-103::pages', [
             'pages' => $pages,
             'deployments' => $deployments,
@@ -666,6 +729,8 @@ class Pages extends Component
             'hasVersions' => $hasVersions,
             'hasChanges' => $hasChanges,
             'questions' => $questions,
+            'editing' => $editing,
+            'previewHtml' => $previewHtml,
         ]);
     }
 }

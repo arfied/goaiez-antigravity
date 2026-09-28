@@ -9,11 +9,14 @@ use App\Modules\X103\Domain\SiteBlockRenderer;
 use App\Modules\X103\Models\Page;
 use App\Services\Ai\AiRequest;
 use App\Services\Ai\AiRouter;
+use App\Services\Assistant\PriceBook;
 use App\Services\Config\DefaultsRegistry;
+use App\Support\PlanPricing;
 
 final class SiteEditProposeAction
 {
     public function __construct(
+        private readonly PriceBook $priceBook,
         private readonly AiRouter $router,
         private readonly DefaultsRegistry $registry,
         private readonly SiteBlockRenderer $renderer
@@ -37,7 +40,25 @@ final class SiteEditProposeAction
             $currentBlocks = $page->draft_meta['pending_edit']['blocks'] ?? [];
         }
 
-        $prompt = "Owner request: {$request}\n\nCurrent blocks (JSON):\n".json_encode($currentBlocks, JSON_UNESCAPED_SLASHES);
+        $facts = [];
+        $priceList = $this->priceBook->list();
+        foreach ($priceList->entries as $entry) {
+            if ($entry->isConfirmed()) {
+                $priceText = PlanPricing::format($entry->amount());
+                if ($entry->isRange()) {
+                    $priceText .= ' - '.PlanPricing::format($entry->upperAmount());
+                }
+                $facts[] = "Service: {$entry->label} (Price: {$priceText})";
+            }
+        }
+
+        if (empty($facts)) {
+            $pricesSection = 'Prices you may use: none — do not state any price.';
+        } else {
+            $pricesSection = "Prices you may use (never any other price):\n".implode("\n", $facts);
+        }
+
+        $prompt = "Owner request: {$request}\n\n{$pricesSection}\n\nCurrent blocks (JSON):\n".json_encode($currentBlocks, JSON_UNESCAPED_SLASHES);
 
         $response = $this->router->dispatch(new AiRequest(
             task: AiTask::SiteCopy,
