@@ -9,6 +9,7 @@ use App\Jobs\DeliverPlatformMail;
 use App\Models\BusinessMembership;
 use App\Models\User;
 use App\Modules\X113\Ui\Staff;
+use App\Services\Team\TeamInvites;
 use App\Support\Tenancy;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -401,5 +402,260 @@ final class TeamInviteTest extends TestCase
             ->assertSee('Visible Staff')
             ->assertSee('vis@example.test')
             ->assertSee('Active');
+    }
+
+    public function test_owner_invites_manager(): void
+    {
+        Bus::fake();
+
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Livewire::test(Staff::class)
+            ->set('name', 'Invited Manager')
+            ->set('email', 'inv-manager@example.test')
+            ->set('inviteRole', 'manager')
+            ->call('invite')
+            ->assertSet('error', null);
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'inv-manager@example.test',
+            'role' => UserRole::Manager,
+        ]);
+
+        $user = User::where('email', 'inv-manager@example.test')->firstOrFail();
+
+        $this->assertDatabaseHas((new BusinessMembership)->getTable(), [
+            'business_id' => $biz->id,
+            'user_id' => $user->id,
+            'role' => 'manager',
+        ]);
+
+        $token = Password::broker()->createToken($user);
+        Password::broker()->reset(
+            [
+                'email' => $user->email,
+                'token' => $token,
+                'password' => 'N3w-pass-8392!',
+                'password_confirmation' => 'N3w-pass-8392!',
+            ],
+            function ($u, $p) {
+                $u->forceFill(['password' => Hash::make($p)])->save();
+                event(new PasswordReset($u));
+            }
+        );
+        Tenancy::set($biz->id);
+        $membership = BusinessMembership::withoutGlobalScopes()->where('user_id', $user->id)->firstOrFail();
+        $membership->update(['accepted_at' => now()]);
+
+        Tenancy::forgetAll();
+        $this->actingAs($user);
+        $this->get('/account/settings')->assertOk();
+        $this->post('/account/plan/cancel')->assertForbidden();
+    }
+
+    public function test_default_invite_creates_staff(): void
+    {
+        Bus::fake();
+
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Livewire::test(Staff::class)
+            ->set('name', 'Invited Staff')
+            ->set('email', 'inv-staff@example.test')
+            ->call('invite')
+            ->assertSet('error', null);
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'inv-staff@example.test',
+            'role' => UserRole::Staff,
+        ]);
+
+        $user = User::where('email', 'inv-staff@example.test')->firstOrFail();
+
+        $this->assertDatabaseHas((new BusinessMembership)->getTable(), [
+            'business_id' => $biz->id,
+            'user_id' => $user->id,
+            'role' => 'staff',
+        ]);
+
+        $token = Password::broker()->createToken($user);
+        Password::broker()->reset(
+            [
+                'email' => $user->email,
+                'token' => $token,
+                'password' => 'N3w-pass-8392!',
+                'password_confirmation' => 'N3w-pass-8392!',
+            ],
+            function ($u, $p) {
+                $u->forceFill(['password' => Hash::make($p)])->save();
+                event(new PasswordReset($u));
+            }
+        );
+        Tenancy::set($biz->id);
+        $membership = BusinessMembership::withoutGlobalScopes()->where('user_id', $user->id)->firstOrFail();
+        $membership->update(['accepted_at' => now()]);
+
+        Tenancy::forgetAll();
+        $this->actingAs($user);
+        $this->get('/account/settings')->assertForbidden();
+    }
+
+    public function test_invite_role_owner_refused(): void
+    {
+        Bus::fake();
+
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Livewire::test(Staff::class)
+            ->set('name', 'Invited Owner')
+            ->set('email', 'inv-owner@example.test')
+            ->set('inviteRole', 'owner')
+            ->call('invite')
+            ->assertSet('error', 'Choose Staff or Manager.');
+
+        $this->assertDatabaseMissing('users', [
+            'email' => 'inv-owner@example.test',
+        ]);
+        Bus::assertNotDispatched(DeliverPlatformMail::class);
+    }
+
+    public function test_team_invites_service_refuses_super_admin(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+        $result = app(TeamInvites::class)->invite($biz->id, 'super@example.test', 'Super', $owner, UserRole::SuperAdmin);
+        $this->assertFalse($result['ok']);
+        $this->assertEquals('Choose Staff or Manager.', $result['message']);
+
+        $this->assertDatabaseMissing('users', [
+            'email' => 'super@example.test',
+        ]);
+    }
+
+    public function test_staff_screen_shows_access_levels(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+        $manager = User::factory()->create(['role' => UserRole::Manager, 'name' => 'Visible Manager', 'email' => 'vis-mgr@example.test']);
+        Tenancy::set((int) $biz->id);
+        BusinessMembership::create([
+            'business_id' => $biz->id,
+            'user_id' => $manager->id,
+            'role' => 'manager',
+            'invited_at' => now(),
+            'accepted_at' => now(),
+        ]);
+
+        $staff = User::factory()->create(['role' => UserRole::Staff, 'name' => 'Visible Staff', 'email' => 'vis-stf@example.test']);
+        BusinessMembership::create([
+            'business_id' => $biz->id,
+            'user_id' => $staff->id,
+            'role' => 'staff',
+            'invited_at' => now(),
+            'accepted_at' => now(),
+        ]);
+        Tenancy::forgetAll();
+
+        $this->actingAs($owner)
+            ->get(route('x-113.staff'))
+            ->assertOk()
+            ->assertSee('Access: Manager')
+            ->assertSee('Access: Staff');
+    }
+
+    public function test_invite_refuses_super_admin(): void
+    {
+        Bus::fake();
+
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $superAdmin = User::factory()->create(['role' => UserRole::SuperAdmin, 'email' => 'super@example.test']);
+
+        Livewire::test(Staff::class)
+            ->set('name', 'Super Admin')
+            ->set('email', 'super@example.test')
+            ->call('invite')
+            ->assertSet('error', 'That email already has an account that cannot join a business as a teammate.');
+
+        $this->assertEquals(UserRole::SuperAdmin, $superAdmin->fresh()->role);
+        $this->assertDatabaseMissing((new BusinessMembership)->getTable(), [
+            'user_id' => $superAdmin->id,
+        ]);
+        Bus::assertNotDispatched(DeliverPlatformMail::class);
+    }
+
+    public function test_invite_refuses_support_agent_and_owner_without_business(): void
+    {
+        Bus::fake();
+
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $supportAgent = User::factory()->create(['role' => UserRole::SupportAgent, 'email' => 'support@example.test']);
+
+        Livewire::test(Staff::class)
+            ->set('name', 'Support Agent')
+            ->set('email', 'support@example.test')
+            ->call('invite')
+            ->assertSet('error', 'That email already has an account that cannot join a business as a teammate.');
+
+        $this->assertEquals(UserRole::SupportAgent, $supportAgent->fresh()->role);
+        $this->assertDatabaseMissing((new BusinessMembership)->getTable(), [
+            'user_id' => $supportAgent->id,
+        ]);
+
+        $otherOwner = User::factory()->create(['role' => UserRole::Owner, 'email' => 'otherowner@example.test']);
+
+        Livewire::test(Staff::class)
+            ->set('name', 'Other Owner')
+            ->set('email', 'otherowner@example.test')
+            ->call('invite')
+            ->assertSet('error', 'That email already has an account that cannot join a business as a teammate.');
+
+        $this->assertEquals(UserRole::Owner, $otherOwner->fresh()->role);
+        $this->assertDatabaseMissing((new BusinessMembership)->getTable(), [
+            'user_id' => $otherOwner->id,
+        ]);
+
+        Bus::assertNotDispatched(DeliverPlatformMail::class);
+    }
+
+    public function test_invite_staff_can_be_upgraded_to_manager(): void
+    {
+        Bus::fake();
+
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $staff = User::factory()->create(['role' => UserRole::Staff, 'email' => 'staff@example.test']);
+
+        Livewire::test(Staff::class)
+            ->set('name', 'Staff Member')
+            ->set('email', 'staff@example.test')
+            ->set('inviteRole', 'manager')
+            ->call('invite')
+            ->assertSet('error', null);
+
+        $this->assertEquals(UserRole::Manager, $staff->fresh()->role);
+        $this->assertDatabaseHas((new BusinessMembership)->getTable(), [
+            'business_id' => $biz->id,
+            'user_id' => $staff->id,
+            'role' => 'manager',
+            'accepted_at' => null,
+            'revoked_at' => null,
+        ]);
+        Bus::assertDispatched(DeliverPlatformMail::class, 1);
     }
 }
