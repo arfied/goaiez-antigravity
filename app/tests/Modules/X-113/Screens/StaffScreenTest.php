@@ -63,7 +63,7 @@ class StaffScreenTest extends TestCase
             ->set('email', 'newcrew@example.test')
             ->call('invite')
             ->assertSet('error', null)
-            ->assertSet('success', 'Invited New Crew. This feeds the staff list; nothing downstream is wired to it yet.');
+            ->assertSet('success', 'Invited New Crew. We emailed newcrew@example.test a link to set their password; they can sign in once they do.');
 
         $this->assertDatabaseHas((new StaffUser)->getTable(), [
             'business_id' => $biz->id,
