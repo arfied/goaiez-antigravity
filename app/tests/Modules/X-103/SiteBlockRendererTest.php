@@ -121,10 +121,16 @@ class SiteBlockRendererTest extends TestCase
         $html = $renderer->render($blocks, []);
 
         $fixture = '<div id="videos-x176">
-  <div class="video-item" data-name="Test Video" data-url="https://video.com">Test Video</div>
+  <div class="site-block__inner">
+    <div class="media media--wide">
+      <div class="video-item" data-name="Test Video" data-url="https://video.com">Test Video</div>
+    </div>
+  </div>
 </div>
-<div id="faq-x176">
-  <div class="faq-item" data-question="Q1">Q1 - A1</div>
+<div id="faq-x176" class="site-block--band">
+  <div class="site-block__inner">
+          <div class="faq-item" data-question="Q1">Q1 - A1</div>
+      </div>
 </div>
 ';
         $this->assertStringContainsString($fixture, $html);
