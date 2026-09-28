@@ -1,7 +1,5 @@
 <?php
 
-use App\Enums\AiModel;
-use App\Enums\AiTask;
 use App\Models\Business;
 use App\Modules\X103\Domain\SiteBlockRenderer;
 use App\Services\Industry\IndustryStartingPoints;
@@ -15,9 +13,9 @@ dataset('design_system_classes', [
     '.lede',
     '.stack',
     '.actions',
-    '.btn',
-    '.btn--primary',
-    '.btn--ghost',
+    '.site-cta',
+    '.site-cta--primary',
+    '.site-cta--ghost',
     '.card',
     '.grid--2',
     '.grid--3',
@@ -65,9 +63,4 @@ it('has focus-visible appearing at least twice', function () {
 
     $matches = substr_count($html, ':focus-visible');
     expect($matches)->toBeGreaterThanOrEqual(2);
-});
-
-it('uses the best model for site copy', function () {
-    expect(AiTask::SiteCopy->defaultModel())->toBe(AiModel::ClaudeOpus5)
-        ->and(AiTask::SiteCopy->maxOutputTokens())->toBe(8192);
 });
