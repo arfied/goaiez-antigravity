@@ -63,7 +63,7 @@ class TemplateApprovalQueueScreenTest extends TestCase
             ->set('category', 'marketing')
             ->set('bodyText', 'Hello world')
             ->call('submit')
-            ->assertSet('success', 'Submitted template my_template.')
+            ->assertSet('success', 'Saved my_template as a draft — connect WhatsApp to submit it to Meta.')
             ->assertSet('name', '')
             ->assertSet('category', '')
             ->assertSet('bodyText', '');

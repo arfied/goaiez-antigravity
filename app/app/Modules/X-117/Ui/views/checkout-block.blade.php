@@ -10,9 +10,7 @@
         <x-ui.attention-card state="attention" heading="Nothing authorised yet">{{ $authorised }}</x-ui.attention-card>
     @endif
     
-    @if($success)
-        <p>{{ $success }}</p>
-    @endif
+    <x-ui.toast kind="success" :message="$success" />
     
     @if($waiting)
         <x-ui.status-pill state="unknown" :label="$waiting" />

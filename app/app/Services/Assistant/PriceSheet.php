@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Assistant;
 
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Knowledge\DocumentText;
 use InvalidArgumentException;
 
@@ -60,6 +61,11 @@ final readonly class PriceSheet
      */
     public const int MAX_KILOBYTES = 256;
 
+    public function maxKilobytes(): int
+    {
+        return $this->defaults->int('pricebook.sheet.max_kilobytes');
+    }
+
     /**
      * The most rows one upload may propose.
      *
@@ -76,9 +82,17 @@ final readonly class PriceSheet
      * counted as unread rather than truncated: a truncated label is a job
      * description the business did not write, quoted in their name.
      */
-    private const int MAX_LABEL_LENGTH = 120;
+    public const int MAX_LABEL_LENGTH = 120;
 
-    public function __construct(private DocumentText $text) {}
+    public function maxLabelLength(): int
+    {
+        return $this->defaults->int('assistant.pricesheet.max_label_length');
+    }
+
+    public function __construct(
+        private DocumentText $text,
+        private readonly DefaultsRegistry $defaults,
+    ) {}
 
     /**
      * Read a file's worth of prices.
@@ -162,7 +176,7 @@ final readonly class PriceSheet
 
         $label = trim($matches['label']);
 
-        if ($label === '' || mb_strlen($label) > self::MAX_LABEL_LENGTH) {
+        if ($label === '' || mb_strlen($label) > $this->maxLabelLength()) {
             return null;
         }
 

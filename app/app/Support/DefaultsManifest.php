@@ -7,10 +7,108 @@ namespace App\Support;
 use App\Enums\AiTask;
 use App\Enums\Plan;
 use App\Enums\StoredObjectKind;
+use App\Jobs\AutopilotJob;
+use App\Jobs\PublicAuditJob;
+use App\Jobs\RunCampaignJob;
+use App\Modules\CBilling\Domain\BillingLedgerEngine;
+use App\Modules\CMail\Actions\EmailWarmupAction;
+use App\Modules\CReviews\Actions\ReviewRequestAction;
+use App\Modules\X01\Domain\UnifiedInboxManager;
+use App\Modules\X120\Actions\CardExpiringScanAction;
+use App\Modules\X136\Actions\SignalScoreAction;
+use App\Modules\X137\Actions\CallAttributeAction;
+use App\Modules\X139\Domain\ConversionUploadEngine;
+use App\Modules\X153\Actions\AlertSendAction;
+use App\Modules\X157\Actions\EdgeDeployAction;
+use App\Modules\X165\Actions\PlanProposeAction;
+use App\Modules\X172\Actions\PortalLinkAction;
+use App\Modules\X176\Actions\InternalLinkRenderAction;
+use App\Modules\X181\Actions\QaTicketCreateAction;
+use App\Modules\X191\Actions\LinkPitchAction;
+use App\Modules\X199\Actions\InvoiceDraftAction;
+use App\Modules\X199\Domain\InvoiceEngine;
+use App\Modules\X202\Domain\ApprovalDeskEngine;
+use App\Modules\X205\Domain\AffiliateEngine;
+use App\Modules\X219\Actions\ProviderHealthAction;
+use App\Services\Activity\ActivityFeed;
+use App\Services\Actuation\SiteChanges;
+use App\Services\Actuation\SiteMeasurements;
+use App\Services\Actuation\SpeedDecider;
+use App\Services\Actuation\SpeedFixes;
+use App\Services\Actuation\T3AltText as AltText;
+use App\Services\Actuation\T3FaqBlock as FaqBlock;
+use App\Services\Actuation\T3InternalLink as InternalLink;
+use App\Services\Actuation\T3MetaUpsert as MetaUpsert;
+use App\Services\Actuation\WordPress\WordPressRestClient;
+use App\Services\Agent\AgentComposer;
+use App\Services\Agent\AgentNudges;
+use App\Services\Agent\ThreadCloseSummaries;
+use App\Services\Assistant\PriceBook;
+use App\Services\Assistant\PriceSheet;
+use App\Services\Assistant\UrgentTerms;
+use App\Services\Audit\AuditEngine;
+use App\Services\Audit\Checks\ReviewStatsCheck;
+use App\Services\Audit\PublicAuditStarter;
+use App\Services\Auth\FailedSignIns;
+use App\Services\Billing\PurchaseReconciliation;
+use App\Services\Billing\RenewalReminders;
+use App\Services\Billing\Subscriptions;
+use App\Services\Billing\TrialEligibility;
+use App\Services\Campaigns\UnknownSendReconciler;
+use App\Services\Config\CredentialStore;
+use App\Services\Config\DefaultsRegistry;
+use App\Services\Content\ContentSelfAudit;
+use App\Services\Content\Publishing;
+use App\Services\Conversations\ConversationThreads;
+use App\Services\Conversations\InboxReplies;
+use App\Services\Crm\CrmNotes;
+use App\Services\Crm\CustomerDirectory;
+use App\Services\Crm\CustomerEditor;
+use App\Services\Crm\CustomerMerges;
+use App\Services\Crm\MergeDuplicateDetector;
+use App\Services\Export\ExportBuilder;
+use App\Services\Feedback\FeedbackPages;
+use App\Services\Fetch\RobotsPolicy;
+use App\Services\Gbp\ZernioSpend;
+use App\Services\Knowledge\DocumentChunker;
+use App\Services\Legal\SmsTermsAlignment;
+use App\Services\MagicLinkService;
+use App\Services\Mail\GooglePushTokenVerifier;
 use App\Services\Mail\MailDrivers;
 use App\Services\Mail\MailQuota;
 use App\Services\Mail\MailSendRate;
+use App\Services\Mail\SnsMessageVerifier;
+use App\Services\Mail\SnsSubscriptions;
+use App\Services\Messaging\Composer\NameNormaliser;
+use App\Services\Messaging\MessageLog;
+use App\Services\Messaging\PlatformComplaintRate;
+use App\Services\Messaging\RecoveryCheckInSender;
+use App\Services\Messaging\SendingHealth;
+use App\Services\Ops\OperatorAlerts;
+use App\Services\Ops\PlatformHealthChecks;
+use App\Services\Ops\ScheduledRunMeter;
+use App\Services\Pixel\IngestRejects;
+use App\Services\Places\GooglePlacesClient;
+use App\Services\Reviews\ReplyGenerator;
+use App\Services\Reviews\ResponseTemplates;
+use App\Services\Reviews\ReviewHubPages;
+use App\Services\Reviews\ReviewReplies;
+use App\Services\Sms\InboundMediaFetcher;
+use App\Services\Sms\InfobipClient;
+use App\Services\Sms\InfobipWebhookVerifier;
+use App\Services\Sms\OwnerNotifications;
+use App\Services\Storage\StorageRetention;
+use App\Services\Support\DataRequests;
+use App\Services\Support\SupportDesk;
 use App\Services\Visibility\ReviewLossDetection;
+use App\Services\Voice\InfobipVoiceProvider;
+use App\Services\Warehouse\L1Derivation;
+use App\Services\Warehouse\PixelSightings;
+use App\Services\Warehouse\Replayer;
+use App\Services\Warehouse\WarehouseRetention;
+use App\Services\Widgets\WidgetInstalls;
+use App\Services\Zernio\ZernioSocialMedia;
+use App\Services\Zernio\ZernioWhatsappMedia;
 
 /**
  * THE SEED MANIFEST — doc `38` Part 2's "one reviewed file", CFG1.
@@ -63,6 +161,11 @@ use App\Services\Visibility\ReviewLossDetection;
 final class DefaultsManifest
 {
     /**
+     * The only group names an entry may use.
+     */
+    public const array GROUPS = ['AI', 'Affiliate', 'Agency', 'Assistant', 'Billing', 'Brand', 'Content', 'Credits', 'Free instant audit', 'Google Business Profile', 'Legal', 'Marketing', 'Messaging', 'Notifications', 'Operations', 'Pixel', 'Places', 'Reviews', 'Sites', 'Support', 'Trust'];
+
+    /**
      * Platform-wide seeds → `platform_settings`.
      *
      * `group` is the Ops editor's heading (`38` Part 2: "the Settings editor
@@ -75,6 +178,182 @@ final class DefaultsManifest
     public static function settings(): array
     {
         $settings = [
+            'routing.default_order' => [
+                'seed' => 'returning_caller,territory,workload,default_staff',
+                'group' => 'Marketing',
+                'description' => 'Default order of lead routing rules applied to a new tenant.',
+            ],
+            'routing.workload_window_days' => [
+                'seed' => 30,
+                'group' => 'Marketing',
+                'description' => 'Number of days to look back when evaluating a staff member\'s workload.',
+            ],
+            'reviews.request.cadence_window_days' => [
+                'seed' => ReviewRequestAction::CADENCE_WINDOW_DAYS,
+                'group' => 'Reviews',
+                'description' => 'Days between review requests; changing it applies to newly scheduled requests.',
+            ],
+            'reviews.request.low_csat_below' => [
+                'seed' => ReviewRequestAction::LOW_CSAT_BELOW,
+                'group' => 'Reviews',
+                'description' => 'CSAT score threshold for low rating alerts; changing it applies to newly rated jobs.',
+            ],
+            'reviews.request.low_csat_job_age_days' => [
+                'seed' => ReviewRequestAction::LOW_CSAT_JOB_AGE_DAYS,
+                'group' => 'Reviews',
+                'description' => 'Days before a low CSAT job is archived; changing it applies to newly rated jobs.',
+            ],
+            'billing.card.expiring_warning_days' => [
+                'seed' => CardExpiringScanAction::EXPIRING_WARNING_DAYS,
+                'group' => 'Billing',
+                'description' => 'Days before expiry to warn about a credit card; changing it applies to newly scanned cards.',
+            ],
+            'alerts.claim.expiry_minutes' => [
+                'seed' => AlertSendAction::CLAIM_EXPIRY_MINUTES,
+                'group' => 'Operations',
+                'description' => 'Minutes before an alert claim expires; changing it applies to newly claimed alerts.',
+            ],
+            'approvals.expiry_hours' => [
+                'seed' => ApprovalDeskEngine::EXPIRY_HOURS,
+                'group' => 'Operations',
+                'description' => 'Hours before an approval request expires; changing it applies to newly created requests.',
+            ],
+            'portal.link.ttl_hours' => [
+                'seed' => PortalLinkAction::TTL_HOURS,
+                'group' => 'Messaging',
+                'description' => 'Hours before a portal link expires; changing it applies to newly generated links.',
+            ],
+            'qa.ticket.sla_hours' => [
+                'seed' => QaTicketCreateAction::SLA_HOURS,
+                'group' => 'Operations',
+                'description' => 'Hours before a QA ticket breaches SLA; changing it applies to newly created tickets.',
+            ],
+            'attribution.call.ttl_minutes' => [
+                'seed' => CallAttributeAction::TTL_MINUTES,
+                'group' => 'Marketing',
+                'description' => 'Minutes before a call attribution expires; changing it applies to newly attributed calls.',
+            ],
+            'crm.lead_score.tier_hot' => [
+                'seed' => UnifiedInboxManager::TIER_HOT,
+                'group' => 'Marketing',
+                'description' => 'Lead score hot tier.',
+            ],
+            'crm.lead_score.tier_warm' => [
+                'seed' => UnifiedInboxManager::TIER_WARM,
+                'group' => 'Marketing',
+                'description' => 'Lead score warm tier.',
+            ],
+            'crm.lead_score.tier_cool' => [
+                'seed' => UnifiedInboxManager::TIER_COOL,
+                'group' => 'Marketing',
+                'description' => 'Lead score cool tier.',
+            ],
+            'crm.lead_score.tier_cold' => [
+                'seed' => UnifiedInboxManager::TIER_COLD,
+                'group' => 'Marketing',
+                'description' => 'Lead score cold tier.',
+            ],
+            'affiliate.tier.gold_referrals' => [
+                'seed' => AffiliateEngine::GOLD_REFERRALS,
+                'group' => 'Affiliate',
+                'description' => 'Affiliate gold tier referrals count.',
+            ],
+            'affiliate.tier.silver_referrals' => [
+                'seed' => AffiliateEngine::SILVER_REFERRALS,
+                'group' => 'Affiliate',
+                'description' => 'Affiliate silver tier referrals count.',
+            ],
+            'affiliate.cookie_lifetime_days' => [
+                'seed' => AffiliateEngine::COOKIE_LIFETIME_DAYS,
+                'group' => 'Affiliate',
+                'description' => 'Affiliate cookie lifetime days.',
+            ],
+            'sites.deploy.speed_budget_ms' => [
+                'seed' => EdgeDeployAction::SPEED_BUDGET_MS,
+                'group' => 'Content',
+                'description' => 'Deploy speed budget ms.',
+            ],
+            'sites.deploy.pricebook_items_max' => [
+                'seed' => EdgeDeployAction::PRICEBOOK_ITEMS_MAX,
+                'group' => 'Content',
+                'description' => 'Deploy pricebook items max.',
+            ],
+            'messaging.log.per_page' => [
+                'seed' => MessageLog::PER_PAGE,
+                'group' => 'Messaging',
+                'description' => 'Number of messages shown per page in the tenant message log.',
+            ],
+            'crm.directory.per_page' => [
+                'seed' => CustomerDirectory::PER_PAGE,
+                'group' => 'Marketing',
+                'description' => 'Number of customers shown per page in the directory.',
+            ],
+            'conversations.list_limit' => [
+                'seed' => ConversationThreads::LIST_LIMIT,
+                'group' => 'Messaging',
+                'description' => 'Maximum number of conversation threads shown in the list.',
+            ],
+            'settings.history_limit' => [
+                'seed' => DefaultsRegistry::HISTORY_LIMIT,
+                'group' => 'Operations',
+                'description' => 'Maximum number of change history entries shown per platform setting.',
+            ],
+            'credentials.history_limit' => [
+                'seed' => CredentialStore::HISTORY_LIMIT,
+                'group' => 'Operations',
+                'description' => 'Maximum number of change history entries shown per credential.',
+            ],
+            'ai.model.site_copy' => [
+                'seed' => AiTask::SiteCopy->defaultModel()->value,
+                'group' => 'Content',
+                'description' => 'The model router\'s per-task override for site_copy (seed = the same model the Conversation task seeds).',
+            ],
+            'social.zernio_enabled' => [
+                'seed' => false,
+                'group' => 'Content',
+                'description' => 'Whether Facebook Page and Instagram posts go out through Zernio. Off until the owner connects an account. The first connection for a business creates its Zernio profile through the Google Business integration, so gbp.zernio_enabled must be on for that step.',
+            ],
+            'sites.copy.system_prompt' => [
+                'seed' => 'Rewrite this text for a small local service business. Keep every fact and number, use plain words, and output at most {max_chars} characters. If notes about nearby businesses are included, they are reference only: cover what they cover if it fits, in this business\'s own words; never reuse a name, sentence or phrase from them.',
+                'group' => 'Content',
+                'description' => 'The system prompt used to polish drafted site copy.',
+            ],
+            'sites.edit.system_prompt' => [
+                'seed' => 'You edit a small business website. You receive the page as a JSON list of blocks and a request from the owner. Return ONLY JSON with two keys: "blocks" — the full new block list, same shape as the input, keeping every key you did not change — and "explanation" — two or three plain sentences saying what you changed and why. Rules: never invent a price, a year, a licence number, a review count or any claim; keep the owner\'s own wording of what they do unless the request is about wording; you may reorder, add or remove blocks only of these types: hero, about, services, reviews_strip, booking_button, contact, faq, video_embed, gallery, team, form.',
+                'group' => 'Content',
+                'description' => 'System prompt for the talk-to-your-site editor: the AI rewrites a page\'s block list from an owner\'s plain-words request and explains what it changed',
+            ],
+            'sites.page.system_prompt' => [
+                'seed' => 'You make ONE new page for a small business website from the owner\'s plain-words request. Return ONLY JSON with four keys: "title" — the page title in the owner\'s words; "slug" — a short lowercase URL word or two with hyphens; "blocks" — a list of blocks, each an object with a "type" and the fields that type needs; "explanation" — two or three plain sentences saying what the page contains. Rules: never invent a price, a date, a year, a licence number, a review count or any claim the owner did not state; if the request names an offer, describe it only in the owner\'s terms; use only these block types: hero (headline, subline), about (text), services (items: name, description), faq (items: question, answer), booking_button (label, url), contact. If notes about nearby businesses are included, they are reference only: cover what they cover if it fits, in this business\'s own words; never reuse a name, sentence or phrase from them.',
+                'group' => 'Content',
+                'description' => 'System prompt for "Make me a page": the AI proposes a new page (title, slug, blocks) from an owner\'s plain-words request; the page lands as an unpublished draft the owner publishes or deletes',
+            ],
+            'sites.variant.system_prompt' => [
+                'seed' => 'Write exactly two alternative headlines for the top of a local service business\'s home page. Plain words, at most 70 characters each, no prices, no claims the facts do not support, no business names of any kind. Return them as a list.',
+                'group' => 'Content',
+                'description' => 'System prompt for proposing variant headlines: the AI proposes two alternative headlines for the home page.',
+            ],
+            'sites.copy.max_chars' => [
+                'seed' => 600,
+                'group' => 'Content',
+                'description' => 'Maximum characters for polished site copy.',
+            ],
+            'sites.seo.system_prompt' => [
+                'seed' => 'Write one page title of at most {title_max_chars} characters and one description of at most {description_max_chars} characters. Keep it plain, factual, name the business and the service, and make no claims not in the text.',
+                'group' => 'Content',
+                'description' => 'The system prompt used to draft SEO titles and descriptions.',
+            ],
+            'sites.seo.title_max_chars' => [
+                'seed' => 60,
+                'group' => 'Content',
+                'description' => 'Maximum characters for drafted SEO titles.',
+            ],
+            'sites.seo.description_max_chars' => [
+                'seed' => 155,
+                'group' => 'Content',
+                'description' => 'Maximum characters for drafted SEO descriptions.',
+            ],
+
             /*
              * Billing shape. Not prices — those are per-plan and live in
              * entitlements() below — but the terms every plan shares.
@@ -151,6 +430,12 @@ final class DefaultsManifest
                 'seed' => 30,
                 'group' => 'Billing',
                 'description' => 'Days between charges (decision 147 — 30 days, not calendar months, which is 12.17 cycles a year). Sent to Stripe as the price\'s recurring interval when a Checkout Session is opened. ⚠️ Applies to new subscriptions only: an existing one keeps the interval it was created with.',
+            ],
+
+            'billing.risk.days_overdue_high' => [
+                'seed' => 30,
+                'group' => 'Billing',
+                'description' => 'Invoices past this number of days overdue put a customer in the High risk tier.',
             ],
 
             /*
@@ -265,6 +550,30 @@ final class DefaultsManifest
                 'description' => 'Per-tenant AI spend ceiling for a calendar month, in hundredths of a cent of OUR cost — not of the tenant\'s charge, which is eight times it and lives in ai_calls.retail_hundredths_cents (3304, 3358). 500,000 is $50. ⛔ DECISION 3293 DELETED THE PER-TENANT DOLLAR COST CAP AND 3295 SAYS THIS KEY GOES WITH IT: "an AI-only dollar cap is still a dollar cap, so it goes the same way, and the AI credit balance replaces it." IT IS STILL HERE, DELIBERATELY, AND 3820 IS THE ARGUMENT. The AI credit balance now exists and does refuse (3419, 3424, 3608) — but only for a tenant who HAS a balance. 3609 permits an account that has never been funded, because gating a bare zero would have stopped all AI for every tenant at once, and the unfunded set is not a corner of the plan ladder: Subscriptions provisions every new business as Plan::Base/pending_checkout, and ResetMonthlyCredits grants nothing at all to any account TrialEligibility refuses — which is every account with no confirmed Google listing. Deleting this key therefore handed every unverified account unlimited AI, permanently, in a state under the tenant\'s own control. It is OUTER CONTAINMENT behind the balance gate: AiSpend::allows() asks the balance first and this second. ⚠️ IT IS NOT RULE 43\'S CAP, which the owner deleted: rule 43 capped a tenant\'s TOTAL service cost, and messaging, Places and everything else sit outside this key entirely (3107). The four plan.*.cost_cap.* entitlements that did claim to be rule 43\'s cap are gone (3364) — they had no reader in app/ at all. This one fires. ⚠️ At AiTask\'s defaults a busy tenant costs about 61c a month, so it should never fire; if it does, read it as a signal rather than raise it. It comes out when the monthly reset has demonstrably granted in production and the owner has ruled on the unfunded account.',
             ],
 
+            'ai.image.fallback_cost_hundredths' => [
+                'seed' => 600,
+                'group' => 'AI',
+                'description' => 'Charged per generated picture when the provider reports no token usage, so no picture is unmetered',
+            ],
+
+            'sites.edit.max_images' => [
+                'seed' => 2,
+                'group' => 'Content',
+                'description' => 'Maximum number of images that can be generated per site edit proposal.',
+            ],
+
+            'ai.eval.max_cases_per_run' => [
+                'seed' => 20,
+                'group' => 'AI',
+                'description' => 'Maximum number of test cases to evaluate in a single evaluation run (C2c).',
+            ],
+
+            'ai.eval.similarity_pass_pct' => [
+                'seed' => 70,
+                'group' => 'AI',
+                'description' => 'Percentage score from similar_text above which a golden case evaluation passes (C2c).',
+            ],
+
             /*
              * Google Business Profile, read through Zernio while our own API
              * application clears.
@@ -293,6 +602,28 @@ final class DefaultsManifest
                 'seed' => false,
                 'group' => 'Google Business Profile',
                 'description' => 'Whether Google Business reads route through Zernio while our own GBP API application is pending. Off until a tenant-scoped account mapping exists — the client cannot verify that an account id belongs to the tenant it is called for. Retire this key when direct access is approved; the swap re-authorises every tenant and is a commercial decision, not a deploy.',
+            ],
+
+            'whatsapp.zernio_enabled' => [
+                'seed' => false,
+                'group' => 'Messaging',
+                'description' => 'Whether WhatsApp routes through Zernio. Off until the owner connects a number. The first connection for a business creates its Zernio profile through the Google Business integration, so gbp.zernio_enabled must be on for that step.',
+            ],
+
+            'whatsapp.zernio_onboarding' => [
+                'seed' => 'api',
+                'group' => 'Messaging',
+                'description' => 'Zernio onboarding mode for connecting a number. api is Cloud API only; business_app keeps the number usable in the WhatsApp Business phone app but caps throughput at 20 messages a second and disables groups and calling.',
+            ],
+            'whatsapp.media_max_bytes' => [
+                'seed' => ZernioWhatsappMedia::MAX_BYTES,
+                'group' => 'Messaging',
+                'description' => 'Largest WhatsApp photo, voice note or file saved from an incoming message, in bytes.',
+            ],
+            'social.dm_media_max_bytes' => [
+                'seed' => ZernioSocialMedia::MAX_BYTES,
+                'group' => 'Messaging',
+                'description' => 'Largest photo or file saved from an incoming Facebook or Instagram message, in bytes.',
             ],
 
             /*
@@ -1616,7 +1947,7 @@ final class DefaultsManifest
              */
             'crm.tasks_enabled' => [
                 'seed' => true,
-                'group' => 'CRM',
+                'group' => 'Marketing',
                 'description' => 'Whether owners can create and see follow-ups (`44` §2). On by default — the feature has no vendor, no spend and no send path, so rule 3\'s conservative value is the working one.',
             ],
 
@@ -1704,7 +2035,7 @@ final class DefaultsManifest
              */
             'crm.task_open_max' => [
                 'seed' => 200,
-                'group' => 'CRM',
+                'group' => 'Marketing',
                 'description' => 'Open follow-ups per business before creating another is refused (`44` §1\'s hoarding guard). The refusal names this key so an operator can find it.',
             ],
 
@@ -1854,6 +2185,12 @@ final class DefaultsManifest
                 'description' => 'Whether the weekly wins digest is emailed to account holders at all (automation #109, `16` §12). On by default — every send is account-holder email through PlatformMailer, needing no consent record. Turn it off to stop the whole sweep without a deploy; no week is lost, because the cursor moves only on a delivery and the next digest widens to cover the gap.',
             ],
 
+            'owner_digest.monthly_enabled' => [
+                'seed' => true,
+                'group' => 'Trust',
+                'description' => 'Whether the monthly "what your website did" email is sent to account holders at all. On by default — account-holder email through PlatformMailer, no consent record needed. Off stops the sweep without a deploy; the cursor moves only on a delivery, so the next email widens to cover the gap.',
+            ],
+
             /*
              * The domain every platform email is sent from (5500).
              *
@@ -1902,6 +2239,12 @@ final class DefaultsManifest
                 'seed' => 'goaieasy.net',
                 'group' => 'Messaging',
                 'description' => 'The only domain this platform sends email from (decision 5500), superseding 2114\'s mail.goaiez.com and decision 30\'s reports.goaiez.com. A separately registered domain rather than a subdomain, because reputation, DMARC alignment and blocklisting all work at the organizational domain, so a subdomain of goaiez.com is not separation. SPF, DKIM and DMARC are published here and nowhere else, so a from address on any other domain fails authentication at the receiving server — PlatformMailer refuses one rather than sending it. ⚠️ Never the primary domain: that half of decision 30 is unchanged and separately enforced.',
+            ],
+
+            'mail.health.window_days' => [
+                'seed' => 30,
+                'group' => 'Messaging',
+                'description' => 'Window days for complaint bounce summary action.',
             ],
 
             /*
@@ -2330,6 +2673,16 @@ final class DefaultsManifest
                 'group' => 'Operations',
                 'description' => 'How old the scheduler\'s or a queue worker\'s last heartbeat may be before the operator is alerted (T176 P23). 0 disables the check. ⛔ THIS IS THE ONE ALERT THAT FIRES ON ABSENCE, and it is why the check does not run in the scheduler: a dead scheduler produces silence, not an error, and a check that only runs while the thing it checks is running cannot report that it stopped. It runs in the web process instead. ⚠️ FIFTEEN RATHER THAN TWO, because both processes are restarted on every deploy and a threshold under a deploy\'s length pages somebody every release. ⚠️ A process that has NEVER beaten is not alerted — a fresh install would otherwise page on its first request.',
             ],
+            'fixer.ladder.start_level' => [
+                'seed' => 3,
+                'group' => 'Operations',
+                'description' => 'The level a NEW action type starts at in the Fixer ladder.',
+            ],
+            'fixer.ladder.auto_level' => [
+                'seed' => 3,
+                'group' => 'Operations',
+                'description' => 'At or above this level a command runs without a tap. Below it, the command waits in One-Tap Approval.',
+            ],
 
             /*
              * §10's Delivery paragraph, read literally rather than guessed:
@@ -2514,6 +2867,31 @@ final class DefaultsManifest
                 'group' => 'Marketing',
                 'description' => 'Whether the signed-out site says a site is built from a conversation. ⛔ A CLAIM SWITCH — see `features.commerce`.',
             ],
+            'sites.build.recrawl_after_hours' => [
+                'seed' => 24,
+                'group' => 'Sites',
+                'description' => 'Re-run crawls again only if this many hours have passed.',
+            ],
+            'sites.build.max_pages_publish' => [
+                'seed' => 12,
+                'group' => 'Sites',
+                'description' => 'Maximum number of pages to publish during build.',
+            ],
+            'sites.crawl.max_pages' => [
+                'seed' => 25,
+                'group' => 'Sites',
+                'description' => 'Maximum number of pages followed on the same host breadth-first when fetching a tenant site.',
+            ],
+            'sites.images.max_per_site' => [
+                'seed' => 60,
+                'group' => 'Sites',
+                'description' => 'Maximum number of unique images to store from a single site\'s inventory (D2).',
+            ],
+            'sites.images.max_bytes' => [
+                'seed' => 2000000,
+                'group' => 'Sites',
+                'description' => 'Maximum size of an individual image fetched for inventory storage, in bytes. Must not exceed the FetchGateway\'s own 2 MB ceiling.',
+            ],
             'features.boost_score' => [
                 'seed' => false,
                 'group' => 'Marketing',
@@ -2687,6 +3065,71 @@ final class DefaultsManifest
                 'group' => 'Content',
                 'description' => 'Whether this platform may write to a tenant\'s own website — pages published and fixes applied on their site, on its own, without anybody here pressing anything again. ⛔ This alone answers nothing: a website adapter must also be connected on this deployment, and every write is refused unless that adapter reports the site reachable. ⚠️ Which adapter a deployment has connected is a setting on the machine, not in this database, so nothing written here can tell you — the confirmation shown when you turn this on states what this deployment actually has. ⚠️ It does not switch off the advisory hand-off, which transmits nothing to any website and needs no revert. Turning it off takes one press.',
             ],
+            'actuation.faq.max_items' => [
+                'seed' => FaqBlock::MAX_ITEMS,
+                'group' => 'Content',
+                'description' => 'The maximum number of items allowed in a FAQ block.',
+            ],
+            'actuation.faq.max_answer_chars' => [
+                'seed' => FaqBlock::MAX_ANSWER,
+                'group' => 'Content',
+                'description' => 'The maximum number of characters allowed in a FAQ answer.',
+            ],
+            'actuation.alt_text.max_chars' => [
+                'seed' => AltText::MAX_TEXT,
+                'group' => 'Content',
+                'description' => 'The maximum number of characters allowed in alt text.',
+            ],
+            'actuation.internal_link.max_text_chars' => [
+                'seed' => InternalLink::MAX_TEXT,
+                'group' => 'Content',
+                'description' => 'The maximum number of characters allowed in an internal link text.',
+            ],
+            'actuation.meta.max_content_chars' => [
+                'seed' => MetaUpsert::MAX_CONTENT,
+                'group' => 'Content',
+                'description' => 'The maximum number of characters allowed in a meta tag content attribute.',
+            ],
+            'speed.min_hours_between_fixes' => [
+                'seed' => SpeedFixes::MINIMUM_HOURS_BETWEEN_FIXES,
+                'group' => 'Content',
+                'description' => 'The minimum number of hours that must elapse before a subsequent speed fix can be applied.',
+            ],
+            'speed.baseline_days' => [
+                'seed' => SpeedDecider::BASELINE_DAYS,
+                'group' => 'Content',
+                'description' => 'The number of days to measure performance before applying a speed fix.',
+            ],
+            'sites.measure.window_starts_days' => [
+                'seed' => SiteMeasurements::MEASURED_WINDOW_STARTS_DAYS,
+                'group' => 'Content',
+                'description' => 'The number of days after a site change when the measurement window begins.',
+            ],
+            'sites.measure.window_ends_days' => [
+                'seed' => SiteMeasurements::MEASURED_WINDOW_ENDS_DAYS,
+                'group' => 'Content',
+                'description' => 'The number of days after a site change when the measurement window ends.',
+            ],
+            'sites.measure.baseline_days' => [
+                'seed' => SiteMeasurements::BASELINE_DAYS,
+                'group' => 'Content',
+                'description' => 'The number of days to measure performance prior to a site change for comparison.',
+            ],
+            'sites.revert.attempt_ceiling' => [
+                'seed' => SiteMeasurements::REVERT_ATTEMPT_CEILING,
+                'group' => 'Content',
+                'description' => 'The maximum number of times to attempt reverting a site change before giving up.',
+            ],
+            'sites.undo.in_progress_minutes' => [
+                'seed' => SiteChanges::UNDO_IN_PROGRESS_MINUTES,
+                'group' => 'Content',
+                'description' => 'The maximum time in minutes allowed for an undo operation before it is considered stuck or failed.',
+            ],
+            'wordpress.timeout_seconds' => [
+                'seed' => WordPressRestClient::TIMEOUT_SECONDS,
+                'group' => 'Content',
+                'description' => 'The timeout in seconds for requests made to a WordPress site via the REST API.',
+            ],
 
             /*
              * Doc `16` §15.3's volume caps — *"deliberately conservative"* —
@@ -2820,6 +3263,695 @@ final class DefaultsManifest
                 'group' => 'Agency',
                 'description' => 'The agency discount off voice, in basis points (P-008 2026-09-05).',
             ],
+            'sites.draft.about_max_chars' => [
+                'seed' => 1200,
+                'group' => 'Sites',
+                'description' => 'Maximum length of the drafted about text block, extracted from the inventory.',
+            ],
+
+            'sites.draft.gallery_max' => [
+                'seed' => 8,
+                'group' => 'Content',
+                'description' => 'Maximum number of images included in the drafted gallery block.',
+            ],
+
+            'sites.draft.team_min' => [
+                'seed' => 1,
+                'group' => 'Sites',
+                'description' => 'Minimum number of staff users required to draft the team block.',
+            ],
+
+            'sites.draft.reviews_max' => [
+                'seed' => 6,
+                'group' => 'Sites',
+                'description' => 'Maximum number of displayable reviews included in the drafted reviews strip block.',
+            ],
+
+            'sites.draft.reviews_min_rating' => [
+                'seed' => 4,
+                'group' => 'Sites',
+                'description' => 'Minimum rating required for a review to be included in the drafted reviews strip block.',
+            ],
+            'signals.decay.half_life_days' => [
+                'seed' => 14,
+                'group' => 'Marketing',
+                'description' => 'The default half-life in days for signal decay models (C1).',
+            ],
+            'signals.decay.rate_pct' => [
+                'seed' => 5.0,
+                'group' => 'Marketing',
+                'description' => 'The default decay rate percentage for signal decay models (C1).',
+            ],
+            'ai.eval.pass_threshold_pct' => [
+                'seed' => 90,
+                'group' => 'AI',
+                'description' => 'Threshold percentage for an AI evaluation to pass (C2b).',
+            ],
+            'ai.eval.max_cases_per_set' => [
+                'seed' => 50,
+                'group' => 'AI',
+                'description' => 'Maximum number of cases kept in a golden set before the oldest is dropped (C2b).',
+            ],
+            'ops.alerts.push_budget_per_kind' => [
+                'seed' => OperatorAlerts::PUSH_BUDGET_PER_KIND,
+                'group' => 'Operations',
+                'description' => 'Operator alerts push budget per kind.',
+            ],
+            'ops.alerts.push_budget_hours' => [
+                'seed' => OperatorAlerts::PUSH_BUDGET_HOURS,
+                'group' => 'Operations',
+                'description' => 'Operator alerts push budget hours.',
+            ],
+            'ops.alerts.mail_path_repeat_hours' => [
+                'seed' => OperatorAlerts::MAIL_PATH_REPEAT_HOURS,
+                'group' => 'Operations',
+                'description' => 'Operator alerts mail path repeat hours.',
+            ],
+            'ops.alerts.summary_limit' => [
+                'seed' => OperatorAlerts::SUMMARY_LIMIT,
+                'group' => 'Operations',
+                'description' => 'Operator alerts summary limit.',
+            ],
+            'ops.alerts.min_opening' => [
+                'seed' => OperatorAlerts::MIN_OPENING,
+                'group' => 'Operations',
+                'description' => 'Operator alerts minimum opening.',
+            ],
+            'ops.alerts.retention_days' => [
+                'seed' => OperatorAlerts::RETENTION_DAYS,
+                'group' => 'Operations',
+                'description' => 'Operator alerts retention days.',
+            ],
+            'warehouse.bot_threshold' => [
+                'seed' => L1Derivation::BOT_THRESHOLD,
+                'group' => 'Pixel',
+                'description' => 'Warehouse bot threshold.',
+            ],
+            'warehouse.attribution_window_days' => [
+                'seed' => Replayer::ATTRIBUTION_WINDOW_DAYS,
+                'group' => 'Pixel',
+                'description' => 'Warehouse attribution window days.',
+            ],
+            'warehouse.sightings_fresh_days' => [
+                'seed' => PixelSightings::FRESH_DAYS,
+                'group' => 'Pixel',
+                'description' => 'Warehouse sightings fresh days.',
+            ],
+            'warehouse.l2_retention_days' => [
+                'seed' => WarehouseRetention::L2_RETENTION_DAYS,
+                'group' => 'Pixel',
+                'description' => 'Warehouse L2 retention days.',
+            ],
+            'billing.reconciliation.minimum_age_minutes' => [
+                'seed' => PurchaseReconciliation::MINIMUM_AGE_MINUTES,
+                'group' => 'Billing',
+                'description' => 'Minimum age in minutes for purchase reconciliation.',
+            ],
+            'billing.reconciliation.lookback_days' => [
+                'seed' => PurchaseReconciliation::LOOKBACK_DAYS,
+                'group' => 'Billing',
+                'description' => 'Lookback days for purchase reconciliation.',
+            ],
+            'billing.reconciliation.default_batch' => [
+                'seed' => PurchaseReconciliation::DEFAULT_BATCH,
+                'group' => 'Billing',
+                'description' => 'Default batch size for purchase reconciliation.',
+            ],
+            'pixel.rejects.retention_days' => [
+                'seed' => IngestRejects::RETENTION_DAYS,
+                'group' => 'Pixel',
+                'description' => 'Retention days for ingest rejects.',
+            ],
+            'pixel.rejects.recent_window_hours' => [
+                'seed' => IngestRejects::RECENT_WINDOW_HOURS,
+                'group' => 'Pixel',
+                'description' => 'Recent window in hours for ingest rejects.',
+            ],
+            'pixel.rejects.tenant_window_hours' => [
+                'seed' => IngestRejects::TENANT_WINDOW_HOURS,
+                'group' => 'Pixel',
+                'description' => 'Tenant window in hours for ingest rejects.',
+            ],
+            'pixel.rejects.origins_per_hour' => [
+                'seed' => IngestRejects::ORIGINS_PER_HOUR,
+                'group' => 'Pixel',
+                'description' => 'Origins per hour for ingest rejects.',
+            ],
+            'ops.health.credential_repeat_days' => [
+                'seed' => PlatformHealthChecks::CREDENTIAL_REPEAT_DAYS,
+                'group' => 'Operations',
+                'description' => 'Credential repeat days for platform health checks.',
+            ],
+            'ops.runs.failed_run_repeat_hours' => [
+                'seed' => ScheduledRunMeter::FAILED_RUN_REPEAT_HOURS,
+                'group' => 'Operations',
+                'description' => 'Failed run repeat hours for scheduled run meter.',
+            ],
+            'support.data_requests.statutory_due_days' => [
+                'seed' => DataRequests::STATUTORY_DUE_DAYS,
+                'group' => 'Operations',
+                'description' => 'The statutory period. Lowering it is fine, raising it is a legal question.',
+            ],
+            'gbp.zernio.free_tier_credit_cents' => [
+                'seed' => ZernioSpend::FREE_TIER_CREDIT_CENTS,
+                'group' => 'Google Business Profile',
+                'description' => 'Free tier credit in cents for Zernio spend.',
+            ],
+            'notifications.quiet_hours.start' => [
+                'seed' => 21,
+                'group' => 'Notifications',
+                'description' => 'The hour the quiet window starts.',
+            ],
+            'notifications.quiet_hours.end' => [
+                'seed' => 8,
+                'group' => 'Notifications',
+                'description' => 'The hour the quiet window ends.',
+            ],
+            'notifications.holds.window_days' => [
+                'seed' => 7,
+                'group' => 'Notifications',
+                'description' => 'How many days of holds the screen shows.',
+            ],
+            'brand.default_accent' => [
+                'seed' => '#0284c7',
+                'group' => 'Brand',
+                'description' => 'The default accent colour for brand cards.',
+            ],
+            'brand.card.max_logo_kb' => [
+                'seed' => 512,
+                'group' => 'Brand',
+                'description' => 'Maximum allowed size for the tenant brand logo in KB.',
+            ],
+            'brand.card.badge_max_chars' => [
+                'seed' => 40,
+                'group' => 'Brand',
+                'description' => 'Maximum characters allowed in the badge text.',
+            ],
+            'billing.topup.daily_ceiling_cents' => [
+                'seed' => BillingLedgerEngine::DAILY_TOPUP_CEILING_CENTS,
+                'group' => 'Billing',
+                'description' => 'Daily ceiling for ledger topups.',
+            ],
+            'billing.cycle.voicemail_only_from_day' => [
+                'seed' => BillingLedgerEngine::VOICEMAIL_ONLY_FROM_DAY,
+                'group' => 'Billing',
+                'description' => 'Day in the cycle when voicemail-only restrictions apply.',
+            ],
+            'invoices.default_credit_limit_cents' => [
+                'seed' => InvoiceEngine::DEFAULT_CREDIT_LIMIT_CENTS,
+                'group' => 'Billing',
+                'description' => 'Default credit limit for invoices in cents.',
+            ],
+            'invoices.default_due_days' => [
+                'seed' => InvoiceDraftAction::DEFAULT_DUE_DAYS,
+                'group' => 'Billing',
+                'description' => 'Default due days for invoices.',
+            ],
+            'plans.default_interval_months' => [
+                'seed' => PlanProposeAction::DEFAULT_INTERVAL_MONTHS,
+                'group' => 'Billing',
+                'description' => 'Default interval in months for plans.',
+            ],
+            'mail.warmup.jitter_pct' => [
+                'seed' => EmailWarmupAction::JITTER_PCT,
+                'group' => 'Messaging',
+                'description' => 'Jitter percentage for email warmup.',
+            ],
+            'mail.warmup.daily_allowance' => [
+                'seed' => EmailWarmupAction::DAILY_ALLOWANCE,
+                'group' => 'Messaging',
+                'description' => 'Daily allowance for email warmup.',
+            ],
+            'links.pitch.monthly_send_ceiling' => [
+                'seed' => LinkPitchAction::MONTHLY_SEND_CEILING,
+                'group' => 'Marketing',
+                'description' => 'Monthly send ceiling for link pitches.',
+            ],
+            'links.internal.emitted_max' => [
+                'seed' => InternalLinkRenderAction::EMITTED_MAX,
+                'group' => 'Content',
+                'description' => 'Maximum number of internal links emitted.',
+            ],
+            'attribution.conversion.window_days' => [
+                'seed' => ConversionUploadEngine::ATTRIBUTION_WINDOW_DAYS,
+                'group' => 'Marketing',
+                'description' => 'Attribution window days for conversions.',
+            ],
+            'signals.high_intent_score' => [
+                'seed' => SignalScoreAction::HIGH_INTENT_SCORE,
+                'group' => 'Marketing',
+                'description' => 'High intent score for signals.',
+            ],
+            'ai.provider.degraded_error_rate_pct' => [
+                'seed' => ProviderHealthAction::DEGRADED_ERROR_RATE_PCT,
+                'group' => 'Operations',
+                'description' => 'Degraded error rate percentage for AI providers.',
+            ],
+            'auth.magic_link.lifetime_minutes' => [
+                'seed' => MagicLinkService::LIFETIME_MINUTES,
+                'group' => 'Operations',
+                'description' => 'Lifetime of a magic link in minutes.',
+            ],
+            'activity.feed.per_page' => [
+                'seed' => ActivityFeed::PER_PAGE,
+                'group' => 'Operations',
+                'description' => 'Items per page in the activity feed.',
+            ],
+            'agent.compose.snippet_chars' => [
+                'seed' => AgentComposer::SNIPPET_CHARACTERS,
+                'group' => 'Messaging',
+                'description' => 'Length of snippets in agent compose.',
+            ],
+            'agent.summary.messages_read' => [
+                'seed' => ThreadCloseSummaries::MESSAGES_READ,
+                'group' => 'Messaging',
+                'description' => 'Number of messages read for thread close summaries.',
+            ],
+            'audit.public.reuse_window_seconds' => [
+                'seed' => PublicAuditStarter::REUSE_WINDOW_SECONDS,
+                'group' => 'Reviews',
+                'description' => 'Window for public audit reuse in seconds.',
+            ],
+            'audit.reviews.thin_count' => [
+                'seed' => ReviewStatsCheck::THIN_REVIEW_COUNT,
+                'group' => 'Reviews',
+                'description' => 'Threshold for thin review count.',
+            ],
+            'pricebook.sheet.max_kilobytes' => [
+                'seed' => PriceSheet::MAX_KILOBYTES,
+                'group' => 'Content',
+                'description' => 'Max kilobytes for price sheet uploads.',
+            ],
+            'agent.nudges.window_hours' => [
+                'seed' => AgentNudges::WINDOW_HOURS,
+                'group' => 'Assistant',
+                'description' => 'Window in hours for agent nudges.',
+            ],
+            'auth.failed_sign_ins.window_minutes' => [
+                'seed' => FailedSignIns::WINDOW_MINUTES,
+                'group' => 'Operations',
+                'description' => 'Window in minutes for failed sign-ins.',
+            ],
+            'campaigns.unknown_send.vendor_log_window_hours' => [
+                'seed' => UnknownSendReconciler::VENDOR_LOG_WINDOW_HOURS,
+                'group' => 'Messaging',
+                'description' => 'Vendor log window hours for unknown sends.',
+            ],
+            'audit.engine.budget_seconds' => [
+                'seed' => AuditEngine::BUDGET_SECONDS,
+                'group' => 'Reviews',
+                'description' => 'Budget seconds for audit engine.',
+            ],
+            'content.self_audit.impression_window_days' => [
+                'seed' => ContentSelfAudit::IMPRESSION_WINDOW_DAYS,
+                'group' => 'Content',
+                'description' => 'Impression window days for self audits.',
+            ],
+            'billing.trial.signup_origin_window_days' => [
+                'seed' => TrialEligibility::SIGNUP_ORIGIN_WINDOW_DAYS,
+                'group' => 'Billing',
+                'description' => 'Signup origin window days for trials.',
+            ],
+            'billing.renewal.opens_days_before' => [
+                'seed' => RenewalReminders::OPENS_DAYS_BEFORE,
+                'group' => 'Billing',
+                'description' => 'Days before renewal opens.',
+            ],
+            'billing.renewal.closes_days_before' => [
+                'seed' => RenewalReminders::CLOSES_DAYS_BEFORE,
+                'group' => 'Billing',
+                'description' => 'Days before renewal closes.',
+            ],
+            'billing.renewal.claim_minutes' => [
+                'seed' => Subscriptions::RENEWAL_REMINDER_CLAIM_MINUTES,
+                'group' => 'Billing',
+                'description' => 'Renewal reminder claim minutes.',
+            ],
+            'content.publishing.hold_hours' => [
+                'seed' => Publishing::HOLD_HOURS,
+                'group' => 'Content',
+                'description' => 'Publishing hold hours.',
+            ],
+            'crm.merge.undo_window_days' => [
+                'seed' => CustomerMerges::UNDO_WINDOW_DAYS,
+                'group' => 'Marketing',
+                'description' => 'Undo window days for customer merges.',
+            ],
+            'export.request_cooldown_minutes' => [
+                'seed' => ExportBuilder::REQUEST_COOLDOWN_MINUTES,
+                'group' => 'Operations',
+                'description' => 'Export request cooldown minutes.',
+            ],
+            'export.in_flight_reuse_minutes' => [
+                'seed' => ExportBuilder::IN_FLIGHT_REUSE_MINUTES,
+                'group' => 'Operations',
+                'description' => 'Export in-flight reuse minutes.',
+            ],
+            'billing.dunning.schedule_hours' => [
+                'seed' => '24,72,120',
+                'group' => 'Billing',
+                'description' => 'Dunning ladder schedule in hours.',
+            ],
+            'fetch.cooldown_hours' => [
+                'seed' => '6,24,72',
+                'group' => 'Content',
+                'description' => 'Fetch cooldown schedule in hours.',
+            ],
+            'sites.revert.backoff_hours' => [
+                'seed' => '0,0,24,24,48,48,96,168',
+                'group' => 'Sites',
+                'description' => 'Revert backoff schedule in hours.',
+            ],
+            'scheduling.slot_hours' => [
+                'seed' => '9,11,14,16',
+                'group' => 'Operations',
+                'description' => 'Standard potential slots in hours.',
+            ],
+
+            'sites.faq.max_sources' => [
+                'seed' => 8,
+                'group' => 'Content',
+                'description' => 'Maximum number of service lines from PriceBook to send to the AI router.',
+            ],
+
+            'sites.faq.max_items' => [
+                'seed' => 6,
+                'group' => 'Content',
+                'description' => 'Maximum number of FAQ items drafted.',
+            ],
+
+            'sites.faq.system_prompt' => [
+                'seed' => 'Write at most 6 plain-language question and answer pairs a customer of a local service business would ask. Use ONLY the facts given, include no prices not present, and make no promises.',
+                'group' => 'Content',
+                'description' => 'System prompt for generating the FAQ block.',
+            ],
+
+            'sites.questions.recent_days' => [
+                'seed' => 90,
+                'group' => 'Content',
+                'description' => 'How many days back the Pages screen looks for questions customers typed into the site chat or the contact form.',
+            ],
+
+            'sites.questions.max' => [
+                'seed' => 20,
+                'group' => 'Content',
+                'description' => 'How many unanswered customer questions the Pages screen lists at once.',
+            ],
+
+            'sites.questions.answer_system_prompt' => [
+                'seed' => "Answer ONE customer question in plain language for a local service business. Use ONLY the facts given, include no prices not present, make no promises, and keep the customer's question as asked, tidied for spelling only. Return the question and the answer.",
+                'group' => 'Content',
+                'description' => 'System prompt for answering customer questions on Pages.',
+            ],
+
+            'reviews.reply.max_recovery_length' => [
+                'seed' => ReplyGenerator::MAX_RECOVERY_LENGTH,
+                'group' => 'Reviews',
+                'description' => 'Maximum length of a recovery reply.',
+            ],
+            'reviews.reply.max_label_length' => [
+                'seed' => ReplyGenerator::MAX_LABEL_LENGTH,
+                'group' => 'Reviews',
+                'description' => 'Maximum length of a reply label.',
+            ],
+            'reviews.templates.max_name_length' => [
+                'seed' => ResponseTemplates::MAX_NAME_LENGTH,
+                'group' => 'Reviews',
+                'description' => 'Maximum length of a template name.',
+            ],
+            'reviews.templates.max_body_length' => [
+                'seed' => ResponseTemplates::MAX_BODY_LENGTH,
+                'group' => 'Reviews',
+                'description' => 'Maximum length of a template body.',
+            ],
+            'reviews.publish.recheck_settle_minutes' => [
+                'seed' => ReviewReplies::PUBLISH_RECHECK_SETTLE_MINUTES,
+                'group' => 'Reviews',
+                'description' => 'Minutes to wait before rechecking a published reply.',
+            ],
+            'reviews.publish.retry_floor_minutes' => [
+                'seed' => ReviewReplies::PUBLISH_RETRY_FLOOR_MINUTES,
+                'group' => 'Reviews',
+                'description' => 'Minimum minutes before retrying a reply publish.',
+            ],
+            'reviews.hub.max_reviews' => [
+                'seed' => ReviewHubPages::MAX_REVIEWS,
+                'group' => 'Reviews',
+                'description' => 'Maximum number of reviews to show on the hub.',
+            ],
+            'crm.notes.max_length' => [
+                'seed' => CrmNotes::MAX_LENGTH,
+                'group' => 'Marketing',
+                'description' => 'Maximum length of customer notes.',
+            ],
+            'crm.customer.max_name_length' => [
+                'seed' => CustomerEditor::MAX_NAME_LENGTH,
+                'group' => 'Marketing',
+                'description' => 'Maximum length of a customer name.',
+            ],
+            'crm.customer.max_tags' => [
+                'seed' => CustomerEditor::MAX_TAGS,
+                'group' => 'Marketing',
+                'description' => 'Maximum number of tags a customer can have.',
+            ],
+            'crm.customer.max_tag_length' => [
+                'seed' => CustomerEditor::MAX_TAG_LENGTH,
+                'group' => 'Marketing',
+                'description' => 'Maximum length of a single customer tag.',
+            ],
+            'crm.merge.compared_digits' => [
+                'seed' => MergeDuplicateDetector::COMPARED_DIGITS,
+                'group' => 'Marketing',
+                'description' => 'Number of digits compared when detecting duplicate phones.',
+            ],
+            'conversations.reply.body_limit' => [
+                'seed' => InboxReplies::BODY_LIMIT,
+                'group' => 'Messaging',
+                'description' => 'Maximum length of an inbox reply body.',
+            ],
+            'support.ticket.subject_limit' => [
+                'seed' => SupportDesk::SUBJECT_LIMIT,
+                'group' => 'Support',
+                'description' => 'Maximum length of a support ticket subject.',
+            ],
+            'support.ticket.body_limit' => [
+                'seed' => SupportDesk::BODY_LIMIT,
+                'group' => 'Support',
+                'description' => 'Maximum length of a support ticket body.',
+            ],
+            'feedback.pages.max_name_length' => [
+                'seed' => FeedbackPages::MAX_NAME_LENGTH,
+                'group' => 'Reviews',
+                'description' => 'Maximum length of a feedback page name.',
+            ],
+            'messaging.health.window_hours' => [
+                'seed' => SendingHealth::WINDOW_HOURS,
+                'group' => 'Messaging',
+                'description' => 'Window hours for calculating sending health.',
+            ],
+            'messaging.health.retention_days' => [
+                'seed' => SendingHealth::RETENTION_DAYS,
+                'group' => 'Messaging',
+                'description' => 'Days to retain sending health records.',
+            ],
+            'messaging.recovery.link_ttl_days' => [
+                'seed' => RecoveryCheckInSender::LINK_TTL_DAYS,
+                'group' => 'Messaging',
+                'description' => 'Days before a recovery link expires.',
+            ],
+            'messaging.complaint_rate.last_sample_ttl_hours' => [
+                'seed' => PlatformComplaintRate::LAST_SAMPLE_TTL_HOURS,
+                'group' => 'Messaging',
+                'description' => 'Hours before the last complaint sample expires.',
+            ],
+            'messaging.composer.name_max_length' => [
+                'seed' => NameNormaliser::MAX_LENGTH,
+                'group' => 'Messaging',
+                'description' => 'Maximum length of a name in the composer.',
+            ],
+        ];
+
+        $settings['campaigns.run.barren_pass_minutes'] = [
+            'seed' => RunCampaignJob::BARREN_PASS_MINUTES,
+            'group' => 'Messaging',
+            'description' => 'How many minutes a campaign pass that found nothing to do waits before it tries again.',
+        ];
+        $settings['campaigns.run.max_deferral_days'] = [
+            'seed' => RunCampaignJob::MAX_DEFERRAL_DAYS,
+            'group' => 'Messaging',
+            'description' => 'How many days a contact can have deferred a message before the campaign drops them.',
+        ];
+        $settings['autopilot.abandoned_repeat_hours'] = [
+            'seed' => AutopilotJob::ABANDONED_REPEAT_HOURS,
+            'group' => 'Content',
+            'description' => 'How many hours between sending automated follow-ups.',
+        ];
+        $settings['audit.public.unique_for_seconds'] = [
+            'seed' => PublicAuditJob::UNIQUE_FOR_SECONDS,
+            'group' => 'Reviews',
+            'description' => 'How long an audit is kept unique in the queue.',
+        ];
+        $settings['queue.backoff.standard_seconds'] = [
+            'seed' => implode(',', QueueBackoff::STANDARD),
+            'group' => 'Operations',
+            'description' => 'Standard backoff ladder for background jobs.',
+        ];
+        $settings['queue.backoff.media_seconds'] = [
+            'seed' => implode(',', QueueBackoff::MEDIA),
+            'group' => 'Operations',
+            'description' => 'Backoff ladder for media-related background jobs.',
+        ];
+        $settings['queue.backoff.actuation_seconds'] = [
+            'seed' => implode(',', QueueBackoff::ACTUATION),
+            'group' => 'Operations',
+            'description' => 'Backoff ladder for actuation background jobs.',
+        ];
+        $settings['queue.backoff.voice_seconds'] = [
+            'seed' => implode(',', QueueBackoff::VOICE),
+            'group' => 'Operations',
+            'description' => 'Backoff ladder for voice-related background jobs.',
+        ];
+        $settings['queue.backoff.pixel_archive_seconds'] = [
+            'seed' => implode(',', QueueBackoff::PIXEL_ARCHIVE),
+            'group' => 'Operations',
+            'description' => 'Backoff ladder for pixel archiving background jobs.',
+        ];
+        $settings['assistant.pricebook.max_slug_length'] = [
+            'seed' => PriceBook::MAX_SLUG_LENGTH,
+            'group' => 'Assistant',
+            'description' => 'Maximum length of a slug in the price book (A4 slice 8).',
+        ];
+        $settings['assistant.pricebook.max_label_length'] = [
+            'seed' => PriceBook::MAX_LABEL_LENGTH,
+            'group' => 'Assistant',
+            'description' => 'Maximum length of a label in the price book (A4 slice 8).',
+        ];
+        $settings['assistant.pricesheet.max_label_length'] = [
+            'seed' => PriceSheet::MAX_LABEL_LENGTH,
+            'group' => 'Assistant',
+            'description' => 'Maximum length of a label in the price sheet (A4 slice 8).',
+        ];
+        $settings['assistant.urgent.max_terms'] = [
+            'seed' => UrgentTerms::MAX_TERMS,
+            'group' => 'Assistant',
+            'description' => 'Maximum number of urgent terms (A4 slice 8).',
+        ];
+        $settings['assistant.urgent.max_length'] = [
+            'seed' => UrgentTerms::MAX_LENGTH,
+            'group' => 'Assistant',
+            'description' => 'Maximum length of a single urgent term (A4 slice 8).',
+        ];
+        $settings['fetch.robots.cache_seconds'] = [
+            'seed' => RobotsPolicy::CACHE_SECONDS,
+            'group' => 'Content',
+            'description' => 'How long to cache a successfully fetched robots.txt (A4 slice 8).',
+        ];
+        $settings['fetch.robots.unavailable_cache_seconds'] = [
+            'seed' => RobotsPolicy::UNAVAILABLE_CACHE_SECONDS,
+            'group' => 'Content',
+            'description' => 'How long to cache a failed robots.txt fetch (A4 slice 8).',
+        ];
+        $settings['knowledge.chunker.overlap_characters'] = [
+            'seed' => DocumentChunker::OVERLAP_CHARACTERS,
+            'group' => 'Assistant',
+            'description' => 'Number of characters to overlap between chunks (A4 slice 8).',
+        ];
+        $settings['knowledge.chunker.minimum_characters'] = [
+            'seed' => DocumentChunker::MINIMUM_CHARACTERS,
+            'group' => 'Assistant',
+            'description' => 'Minimum number of characters for a valid chunk (A4 slice 8).',
+        ];
+        $settings['places.cache_ttl_seconds'] = [
+            'seed' => GooglePlacesClient::CACHE_TTL_SECONDS,
+            'group' => 'Places',
+            'description' => 'How long to cache Places API responses (A4 slice 8).',
+        ];
+        $settings['widgets.install.stale_after_hours'] = [
+            'seed' => WidgetInstalls::STALE_AFTER_HOURS,
+            'group' => 'Operations',
+            'description' => 'A PLATFORM setting is exactly an Ops edit, not a tenant\'s, superseding 3092\'s scope (owner ruling 2026-09-22).',
+        ];
+        $settings['widgets.install.throttle_seconds'] = [
+            'seed' => WidgetInstalls::THROTTLE_SECONDS,
+            'group' => 'Operations',
+            'description' => 'Seconds to throttle widget install events (A4 slice 8).',
+        ];
+        $settings['storage.retention.chunk'] = [
+            'seed' => StorageRetention::CHUNK,
+            'group' => 'Operations',
+            'description' => 'Number of files to process per chunk during retention sweeps (A4 slice 8).',
+        ];
+
+        $settings['mail.sns.pending_ttl_seconds'] = [
+            'seed' => SnsSubscriptions::PENDING_TTL_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'Time to hold an SNS subscription pending confirmation.',
+        ];
+        $settings['mail.sns.confirm_timeout_seconds'] = [
+            'seed' => SnsSubscriptions::CONFIRM_TIMEOUT_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'Timeout for SNS subscription confirmation request.',
+        ];
+        $settings['mail.quota.alert_quiet_seconds'] = [
+            'seed' => MailQuota::ALERT_QUIET_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'How long the mail quota alert stays quiet after firing.',
+        ];
+        $settings['mail.google_push.certificate_ttl_seconds'] = [
+            'seed' => GooglePushTokenVerifier::CERTIFICATE_TTL_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'Google push token certificate TTL.',
+        ];
+        $settings['mail.sns.certificate_ttl_seconds'] = [
+            'seed' => SnsMessageVerifier::CERTIFICATE_TTL_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'SNS message certificate TTL.',
+        ];
+        $settings['sms.webhook.max_signature_age_seconds'] = [
+            'seed' => InfobipWebhookVerifier::MAX_SIGNATURE_AGE_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'Maximum allowed signature age for Infobip webhooks.',
+        ];
+        $settings['sms.inbound_media.timeout_seconds'] = [
+            'seed' => InboundMediaFetcher::TIMEOUT_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'Timeout for fetching inbound SMS media.',
+        ];
+        $settings['sms.owner_notifications.correlation_window_hours'] = [
+            'seed' => OwnerNotifications::CORRELATION_WINDOW_HOURS,
+            'group' => 'Notifications',
+            'description' => 'Correlation window hours for owner notifications.',
+        ];
+        $settings['sms.owner_notifications.ledger_limit'] = [
+            'seed' => OwnerNotifications::LEDGER_LIMIT,
+            'group' => 'Notifications',
+            'description' => 'Ledger limit for owner notifications.',
+        ];
+        $settings['sms.infobip.log_lookup_chunk'] = [
+            'seed' => InfobipClient::LOG_LOOKUP_CHUNK,
+            'group' => 'Messaging',
+            'description' => 'Chunk size for Infobip log lookups.',
+        ];
+        $settings['sms.infobip.log_lookup_limit'] = [
+            'seed' => InfobipClient::LOG_LOOKUP_LIMIT,
+            'group' => 'Messaging',
+            'description' => 'Limit for Infobip log lookups.',
+        ];
+        $settings['voice.media.download_timeout_seconds'] = [
+            'seed' => InfobipVoiceProvider::DOWNLOAD_TIMEOUT_SECONDS,
+            'group' => 'Messaging',
+            'description' => 'Timeout for downloading voice media.',
+        ];
+        $settings['legal.sms_terms.max_name_length'] = [
+            'seed' => SmsTermsAlignment::MAX_NAME_LENGTH,
+            'group' => 'Legal',
+            'description' => 'Maximum length for SMS terms alignment name.',
+        ];
+
+        $settings['sites.sitemap.max_urls'] = [
+            'seed' => 500,
+            'group' => 'Sites',
+            'description' => 'Maximum URLs included in the sitemap. A site past this limit should use a sitemap index.',
         ];
 
         return array_merge($settings, self::mailSendingCeilings());

@@ -7,12 +7,24 @@ namespace App\Modules\X137\Actions;
 use App\Modules\X137\Events\CallAttributed;
 use App\Modules\X137\Events\VisitJoinedToCall;
 use App\Modules\X137\Models\CallToken;
+use App\Services\Config\DefaultsRegistry;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
 final class CallAttributeAction
 {
+    public const TTL_MINUTES = 30;
+
+    public function __construct(
+        private readonly DefaultsRegistry $registry
+    ) {}
+
+    private function ttlMinutes(): int
+    {
+        return $this->registry->int('attribution.call.ttl_minutes');
+    }
+
     /**
      * Allocate a DNI call token from the business pool.
      */
@@ -20,8 +32,9 @@ final class CallAttributeAction
         int $businessId,
         string $visitorSessionToken,
         string $campaignSource = 'google_cpc',
-        int $ttlMinutes = 30
+        ?int $ttlMinutes = null
     ): CallToken {
+        $ttlMinutes ??= $this->ttlMinutes();
         if (trim((string) $visitorSessionToken) === '') {
             throw new \DomainException('VISITOR_SESSION_TOKEN_REQUIRED');
         }
@@ -76,9 +89,10 @@ final class CallAttributeAction
         string $visitorSessionToken,
         string $allocatedNumber,
         string $campaignSource = 'google_cpc',
-        int $ttlMinutes = 30,
+        ?int $ttlMinutes = null,
         bool $offlineCampaign = false
     ): CallToken {
+        $ttlMinutes ??= $this->ttlMinutes();
         if ($offlineCampaign) {
             $conflicting = CallToken::where('business_id', $businessId)
                 ->where('allocated_number', $allocatedNumber)

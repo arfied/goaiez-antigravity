@@ -36,7 +36,7 @@
                             </div>
                             <div class="flex sm:flex-col gap-2 w-full sm:w-auto mt-2 sm:mt-0">
                                 <x-ui.button variant="secondary" size="default" type="button" class="flex-1 sm:flex-none" x-on:click="navigator.clipboard.writeText(document.getElementById('opener-{{ $visitor['visitor_id'] }}').value)">Copy</x-ui.button>
-                                <x-ui.button variant="quiet" size="default" type="button" class="flex-1 sm:flex-none" wire:click="dismiss('{{ $visitor['visitor_id'] }}')">Dismiss</x-ui.button>
+                                <x-ui.button variant="quiet" size="default" type="button" class="flex-1 sm:flex-none" wire:click="dismiss('{{ $visitor['visitor_id'] }}')">Hide for now</x-ui.button>
                             </div>
                         </x-ui.row>
                     @endforeach

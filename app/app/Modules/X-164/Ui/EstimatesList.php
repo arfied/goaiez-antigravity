@@ -6,10 +6,12 @@ namespace App\Modules\X164\Ui;
 
 use App\Modules\X164\Actions\EstimateAcceptAction;
 use App\Modules\X164\Actions\EstimateDraftAction;
+use App\Modules\X164\Actions\EstimateEmailAction;
 use App\Modules\X164\Actions\EstimateRefreshAction;
-use App\Modules\X164\Actions\EstimateSendAction;
 use App\Modules\X164\Models\Estimate;
 use App\Modules\X164\Models\EstimateLine;
+use App\Modules\X172\Actions\PortalLinkAction;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -77,15 +79,20 @@ class EstimatesList extends Component
         $this->unitPriceCents = 0;
     }
 
-    public function sendEstimate(int $estimateId, EstimateSendAction $action): void
+    public function sendEstimate(int $estimateId): void
     {
+        abort_unless(auth()->user()?->role->canConfigureAutomation() === true, 403);
+
         $this->error = null;
         $this->success = null;
 
-        $estimate = $action->handle(Tenancy::idOrFail(), $estimateId);
+        $out = app(EstimateEmailAction::class)->handle($estimateId);
 
-        $this->success = 'Estimate '.$estimate->estimate_number.' is marked sent. Nothing is delivered '
-            .'to the customer yet — this records the status only.';
+        if ($out['sent']) {
+            $this->success = $out['message'];
+        } else {
+            $this->error = $out['message'];
+        }
     }
 
     public function acceptEstimate(int $estimateId, EstimateAcceptAction $action): void
@@ -160,6 +167,15 @@ class EstimatesList extends Component
         $this->refreshedUnitPriceCents = '';
     }
 
+    public array $portalUrl = [];   // estimate id → public URL
+
+    public function portalLink(int $estimateId, PortalLinkAction $action): void
+    {
+        $estimate = Estimate::where('business_id', Tenancy::idOrFail())->findOrFail($estimateId);
+        $link = $action->handle((int) Tenancy::idOrFail(), 'estimate', (int) $estimate->id, $estimate->customer_id === null ? null : (int) $estimate->customer_id);
+        $this->portalUrl[$estimateId] = route('x-172.portal', ['token' => $link->token]);
+    }
+
     public function render()
     {
         $estimates = ($this->businessId > 0)
@@ -168,6 +184,7 @@ class EstimatesList extends Component
 
         return view('x-164::estimates-list', [
             'estimates' => $estimates,
+            'portalTtlHours' => app(DefaultsRegistry::class)->int('portal.link.ttl_hours'),
         ]);
     }
 }

@@ -9,6 +9,7 @@ use App\Contracts\SendLogReader;
 use App\Contracts\Texter;
 use App\Enums\CarrierVerdict;
 use App\Exceptions\TextNotDeliverable;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\PlatformCredentials;
 use App\Support\VendorLog;
 use Carbon\Exceptions\InvalidFormatException;
@@ -346,7 +347,12 @@ final class InfobipClient implements ReachesRecipients, SendLogReader, Texter
      * request would silently go unasked and their rows would stay `Unknown`
      * with nothing anywhere saying why.
      */
-    private const int LOG_LOOKUP_CHUNK = 40;
+    public const int LOG_LOOKUP_CHUNK = 40;
+
+    public function logLookupChunk(): int
+    {
+        return app(DefaultsRegistry::class)->int('sms.infobip.log_lookup_chunk');
+    }
 
     /**
      * The most log entries one call may return.
@@ -356,7 +362,12 @@ final class InfobipClient implements ReachesRecipients, SendLogReader, Texter
      * and a default that silently truncates is how a reconciliation reports
      * "still unknown" about a message the carrier is holding.
      */
-    private const int LOG_LOOKUP_LIMIT = 1000;
+    public const int LOG_LOOKUP_LIMIT = 1000;
+
+    public function logLookupLimit(): int
+    {
+        return app(DefaultsRegistry::class)->int('sms.infobip.log_lookup_limit');
+    }
 
     /**
      * The media type declared on every link segment.
@@ -745,7 +756,7 @@ final class InfobipClient implements ReachesRecipients, SendLogReader, Texter
                 static fn (string $handle): bool => str_starts_with($handle, $prefix),
             ));
 
-            foreach (array_chunk($forProduct, self::LOG_LOOKUP_CHUNK) as $chunk) {
+            foreach (array_chunk($forProduct, $this->logLookupChunk()) as $chunk) {
                 foreach ($this->logEntries($path, $chunk) as $entry) {
                     $answers[$entry->handle] = $entry;
                 }
@@ -784,7 +795,7 @@ final class InfobipClient implements ReachesRecipients, SendLogReader, Texter
                     // values."* Laravel would otherwise serialise a PHP array
                     // as `messageId[]=`, which this API does not read.
                     'messageId' => implode(',', $chunk),
-                    'limit' => self::LOG_LOOKUP_LIMIT,
+                    'limit' => $this->logLookupLimit(),
                 ]),
             );
         } catch (TextNotDeliverable|ConnectionException $e) {

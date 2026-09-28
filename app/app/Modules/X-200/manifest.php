@@ -10,8 +10,10 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-200
+ *
  * @intent GROW under §227.2
-         * @ingress carrier.call <vendor>
+ *
+ * @ingress carrier.call <vendor>
  */
 return [
     'module' => 'X-200',
@@ -58,7 +60,6 @@ return [
         'campaign_board',
         'wallboard',
         'qa_scorecard',
-        'customerfacing_none',
         'abandonment_complaint_rates',
     ],
 

@@ -31,98 +31,73 @@
                 {{ $citationsCount > 0 ? round(($consistentCount / $citationsCount) * 100) : 0 }}%
             </p>
             <div class="mt-2 text-xs text-ink-2">
-                {{ $consistentCount }} / {{ $citationsCount }} Consistent Listings
+                {{ $consistentCount }} / 
+                {{ $citationsCount }} Consistent Listings
             </div>
         </div>
 
-        <div class="bg-card overflow-x-auto overflow-y-hidden shadow rounded-lg p-5 border border-rule">
-            <p class="text-sm font-medium text-ink-2 truncate">Local Map 3-Pack</p>
+        <a href="{{ route('advanced.posts') }}" class="block bg-card overflow-x-auto overflow-y-hidden shadow rounded-lg p-5 border border-rule hover:border-indigo-500 transition">
+            <p class="text-sm font-medium text-ink-2 truncate">Published pages</p>
             <p class="mt-1 text-3xl font-semibold text-ink">
-                #1.6 Avg
+                {{ $pagesCount }}
             </p>
-            <div class="mt-2 text-xs text-ink-2">
-                89% top 3 dominance across 5mi catchment
-            </div>
-        </div>
+        </a>
 
-        <div class="bg-card overflow-x-auto overflow-y-hidden shadow rounded-lg p-5 border border-rule">
-            <p class="text-sm font-medium text-ink-2 truncate">AI Voice Receptionist</p>
-            <p class="mt-1 text-3xl font-semibold text-ink">Active</p>
-            <div class="mt-2 text-xs text-ok font-medium">24/7 Autonomous Triage</div>
-        </div>
+        <a href="{{ route('advanced.voice') }}" class="block bg-card overflow-x-auto overflow-y-hidden shadow rounded-lg p-5 border border-rule hover:border-indigo-500 transition">
+            <p class="text-sm font-medium text-ink-2 truncate">Calls, last 30 days</p>
+            <p class="mt-1 text-3xl font-semibold text-ink">
+                {{ $callsCount }}
+            </p>
+        </a>
 
-        <div class="bg-card overflow-x-auto overflow-y-hidden shadow rounded-lg p-5 border border-rule">
-            <p class="text-sm font-medium text-ink-2 truncate">POS Review Webhooks</p>
-            <p class="mt-1 text-3xl font-semibold text-ink">Connected</p>
-            <div class="mt-2 text-xs text-ink-2">Stripe & Invoicing Active</div>
-        </div>
+        <a href="{{ route('advanced.broadcasts') }}" class="block bg-card overflow-x-auto overflow-y-hidden shadow rounded-lg p-5 border border-rule hover:border-indigo-500 transition">
+            <p class="text-sm font-medium text-ink-2 truncate">Broadcasts</p>
+            <p class="mt-1 text-3xl font-semibold text-ink">
+                {{ $campaignsCount }}
+            </p>
+        </a>
     </div>
 
     <!-- Quick Navigation to Advanced Sections -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <a href="{{ route('advanced.rank-tracker') }}" class="block p-6 bg-card border-2 border-rule rounded-lg hover:border-indigo-500 transition shadow-xs">
-            <div class="text-ink font-semibold text-lg mb-2 flex items-center justify-between">
-                <span>📍 Geo-Grid Rank Tracker</span>
-                <span class="text-[10px] uppercase font-bold bg-sample-bg text-sample px-2 py-0.5 rounded-full">New</span>
-            </div>
-            <p class="text-sm text-ink-2">Interactive 3x3 / 5x5 pin heatmap showing exact Google Maps 3-Pack rankings across your catchment area radius.</p>
+        <a href="{{ route('advanced.rank-tracker') }}" class="block p-6 bg-card border border-rule rounded-lg hover:border-indigo-500 transition">
+            <div class="text-ink font-semibold text-lg">📍 Geo-Grid Rank Tracker</div>
         </a>
 
-        <a href="{{ route('advanced.integrations') }}" class="block p-6 bg-card border-2 border-rule rounded-lg hover:border-indigo-500 transition shadow-xs">
-            <div class="text-ink font-semibold text-lg mb-2 flex items-center justify-between">
-                <span>⚡ POS & Invoicing Triggers</span>
-                <span class="text-[10px] uppercase font-bold bg-sample-bg text-sample px-2 py-0.5 rounded-full">New</span>
-            </div>
-            <p class="text-sm text-ink-2">Connect Stripe, QuickBooks, and Square to automatically dispatch review requests within minutes of customer invoice settlement.</p>
+        <a href="{{ route('advanced.integrations') }}" class="block p-6 bg-card border border-rule rounded-lg hover:border-indigo-500 transition">
+            <div class="text-ink font-semibold text-lg">⚡ POS & Invoicing Triggers</div>
         </a>
 
-        <a href="{{ route('advanced.posts') }}" class="block p-6 bg-card border-2 border-rule rounded-lg hover:border-indigo-500 transition shadow-xs">
-            <div class="text-ink font-semibold text-lg mb-2 flex items-center justify-between">
-                <span>📸 GBP Posts & Photo Sweeps</span>
-                <span class="text-[10px] uppercase font-bold bg-sample-bg text-sample px-2 py-0.5 rounded-full">New</span>
-            </div>
-            <p class="text-sm text-ink-2">Weekly automated GBP updates with local keywords, and zero-app MMS text-to-post photo uploading from the job site.</p>
+        <a href="{{ route('advanced.posts') }}" class="block p-6 bg-card border border-rule rounded-lg hover:border-indigo-500 transition">
+            <div class="text-ink font-semibold text-lg">📸 GBP Posts & Photo Sweeps</div>
         </a>
 
-        <a href="{{ route('advanced.voice') }}" class="block p-6 bg-card border-2 border-rule rounded-lg hover:border-indigo-500 transition shadow-xs">
-            <div class="text-ink font-semibold text-lg mb-2 flex items-center justify-between">
-                <span>🎙️ AI Voice Receptionist</span>
-                <span class="text-[10px] uppercase font-bold bg-sample-bg text-sample px-2 py-0.5 rounded-full">New</span>
-            </div>
-            <p class="text-sm text-ink-2">24/7 conversational voice call answering, emergency forwarding to owner mobile, and automated appointment calendar links.</p>
+        <a href="{{ route('advanced.voice') }}" class="block p-6 bg-card border border-rule rounded-lg hover:border-indigo-500 transition">
+            <div class="text-ink font-semibold text-lg">🎙️ AI Voice Receptionist</div>
         </a>
 
-        <a href="{{ route('advanced.website-builder') }}" class="block p-6 bg-card border-2 border-rule rounded-lg hover:border-indigo-500 transition shadow-xs">
-            <div class="text-ink font-semibold text-lg mb-2 flex items-center justify-between">
-                <span>🌐 Visual Website & Funnel Builder</span>
-                <span class="text-[10px] uppercase font-bold bg-sample-bg text-sample px-2 py-0.5 rounded-full">New</span>
-            </div>
-            <p class="text-sm text-ink-2">Design and launch high-converting local service landing pages with auto-injected schema SEO, live reviews, and mobile preview.</p>
+        <a href="{{ route('x-103.pages') }}" class="block p-6 bg-card border border-rule rounded-lg hover:border-indigo-500 transition">
+            <div class="text-ink font-semibold text-lg">🌐 Visual Website & Funnel Builder</div>
         </a>
 
         <a href="{{ route('advanced.citations') }}" class="block p-6 bg-card border border-rule rounded-lg hover:border-indigo-500 transition">
-            <div class="text-ink font-semibold text-lg mb-2">📍 NAP Citations & Directories</div>
-            <p class="text-sm text-ink-2">Track and fix business name, address, and phone number consistency across Google, Apple Maps, Bing, Yelp, and BBB.</p>
+            <div class="text-ink font-semibold text-lg">📍 NAP Citations & Directories</div>
         </a>
 
         <a href="{{ route('advanced.broadcasts') }}" class="block p-6 bg-card border border-rule rounded-lg hover:border-indigo-500 transition">
-            <div class="text-ink font-semibold text-lg mb-2">📢 Direct Broadcasts</div>
-            <p class="text-sm text-ink-2">Compose targeted SMS/email blasts to verified opt-in customer segments with character and credit forecasting.</p>
+            <div class="text-ink font-semibold text-lg">📢 Direct Broadcasts</div>
         </a>
 
         <a href="{{ route('advanced.competitors') }}" class="block p-6 bg-card border border-rule rounded-lg hover:border-indigo-500 transition">
-            <div class="text-ink font-semibold text-lg mb-2">🎯 Competitor Radar</div>
-            <p class="text-sm text-ink-2">Monitor nearby rivals, compare review velocity, rating trajectories, and Google search ranking changes.</p>
+            <div class="text-ink font-semibold text-lg">🎯 Competitor Radar</div>
         </a>
 
         <a href="{{ route('advanced.visibility') }}" class="block p-6 bg-card border border-rule rounded-lg hover:border-indigo-500 transition">
-            <div class="text-ink font-semibold text-lg mb-2">🔍 Search Visibility & GSC</div>
-            <p class="text-sm text-ink-2">Deep Google Search Console query metrics, average position changes, and click-through breakdowns.</p>
+            <div class="text-ink font-semibold text-lg">🔍 Search Visibility & GSC</div>
         </a>
 
         <a href="{{ route('advanced.defense') }}" class="block p-6 bg-card border border-rule rounded-lg hover:border-indigo-500 transition">
-            <div class="text-ink font-semibold text-lg mb-2">🛡️ Reputation Defense</div>
-            <p class="text-sm text-ink-2">Configure auto-escalation thresholds for negative feedback, instant alerts, and win-back sequences.</p>
+            <div class="text-ink font-semibold text-lg">🛡️ Reputation Defense</div>
         </a>
     </div>
 </div>

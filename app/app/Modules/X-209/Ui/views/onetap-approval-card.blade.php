@@ -1,6 +1,30 @@
 <div>
-    <x-surface.sample-state module="⭐⭐ **The employee's own AI — the only agent in this platform that works for a PERSON rather than for the tenant.** *Everything else acts tenant → customer. **The Fixer acts employee → their own day**: their calendar, their inbox, their jobs, their reschedules.* ⛔⛔ **AND IT IS NOT A CHATBOT. It is a TOOL-CALLING AGENT: it mutates the system through `X-122 ActionRegistry` and only then communicates.** *A plumber texting "running 20 late, tell Smith and push my next" causes `fsm.job.update_eta` → `fsm.job.reschedule` → **then** the customer message. **The database changes first. The text is the consequence, never the substitute.*** ⭐ **It starts at L1 and climbs per action type, per employee** *(P-195)*. **Commanded by voice in `X-171`, by SMS from the employee's own phone, or from the private inbox — no dashboard required.**" screen="onetap_approval_card" />
     <div class="onetap-approval-view p-4">
-        <h3 class="text-lg font-bold">One-Tap Approval</h3>
+        <h2 class="text-lg font-bold text-ink">One-Tap Approval</h2>
+
+        @if($toast)
+            <div class="text-ink-2 bg-surface border p-2 mb-4 rounded">{{ $toast }}</div>
+        @endif
+
+        @if($commands->isEmpty())
+            <x-ui.empty-state heading="Nothing waiting.">Commands from staff whose action is below level {{ $autoLevel }} land here first.</x-ui.empty-state>
+        @else
+            <ul class="divide-y divide-rule">
+                @foreach($commands as $c)
+                    <li class="py-4 flex flex-col gap-2" wire:key="cmd-{{ $c->id }}">
+                        <div>
+                            <span class="font-semibold text-ink">{{ $c->raw_command }}</span>
+                            <span class="text-sm text-ink-2 ml-2">{{ $c->parsed_intent }}</span>
+                            <span class="text-sm text-ink-2 ml-2 tabular-nums">ETA {{ $c->eta_minutes_delayed }} min</span>
+                            <span class="text-sm text-ink-2 ml-2">Staff #{{ $c->staff_person_id }}</span>
+                        </div>
+                        <div class="flex gap-2 mt-2">
+                            <button type="button" wire:click="approve({{ $c->id }})" class="bg-surface text-ink border rounded p-2">Approve</button>
+                            <button type="button" wire:click="delegate({{ $c->id }})" class="bg-surface text-ink border rounded p-2">Hand to owner</button>
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>

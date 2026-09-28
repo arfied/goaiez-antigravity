@@ -7,13 +7,20 @@ namespace App\Services\Conversations;
 use App\Enums\MessageDirection;
 use App\Enums\MessageSenderType;
 use App\Enums\OutreachChannel;
+use App\Jobs\Whatsapp\StoreWhatsappMediaJob;
 use App\Models\Conversation;
 use App\Models\Customer;
 use App\Models\Message;
+use App\Modules\X121\Actions\EntityReadAction;
+use App\Services\Config\DefaultsRegistry;
+use App\Services\Zernio\ZernioWhatsappMedia;
 use App\Support\Tenancy;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
+use Throwable;
 
 /**
  * The tenant's SMS threads — the store the Inbox (R21, P18) reads and writes.
@@ -91,6 +98,8 @@ final class ConversationThreads
      */
     public const int THREAD_LIMIT = 200;
 
+    public function __construct(private readonly DefaultsRegistry $defaults) {}
+
     /**
      * Every SMS thread this tenant has, newest activity first.
      *
@@ -99,7 +108,7 @@ final class ConversationThreads
     public function list(): Collection
     {
         return Conversation::query()
-            ->where('channel', OutreachChannel::Sms->value)
+            ->whereIn('channel', [OutreachChannel::Sms->value, OutreachChannel::Whatsapp->value])
             ->with('customer')
             // Newest first on `updated_at`, which `touch()` moves on every
             // message. Ordering on the message table would need a join no
@@ -113,7 +122,7 @@ final class ConversationThreads
             // `ConventionsTest`'s lint is what found this.
             ->orderByRaw('updated_at DESC NULLS LAST')
             ->orderByDesc('id')
-            ->limit(self::LIST_LIMIT)
+            ->limit($this->defaults->int('conversations.list_limit'))
             ->get();
     }
 
@@ -128,9 +137,96 @@ final class ConversationThreads
     public function find(int $conversationId): ?Conversation
     {
         return Conversation::query()
-            ->where('channel', OutreachChannel::Sms->value)
+            ->whereIn('channel', [OutreachChannel::Sms->value, OutreachChannel::Whatsapp->value])
             ->with('customer')
             ->find($conversationId);
+    }
+
+    public function findSocial(int $conversationId): ?Conversation
+    {
+        return Conversation::query()
+            ->whereIn('channel', ['facebook', 'instagram'])
+            ->with('customer')
+            ->find($conversationId);
+    }
+
+    public function socialThreads(): Collection
+    {
+        return Conversation::query()
+            ->whereIn('channel', ['facebook', 'instagram'])
+            ->with('customer')
+            ->orderByRaw('updated_at DESC NULLS LAST')
+            ->orderByDesc('id')
+            ->limit($this->defaults->int('conversations.list_limit'))
+            ->get();
+    }
+
+    public function socialThread(string $platform, string $conversationRef, string $accountRef, ?string $label): Conversation
+    {
+        if (! in_array($platform, ['facebook', 'instagram'], true)) {
+            throw new InvalidArgumentException("Platform must be facebook or instagram, got $platform");
+        }
+
+        $businessId = Tenancy::idOrFail();
+
+        /** @var Conversation $thread */
+        $thread = DB::transaction(function () use ($platform, $conversationRef, $accountRef, $label, $businessId): Conversation {
+            $existing = Conversation::query()
+                ->where('channel', $platform)
+                ->where('provider_conversation_ref', $conversationRef)
+                ->lockForUpdate()
+                ->first();
+
+            if ($existing instanceof Conversation) {
+                if ($existing->contact_label === null && $label !== null) {
+                    $existing->update(['contact_label' => $label]);
+                }
+
+                return $existing;
+            }
+
+            return Conversation::query()->create([
+                'business_id' => $businessId,
+                'channel' => $platform,
+                'status' => 'open',
+                'priority' => 'normal',
+                'is_bot_handled' => false,
+                'provider_conversation_ref' => $conversationRef,
+                'provider_account_ref' => $accountRef,
+                'contact_label' => $label,
+                'consent_logged_at' => now(),
+            ]);
+        });
+
+        return $thread;
+    }
+
+    public function contactFor(Conversation $conversation): ?array
+    {
+        $this->refuseForeignThread($conversation);
+
+        if ($conversation->customer !== null) {
+            return [
+                'name' => $conversation->customer->name,
+                'phone' => $conversation->customer->phone,
+            ];
+        }
+
+        if ($conversation->person_id !== null) {
+            $person = app(EntityReadAction::class)->handle('people', (int) $conversation->person_id, (int) $conversation->business_id);
+            if ($person === null) {
+                return null;
+            }
+
+            $name = trim(($person['first_name'] ?? '').' '.($person['last_name'] ?? ''));
+
+            return [
+                'name' => $name === '' ? null : $name,
+                'phone' => $person['phone'] ?? null,
+            ];
+        }
+
+        return null;
     }
 
     /**
@@ -256,15 +352,30 @@ final class ConversationThreads
     /**
      * File what the customer said.
      */
-    public function recordInbound(Conversation $conversation, string $body): Message
+    public function recordInbound(Conversation $conversation, string $body, array $attachments = []): Message
     {
-        return $this->record(
+        $message = $this->record(
             $conversation,
             MessageDirection::Inbound,
             MessageSenderType::Customer,
             null,
             $body,
+            $attachments
         );
+
+        $hasPending = false;
+        foreach ($attachments as $att) {
+            if (($att['status'] ?? null) === 'pending') {
+                $hasPending = true;
+                break;
+            }
+        }
+
+        if ($hasPending) {
+            StoreWhatsappMediaJob::dispatch((int) $message->business_id, (int) $message->getKey())->afterCommit();
+        }
+
+        return $message;
     }
 
     /**
@@ -300,6 +411,7 @@ final class ConversationThreads
         MessageSenderType $senderType,
         ?string $senderId,
         string $body,
+        array $attachments = []
     ): Message {
         $this->refuseForeignThread($conversation);
 
@@ -329,6 +441,7 @@ final class ConversationThreads
             $senderType,
             $senderId,
             $body,
+            $attachments
         ): Message {
             $message = Message::query()->create([
                 'business_id' => Tenancy::idOrFail(),
@@ -351,7 +464,7 @@ final class ConversationThreads
                 // ledger already holds the carrier's handle; a thread row that
                 // needs it can be joined through `outreach_messages` when
                 // something needs to.
-                'attachments' => [],
+                'attachments' => array_values($attachments),
                 'created_at' => now(),
             ]);
 
@@ -410,5 +523,136 @@ final class ConversationThreads
                 'That conversation belongs to another tenant, so it cannot be read or written here.',
             );
         }
+    }
+
+    public function inboundWithPendingMedia(int $messageId): ?Message
+    {
+        $businessId = Tenancy::idOrFail();
+
+        /** @var ?Message $message */
+        $message = Message::query()
+            ->where('id', $messageId)
+            ->where('business_id', $businessId)
+            ->where('direction', MessageDirection::Inbound->value)
+            ->first();
+
+        return $message;
+    }
+
+    public function markAttachment(Message $message, int $index, array $fields): void
+    {
+        DB::transaction(function () use ($message, $index, $fields) {
+            $row = Message::query()
+                ->where('id', $message->getKey())
+                ->lockForUpdate()
+                ->first();
+
+            if ($row === null) {
+                return;
+            }
+
+            $attachments = $row->attachments ?? [];
+            if (! isset($attachments[$index])) {
+                return;
+            }
+
+            $attachments[$index] = array_merge($attachments[$index], $fields);
+            $row->update(['attachments' => $attachments]);
+        });
+    }
+
+    public function attachmentOn(Conversation $conversation, int $messageId, int $index): ?array
+    {
+        $this->refuseForeignThread($conversation);
+
+        /** @var ?Message $message */
+        $message = Message::query()
+            ->where('id', $messageId)
+            ->where('conversation_id', $conversation->getKey())
+            ->first();
+
+        if ($message === null) {
+            return null;
+        }
+
+        return $message->attachments[$index] ?? null;
+    }
+
+    public function storedMediaTotals(): array
+    {
+        $businessId = Tenancy::idOrFail();
+
+        $rows = Message::query()
+            ->where('business_id', $businessId)
+            ->where('direction', MessageDirection::Inbound->value)
+            ->whereJsonContains('attachments', [['status' => 'stored']])
+            ->get(['attachments']);
+
+        $objects = 0;
+        $bytes = 0;
+        $unmeasured = 0;
+
+        foreach ($rows as $row) {
+            foreach ($row->attachments as $att) {
+                if (($att['status'] ?? null) === 'stored') {
+                    $objects++;
+                    if (isset($att['size']) && is_int($att['size'])) {
+                        $bytes += $att['size'];
+                    } else {
+                        $unmeasured++;
+                    }
+                }
+            }
+        }
+
+        return ['objects' => $objects, 'bytes' => $bytes, 'unmeasured' => $unmeasured];
+    }
+
+    public function pruneStoredMedia(CarbonInterface $cutoff, int $chunk): array
+    {
+        $businessId = Tenancy::idOrFail();
+
+        $pruned = 0;
+        $refused = 0;
+
+        Message::query()
+            ->where('business_id', $businessId)
+            ->where('direction', MessageDirection::Inbound->value)
+            ->whereJsonContains('attachments', [['status' => 'stored']])
+            ->where('created_at', '<', $cutoff)
+            // chunkById RATHER THAN chunk, because this loop rewrites the very
+            // column its whereJsonContains filters on, matching StorageRetention.php:396
+            ->chunkById($chunk, function ($messages) use (&$pruned, &$refused) {
+                foreach ($messages as $message) {
+                    foreach ($message->attachments as $index => $att) {
+                        if (($att['status'] ?? null) === 'stored') {
+                            $path = $att['path'] ?? null;
+                            if ($path === null) {
+                                $refused++;
+
+                                continue;
+                            }
+
+                            try {
+                                if (Storage::disk(ZernioWhatsappMedia::DISK)->delete($path)) {
+                                    $this->markAttachment($message, $index, [
+                                        'status' => 'pruned',
+                                        'path' => null,
+                                        'size' => null,
+                                        'mime' => null,
+                                    ]);
+                                    $pruned++;
+                                } else {
+                                    $refused++;
+                                }
+                            } catch (Throwable) {
+                                $refused++;
+                            }
+                        }
+                    }
+                }
+            });
+
+        return ['pruned' => $pruned, 'refused' => $refused];
     }
 }

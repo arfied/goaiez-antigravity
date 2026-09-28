@@ -13,6 +13,7 @@ use App\Models\SupportTicket;
 use App\Models\User;
 use App\Notifications\SupportReplyPosted;
 use App\Services\AuditService;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Mail\PlatformMailer;
 use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
@@ -73,7 +74,18 @@ final class SupportDesk
         private readonly AuditService $audit,
         private readonly PlatformMailer $mailer,
         private readonly SupportMacros $macros,
+        private readonly DefaultsRegistry $registry,
     ) {}
+
+    public function subjectLimit(): int
+    {
+        return $this->registry->int('support.ticket.subject_limit');
+    }
+
+    public function bodyLimit(): int
+    {
+        return $this->registry->int('support.ticket.body_limit');
+    }
 
     /**
      * The tenant raises a request. Runs in the tenant already established by
@@ -296,9 +308,7 @@ final class SupportDesk
      * Close a thread — by the tenant, on their own screen.
      *
      * ⚠️ **THE TENANT MAY CLOSE THEIR OWN AND MAY NOT REOPEN IT BY BUTTON.**
-     * Replying is what reopens a thread, which is the same act in the language
-     * the person is already using — a Reopen control beside a reply box is two
-     * ways to say one thing, and `CLAUDE.md` refuses the second.
+     * A resolved ticket is not reopened by the tenant: `requireLiveTicket()` refuses a reply and an inbound mail opens a new thread through `record()`.
      *
      * @throws InvalidArgumentException when the ticket is gone or already closed
      */
@@ -428,7 +438,7 @@ final class SupportDesk
             $ticket = SupportTicket::query()->create([
                 'opened_by_user_id' => $openedByUserId,
                 'channel' => $channel,
-                'subject' => $this->trimTo($subject, self::SUBJECT_LIMIT),
+                'subject' => $this->trimTo($subject, $this->subjectLimit()),
                 'status' => SupportTicketStatus::Open,
                 'last_message_at' => $now,
             ]);
@@ -463,7 +473,7 @@ final class SupportDesk
             'author' => $author,
             'author_user_id' => $authorUserId,
             'channel' => $channel,
-            'body' => $this->trimTo($body, self::BODY_LIMIT),
+            'body' => $this->trimTo($body, $this->bodyLimit()),
             'external_ref' => $externalRef,
             'created_at' => CarbonImmutable::now(),
         ]);

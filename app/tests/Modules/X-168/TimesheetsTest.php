@@ -92,7 +92,7 @@ class TimesheetsTest extends TestCase
         ]);
 
         Livewire::actingAs($user)->test(TimesheetsView::class)
-            ->assertSee('Sample');
+            ->assertSeeHtml('<span>Sample</span>');
     }
 
     public function test_toggle_shows_entries(): void

@@ -107,6 +107,11 @@ final class AgentNudges
      */
     public const int WINDOW_HOURS = 24;
 
+    public function windowHours(): int
+    {
+        return $this->registry->int('agent.nudges.window_hours');
+    }
+
     /**
      * Refused below this, for `AgentThreadStates::MINIMUM_TURN_CAP`'s reason: a
      * delay of zero would text somebody the instant after the link, which reads
@@ -191,7 +196,7 @@ final class AgentNudges
                 'armed_at' => $armedAt,
                 'armed_at_turns' => max(0, $conversation->agent_turns_used),
                 'due_at' => $armedAt->copy()->addMinutes($this->delayMinutes()),
-                'expires_at' => $armedAt->copy()->addHours(self::WINDOW_HOURS),
+                'expires_at' => $armedAt->copy()->addHours($this->windowHours()),
             ]));
         } catch (Throwable) {
             // The loser of a race. The winner owes the same follow-up.
@@ -310,7 +315,7 @@ final class AgentNudges
 
         return max(
             self::MINIMUM_DELAY_MINUTES,
-            min($configured, self::WINDOW_HOURS * 60 - self::MINIMUM_DELAY_MINUTES),
+            min($configured, $this->windowHours() * 60 - self::MINIMUM_DELAY_MINUTES),
         );
     }
 }

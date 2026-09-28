@@ -4,7 +4,7 @@
 
         @if ($runs->isEmpty())
             <x-ui.empty-state icon="○" heading="No campaign is running for anyone yet">
-                When someone is enrolled in a campaign, they appear here until it finishes, pauses or is stopped.
+                When someone is enrolled in a campaign, they appear here. Nothing advances a campaign yet.
             </x-ui.empty-state>
         @else
             <x-ui.row-list>
@@ -21,7 +21,7 @@
                                 </div>
                             </div>
                             <div>
-                                <x-ui.status-pill state="ok" label="Running" />
+                                <x-ui.status-pill state="ok" label="Enrolled at step 1" />
                             </div>
                         </div>
                     </x-ui.row>

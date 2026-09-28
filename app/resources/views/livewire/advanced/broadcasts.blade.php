@@ -20,26 +20,14 @@
     </div>
 
     <!-- Metrics Bar -->
-    <div class="grid grid-cols-1 gap-5 sm:grid-cols-4 mb-8">
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 mb-8">
         <div class="bg-card p-5 rounded-card border border-rule shadow-card">
-            <div class="text-sm font-medium text-ink-2">Total Sent</div>
-            <div class="mt-1 text-3xl font-bold text-ink">1,248</div>
-            <div class="mt-1 text-xs text-ok font-medium">99.2% Delivery Rate</div>
+            <div class="text-sm font-medium text-ink-2">Campaigns This Month</div>
+            <div class="mt-1 text-3xl font-bold text-ink">{{ $campaignsThisMonth }}</div>
         </div>
         <div class="bg-card p-5 rounded-card border border-rule shadow-card">
-            <div class="text-sm font-medium text-ink-2">Avg Click-Through</div>
-            <div class="mt-1 text-3xl font-bold text-ink">38.4%</div>
-            <div class="mt-1 text-xs text-ink-2">+12% vs industry avg</div>
-        </div>
-        <div class="bg-card p-5 rounded-card border border-rule shadow-card">
-            <div class="text-sm font-medium text-ink-2">Reviews Generated</div>
-            <div class="mt-1 text-3xl font-bold text-ink">+84</div>
-            <div class="mt-1 text-xs text-ink-2">Direct from broadcast links</div>
-        </div>
-        <div class="bg-card p-5 rounded-card border border-rule shadow-card">
-            <div class="text-sm font-medium text-ink-2">Carrier Reputation</div>
-            <div class="mt-1 text-3xl font-bold text-ink">High</div>
-            <div class="mt-1 text-xs text-ok font-medium">10DLC Campaign Active</div>
+            <div class="text-sm font-medium text-ink-2">Recipients Enrolled</div>
+            <div class="mt-1 text-3xl font-bold text-ink">{{ $recipientsEnrolled }}</div>
         </div>
     </div>
 
@@ -49,45 +37,44 @@
             <h2 class="text-lg font-semibold text-ink">Recent Broadcasts</h2>
             <span class="text-xs text-ink-2">Updated automatically</span>
         </div>
-        <div class="overflow-x-auto" tabindex="0" aria-label="Recent broadcasts table">
-        <table class="min-w-full divide-y divide-rule">
-            <thead class="bg-paper">
-                <tr>
-                    <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Campaign Name</th>
-                    <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Channel</th>
-                    <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Audience</th>
-                    <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Delivery</th>
-                    <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Status</th>
-                    <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Date Sent</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-rule text-sm">
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap font-medium text-ink">Spring Review & Feedback Drive</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs font-semibold bg-paper text-ink-2 border border-rule">SMS</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-ink-2">All Recent Customers (300)</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-ink-2">298 / 300 (99.3%)</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-ok-bg text-ok">Completed</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-ink-2">3 days ago</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap font-medium text-ink">Loyalty VIP Special Offer</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs font-semibold bg-paper text-ink-2 border border-rule">SMS + Email</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-ink-2">5-Star Reviewers (142)</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-ink-2">142 / 142 (100%)</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-ok-bg text-ok">Completed</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-ink-2">1 week ago</td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap font-medium text-ink">Service Check-in & Autopilot Ask</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs font-semibold bg-paper text-ink-2 border border-rule">SMS</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-ink-2">Post-Visit Cadence (88)</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-ink-2">88 / 88 (100%)</td>
-                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-ok-bg text-ok">Completed</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-ink-2">2 weeks ago</td>
-                </tr>
-            </tbody>
-        </table>
-        </div>
+        @if($campaigns->isEmpty())
+            <div class="p-6 text-center text-sm text-ink-2">
+                No broadcasts yet. Your first campaign appears here after it is drafted.
+            </div>
+        @else
+            @if (session('status')) <p>{{ session('status') }}</p> @endif
+            @error('confirm') <p>{{ $message }}</p> @enderror
+            <div class="overflow-x-auto" tabindex="0" aria-label="Recent broadcasts table">
+                <table class="min-w-full divide-y divide-rule">
+                    <thead class="bg-paper">
+                        <tr>
+                            <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Campaign Name</th>
+                            <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Recipients</th>
+                            <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Replies</th>
+                            <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Date</th>
+                            <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-ink-3 uppercase tracking-wider">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-rule text-sm">
+                        @foreach($campaigns as $campaign)
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap font-medium text-ink">{{ $campaign->name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-ok-bg text-ok">{{ $campaign->status->value }}</span></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-ink-2">{{ $campaign->recipients_count }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-ink-2">{{ $campaign->replies_count }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-ink-2">{{ $campaign->started_at?->format('M j, Y') ?? $campaign->created_at->format('M j, Y') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if($campaign->status === \App\Enums\CampaignStatus::Draft)
+                                        <button type="button" wire:click="confirm({{ $campaign->id }})">Confirm and send</button>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <p>Confirming enrols the dormant audience; messages go out on the next scheduled run, every fifteen minutes.</p>
+        @endif
     </div>
 </div>

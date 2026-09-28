@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X10\Ui;
 
+use App\Modules\X10\Models\Assignment;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -23,6 +24,17 @@ class UnassignedCount extends Component
 
     public function render()
     {
-        return view('x-10::unassigned-count');
+        $totalLeads = Assignment::where('business_id', $this->businessId)
+            ->distinct('lead_id')
+            ->count('lead_id');
+
+        $activeLeads = Assignment::where('business_id', $this->businessId)
+            ->where('status', 'active')
+            ->distinct('lead_id')
+            ->count('lead_id');
+
+        $count = max(0, $totalLeads - $activeLeads);
+
+        return view('x-10::unassigned-count', ['count' => $count]);
     }
 }

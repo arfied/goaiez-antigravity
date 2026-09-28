@@ -15,6 +15,7 @@ use App\Models\Business;
 use App\Models\Location;
 use App\Models\StripeCustomer;
 use App\Models\Subscription;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\PlanQuote;
 use App\Support\PlanSelection;
 use Illuminate\Support\Carbon;
@@ -64,6 +65,7 @@ final class Subscriptions
      * those call sites for no benefit.
      */
     public function __construct(
+        private readonly ?DefaultsRegistry $defaults = null,
         private readonly PlanCharges $charges = new PlanCharges,
     ) {}
 
@@ -577,6 +579,8 @@ final class Subscriptions
      * cannot read is one this rule has no standing to bound, and the fail-open
      * matches 588's for the same population.
      *
+     * ⚠️ ONE EXCEPTION, WRITTEN ONLY FORWARD (wave 825): `no_card_trial_extended_until` is a per-row override staff set from the Ops tenant screen. It needs no backfill (null = no extension), so 9329's argument does not reach it, and it can only extend.
+     *
      * ⚠️ **THE LENGTH IS ASKED OF {@see PlanCharges::trialDays()} AND NOT OF THE
      * REGISTRY**, so that method stays what its own docblock claims — the only
      * reader of `billing.trial_days` in the billing services. It **throws** on a
@@ -612,7 +616,12 @@ final class Subscriptions
             return null;
         }
 
-        return $registeredAt->copy()->addDays($this->charges->trialDays());
+        $ends = $registeredAt->copy()->addDays($this->charges->trialDays());
+        $extended = $subscription->no_card_trial_extended_until;
+
+        // A per-account extension set by platform staff (wave 825) — it can only
+        // lengthen the trial, never shorten it, and null means "no extension".
+        return $extended instanceof Carbon && $extended->gt($ends) ? $extended : $ends;
     }
 
     /**
@@ -649,6 +658,28 @@ final class Subscriptions
     public function noCardTrialHasEnded(Business $business, ?Subscription $subscription): bool
     {
         return $this->noCardTrialEndsAt($business, $subscription)?->isPast() === true;
+    }
+
+    /**
+     * Extend one account's no-card trial to `$until` (wave 825). Refuses an account
+     * that is not on a no-card trial and a date that is not in the future; the
+     * caller runs this inside `Tenancy::actingAs()` and writes the audit entry.
+     */
+    public function extendNoCardTrial(Business $business, Carbon $until): Subscription
+    {
+        $subscription = $this->for($business);
+
+        if (! $subscription instanceof Subscription || $subscription->status !== SubscriptionStatus::PendingCheckout) {
+            throw new RuntimeException('This account is not on a no-card trial, so there is no trial to extend.');
+        }
+
+        if (! $until->isFuture()) {
+            throw new RuntimeException('The new trial end must be in the future.');
+        }
+
+        $subscription->forceFill(['no_card_trial_extended_until' => $until])->save();
+
+        return $subscription->refresh();
     }
 
     /**
@@ -1189,7 +1220,7 @@ final class Subscriptions
      * and this method does not reverse it. What it removes is the *concurrent*
      * road to a duplicate; what survives is the one that was always there, a
      * crash between the send and the record, and after
-     * {@see self::RENEWAL_REMINDER_CLAIM_MINUTES} that crash produces a second
+     * {@see $this->renewalReminderClaimMinutes()} that crash produces a second
      * notice rather than none.
      *
      * ⚠️ **NO TRANSACTION HERE, UNLIKE EVERY OTHER WRITER ON THIS CLASS**, and
@@ -1209,7 +1240,7 @@ final class Subscriptions
      */
     public function claimRenewalReminder(Business $business, Carbon $renewalDate): bool
     {
-        $lapsedBefore = Carbon::now()->subMinutes(self::RENEWAL_REMINDER_CLAIM_MINUTES);
+        $lapsedBefore = Carbon::now()->subMinutes($this->renewalReminderClaimMinutes());
 
         $claimed = Subscription::query()
             ->where('business_id', $business->id)
@@ -1449,4 +1480,9 @@ final class Subscriptions
      * fourteen days began — decision 505's reasoning, on the key whose value the
      * marketing home also prints (518).
      */
+
+    public function renewalReminderClaimMinutes(): int
+    {
+        return ($this->defaults ?? app(DefaultsRegistry::class))->int('billing.renewal.claim_minutes');
+    }
 }

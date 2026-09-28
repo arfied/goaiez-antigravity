@@ -4,12 +4,8 @@
 
         <form wire:submit="proposePlan" class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4">
             <div class="font-bold text-ink">Propose Plan</div>
-            @if($success)
-                <div class="text-ink mb-2">{{ $success }}</div>
-            @endif
-            @if($error)
-                <div class="text-ink font-bold mb-2">{{ $error }}</div>
-            @endif
+            <x-ui.toast kind="success" :message="$success" />
+            <x-ui.toast kind="error" :message="$error" />
 
             <label class="text-sm text-ink-2">Week Label</label>
             <input type="text" wire:model="weekLabel" class="border rounded p-2 text-ink flex-1 bg-surface">
@@ -70,13 +66,16 @@
                                                     <div class="font-medium text-ink">{{ $item->channel }} - {{ $item->topic_theme }}</div>
                                                     <div class="text-sm text-ink-2">Source: {{ $item->source_event }}</div>
                                                     <div class="text-sm text-ink-2">Date: {{ $item->scheduled_date->toFormattedDateString() }}</div>
+                                                    @if(in_array($item->channel, ['facebook', 'instagram'], true))
+                                                        <a href="{{ route('x-182.social-queue', ['topic' => $item->topic_theme]) }}" class="text-sm underline">Write this post</a>
+                                                    @endif
                                                 </div>
                                                 <div>
                                                     @if($item->is_scheduled)
-                                                        <x-ui.status-pill state="ok" label="Scheduled">Scheduled</x-ui.status-pill>
+                                                        <x-ui.status-pill state="ok" label="Planned">Planned</x-ui.status-pill>
                                                     @else
                                                         <x-ui.button wire:click="scheduleItem({{ $item->id }})" size="sm">
-                                                            Schedule
+                                                            Mark as planned
                                                         </x-ui.button>
                                                     @endif
                                                 </div>

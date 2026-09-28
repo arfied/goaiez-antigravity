@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Livewire\Advanced;
 
-use App\Support\Tenancy;
+use App\Services\Tenant\LocationContext;
+use App\Services\Visibility\LocalVisibility;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -12,10 +13,13 @@ use Livewire\Component;
 #[Layout('layouts.account')]
 class Visibility extends Component
 {
-    public function render(): View
+    public function render(LocalVisibility $visibility, LocationContext $locations): View
     {
         return view('livewire.advanced.visibility', [
-            'businessId' => Tenancy::id(),
+            'rows' => $locations->options()->map(fn ($location) => [
+                'location' => $location,
+                'report' => $visibility->for($location),
+            ]),
         ]);
     }
 }

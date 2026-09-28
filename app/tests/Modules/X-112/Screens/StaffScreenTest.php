@@ -37,7 +37,7 @@ class StaffScreenTest extends TestCase
             'business_id' => $biz->id,
             'agency_id' => $agency->id,
             'user_id' => $owner->id,
-            'role' => 'account_manager',
+            'role' => 'account_manager_4623',
             'is_active' => true,
         ]);
         Tenancy::forget();
@@ -45,7 +45,7 @@ class StaffScreenTest extends TestCase
         $this->get(route('x-112.staff'))
             ->assertOk()
             ->assertSee('User #'.$owner->id)
-            ->assertSee('account_manager')
+            ->assertSee('account_manager_4623')
             ->assertSee('Active')
             ->assertDontSee('No agency staff enrolled.');
 
@@ -86,7 +86,7 @@ class StaffScreenTest extends TestCase
             'whitelabel_domain' => 'demo.example',
             'agency_mode' => 'full_service',
         ]);
-        
+
         $newUser = User::factory()->create();
 
         // 2. control creating one

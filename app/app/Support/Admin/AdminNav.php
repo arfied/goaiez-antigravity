@@ -109,6 +109,7 @@ final class AdminNav
             // kept in.
             NavItem::make('What has alerted us', 'admin.operator-alerts', AdminAccess::GATE),
 
+            NavItem::make('Industry starting points', 'admin.industry-starting-points', AdminAccess::GATE),
             NavItem::make('Settings', 'admin.platform-settings', AdminAccess::GATE),
             NavItem::make('Credentials', 'admin.credentials', AdminAccess::GATE),
 

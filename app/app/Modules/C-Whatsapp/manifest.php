@@ -47,6 +47,8 @@ return [
     'owns_table' => [
         'whatsapp_templates',
         'whatsapp_sessions',
+        'whatsapp_connections',
+        'whatsapp_deliveries',
     ],
     'reads_table' => [],
 

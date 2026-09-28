@@ -8,6 +8,7 @@ use App\Enums\UsState;
 use App\Models\Customer;
 use App\Models\User;
 use App\Services\AuditService;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
 use InvalidArgumentException;
@@ -61,7 +62,25 @@ final class CustomerEditor
 
     public const int MAX_TAG_LENGTH = 40;
 
-    public function __construct(private readonly AuditService $audit) {}
+    public function __construct(
+        private readonly AuditService $audit,
+        private readonly DefaultsRegistry $registry,
+    ) {}
+
+    public function maxNameLength(): int
+    {
+        return $this->registry->int('crm.customer.max_name_length');
+    }
+
+    public function maxTags(): int
+    {
+        return $this->registry->int('crm.customer.max_tags');
+    }
+
+    public function maxTagLength(): int
+    {
+        return $this->registry->int('crm.customer.max_tag_length');
+    }
 
     /**
      * Archive — the third contact state (`44` §8, decision 1327): hidden from
@@ -283,9 +302,9 @@ final class CustomerEditor
 
         $name = trim((string) $name);
 
-        if (mb_strlen($name) > self::MAX_NAME_LENGTH) {
+        if (mb_strlen($name) > $this->maxNameLength()) {
             throw new InvalidArgumentException(
-                'A name is at most '.self::MAX_NAME_LENGTH.' characters. The form '
+                'A name is at most '.$this->maxNameLength().' characters. The form '
                 .'refuses this first; reaching here means a caller skipped validation.',
             );
         }
@@ -441,9 +460,9 @@ final class CustomerEditor
                 continue;
             }
 
-            if (mb_strlen($tag) > self::MAX_TAG_LENGTH) {
+            if (mb_strlen($tag) > $this->maxTagLength()) {
                 throw new InvalidArgumentException(
-                    'A tag is at most '.self::MAX_TAG_LENGTH.' characters.',
+                    'A tag is at most '.$this->maxTagLength().' characters.',
                 );
             }
 
@@ -452,9 +471,9 @@ final class CustomerEditor
             }
         }
 
-        if (count($clean) > self::MAX_TAGS) {
+        if (count($clean) > $this->maxTags()) {
             throw new InvalidArgumentException(
-                'A contact holds at most '.self::MAX_TAGS.' tags. `34` §1.3 keeps the '
+                'A contact holds at most '.$this->maxTags().' tags. `34` §1.3 keeps the '
                 .'CRM a rolodex with a memory, not a sales-ops suite.',
             );
         }

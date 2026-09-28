@@ -1,0 +1,344 @@
+<div>
+    <div class="mb-4 flex items-center justify-between">
+        <p class="text-sm text-ink-2">Your current website inventory.</p>
+        <x-ui.button wire:click="crawl" size="default">
+            Crawl Website
+        </x-ui.button>
+    </div>
+
+    @if($pages->isEmpty())
+        <div class="rounded-lg border border-rule bg-paper p-6 text-center">
+            <h2 class="text-sm font-medium text-ink">No pages found</h2>
+            <p class="mt-1 text-sm text-ink-2">
+                Pressing "Crawl Website" will fetch your website's home page and follow its internal links to build an inventory of your current content.
+            </p>
+        </div>
+    @else
+        <div class="overflow-hidden shadow ring-1 ring-rule ring-opacity-5 sm:rounded-lg">
+            <table class="min-w-full divide-y divide-rule">
+                <thead class="bg-paper">
+                    <tr>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-ink">Title</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">URL</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Images</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Fetched At</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-rule bg-paper">
+                    @foreach($pages as $page)
+                        <tr>
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-ink">
+                                {{ $page->title ?? 'Untitled' }}
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">
+                                <a href="{{ $page->url }}" target="_blank" class="text-indigo-600 hover:text-indigo-900">{{ $page->url }}</a>
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">
+                                {{ $page->images_count }}
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">
+                                {{ $page->fetched_at ? $page->fetched_at->diffForHumans() : 'Never' }}
+                            </td>
+                            <td class="px-3 py-4 text-sm text-ink-2">
+                                @if($page->status === 'fetched')
+                                    Fetched
+                                @else
+                                    @php
+                                        $pageReason = $page->refusal_reason ? \App\Enums\FetchRefusalReason::tryFrom($page->refusal_reason) : null;
+                                    @endphp
+                                    @if($pageReason && $pageReason->namesTheOriginsOwnRule())
+                                        Not fetched — your website's own robots.txt refuses this page.
+                                    @elseif($pageReason && $pageReason->isThisPlatformsOwnDoing())
+                                        Not fetched — this platform held back ({{ $page->refusal_reason }}); nothing about your website was consulted.
+                                    @elseif($pageReason)
+                                        Not fetched — your website's robots.txt could not be read, so no rule of yours was consulted.
+                                    @elseif($page->refusal_reason === 'blocked_by_site')
+                                        Not fetched — your website's security service blocked our request (a firewall or bot protection such as Cloudflare). Ask whoever looks after your site to allow the user agent <code>{{ \App\Services\Fetch\RobotsPolicy::userAgentToken() }}</code> — in Cloudflare: Security, WAF, Custom rules, then a rule that skips bot protection when the user agent contains <code>{{ \App\Services\Fetch\RobotsPolicy::userAgentToken() }}</code> — then press Crawl again.
+                                    @else
+                                        Not fetched — the request failed ({{ $page->refusal_reason ?? 'unknown' }}).
+                                    @endif
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
+
+    <div class="mt-8 mb-4 flex items-center justify-between">
+        <p class="text-sm text-ink-2">Images found on your website.</p>
+        <x-ui.button wire:click="copyImages" size="default">
+            Copy Images
+        </x-ui.button>
+    </div>
+
+    @if($images->isEmpty())
+        <div class="rounded-lg border border-rule bg-paper p-6 text-center">
+            <h2 class="text-sm font-medium text-ink">No images stored</h2>
+            <p class="mt-1 text-sm text-ink-2">
+                Pressing "Copy Images" will fetch images from your inventory and store them.
+            </p>
+        </div>
+    @else
+        <div class="overflow-hidden shadow ring-1 ring-rule ring-opacity-5 sm:rounded-lg mb-8">
+            <table class="min-w-full divide-y divide-rule">
+                <thead class="bg-paper">
+                    <tr>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-ink">Host</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Status</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Details</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-rule bg-paper">
+                    @php
+                        $groupedImages = $images->groupBy(function($img) {
+                            return $img->attribution . '|' . $img->status . '|' . $img->refusal_reason;
+                        });
+                    @endphp
+                    @foreach($groupedImages as $group)
+                        @php
+                            $first = $group->first();
+                            $reasonEnum = $first->refusal_reason ? \App\Enums\FetchRefusalReason::tryFrom($first->refusal_reason) : null;
+                            $reasonText = $first->refusal_reason;
+                            if ($reasonEnum) {
+                                if ($reasonEnum->namesTheOriginsOwnRule()) {
+                                    $reasonText = 'The origin\'s own robots.txt was read and refuses this path.';
+                                } elseif ($reasonEnum->isThisPlatformsOwnDoing()) {
+                                    $reasonText = 'This platform decided the refusal out of its own configuration and its own ledger, with nothing about the origin consulted.';
+                                } else {
+                                    $reasonText = 'The origin\'s robots.txt could not be obtained or parsed, so no rule of theirs was read at all.';
+                                }
+                            } else {
+                                if ($first->refusal_reason === 'oversize') {
+                                    $reasonText = 'Too large to copy — the source served more than the size limit.';
+                                } elseif ($first->refusal_reason === 'non_image') {
+                                    $reasonText = 'Not an image — the source answered with something else.';
+                                } elseif ($first->refusal_reason === 'blocked') {
+                                    $reasonText = 'The source blocked the fetch.';
+                                } elseif ($first->refusal_reason === 'challenge') {
+                                    $reasonText = 'The source asked for a human check (a challenge page).';
+                                } elseif ($first->refusal_reason === 'empty') {
+                                    $reasonText = 'The source answered with an empty body.';
+                                } elseif ($first->refusal_reason === 'store_failed') {
+                                    $reasonText = 'Failed: the copy could not be stored.';
+                                } else {
+                                    $reasonText = 'Failed: ' . $first->refusal_reason;
+                                }
+                            }
+                        @endphp
+                        <tr>
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-ink">
+                                {{ $first->attribution }} ({{ $group->count() }})
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">
+                                {{ ucfirst($first->status) }}
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">
+                                @if($first->status === 'refused' || $first->status === 'failed')
+                                    {{ $reasonText }}
+                                @else
+                                    Stored successfully
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        @php $storedImages = $images->where('status', 'stored')->sortBy('id'); @endphp
+        @if($storedImages->isNotEmpty())
+            <p class="text-sm text-ink-2 mb-2">Describe each stored picture in a few words — a screen reader says this instead of the picture, and the next draft carries it.</p>
+            <table class="min-w-full divide-y divide-rule mb-8">
+                <thead class="bg-paper">
+                    <tr>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-ink">Picture</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Description</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink"></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-rule bg-paper">
+                    @foreach($storedImages as $img)
+                        <tr wire:key="alt-{{ $img->id }}">
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-ink">{{ basename(parse_url($img->source_url, PHP_URL_PATH) ?? $img->source_url) }}</td>
+                            <td class="px-3 py-4 text-sm text-ink-2"><label class="sr-only" for="alt-{{ $img->id }}">Description for {{ basename(parse_url($img->source_url, PHP_URL_PATH) ?? $img->source_url) }}</label><input id="alt-{{ $img->id }}" type="text" maxlength="160" wire:model="alts.{{ $img->id }}" class="w-full rounded border border-rule px-2 py-1 text-sm"></td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm"><x-ui.button type="button" wire:click="saveAlt({{ $img->id }})" size="default">Save</x-ui.button></td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    @endif
+
+    <div class="mt-8 mb-4 flex items-center justify-between">
+        <p class="text-sm text-ink-2">Your draft pages.</p>
+        <x-ui.button wire:click="draftSite" size="default">
+            Draft Site
+        </x-ui.button>
+    </div>
+
+    @if($draftPages->isEmpty())
+        <div class="rounded-lg border border-rule bg-paper p-6 text-center">
+            <h2 class="text-sm font-medium text-ink">No draft pages</h2>
+            <p class="mt-1 text-sm text-ink-2">
+                Pressing "Draft Site" will build draft pages from your inventory.
+            </p>
+        </div>
+    @else
+        <div class="overflow-hidden shadow ring-1 ring-rule ring-opacity-5 sm:rounded-lg mb-8">
+            <table class="min-w-full divide-y divide-rule">
+                <thead class="bg-paper">
+                    <tr>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-ink">Title</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Slug</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Link</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-rule bg-paper">
+                    @foreach($draftPages as $page)
+                        <tr>
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-ink">
+                                {{ $page->title }}
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">
+                                {{ $page->slug }}
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">
+                                <a href="{{ route('x-103.pages') }}" class="text-indigo-600 hover:text-indigo-900">View Page</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
+
+    <div class="mt-8 mb-4">
+        <h2>Your opening hours</h2>
+        <table class="min-w-full divide-y divide-rule mt-4">
+            <thead class="bg-paper">
+                <tr>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-ink">Day</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Open</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Close</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Closed</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-rule bg-paper">
+                @foreach($hours as $i => $row)
+                    <tr>
+                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-ink">{{ $row['day'] }}</td>
+                        <td class="whitespace-nowrap px-3 py-4"><input type="time" wire:model="hours.{{ $i }}.open"></td>
+                        <td class="whitespace-nowrap px-3 py-4"><input type="time" wire:model="hours.{{ $i }}.close"></td>
+                        <td class="whitespace-nowrap px-3 py-4"><input type="checkbox" wire:model="hours.{{ $i }}.closed"></td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+        <div class="mt-4">
+            <x-ui.button wire:click="saveHours" size="default">Save hours</x-ui.button>
+            <p class="text-sm text-ink-2 mt-2">Shown in the contact section of every drafted page.</p>
+        </div>
+    </div>
+
+    <div class="mt-8 mb-4">
+        <h2>What your site is still missing</h2>
+        @if (count($missing) === 0)
+            <p class="text-sm text-ink-2 mt-2">Nothing — every section of the draft has something to show.</p>
+        @else
+            <p class="text-sm text-ink-2 mt-2">The draft leaves a section out when it cannot find the fact behind it. Fill these in and draft again.</p>
+            <table class="min-w-full divide-y divide-rule mt-4">
+                <thead class="bg-paper">
+                    <tr>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-ink">Missing</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Why it matters</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Where to add it</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-rule bg-paper">
+                    @foreach ($missing as $row)
+                        <tr>
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-ink">{{ $row['label'] }}</td>
+                            <td class="px-3 py-4 text-sm text-ink-2">{{ $row['hint'] }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">
+                                @if ($row['route'] !== null)
+                                    <a href="{{ route($row['route']) }}" class="text-indigo-600 hover:text-indigo-900">Open</a>
+                                @else
+                                    On this page
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    </div>
+
+    <div class="mt-8 mb-4">
+        <h2>Can everyone read it</h2>
+        @if (count($draftPages) === 0)
+            <p class="text-sm text-ink-2 mt-2">Nothing to check yet — draft the site first.</p>
+        @elseif (count($readability) === 0)
+            <p class="text-sm text-ink-2 mt-2">Every drafted page passed: each picture has a description, every form field has a label, every page has a main heading, and the copy reads at grade {{ \App\Modules\X103\Actions\SiteReadabilityAction::MAX_READING_GRADE }} or below.</p>
+        @else
+            <p class="text-sm text-ink-2 mt-2">Checked against the draft, not the live site. Fix these and draft again.</p>
+            <table class="min-w-full divide-y divide-rule mt-4">
+                <thead class="bg-paper">
+                    <tr>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-ink">Page</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Problem</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Why it matters</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Where to fix it</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-rule bg-paper">
+                    @foreach ($readability as $row)
+                        <tr>
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-ink">{{ $row['page'] }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink">{{ $row['label'] }}</td>
+                            <td class="px-3 py-4 text-sm text-ink-2">{{ $row['hint'] }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">
+                                @if ($row['route'] !== null)
+                                    <a href="{{ route($row['route']) }}" class="text-indigo-600 hover:text-indigo-900">Open</a>
+                                @else
+                                    On this page
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    </div>
+    <div class="mt-8 mb-4">
+        <h2>How heavy each page is</h2>
+        @if (count($draftPages) === 0)
+            <p class="text-sm text-ink-2 mt-2">Nothing to weigh yet — draft the site first.</p>
+        @else
+            <p class="text-sm text-ink-2 mt-2">What a visitor downloads before the page shows, from the draft. This is a weight, not a load time — your pixel measures real visitors' load times on the live site. Pictures are stored exactly as your site served them; a smaller original is the only way to make one lighter.</p>
+            <table class="min-w-full divide-y divide-rule mt-4">
+                <thead class="bg-paper">
+                    <tr>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-ink">Page</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Pictures</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Largest picture</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Page text</th>
+                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-ink">Outside scripts</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-rule bg-paper">
+                    @foreach ($pageWeight as $row)
+                        <tr>
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-ink">{{ $row['page'] }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">{{ $row['images'] }} — {{ number_format($row['image_bytes'] / 1024, 1) }} KB</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">@if ($row['largest'] !== null){{ $row['largest'] }} ({{ number_format($row['largest_bytes'] / 1024, 1) }} KB)@else none @endif</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">{{ number_format($row['html_bytes'] / 1024, 1) }} KB</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-ink-2">{{ $row['scripts'] === 1 ? 'the visitor pixel' : 'none' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    </div>
+</div>

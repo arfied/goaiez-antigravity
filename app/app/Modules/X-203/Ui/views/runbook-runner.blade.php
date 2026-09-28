@@ -2,7 +2,7 @@
     <div class="runbook-runner-view p-4">
         <h2 class="text-lg font-bold text-ink">Runbooks</h2>
         @if($runbooks->isEmpty())
-            <p class="text-ink-2">No runbooks defined.</p>
+            <x-ui.empty-state heading="No runbooks">Defining or running a runbook is not built here yet; this list fills only once a runbook exists.</x-ui.empty-state>
         @else
             <ul>
                 @foreach($runbooks as $r)

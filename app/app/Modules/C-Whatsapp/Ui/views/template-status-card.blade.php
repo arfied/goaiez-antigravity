@@ -1,8 +1,14 @@
 <div>
     <div class="whatsapp-card-view p-4">
-        <h2 class="text-lg font-bold text-ink">WhatsApp templates</h2>
+        <div class="flex items-center justify-between">
+            <h2 class="text-lg font-bold text-ink">WhatsApp templates</h2>
+            <button wire:click="refresh" class="text-sm border rounded px-2 py-1 bg-surface">Refresh from Meta</button>
+        </div>
+        
+        <x-ui.toast kind="error" :message="$error ?? null" />
+        
         @if($templates->isEmpty())
-            <x-ui.empty-state heading="No templates yet.">A message template has to be approved before it can be sent outside a conversation, and each one's status shows here.</x-ui.empty-state>
+            <x-ui.empty-state heading="No templates yet.">Templates are reviewed by Meta through Zernio, usually within a day. Connect WhatsApp first to submit one.</x-ui.empty-state>
         @else
             <ul class="divide-y divide-rule">
                 @foreach($templates as $t)

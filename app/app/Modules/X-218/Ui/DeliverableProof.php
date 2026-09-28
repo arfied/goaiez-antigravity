@@ -56,7 +56,7 @@ class DeliverableProof extends Component
                 $this->artifactHash ?: null
             );
 
-            $this->success = 'Recorded deliverable for deal '.$this->dealId.' and status was recorded as 200. This feeds the deal tracker; nothing downstream is wired to it yet.';
+            $this->success = 'Recorded deliverable for deal '.$this->dealId.' with the status you entered ('.$this->httpStatus.'). The app did not open the page itself — check the post before you pay out.';
 
             $this->dealId = '';
             $this->liveUrl = '';

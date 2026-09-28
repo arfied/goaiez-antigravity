@@ -12,7 +12,11 @@ use App\Enums\SendRefusalReason;
 use App\Models\Conversation;
 use App\Models\Customer;
 use App\Models\User;
+use App\Modules\CWhatsapp\Actions\WhatsappConnectionLookupAction;
+use App\Modules\CWhatsapp\Actions\WhatsappSendAction;
+use App\Modules\CWhatsapp\Actions\WhatsappTemplateLookupAction;
 use App\Services\AuditService;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Consent\ConsentService;
 use App\Services\Messaging\Outbound\OutboundMessage;
 use App\Services\Messaging\Outbound\SendKey;
@@ -94,7 +98,13 @@ final class InboxReplies
         private readonly AgentThreads $threads,
         private readonly ConversationThreads $store,
         private readonly AuditService $audit,
+        private readonly DefaultsRegistry $registry,
     ) {}
+
+    public function bodyLimit(): int
+    {
+        return $this->registry->int('conversations.reply.body_limit');
+    }
 
     /**
      * Answer one thread.
@@ -128,9 +138,14 @@ final class InboxReplies
             );
         }
 
+        // Only SMS threads are answered from here. A WhatsApp conversation must not be answered by text message; WhatsApp replies go through Zernio once connected (REVIEWS-56).
+        if ($conversation->channel !== OutreachChannel::Sms->value) {
+            return SendRefusalReason::ChannelUnavailable;
+        }
+
         $body = trim($body);
 
-        if ($body === '' || mb_strlen($body) > self::BODY_LIMIT) {
+        if ($body === '' || mb_strlen($body) > $this->bodyLimit()) {
             throw new InvalidArgumentException(
                 'A reply must have something in it and must fit inside the Inbox ceiling. The '
                 .'screen validates both before calling this; arriving here means neither did.',
@@ -203,5 +218,123 @@ final class InboxReplies
         );
 
         return $outcome;
+    }
+
+    public function sendWhatsapp(Conversation $conversation, string $body, User $actor): array
+    {
+        $businessId = Tenancy::idOrFail();
+
+        if ((int) $conversation->business_id !== $businessId) {
+            throw new InvalidArgumentException(
+                'That conversation belongs to another tenant, so it cannot be answered here.',
+            );
+        }
+
+        if ($conversation->channel !== OutreachChannel::Whatsapp->value) {
+            throw new InvalidArgumentException('Only a WhatsApp conversation is answered on WhatsApp.');
+        }
+
+        $body = trim($body);
+
+        if ($body === '' || mb_strlen($body) > $this->bodyLimit()) {
+            throw new InvalidArgumentException(
+                'A reply must have something in it and must fit inside the Inbox ceiling. The '
+                .'screen validates both before calling this; arriving here means neither did.',
+            );
+        }
+
+        $contact = $this->store->contactFor($conversation);
+        $phone = $contact['phone'] ?? null;
+        if (empty($phone)) {
+            return ['sent' => false, 'message' => 'Not sent — there is no phone number for this person.'];
+        }
+
+        $connection = app(WhatsappConnectionLookupAction::class)->forBusiness($businessId);
+        if ($connection === null || $connection->status !== 'connected') {
+            return ['sent' => false, 'message' => 'Not sent — connect a WhatsApp number first.'];
+        }
+
+        $this->threads->latch($conversation, $actor);
+
+        $res = app(WhatsappSendAction::class)->handle($businessId, $phone, $body);
+
+        return $this->whatsappOutcome($conversation, $actor, $res, $body, null);
+    }
+
+    public function sendWhatsappTemplate(Conversation $conversation, int $templateId, User $actor): array
+    {
+        $businessId = Tenancy::idOrFail();
+
+        if ((int) $conversation->business_id !== $businessId) {
+            throw new InvalidArgumentException(
+                'That conversation belongs to another tenant, so it cannot be answered here.',
+            );
+        }
+
+        if ($conversation->channel !== OutreachChannel::Whatsapp->value) {
+            throw new InvalidArgumentException('Only a WhatsApp conversation is answered on WhatsApp.');
+        }
+
+        $contact = $this->store->contactFor($conversation);
+        $phone = $contact['phone'] ?? null;
+        if (empty($phone)) {
+            return ['sent' => false, 'message' => 'Not sent — there is no phone number for this person.'];
+        }
+
+        $connection = app(WhatsappConnectionLookupAction::class)->forBusiness($businessId);
+        if ($connection === null || $connection->status !== 'connected') {
+            return ['sent' => false, 'message' => 'Not sent — connect a WhatsApp number first.'];
+        }
+
+        $template = app(WhatsappTemplateLookupAction::class)->sendable($businessId)->firstWhere('id', $templateId);
+        if ($template === null) {
+            return ['sent' => false, 'message' => 'Not sent — that template is not approved for sending.'];
+        }
+
+        $this->threads->latch($conversation, $actor);
+
+        $res = app(WhatsappSendAction::class)->handle($businessId, $phone, $template->body_text, $template->name);
+
+        return $this->whatsappOutcome($conversation, $actor, $res, $template->body_text, $template->name);
+    }
+
+    private function whatsappOutcome(Conversation $conversation, User $actor, array $res, string $recordedBody, ?string $templateName): array
+    {
+        if ($res['status'] === 'sent') {
+            $this->store->recordOutboundFromPerson(conversation: $conversation, body: $recordedBody, userId: (int) $actor->id);
+            $this->audit->record(
+                action: 'inbox.reply.sent',
+                actor: 'user:'.$actor->id,
+                entity: $conversation,
+                metadata: ['channel' => 'whatsapp', 'carrier_handle' => $res['provider_message_ref'] ?? null, 'template' => $templateName],
+            );
+
+            if ($templateName !== null) {
+                return ['sent' => true, 'message' => 'Sent the "'.$templateName.'" template on WhatsApp. Your assistant will stay quiet on this conversation.'];
+            }
+
+            return ['sent' => true, 'message' => 'Sent on WhatsApp. Your assistant will stay quiet on this conversation.'];
+        }
+
+        if ($res['status'] === 'unconfirmed') {
+            return ['sent' => false, 'message' => 'Sent to Zernio, but WhatsApp has not confirmed it yet — check the conversation before sending it again.'];
+        }
+
+        if ($res['status'] === 'refused') {
+            $code = $res['refusal_code'] ?? '';
+            if ($code === 'WHATSAPP_NOT_CONNECTED') {
+                return ['sent' => false, 'message' => 'Not sent — connect a WhatsApp number first.'];
+            }
+            if ($code === 'NO_ZERNIO_CONVERSATION') {
+                return ['sent' => false, 'message' => 'Not sent — this person has not written to your WhatsApp number yet, so there is no conversation to reply in.'];
+            }
+            if ($code === 'OUTSIDE_24H_WINDOW_TEMPLATE_REQUIRED' || $code === 'TEMPLATE_NOT_APPROVED') {
+                return ['sent' => false, 'message' => 'Not sent — this person last wrote more than 24 hours ago. WhatsApp only allows an approved template now.'];
+            }
+
+            return ['sent' => false, 'message' => 'Not sent — this person cannot be messaged on WhatsApp right now ('.$code.').'];
+        }
+
+        return ['sent' => false, 'message' => 'Not sent — WhatsApp did not accept it.'];
     }
 }

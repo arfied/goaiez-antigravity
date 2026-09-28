@@ -36,6 +36,8 @@ enum AiTask: string
     /** FPR-02: does this text need withholding from display? */
     case Moderation = 'moderation';
 
+    case SiteCopy = 'site_copy';
+
     /** GBP-03: a reply to a review, in the tenant's brand voice, published publicly. */
     case ReplyGeneration = 'reply_generation';
 
@@ -93,6 +95,8 @@ enum AiTask: string
      */
     case Conversation = 'conversation';
 
+    case SiteImage = 'site_image';
+
     /**
      * The `platform_settings` key an operator overrides to move this tier.
      */
@@ -109,8 +113,10 @@ enum AiTask: string
         return match ($this) {
             self::ReviewAnalysis, self::Moderation,
             self::ReplyGeneration,
-            self::Conversation => AiModel::Gpt4oMini,
+            self::Conversation,
+            self::SiteCopy => AiModel::Gpt4oMini,
             self::KnowledgeEmbedding => AiModel::TextEmbedding3Small,
+            self::SiteImage => AiModel::GptImage25Flare,
         };
     }
 
@@ -131,6 +137,11 @@ enum AiTask: string
         return $this === self::KnowledgeEmbedding;
     }
 
+    public function producesImage(): bool
+    {
+        return $this === self::SiteImage;
+    }
+
     /**
      * Output ceiling for this tier, in tokens.
      *
@@ -144,6 +155,7 @@ enum AiTask: string
         return match ($this) {
             self::Moderation => 512,
             self::ReviewAnalysis => 1024,
+            self::SiteCopy => 2048,
             self::ReplyGeneration => 4096,
             // ⚠️ **GENEROUS FOR A 160-CHARACTER MESSAGE, AND FOR THE SAME REASON
             // AS THE REPLY TIER ABOVE.** On Claude Sonnet 5 adaptive thinking is
@@ -160,6 +172,7 @@ enum AiTask: string
             // embedding tier outright, which is the guard that makes this arm
             // unreachable rather than merely unused.
             self::KnowledgeEmbedding => 0,
+            self::SiteImage => 0,
         };
     }
 

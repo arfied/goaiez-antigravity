@@ -12,6 +12,7 @@ use App\Modules\X136\Models\Signal;
 use App\Modules\X136\Models\SignalScore;
 use App\Modules\X136\Ui\CoolingView;
 use App\Modules\X136\Ui\SignalVolumePrecisionView;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
@@ -107,10 +108,10 @@ class X136ScreensTest extends TestCase
      */
     public function test_cooling_view_never_a_send(): void
     {
-        Livewire::test(CoolingView::class, ['businessId' => $this->businessId])
-            ->assertSee('A signal informs, it never sends')
-            ->assertDontSeeHtml('Send Message')
-            ->assertDontSeeHtml('wire:click="send"');
+        $component = Livewire::test(CoolingView::class, ['businessId' => $this->businessId])
+            ->assertSee('A signal informs, it never sends');
+        preg_match_all('/wire:click="([A-Za-z]+)/', $component->html(), $clicks);
+        $this->assertSame([], array_values(array_diff(array_unique($clicks[1]), ['toggleSample', 'markDecayed'])), 'the cooling view has no click that sends anything');
 
         $this->assertSame(0, DB::table('send_permits')->count());
         $this->assertSame(0, DB::table('outreach_messages')->count());
@@ -184,7 +185,7 @@ class X136ScreensTest extends TestCase
 
     public function test_signal_volume_precision_shows_stats(): void
     {
-        $action = new SignalScoreAction;
+        $action = new SignalScoreAction(app(DefaultsRegistry::class));
         $action->recordAndScore($this->businessId, 'p1', 'pricing_visit', [], 80.0);
         $action->recordAndScore($this->businessId, 'p2', 'pricing_visit', [], 40.0);
 
@@ -205,12 +206,14 @@ class X136ScreensTest extends TestCase
 
     public function test_signal_volume_precision_no_decay_model(): void
     {
-        $action = new SignalScoreAction;
+        $action = new SignalScoreAction(app(DefaultsRegistry::class));
         $action->recordAndScore($this->businessId, 'p1', 'hiring', [], 80.0);
+
+        DecayModel::where('business_id', $this->businessId)->delete();
 
         Livewire::test(SignalVolumePrecisionView::class, ['businessId' => $this->businessId])
             ->assertSee('hiring')
-            ->assertSee('No decay model yet. A model needs 30 days of events.');
+            ->assertSee('Platform default until you set one.');
     }
 
     public function test_signal_volume_precision_get_route(): void

@@ -610,7 +610,7 @@ Only what is listed. Cross-module change is an EVENT or a REGISTERED ACTION — 
 ## HOW THIS IS PROVEN
   TEST ANCHOR  a tenant-A session issuing SELECT FROM jobs returns ZERO tenant-B rows, not an exception (RLS is the wall, not the app); a price change to a Fact invalidates dependents in the same transaction — fact.invalidated and the update share one commit id
   owns_table businesses · people · conversations · messages · jobs · reviews · campaigns · assets · ledger_entries · facts · sites · numbers · entity_history
-  renders    entity_history_viewer · when_x111_renders
+  renders    entity_history_viewer
 
 ## AUTONOMY
   ships at n/a — ON from minute one (R235; @intent RECOVER describes the action, it does not gate it)

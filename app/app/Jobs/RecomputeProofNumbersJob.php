@@ -117,7 +117,7 @@ final class RecomputeProofNumbersJob implements ShouldQueue
      */
     public function backoff(): array
     {
-        return QueueBackoff::ladder([60, 300]);
+        return QueueBackoff::ladder(QueueBackoff::fromSetting('queue.backoff.standard_seconds'));
     }
 
     public function handle(ProofNumbers $proof): void

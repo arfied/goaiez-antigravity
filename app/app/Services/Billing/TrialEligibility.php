@@ -11,6 +11,7 @@ use App\Exceptions\TrialGrantRefused;
 use App\Models\Business;
 use App\Models\Location;
 use App\Models\TrialClaim;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Places\PlaceConfirmation;
 use App\Services\Support\CreditGrants;
 use App\Support\Trials\TrialGrantAuthorization;
@@ -446,8 +447,8 @@ final class TrialEligibility
             ->where('kind', TrialClaimKind::SignupOrigin)
             ->where('identity_hash', $mine->identity_hash)
             ->whereBetween('created_at', [
-                $anchor->subDays(self::SIGNUP_ORIGIN_WINDOW_DAYS),
-                $anchor->addDays(self::SIGNUP_ORIGIN_WINDOW_DAYS),
+                $anchor->subDays($this->signupOriginWindowDays()),
+                $anchor->addDays($this->signupOriginWindowDays()),
             ])
             ->distinct()
             ->count('business_id');
@@ -536,5 +537,10 @@ final class TrialEligibility
     private static function identityHash(TrialClaimKind $kind, string $value): string
     {
         return hash_hmac('sha256', $kind->value.'|'.$value, (string) config('app.key'));
+    }
+
+    public function signupOriginWindowDays(): int
+    {
+        return app(DefaultsRegistry::class)->int('billing.trial.signup_origin_window_days');
     }
 }

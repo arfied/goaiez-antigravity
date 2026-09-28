@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X176;
 
+use App\Models\User;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
+use App\Modules\X176\Actions\LlmsTxtRenderAction;
 use App\Support\Tenancy;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -347,5 +350,71 @@ final class LlmsTxtTest extends TestCase
         $content = Storage::disk('local')->get($llmsPath);
         $this->assertStringContainsString('20% off winter service', $content);
         $this->assertStringNotContainsString('nested', $content);
+    }
+
+    public function test_llms_txt_carries_the_headline_services_faq_and_contact_of_a_real_page(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant([
+            'name' => 'Local Tenant Real Page',
+        ]);
+        Tenancy::set((int) $biz->id);
+
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Services', 'slug' => 'services']);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => 'commit_llms_real',
+            'content_blocks' => [
+                ['type' => 'hero', 'headline' => 'Distinctive headline 4631', 'subline' => 'Distinctive subline 4632'],
+                ['type' => 'about', 'text' => 'Distinctive about 4633'],
+                ['type' => 'services', 'items' => [['name' => 'Distinctive service 4634', 'price_text' => '$149']]],
+                ['type' => 'faq', 'items' => [['question' => 'Distinctive question 4635?', 'answer' => 'Distinctive answer 4636']]],
+                ['type' => 'contact', 'phone' => '+1 512 555 4637', 'industry_facts' => [['label' => 'Parking', 'value' => 'Distinctive parking 4638']]],
+                ['type' => 'script', 'content' => 'pixel_script'],
+            ],
+        ]);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'llms-real.example.com', true);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $page->id,
+            commitId: 'commit_llms_real',
+            businessName: 'Local Biz Real Page'
+        );
+
+        $this->assertEquals('deployed', $res['status']);
+
+        $txt = Storage::disk('local')->get("sites/{$res['deploy_hash']}.llms.txt");
+        $this->assertStringContainsString('Distinctive headline 4631', $txt);
+        $this->assertStringContainsString('Distinctive subline 4632', $txt);
+        $this->assertStringContainsString('Distinctive about 4633', $txt);
+        $this->assertStringContainsString('- Distinctive service 4634 — $149', $txt);
+        $this->assertStringContainsString('Q: Distinctive question 4635?', $txt);
+        $this->assertStringContainsString('A: Distinctive answer 4636', $txt);
+        $this->assertStringContainsString('Phone: +1 512 555 4637', $txt);
+        $this->assertStringContainsString('Parking: Distinctive parking 4638', $txt);
+        $this->assertStringNotContainsString('pixel_script', $txt);
+    }
+
+    public function test_llms_txt_carries_the_opening_hours_array(): void
+    {
+        $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $action = app(LlmsTxtRenderAction::class);
+        $output = $action->handle('Example Plumbing', 'Welcome', 'home', [
+            [
+                'type' => 'contact',
+                'hours' => [
+                    ['day' => 'Mon', 'open' => '08:00', 'close' => '17:00'],
+                    ['day' => 'Distinctive Sun 4917', 'open' => 'Closed', 'close' => ''],
+                ],
+            ],
+        ]);
+
+        $this->assertStringContainsString('Hours: Mon 08:00-17:00, Distinctive Sun 4917 Closed', $output);
     }
 }

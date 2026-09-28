@@ -48,7 +48,7 @@ class GbpCardScreenTest extends TestCase
         $this->get(route('x-177.gbp-card'))
             ->assertOk()
             ->assertSee('Distinctive Store 4502')
-            ->assertSee('Profile is active')
+            ->assertSee('not reading your profile')
             ->assertSee('Distinctive post 4502')
             ->assertDontSee('Connect Google');
 

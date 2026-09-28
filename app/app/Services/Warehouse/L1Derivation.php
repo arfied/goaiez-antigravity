@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Warehouse;
 
 use App\Enums\DeviceClass;
+use App\Services\Config\DefaultsRegistry;
 use JsonException;
 
 /**
@@ -103,6 +104,7 @@ final class L1Derivation
      */
     public static function rows(array $line, string $l0Path): array
     {
+        $botThreshold = app(DefaultsRegistry::class)->int('warehouse.bot_threshold');
         $payload = self::decodePayload($line['payload'] ?? null);
 
         if ($payload === null) {
@@ -164,8 +166,8 @@ final class L1Derivation
                 'occurred_at' => $occurredAt ?? $receivedAt,
                 'received_at' => $receivedAt,
 
-                'is_bot' => self::botScore($device) >= self::BOT_THRESHOLD,
-                'bot_score' => self::botScore($device),
+                'is_bot' => self::botScore($device) >= $botThreshold,
+                'bot_probability' => self::botScore($device),
 
                 'page_path' => self::truncate(self::string($event['page_path'] ?? null) ?? '/', 512),
                 'page_host' => self::truncate(self::host($event['page_url'] ?? null) ?? '', 255),

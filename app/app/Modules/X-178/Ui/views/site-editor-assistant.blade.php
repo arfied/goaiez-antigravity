@@ -1,5 +1,14 @@
 <section class="site-editor-assistant-panel p-4">
     <h2 class="text-lg font-bold text-ink">Site editor</h2>
+    <div class="mb-6">
+        <h3 class="text-base font-bold text-ink">Edit your site by asking</h3>
+        <p class="text-sm text-ink-2">Open a page, say what to change, see it on the right, then apply or undo.</p>
+        @forelse($pages as $p)
+            <div class="mt-2"><a class="underline" href="{{ route('x-103.pages') }}?edit={{ $p->id }}">Open {{ $p->title }} in the editor</a></div>
+        @empty
+            <div class="mt-2"><a class="underline" href="{{ route('x-103.pages') }}">Add your first page</a></div>
+        @endforelse
+    </div>
     @if($undoSuccess)
         <div class="text-ink bg-surface border rounded p-2 mb-4">{{ $undoSuccess }}</div>
     @endif
@@ -19,12 +28,8 @@
 
     <div class="mt-8 bg-surface p-4 border rounded">
         <h3 class="text-lg font-bold text-ink">Generate Lead-Capture Block</h3>
-        @if($success)
-            <div class="text-ink bg-surface border rounded p-2 mb-4">{{ $success }}</div>
-        @endif
-        @if($error)
-            <div class="text-ink bg-surface border rounded p-2 mb-4">{{ $error }}</div>
-        @endif
+        <x-ui.toast kind="success" :message="$success" />
+        <x-ui.toast kind="error" :message="$error" />
         <form wire:submit="generate" class="flex flex-col gap-4 mt-4">
             <input type="number" wire:model="pageId" placeholder="Page ID" class="border rounded p-2 text-ink bg-surface">
             <input type="text" wire:model="niche" placeholder="Niche" class="border rounded p-2 text-ink bg-surface">

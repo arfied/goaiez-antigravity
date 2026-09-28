@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Livewire\Admin;
 
+use App\Enums\SubscriptionStatus;
 use App\Http\Requests\Billing\BillingTermRequest;
 use App\Models\AuditLogEntry;
 use App\Models\Business;
 use App\Models\Location;
 use App\Models\Subscription;
+use App\Models\User;
 use App\Services\AuditService;
 use App\Services\Billing\LocationAllowance;
 use App\Services\Billing\PlanCharges;
@@ -19,6 +21,7 @@ use App\Support\PlanPricing;
 use App\Support\PlanSelection;
 use App\Support\Tenancy;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Locked;
@@ -81,6 +84,9 @@ final class TenantLocations extends Component
      */
     public string $lookup = '';
 
+    /** when the email owns more than one business, their ids and names — never anyone else's */
+    public array $ownedChoices = [];
+
     /**
      * ⚠️ `#[Locked]` BECAUSE `lookUp()` IS THE ONLY THING THAT MAY SET IT, AND
      * THE AUDIT ROW IS WRITTEN THERE — `PhiTenants`' reasoning exactly. Without
@@ -100,6 +106,9 @@ final class TenantLocations extends Component
      * message anybody can act on.
      */
     public string $additionalLocations = '';
+
+    /** The date typed into the trial form, `Y-m-d`. */
+    public string $trialUntil = '';
 
     public string $name = '';
 
@@ -127,11 +136,47 @@ final class TenantLocations extends Component
 
         $this->resetErrorBag();
 
-        $id = (int) trim($this->lookup);
+        $typed = trim($this->lookup);
+
+        if ($typed === '') {
+            $this->businessId = null;
+            Toaster::error('Enter a business number or the owner’s email address.');
+
+            return;
+        }
+
+        if (filter_var($typed, FILTER_VALIDATE_EMAIL) !== false) {
+            $owner = User::query()->whereRaw('lower(email) = ?', [strtolower($typed)])->first();
+            $owned = $owner instanceof User
+                ? Tenancy::actingAsUser((int) $owner->id, fn () => Business::withoutGlobalScopes()->where('owner_user_id', (int) $owner->id)->orderBy('id')->get(['id', 'name']))
+                : collect();
+
+            if ($owned->isEmpty()) {
+                $this->businessId = null;
+                $this->ownedChoices = [];
+                Toaster::error('No business is owned by that email address.');
+
+                return;
+            }
+
+            if ($owned->count() > 1) {
+                // The owner has several: show them (they are all this one owner's) and let the operator pick.
+                $this->businessId = null;
+                $this->ownedChoices = $owned->map(fn (Business $b): array => ['id' => (int) $b->id, 'name' => (string) $b->name])->all();
+
+                return;
+            }
+
+            $id = (int) $owned->first()->id;
+        } else {
+            $id = (int) $typed;
+        }
+
+        $this->ownedChoices = [];
 
         if ($id <= 0) {
             $this->businessId = null;
-            Toaster::error('Enter a business number.');
+            Toaster::error('Enter a business number or the owner’s email address.');
 
             return;
         }
@@ -159,6 +204,13 @@ final class TenantLocations extends Component
             $id,
             fn (): int => $allowance->purchased($business),
         );
+    }
+
+    public function choose(int $id): void
+    {
+        $this->lookup = (string) $id;
+        $this->ownedChoices = [];
+        $this->lookUp(app(AuditService::class), app(LocationAllowance::class));
     }
 
     /**
@@ -214,6 +266,40 @@ final class TenantLocations extends Component
         }
 
         Toaster::success('Recorded — set the matching amount at the gateway if you have not already');
+    }
+
+    public function extendTrial(AuditService $audit, Subscriptions $subscriptions): void
+    {
+        $this->authorize(AdminAccess::GATE);
+
+        $business = $this->inView();
+
+        $this->validate([
+            'trialUntil' => ['required', 'date', 'after:today'],
+        ], [
+            'trialUntil.after' => 'Pick a date after today.',
+        ]);
+
+        $until = Carbon::parse($this->trialUntil)->endOfDay();
+
+        try {
+            Tenancy::actingAs($business->id, function () use ($subscriptions, $business, $until, $audit): void {
+                $subscriptions->extendNoCardTrial($business, $until);
+
+                $audit->record(
+                    'subscription.no_card_trial_extended',
+                    $this->actor(),
+                    $business,
+                    ['until' => $until->toIso8601String()],
+                );
+            });
+        } catch (RuntimeException $refusal) {
+            $this->addError('trialUntil', $refusal->getMessage());
+
+            return;
+        }
+
+        Toaster::success('Trial extended to '.$until->format('j M Y').'.');
     }
 
     /**
@@ -352,6 +438,8 @@ final class TenantLocations extends Component
                 $charges->agreedAdditionalLocationPriceFor($subscription, $selection),
             ),
             'term' => $selection->term,
+            'onNoCardTrial' => $subscription?->status === SubscriptionStatus::PendingCheckout,
+            'noCardTrialEndsAt' => Tenancy::actingAs($business->id, fn (): ?Carbon => (new Subscriptions)->noCardTrialEndsAt($business, $subscription)),
         ]);
     }
 

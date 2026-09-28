@@ -89,7 +89,8 @@
                                 >
                                     {{-- A contact the owner deleted leaves the thread standing
                                          with nobody on it. Saying so beats a blank line. --}}
-                                    {{ $item->customer?->name ?? 'This contact was removed' }}
+                                    {{ $contacts[$item->id]['name'] ?? 'This contact was removed' }}
+                                    @if ($item->channel === 'whatsapp') <span class="ml-2 text-xs text-ink-2">WhatsApp</span> @endif
                                 </button>
                                 <p class="text-sm text-ink-2">{{ $item->updated_at?->diffForHumans() }}</p>
                             </div>
@@ -105,7 +106,8 @@
         <section class="rounded-[--radius-panel] border border-rule bg-card p-5" aria-label="One conversation">
             <div class="flex flex-wrap items-baseline justify-between gap-2">
                 <h2 class="font-display text-lg font-semibold text-ink">
-                    {{ $thread->customer?->name ?? 'This contact was removed' }}
+                    {{ $contact['name'] ?? 'This contact was removed' }}
+                    @if ($thread->channel === 'whatsapp') <span class="ml-2 text-xs text-ink-2">WhatsApp</span> @endif
                 </h2>
                 <p class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-paper text-ink-2 border border-rule" data-thread-state>{{ $state->status->ownerLabel() }}</p>
             </div>
@@ -176,6 +178,23 @@
                             <span class="font-normal">· {{ $entry->created_at?->diffForHumans() }}</span>
                         </p>
                         <p class="mt-1 whitespace-pre-line break-words text-base text-ink">{{ $entry->body }}</p>
+                        @foreach (($entry->attachments ?? []) as $i => $att)
+                            @if (($att['status'] ?? '') === 'stored')
+                                <x-ui.button variant="secondary" size="default" wire:click="downloadAttachment({{ $entry->id }}, {{ $i }})">Download the {{ $att['type'] }}</x-ui.button>
+                            @elseif (($att['status'] ?? '') === 'pending')
+                                Saving the {{ $att['type'] }}…
+                            @elseif (($att['status'] ?? '') === 'expired')
+                                WhatsApp deleted this {{ $att['type'] }} before it could be saved.
+                            @elseif (($att['status'] ?? '') === 'too_large')
+                                This {{ $att['type'] }} is too large to save here.
+                            @elseif (($att['status'] ?? '') === 'refused_health_tenant')
+                                This {{ $att['type'] }} was not saved, because this business handles health information.
+                            @elseif (($att['status'] ?? '') === 'pruned')
+                                This {{ $att['type'] }} was deleted after your media retention period.
+                            @else
+                                This {{ $att['type'] }} could not be saved.
+                            @endif
+                        @endforeach
                     </li>
                 @empty
                     {{--
@@ -192,7 +211,7 @@
                 @endforelse
             </ol>
 
-            @if ($thread->customer === null)
+            @if ($thread->channel === 'whatsapp' ? (($contact['phone'] ?? null) === null) : $thread->customer === null)
                 <p class="mt-6 text-base text-ink-2">
                     You can read this conversation, but there is nobody left to reply to —
                     this contact was removed.
@@ -211,7 +230,7 @@
                     <textarea
                         wire:model="reply"
                         rows="3"
-                        maxlength="{{ InboxReplies::BODY_LIMIT }}"
+                        maxlength="{{ $this->bodyLimit() }}"
                         class="rounded-[--radius-control] border border-rule bg-card px-3 py-2 text-base text-ink"
                     ></textarea>
                 </label>
@@ -222,6 +241,27 @@
                 <div class="mt-4">
                     <x-ui.button type="button" size="default" wire:click="send">Send</x-ui.button>
                 </div>
+
+                @if ($thread->channel === 'whatsapp' && $templates->isNotEmpty())
+                    <div class="mt-6 border-t border-rule pt-4">
+                        <label class="flex flex-col gap-1">
+                            <span class="text-sm font-medium text-ink-2">More than 24 hours since they last wrote? WhatsApp only allows an approved template.</span>
+                            <select wire:model="templateId" class="rounded-[--radius-control] border border-rule bg-card px-3 py-2 text-base text-ink">
+                                <option value="">Choose a template</option>
+                                @foreach ($templates as $tpl)
+                                    <option value="{{ $tpl->id }}">{{ $tpl->name }}</option>
+                                @endforeach
+                            </select>
+                        </label>
+                        @error('templateId')
+                            <p class="mt-2 text-base text-alert" role="alert">{{ $message }}</p>
+                        @enderror
+
+                        <div class="mt-4">
+                            <x-ui.button type="button" size="default" wire:click="sendTemplate">Send template</x-ui.button>
+                        </div>
+                    </div>
+                @endif
             @endif
 
             <div class="mt-6 flex flex-wrap gap-3 border-t border-rule pt-4">

@@ -8,6 +8,7 @@ use App\Models\Location;
 use App\Services\Actuation\SiteProbe;
 use App\Services\Tenant\TenantPause;
 use App\Services\Tenant\TenantSuspension;
+use App\Support\QueueBackoff;
 use App\Support\Tenancy;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -54,10 +55,10 @@ final class ProbeLocationSiteJob implements ShouldQueue
      */
     public int $tries = 3;
 
-    /**
-     * @var list<int>
-     */
-    public array $backoff = [60, 600];
+    public function backoff(): array
+    {
+        return QueueBackoff::ladder(QueueBackoff::fromSetting('queue.backoff.media_seconds'));
+    }
 
     /**
      * ⚠️ **IDS RATHER THAN MODELS.** `SerializesModels` re-queries on unserialize

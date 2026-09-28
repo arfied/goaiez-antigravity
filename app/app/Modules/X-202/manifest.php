@@ -10,6 +10,7 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-202
+ *
  * @intent RECOVER under §227.2
  */
 return [
@@ -54,7 +55,6 @@ return [
         'item',
         'audit_export',
         'mobile',
-        'slack',
     ],
 
     // P-209 — silence fails OPEN. `none` is a decision; absence is not.

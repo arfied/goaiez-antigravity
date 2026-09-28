@@ -10,6 +10,7 @@ use App\Enums\SiteSnapshotState;
 use App\Enums\SpeedFix;
 use App\Models\SiteChange;
 use App\Services\ActivityService;
+use App\Services\Config\DefaultsRegistry;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -149,10 +150,15 @@ final class SiteMeasurements
      */
     public const array REVERT_BACKOFF_HOURS = [0, 0, 24, 24, 48, 48, 96, 168];
 
-    public function __construct(
+    public function __construct(private readonly DefaultsRegistry $registry,
         private readonly SiteChanges $siteChanges,
         private readonly ActivityService $activity,
     ) {}
+
+    public function revertBackoffHours(): array
+    {
+        return $this->registry->intList('sites.revert.backoff_hours');
+    }
 
     /**
      * Every applied, unmeasured, still-live change whose window has closed.
@@ -204,7 +210,7 @@ final class SiteMeasurements
                 ->whereNull('measured_at')
                 ->whereNull('rolled_back_at')
                 ->whereNotIn('change_type', SpeedFix::changeTypes())
-                ->where('applied_at', '<=', $now->subDays(self::MEASURED_WINDOW_ENDS_DAYS)),
+                ->where('applied_at', '<=', $now->subDays($this->registry->int('sites.measure.window_ends_days'))),
             $limit,
         );
     }
@@ -541,7 +547,7 @@ final class SiteMeasurements
         }
 
         $attempts = (int) $change->revert_attempts + 1;
-        $exhausted = $attempts >= self::REVERT_ATTEMPT_CEILING;
+        $exhausted = $attempts >= $this->registry->int('sites.revert.attempt_ceiling');
 
         // forceFill because the columns are guarded on the model: this service
         // is their only writer and a request body must never be one.
@@ -549,7 +555,7 @@ final class SiteMeasurements
             'revert_attempts' => $attempts,
             // ⚠️ **CLEARED ON EXHAUSTION RATHER THAN LEFT AT A PAST TIME**, so
             // that a row nobody is retrying does not read as one that is due.
-            'revert_attempt_after' => $exhausted ? null : CarbonImmutable::now()->addHours(self::backoffHours($attempts)),
+            'revert_attempt_after' => $exhausted ? null : CarbonImmutable::now()->addHours($this->backoffHours($attempts)),
             'revert_attempts_exhausted_at' => $exhausted ? CarbonImmutable::now() : null,
         ])->save();
 
@@ -565,9 +571,9 @@ final class SiteMeasurements
      * otherwise fall off its own end into an undefined index, which is a fatal
      * on the one path whose whole job is to keep trying.
      */
-    private static function backoffHours(int $attempts): int
+    private function backoffHours(int $attempts): int
     {
-        $schedule = self::REVERT_BACKOFF_HOURS;
+        $schedule = $this->revertBackoffHours();
 
         return $schedule[min($attempts, count($schedule)) - 1];
     }
@@ -598,7 +604,7 @@ final class SiteMeasurements
                 'site_change_id' => (int) $change->id,
                 'change_type' => $change->change_type,
                 'url' => $change->url,
-                'attempts' => self::REVERT_ATTEMPT_CEILING,
+                'attempts' => $this->registry->int('sites.revert.attempt_ceiling'),
             ],
             'A change on your website needs you to take it off',
         );

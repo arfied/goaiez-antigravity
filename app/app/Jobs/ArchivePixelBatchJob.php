@@ -13,6 +13,7 @@ use App\Services\Warehouse\L0Batch;
 use App\Services\Warehouse\L0Receipt;
 use App\Services\Warehouse\L1Derivation;
 use App\Services\Warehouse\L1Loader;
+use App\Support\QueueBackoff;
 use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
 use Illuminate\Bus\Queueable;
@@ -152,7 +153,12 @@ final class ArchivePixelBatchJob implements ShouldQueue
      */
     public function backoff(): array
     {
-        return [30 + random_int(-10, 10), 120 + random_int(-30, 30)];
+        $base = QueueBackoff::fromSetting('queue.backoff.pixel_archive_seconds');
+
+        return [
+            $base[0] + random_int(-10, 10),
+            $base[1] + random_int(-30, 30),
+        ];
     }
 
     /**

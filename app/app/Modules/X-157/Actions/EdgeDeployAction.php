@@ -7,10 +7,12 @@ namespace App\Modules\X157\Actions;
 use App\Models\Business;
 use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X103\Actions\PageVersionAction;
+use App\Modules\X103\Domain\SiteBlockRenderer;
 use App\Modules\X108\Actions\AppointmentListAction;
 use App\Modules\X155\Actions\FormReadAction;
 use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
+use App\Modules\X157\Models\CustomDomainRequest;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
 use App\Modules\X163\Actions\QuotablePriceAction;
@@ -18,24 +20,43 @@ use App\Modules\X176\Actions\InternalLinkRenderAction;
 use App\Modules\X176\Actions\LlmsTxtRenderAction;
 use App\Modules\X176\Actions\SchemaRenderAction;
 use App\Modules\X176\Actions\SeoRenderAction;
+use App\Services\Config\DefaultsRegistry;
+use App\Services\Industry\IndustryStartingPoints;
+use App\Services\Pixel\PixelKeys;
+use App\Support\Money;
+use App\Support\PlanPricing;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 
 final class EdgeDeployAction
 {
+    public const SPEED_BUDGET_MS = 1500;
+
+    public const PRICEBOOK_ITEMS_MAX = 20;
+
+    private const DNI_SCRIPT = <<<'JS'
+(function(){var c=document.querySelector('div[data-dni-url]');if(!c){return;}var u=c.getAttribute('data-dni-url');if(!u){return;}var t='';try{var s=window.localStorage.getItem('_q_s');if(s){t=String(JSON.parse(s).id||'');}}catch(e){}if(!t){t='dni_'+Math.random().toString(36).slice(2)+Date.now().toString(36);}fetch(u+'?visitor_session_token='+encodeURIComponent(t),{credentials:'omit',headers:{Accept:'application/json'}}).then(function(r){return r.ok?r.json():null;}).then(function(d){if(!d||!d.number){return;}var a=document.createElement('a');a.setAttribute('href','tel:'+String(d.number).replace(/[^+0-9]/g,''));a.appendChild(document.createTextNode(String(d.number)));while(c.firstChild){c.removeChild(c.firstChild);}c.appendChild(a);}).catch(function(){});})();
+JS;
+
+    public function __construct(private DefaultsRegistry $defaults) {}
+
     public function handle(
         int $businessId,
         int $edgeZoneId,
         int $measuredTtfbMs = 120,
-        int $speedBudgetMs = 1500,
+        ?int $speedBudgetMs = null,
         ?int $pageId = null,
         ?string $commitId = null,
-        ?string $businessName = null
+        ?string $businessName = null,
+        ?int $pageVariantId = null
     ): array {
-        return DB::transaction(function () use ($businessId, $edgeZoneId, $measuredTtfbMs, $speedBudgetMs, $commitId, $pageId, $businessName) {
+        $speedBudgetMs ??= $this->defaults->int('sites.deploy.speed_budget_ms');
+
+        return DB::transaction(function () use ($businessId, $edgeZoneId, $measuredTtfbMs, $speedBudgetMs, $commitId, $pageId, $businessName, $pageVariantId) {
             $zone = EdgeZone::where('business_id', $businessId)->findOrFail($edgeZoneId);
 
             if ($commitId) {
@@ -74,6 +95,7 @@ final class EdgeDeployAction
                 'business_id' => $businessId,
                 'edge_zone_id' => $zone->id,
                 'page_id' => $pageId,
+                'page_variant_id' => $pageVariantId,
                 'deploy_hash' => $deployHash,
                 'status' => 'deploying',
                 'speed_index' => ($measuredTtfbMs <= $speedBudgetMs) ? 100 : 40,
@@ -124,11 +146,14 @@ final class EdgeDeployAction
                 ];
             }
 
+            $stored = $this->defaults->value('billing.currency');
+            $currency = is_string($stored) && trim($stored) !== '' ? strtoupper(trim($stored)) : 'USD';
+
             $productOffers = [];
             $priceBookItems = app(QuotablePriceAction::class)->options($businessId);
             // The old code did ->limit(20), so we do array_slice
             usort($priceBookItems, fn ($a, $b) => $a['id'] <=> $b['id']);
-            $priceBookItems = array_slice($priceBookItems, 0, 20);
+            $priceBookItems = array_slice($priceBookItems, 0, $this->defaults->int('sites.deploy.pricebook_items_max'));
             foreach ($priceBookItems as $item) {
                 if (trim((string) $item['service_name']) === '') {
                     continue;
@@ -136,11 +161,72 @@ final class EdgeDeployAction
                 $productOffers[] = [
                     'name' => $item['service_name'],
                     'price' => $item['price_cents'] / 100,
+                    'price_max' => isset($item['price_max_cents']) ? $item['price_max_cents'] / 100 : null,
+                    'currency' => $currency,
+                    'price_text' => PlanPricing::format(Money::of((int) $item['price_cents'], $currency)),
+                    'price_max_text' => isset($item['price_max_cents']) ? PlanPricing::format(Money::of((int) $item['price_max_cents'], $currency)) : null,
                 ];
             }
 
-            $html = '<html><head>';
+            $html = '<!doctype html><html lang="en"><head>';
+            $html .= "<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n";
             $html .= "<meta name=\"ssl\" content=\"valid\">\n";
+
+            $x176Usable = false;
+            $breadcrumbs = [];
+            if ($pageId !== null && $businessName !== null && $commitId !== null) {
+                $x176Usable = true;
+                $page = app(PageReadAction::class)->findForBusiness($businessId, $pageId);
+                if ($page && ! empty($page->slug) && trim((string) $page->title) !== '') {
+                    $parts = explode('/', trim($page->slug, '/'));
+                    $paths = [];
+                    $current = '';
+                    foreach ($parts as $part) {
+                        $current = $current ? $current.'/'.$part : $part;
+                        $paths[] = $current;
+                    }
+                    $pages = app(PageReadAction::class)->publishedForSlugs($businessId, $paths);
+                    $hierarchyPages = [];
+                    foreach ($pages as $p) {
+                        $norm = trim((string) $p->slug, '/');
+                        if (isset($hierarchyPages[$norm])) {
+                            $x176Usable = false;
+                            break;
+                        }
+                        $hierarchyPages[$norm] = $p;
+                    }
+                    if ($x176Usable) {
+                        foreach ($paths as $path) {
+                            if (! isset($hierarchyPages[$path]) || trim((string) $hierarchyPages[$path]->title) === '') {
+                                $x176Usable = false;
+                                break;
+                            }
+                            if (count($parts) > 1) {
+                                $breadcrumbs[] = [
+                                    'name' => $hierarchyPages[$path]->title,
+                                    'slug' => $path,
+                                ];
+                            }
+                        }
+                    }
+                    if (! $x176Usable) {
+                        $breadcrumbs = [];
+                    }
+                }
+            }
+
+            $headPage = null;
+            if ($pageId !== null) {
+                $headPage = app(PageReadAction::class)->findForBusiness($businessId, $pageId);
+            }
+            if (! $x176Usable) {
+                $seoTitle = $headPage ? ($headPage->seo_title ?: $headPage->title ?: $businessName) : $businessName;
+                $html .= '<title>'.e((string) $seoTitle)."</title>\n";
+                if ($headPage && ! empty($headPage->seo_description)) {
+                    $html .= '<meta name="description" content="'.e($headPage->seo_description)."\">\n";
+                }
+            }
+
             $html .= "</head><body>\n";
 
             if ($commitId) {
@@ -150,9 +236,11 @@ final class EdgeDeployAction
                         ? array_column($version->content_blocks, 'type')
                         : [];
 
+                    $business = Business::find($businessId);
+                    $pixelKey = $business === null ? '' : app(PixelKeys::class)->ensureFor($business);
                     if (in_array('pixel_script', $blockTypes, true)) {
                         $pixelSrc = route('pixel.bundle.pointer', absolute: false);
-                        $html .= "<script id=\"x110-pixel\" src=\"{$pixelSrc}\"></script>\n";
+                        $html .= "<script id=\"x110-pixel\" src=\"{$pixelSrc}\" data-k=\"".e($pixelKey)."\"></script>\n";
                     }
 
                     $hasChat = in_array('chat_widget', $blockTypes, true);
@@ -173,84 +261,66 @@ final class EdgeDeployAction
                             ];
                         }
                         if (($block['type'] ?? '') === 'faq') {
-                            if (! is_scalar($block['question'] ?? '') || ! is_scalar($block['answer'] ?? '')
-                                || trim((string) ($block['question'] ?? '')) === '' || trim((string) ($block['answer'] ?? '')) === '') {
-                                continue;
-                            }
                             // FAQPage schema injected on publish (TEST ANCHOR, G8-16, ruling 41)
-                            $faqs[] = [
-                                'question' => $block['question'],
-                                'answer' => $block['answer'],
-                            ];
+                            $pairs = isset($block['items']) && is_array($block['items']) ? $block['items'] : [$block];
+                            foreach ($pairs as $pair) {
+                                if (! is_array($pair) || ! is_scalar($pair['question'] ?? '') || ! is_scalar($pair['answer'] ?? '')
+                                    || trim((string) ($pair['question'] ?? '')) === '' || trim((string) ($pair['answer'] ?? '')) === '') {
+                                    continue;
+                                }
+                                $faqs[] = ['question' => $pair['question'], 'answer' => $pair['answer']];
+                            }
                         }
                     }
 
                     if ($hasChat) {
-                        $html .= "<div class=\"chat-widget-container\"></div>\n";
+                        $chatSrc = route('chat.script', absolute: false);
+                        $html .= "<div class=\"chat-widget-container\" data-chat-mount></div>\n";
+                        $html .= "<script id=\"x102-chat\" src=\"{$chatSrc}\" data-chat data-key=\"".e($pixelKey)."\"></script>\n";
                     }
                     if ($hasForm) {
-                        $formId = app(FormReadAction::class)->firstIdForBusiness($businessId);
-                        $action = $formId === null
-                            ? ''
-                            : " method=\"post\" action=\"/sites/{$businessId}/{$deployHash}/forms/{$formId}\"";
-                        $html .= "<form class=\"form-capture-x155\"{$action}></form>\n";
+                        $definition = app(FormReadAction::class)->firstDefinitionForBusiness($businessId);
+                        if ($definition === null) {
+                            // No form defined yet: the marker stays so the site law can see the slot, but nothing pretends to be a form.
+                            $html .= "<div class=\"form-capture-x155\"></div>\n";
+                        } else {
+                            $formActionBase = route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false);
+                            $html .= "<div class=\"form-capture-x155\">\n";
+                            $html .= View::make('x-103::site.blocks.form', [
+                                'block' => [
+                                    'definition_id' => (int) $definition['id'],
+                                    'fields' => $definition['fields'],
+                                    'required' => $definition['required'],
+                                    'honeypot' => $definition['honeypot'],
+                                ],
+                                'context' => ['form_action_base' => $formActionBase],
+                            ])->render();
+                            $html .= "</div>\n";
+                        }
                     }
                     if ($hasDni) {
-                        $html .= "<div class=\"dni-pool-x137\"></div>\n";
+                        $dniUrl = route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false).'/dni';
+                        $html .= '<div class="dni-pool-x137" data-dni-url="'.e($dniUrl)."\"></div>\n";
+                        $html .= '<script id="x137-dni">'.self::DNI_SCRIPT."</script>\n";
                     }
                 }
             }
+            $verified = CustomDomainRequest::withoutGlobalScopes()->where('business_id', $businessId)->where('status', 'verified')->orderByDesc('id')->value('domain');
+            $canonicalHost = $verified !== null && $verified !== '' ? strtolower($verified) : $zone->domain_name;
 
-            $breadcrumbs = [];
-            if ($pageId !== null && $businessName !== null && $commitId !== null) {
-                $page = app(PageReadAction::class)->findForBusiness($businessId, $pageId);
-                if ($page && ! empty($page->slug) && trim((string) $page->title) !== '') {
-                    $parts = explode('/', trim($page->slug, '/'));
-                    if (count($parts) > 1) {
-                        $paths = [];
-                        $current = '';
-                        foreach ($parts as $part) {
-                            $current = $current ? $current.'/'.$part : $part;
-                            $paths[] = $current;
-                        }
+            // Where this page's siblings live. On a verified custom domain a root-relative
+            // slug is right; at the platform address (the `platform` zone) it would resolve against the platform's
+            // own routes, so links go through the stable per-page route (wave 821).
+            $linkBase = ($zone->provider === 'platform' && ($verified === null || $verified === '')) ? "/sites/{$businessId}/p" : '';
 
-                        $pages = app(PageReadAction::class)->publishedForSlugs($businessId, $paths);
-
-                        $hierarchyPages = [];
-                        $usable = true;
-                        foreach ($pages as $p) {
-                            $norm = trim((string) $p->slug, '/');
-                            if (isset($hierarchyPages[$norm])) {
-                                $usable = false;
-                                break;
-                            }
-                            $hierarchyPages[$norm] = $p;
-                        }
-
-                        if ($usable) {
-                            foreach ($paths as $path) {
-                                if (! isset($hierarchyPages[$path]) || trim((string) $hierarchyPages[$path]->title) === '') {
-                                    $usable = false;
-                                    break;
-                                }
-                                $breadcrumbs[] = [
-                                    'name' => $hierarchyPages[$path]->title,
-                                    'slug' => $path,
-                                ];
-                            }
-                        }
-                        if (! $usable) {
-                            $breadcrumbs = [];
-                        }
-                    }
-                }
-
+            if ($x176Usable) {
                 $seoResult = app(SeoRenderAction::class)->handle(
                     $businessId,
                     $pageId,
                     $businessName,
                     $commitId,
-                    $zone->domain_name
+                    $canonicalHost,
+                    pathPrefix: $linkBase
                 );
 
                 $escapedTitle = e($seoResult['title']);
@@ -264,19 +334,22 @@ final class EdgeDeployAction
                     "<link rel=\"canonical\" href=\"{$escapedCanonical}\">\n</head>",
                     $html
                 );
+            }
 
+            if ($pageId !== null && $businessName !== null && $commitId !== null) {
                 $schemaResult = app(SchemaRenderAction::class)->handle(
                     $businessId,
                     $pageId,
                     $businessName,
                     $commitId,
-                    $zone->domain_name,
+                    $canonicalHost,
                     productOffers: $productOffers ?: null,
                     videos: $videos ?: null,
                     events: $events ?: null,
                     address: $address ?: null,
                     breadcrumbs: $breadcrumbs ?: null,
-                    faqs: $faqs ?: null
+                    faqs: $faqs ?: null,
+                    pathPrefix: $linkBase
                 );
 
                 if (isset($schemaResult['json_ld'])) {
@@ -295,13 +368,22 @@ final class EdgeDeployAction
                     if (Storage::disk('local')->put("sites/{$deployHash}.llms.txt", $llmsTxtContent) === false) {
                         Log::warning("the llms.txt artifact could not be written: sites/{$deployHash}.llms.txt");
                     }
+
+                    $context = [
+                        'businessName' => $businessName,
+                        'deployHash' => $deployHash,
+                        'tenant_storage_url_prefix' => route('x-157.site.media', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false).'/',
+                        'form_action_base' => route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false),
+                        'tokens' => app(IndustryStartingPoints::class)->forBusiness($businessId),
+                    ];
+                    $html .= app(SiteBlockRenderer::class)->render($contentBlocks, $context);
                 }
             }
 
             if (! empty($breadcrumbs)) {
                 $html .= "<nav id=\"breadcrumb-x176\">\n";
                 foreach ($breadcrumbs as $crumb) {
-                    $html .= '  <a href="/'.e($crumb['slug']).'">'.e($crumb['name'])."</a>\n";
+                    $html .= '  <a href="'.e($linkBase).'/'.e($crumb['slug']).'">'.e($crumb['name'])."</a>\n";
                 }
                 $html .= "</nav>\n";
             }
@@ -309,7 +391,8 @@ final class EdgeDeployAction
             if (! empty($productOffers)) {
                 $html .= "<div id=\"offers-x176\">\n";
                 foreach ($productOffers as $offer) {
-                    $html .= '  <div class="offer-item" data-name="'.e($offer['name']).'">'.e($offer['name']).' - $'.e((string) $offer['price'])."</div>\n";
+                    $priceText = e($offer['price_text']).(isset($offer['price_max_text']) ? ' to '.e($offer['price_max_text']) : '');
+                    $html .= '  <div class="offer-item" data-name="'.e($offer['name']).'">'.e($offer['name']).' - '.$priceText."</div>\n";
                 }
                 $html .= "</div>\n";
             }
@@ -342,27 +425,7 @@ final class EdgeDeployAction
                 $html .= "</div>\n";
             }
 
-            if (! empty($videos)) {
-                $html .= "<div id=\"videos-x176\">\n";
-                foreach ($videos as $video) {
-                    $html .= '  <div class="video-item" data-name="'.e($video['name']).'" data-url="'.e($video['contentUrl']).'">'.e($video['name'])."</div>\n";
-                }
-                $html .= "</div>\n";
-            }
-
-            if (! empty($faqs)) {
-                try {
-                    $html .= "<div id=\"faq-x176\">\n";
-                    foreach ($faqs as $faq) {
-                        $html .= '  <div class="faq-item" data-question="'.e((string) ($faq['question'] ?? '')).'">'.e((string) ($faq['question'] ?? '')).' - '.e((string) ($faq['answer'] ?? ''))."</div>\n";
-                    }
-                    $html .= "</div>\n";
-                } catch (\Throwable $e) {
-                    Log::warning('the faq block could not be rendered: '.$e->getMessage());
-                }
-            }
-
-            $internalLinksHtml = app(InternalLinkRenderAction::class)->handle($businessId);
+            $internalLinksHtml = app(InternalLinkRenderAction::class)->handle($businessId, $linkBase);
             if ($internalLinksHtml !== '') {
                 $html .= $internalLinksHtml;
             }
@@ -382,9 +445,11 @@ final class EdgeDeployAction
             // DeployCompleted all follow the write, because ModuleServiceProvider's route
             // serves a `deployed` row by reading that exact file. A deploy supersedes only
             // the previous deploy of the same page (R245, 2026-09-05).
+            // an arm never supersedes the other arm; the owner's stop (X-103) is what retires a variant.
             Deployment::where('business_id', $businessId)
                 ->where('edge_zone_id', $zone->id)
                 ->where('page_id', $pageId)
+                ->when($pageVariantId === null, fn ($q) => $q->whereNull('page_variant_id'), fn ($q) => $q->where('page_variant_id', $pageVariantId))
                 ->where('status', 'deployed')
                 ->where('id', '!=', $deployment->id)
                 ->update(['status' => 'superseded']);
@@ -397,7 +462,7 @@ final class EdgeDeployAction
             Event::dispatch(new DeployCompleted(
                 businessId: $businessId,
                 deploymentId: $deployment->id,
-                domainName: $zone->domain_name,
+                domainName: $canonicalHost,
                 deployHash: $deployHash
             ));
 

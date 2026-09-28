@@ -10,6 +10,7 @@ use App\Enums\OutreachStatus;
 use App\Enums\ReviewInviteKind;
 use App\Models\Customer;
 use App\Models\OutreachMessage;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -63,6 +64,8 @@ final class MessageLog
     /** How many messages one page of the log shows. */
     public const int PER_PAGE = 25;
 
+    public function __construct(private readonly DefaultsRegistry $defaults) {}
+
     /**
      * The tenant's messages, newest first.
      *
@@ -83,7 +86,7 @@ final class MessageLog
         return OutreachMessage::query()
             ->with('customer')
             ->orderByDesc('id')
-            ->paginate(self::PER_PAGE);
+            ->paginate($this->defaults->int('messaging.log.per_page'));
     }
 
     /**

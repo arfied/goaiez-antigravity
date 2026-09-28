@@ -72,7 +72,7 @@ class X156ScreensTest extends TestCase
         );
 
         Livewire::test(ConnectSourceView::class, ['businessId' => $this->businessId])
-            ->assertSee('Synced')
+            ->assertSee('Has received data')
             ->assertSee('3 records')
             ->call('pause', $source->id)
             ->assertSee('Paused');

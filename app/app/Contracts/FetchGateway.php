@@ -15,7 +15,7 @@ use App\Services\Fetch\FetchResult;
  * public pages where permitted, microsite health probes). No module fetches HTML
  * on its own — build-failing import test."
  *
- * That import lint is in ArchitectureTest and it is the reason this interface
+ * That import lint is in tests/Feature/Architecture/OutboundHttpTest.php and it is the reason this interface
  * exists in row 2 rather than in the row `40` imagined. `40` Part 8 assigns the
  * gateway to a build row "1c" in the `30`–`40` pack's own numbering, which does
  * not map onto `29` §11.2's 26 rows — so nothing ever scheduled it, while the

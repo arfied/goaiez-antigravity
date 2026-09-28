@@ -39,6 +39,7 @@ use App\Modules\CReviews\Ui\LossAlerts;
 use App\Modules\CReviews\Ui\ReviewsQaRequests;
 use App\Modules\CSms\Events\MessageReceived;
 use App\Modules\CSms\Events\SendRequested;
+use App\Modules\CSms\Events\SendSettled;
 use App\Modules\X121\Models\Person;
 use App\Modules\X171\Events\JobCompleted;
 use App\Modules\X181\Actions\QaTicketCreateAction;
@@ -72,7 +73,7 @@ class CReviewsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->requestAction = new ReviewRequestAction;
+        $this->requestAction = new ReviewRequestAction(app(DefaultsRegistry::class));
         $this->replyAction = new ReviewReplyAction;
         $this->syncAction = new ReviewSyncAction;
         $this->ticketAction = new QaTicketAction;
@@ -111,7 +112,7 @@ class CReviewsTest extends TestCase
             customerId: $customerId,
             promptTemplate: 'How did the repair go? We would love your feedback.'
         );
-        $this->assertEquals('sent', $validPromptRes['status']);
+        $this->assertEquals('requested', $validPromptRes['status']);
 
         // 2. A 3★ review has NO public reply row ever
         $threeStarReview = $this->syncAction->handle(
@@ -239,7 +240,7 @@ class CReviewsTest extends TestCase
         ]);
 
         $res = $this->requestAction->handle($biz->id, $customerId, 'How did the repair go?');
-        $this->assertEquals('sent', $res['status']);
+        $this->assertEquals('requested', $res['status']);
     }
 
     /**
@@ -349,7 +350,7 @@ class CReviewsTest extends TestCase
             'first_name' => 'Triage Customer 2',
         ]);
         $resSent = $this->requestAction->handle($biz->id, $customerId2, 'Please review', 'google', 8, 60);
-        $this->assertEquals('sent', $resSent['status']);
+        $this->assertEquals('requested', $resSent['status']);
     }
 
     /**
@@ -470,7 +471,7 @@ class CReviewsTest extends TestCase
 
         // 2. First request is sent on google
         $res1 = $this->requestAction->handle($biz->id, $customerId, 'How did it go?', 'google');
-        $this->assertEquals('sent', $res1['status']);
+        $this->assertEquals('requested', $res1['status']);
 
         Event::assertDispatched(SendRequested::class, function ($e) {
             return $e->messageClass === 'marketing';
@@ -494,7 +495,7 @@ class CReviewsTest extends TestCase
             ->update(['created_at' => Carbon::now()->subDays(31)]);
 
         $res3 = $this->requestAction->handle($biz->id, $customerId, 'How did it go after a month?', 'yelp');
-        $this->assertEquals('sent', $res3['status']);
+        $this->assertEquals('requested', $res3['status']);
 
         // 5. A third request (after the 2-pass cap is reached) is refused, regardless of window
         ReviewRequest::where('id', $res3['review_request_id'])
@@ -842,7 +843,7 @@ class CReviewsTest extends TestCase
         Event::dispatch(new JobCompleted($biz->id, 100, 200, $person->id, now()->subDays(61)));
 
         $req = ReviewRequest::where('business_id', $biz->id)->where('customer_id', $person->id)->latest('id')->first();
-        $this->assertEquals('sent', $req->status);
+        $this->assertEquals('queued', $req->status);
 
         Event::assertDispatched(SendRequested::class, 1);
     }
@@ -871,7 +872,7 @@ class CReviewsTest extends TestCase
         Event::dispatch(new JobCompleted($biz->id, 100, 200, $person->id, now()));
 
         $req = ReviewRequest::where('business_id', $biz->id)->where('customer_id', $person->id)->latest('id')->first();
-        $this->assertEquals('sent', $req->status);
+        $this->assertEquals('queued', $req->status);
 
         $newTicket = QaTicket::where('business_id', $biz->id)->where('review_request_id', $req->id)->first();
         $this->assertNull($newTicket);
@@ -958,7 +959,7 @@ class CReviewsTest extends TestCase
         $this->assertEquals(0, $count);
     }
 
-    public function test_default_prompt_returns_sent_not_refused(): void
+    public function test_default_prompt_returns_requested_not_refused(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Review Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -968,10 +969,10 @@ class CReviewsTest extends TestCase
             'first_name' => 'Test Customer',
         ]);
 
-        $action = new ReviewRequestAction;
+        $action = new ReviewRequestAction(app(DefaultsRegistry::class));
         $result = $action->handle($biz->id, $customerId, 'How did the repair go? Please leave us a review!', 'google');
 
-        $this->assertEquals('sent', $result['status']);
+        $this->assertEquals('requested', $result['status']);
     }
 
     public function test_no_fake_rows_written_on_mount(): void
@@ -1319,5 +1320,119 @@ class CReviewsTest extends TestCase
         Livewire::test(ReviewsQaRequests::class, ['businessId' => $biz->id])
             ->assertViewHas('publicCount', 0)
             ->assertViewHas('internalCount', 1);
+    }
+
+    public function test_escalation_reports_the_sla_the_ticket_actually_carries(): void
+    {
+        $biz = self::provisionTenant(['name' => 'Escalation SLA', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $req = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 2,
+        ]);
+
+        $res = app(QaTicketAction::class)->handle($biz->id, $req->id);
+        $this->assertSame('open_sla_48h', $res['ticket_status']);
+
+        $ticket = QaTicket::where('review_request_id', $req->id)->first();
+        $this->assertEqualsWithDelta(48.0, $ticket->arrived_at->diffInHours($ticket->sla_due_at), 0.1);
+
+        QaSetting::create([
+            'business_id' => $biz->id,
+            'sla_hours' => 12,
+        ]);
+
+        $req2 = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 2,
+        ]);
+
+        $res2 = app(QaTicketAction::class)->handle($biz->id, $req2->id);
+        $this->assertSame('open_sla_12h', $res2['ticket_status']);
+
+        $ticket2 = QaTicket::where('review_request_id', $req2->id)->first();
+        $this->assertEqualsWithDelta(12.0, $ticket2->arrived_at->diffInHours($ticket2->sla_due_at), 0.1);
+    }
+
+    public function test_a_customer_with_no_phone_gets_a_no_phone_request_and_nothing_is_dispatched(): void
+    {
+        Event::fake([SendRequested::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Review Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'No',
+            'last_name' => 'Phone',
+        ]);
+        $customerId = $person->id;
+
+        $action = new ReviewRequestAction(app(DefaultsRegistry::class));
+        $res = $action->handle($biz->id, $customerId, 'How did the repair go? Please leave us a review!', 'google');
+
+        $this->assertEquals('requested', $res['status']);
+        $this->assertEquals('no_phone', $res['request_status']);
+
+        $req = ReviewRequest::find($res['review_request_id']);
+        $this->assertEquals('no_phone', $req->status);
+
+        Event::assertNotDispatched(SendRequested::class);
+    }
+
+    public function test_a_customer_with_a_phone_gets_a_queued_request_carrying_the_source(): void
+    {
+        Event::fake([SendRequested::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Review Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'Has',
+            'last_name' => 'Phone',
+            'phone' => '+15125554923',
+        ]);
+        $customerId = $person->id;
+
+        $action = new ReviewRequestAction(app(DefaultsRegistry::class));
+        $res = $action->handle($biz->id, $customerId, 'How did the repair go? Please leave us a review!', 'google');
+
+        $this->assertEquals('queued', $res['request_status']);
+
+        $req = ReviewRequest::find($res['review_request_id']);
+        $this->assertEquals('queued', $req->status);
+
+        Event::assertDispatched(SendRequested::class, fn ($e) => $e->source === 'review_request' && $e->compositionId === $res['review_request_id']);
+    }
+
+    public function test_a_settled_refusal_reaches_the_request_row(): void
+    {
+        Event::fake([SendRequested::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Review Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customerId = DB::table('people')->insertGetId([
+            'business_id' => $biz->id,
+            'first_name' => 'Settle',
+            'last_name' => 'Phone',
+            'phone' => '+15125554924',
+        ]);
+
+        $action = new ReviewRequestAction(app(DefaultsRegistry::class));
+        $res = $action->handle($biz->id, $customerId, 'How did the repair go? Please leave us a review!', 'google');
+
+        Event::dispatch(new SendSettled($biz->id, $res['review_request_id'], 'review_request', 'refused', 'Distinctive reason 4925'));
+
+        $req = ReviewRequest::find($res['review_request_id']);
+        $this->assertEquals('refused', $req->status);
+        $this->assertEquals('Distinctive reason 4925', $req->settled_reason);
+        $this->assertNotNull($req->settled_at);
+
+        Event::dispatch(new SendSettled($biz->id, $res['review_request_id'], 'csat', 'sent', null));
+
+        $req = $req->fresh();
+        $this->assertEquals('refused', $req->status);
     }
 }

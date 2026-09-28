@@ -10,6 +10,7 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-127
+ *
  * @intent RECOVER
  */
 return [
@@ -51,7 +52,6 @@ return [
     'reads_table' => [],
 
     'renders' => [
-        'TenantZeroConsole',
         'MetricProofPanel',
     ],
 

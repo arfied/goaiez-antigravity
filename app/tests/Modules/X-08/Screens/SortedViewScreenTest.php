@@ -6,6 +6,7 @@ namespace Tests\Modules\X08\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X08\Actions\ChurnScoreAction;
 use App\Modules\X08\Models\ChurnScore;
 use App\Modules\X08\Ui\SortedView;
 use App\Support\Tenancy;
@@ -52,5 +53,24 @@ class SortedViewScreenTest extends TestCase
             ->assertDontSee('OTHER_TENANT_XYZ');
 
         Livewire::test(SortedView::class)->assertOk();
+    }
+
+    public function test_sorted_risk_rankings_puts_high_risk_first(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+        $action = new ChurnScoreAction;
+        $action->evaluate($biz->id, 'Distinctive T_MED 4671', 5, false);
+        $action->evaluate($biz->id, 'Distinctive T_LOW 4672', 0, true);
+        $action->evaluate($biz->id, 'Distinctive T_HIGH 4673', 20, false);
+
+        Tenancy::set($biz->id);
+
+        $this->actingAs($owner)->get(route('x-08.sorted'))->assertSeeInOrder([
+            'Distinctive T_HIGH 4673',
+            'Distinctive T_MED 4671',
+            'Distinctive T_LOW 4672',
+        ]);
     }
 }

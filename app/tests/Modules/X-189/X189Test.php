@@ -4,15 +4,27 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X189;
 
+use App\Models\User;
+use App\Modules\X189\Actions\BrandCardEnsureAction;
 use App\Modules\X189\Actions\ImageOverlayAction;
 use App\Modules\X189\Events\MediaBranded;
+use App\Modules\X189\Models\BrandCard;
 use App\Modules\X189\Models\BrandedMedia;
+use App\Modules\X189\Ui\BrandCardEditor;
+use App\Services\Sms\TenantNumbers;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 class X189Test extends TestCase
 {
+    use RefreshesTenantDatabase;
+
     private ImageOverlayAction $overlayAction;
 
     protected function setUp(): void
@@ -52,6 +64,19 @@ class X189Test extends TestCase
 
         // 2. Valid licensed asset: creates row, output file carries branded overlay layer (TEST ANCHOR)
         $licensedAssetUrl = 'https://s3.amazonaws.com/uploads/licensed_job_photo.jpg';
+
+        DB::table('fetch_sources')->insertOrIgnore([
+            'key' => 'tenant_site',
+            'method_ceiling' => 'light_fetch',
+        ]);
+
+        $canvas = imagecreatetruecolor(100, 100);
+        ob_start();
+        imagejpeg($canvas);
+        $jpg = ob_get_clean();
+        imagedestroy($canvas);
+        Http::fake(['*' => Http::response($jpg, 200)]);
+
         $brandedResult = $this->overlayAction->overlay(
             businessId: $biz->id,
             sourceAssetUrl: $licensedAssetUrl,
@@ -84,6 +109,18 @@ class X189Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Branded Media Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
+
+        DB::table('fetch_sources')->insertOrIgnore([
+            'key' => 'tenant_site',
+            'method_ceiling' => 'light_fetch',
+        ]);
+
+        $canvas = imagecreatetruecolor(100, 100);
+        ob_start();
+        imagejpeg($canvas);
+        $jpg = ob_get_clean();
+        imagedestroy($canvas);
+        Http::fake(['*' => Http::response($jpg, 200)]);
 
         $result = $this->overlayAction->overlay($biz->id, 'https://cdn.example.com/src/a.jpg', 'licensed', 'social');
         $this->assertSame('branded', $result['status']);
@@ -129,5 +166,81 @@ class X189Test extends TestCase
             );
         }
         $this->assertGreaterThanOrEqual(3, $controlMatches);
+    }
+
+    public function test_ensure_creates_card_with_tenant_number(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Card Tenant']);
+        $ensure = app(BrandCardEnsureAction::class);
+        $card = $ensure->handle($biz->id);
+        $this->assertEquals(app(TenantNumbers::class)->ownBrandNumberFor($biz->id), $card->badge_text);
+
+        $biz2 = TestCase::provisionTenant(['name' => 'Card Tenant 2']);
+        $card2 = $ensure->handle($biz2->id);
+        $this->assertNull($card2->badge_text);
+    }
+
+    public function test_editor_saves_validates_uploads(): void
+    {
+        Storage::fake('local');
+        $owner = User::factory()->create(['role' => 'owner']);
+        $biz = TestCase::provisionTenant(['name' => 'Editor Tenant', 'owner_user_id' => $owner->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Livewire::actingAs($owner);
+
+        Livewire::test(BrandCardEditor::class)
+            ->set('accentColor', '#abcdef')
+            ->set('badgeText', 'hello')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $card = BrandCard::where('business_id', $biz->id)->first();
+        $this->assertEquals('#abcdef', $card->accent_color);
+
+        $file = UploadedFile::fake()->image('logo.jpg')->size(100);
+        Livewire::test(BrandCardEditor::class)
+            ->set('logo', $file)
+            ->call('uploadLogo')
+            ->assertHasNoErrors();
+
+        $card->refresh();
+        Storage::disk('local')->assertExists($card->logo_path);
+    }
+
+    public function test_overlay_generates_jpeg_and_signed_route(): void
+    {
+        Storage::fake('local');
+        Http::fake();
+
+        $biz = TestCase::provisionTenant(['name' => 'Overlay Tenant']);
+        $biz2 = TestCase::provisionTenant(['name' => 'Other Tenant']);
+
+        $canvas = imagecreatetruecolor(640, 480);
+        ob_start();
+        imagepng($canvas);
+        $png = ob_get_clean();
+        imagedestroy($canvas);
+
+        Storage::disk('local')->put('test-src.png', $png);
+
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $result = $this->overlayAction->overlay($biz->id, 'storage:test-src.png', 'license123');
+
+        $this->assertEquals('branded', $result['status']);
+
+        $media = BrandedMedia::find($result['media_id']);
+        $path = 'branded/'.$biz->id.'/'.md5('storage:test-src.png').'-social.jpg';
+        Storage::disk('local')->assertExists($path);
+
+        $this->assertEquals(640, $result['overlay_layer']['width']);
+        $this->assertEquals(480, $result['overlay_layer']['height']);
+
+        Http::assertNothingSent();
+
+        $url = $media->output_media_url;
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $response = $this->get($url);
+        $response->assertStatus(200);
     }
 }

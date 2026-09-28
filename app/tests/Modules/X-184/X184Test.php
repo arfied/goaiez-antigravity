@@ -8,6 +8,7 @@ use App\Modules\X184\Domain\PlanEngine;
 use App\Modules\X184\Events\ItemScheduled;
 use App\Modules\X184\Events\PlanCreated;
 use App\Modules\X184\Models\PlanItem;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -31,7 +32,7 @@ class X184Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Test Biz', 'currency' => 'USD']);
 
         Tenancy::actingAs($biz->id, function () use ($biz) {
-            $proposeAction = new PlanProposeAction;
+            $proposeAction = new PlanProposeAction(app(DefaultsRegistry::class));
             $plan = $proposeAction->proposePlan($biz->id, '2026-W35', 3, [
                 ['channel' => 'facebook', 'topic_theme' => 'Winter Promo', 'source_event' => 'Promo Launch'],
                 ['channel' => 'instagram', 'topic_theme' => 'Summer Sale', 'source_event' => 'Seasonal'],
@@ -57,7 +58,7 @@ class X184Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Test Biz', 'currency' => 'USD']);
 
         Tenancy::actingAs($biz->id, function () use ($biz) {
-            $proposeAction = new PlanProposeAction;
+            $proposeAction = new PlanProposeAction(app(DefaultsRegistry::class));
             $plan = $proposeAction->proposePlan($biz->id, '2026-W35', 3, [
                 ['channel' => 'facebook', 'topic_theme' => 'Winter Promo', 'source_event' => 'Promo Launch'],
             ]);
@@ -81,7 +82,7 @@ class X184Test extends TestCase
         Tenancy::actingAs($biz->id, function () use ($biz) {
             Event::fake();
 
-            $proposeAction = new PlanProposeAction;
+            $proposeAction = new PlanProposeAction(app(DefaultsRegistry::class));
             $plan = $proposeAction->proposePlan($biz->id, '2026-W35', 3, [
                 ['channel' => 'facebook', 'topic_theme' => 'T1', 'source_event' => 'E1'],
                 ['channel' => 'instagram', 'topic_theme' => 'T2', 'source_event' => 'E2'],
@@ -107,7 +108,7 @@ class X184Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Test Biz', 'currency' => 'USD']);
 
         Tenancy::actingAs($biz->id, function () use ($biz) {
-            $proposeAction = new PlanProposeAction;
+            $proposeAction = new PlanProposeAction(app(DefaultsRegistry::class));
             $plan = $proposeAction->proposePlan($biz->id, '2026-W35', 3, [
                 ['channel' => 'facebook', 'topic_theme' => 'T1', 'source_event' => 'Trend1'],
                 ['channel' => 'facebook', 'topic_theme' => 'T2', 'source_event' => 'Trend2'],

@@ -9,6 +9,7 @@ use App\Models\AutopilotSettings;
 use App\Models\Location;
 use App\Models\Review;
 use App\Models\ReviewHubPage;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Feedback\FeedbackPages;
 use App\Support\SqlState;
 use App\Support\Tenancy;
@@ -112,7 +113,13 @@ final class ReviewHubPages
 
     public function __construct(
         private readonly FeedbackPages $feedbackPages,
+        private readonly DefaultsRegistry $registry,
     ) {}
+
+    public function maxReviews(): int
+    {
+        return $this->registry->int('reviews.hub.max_reviews');
+    }
 
     /**
      * Mint this location's hub page, or return the one it already has.
@@ -342,7 +349,7 @@ final class ReviewHubPages
             // order by and most tables carry a nullable `created_at`. Slice A's
             // lint fails the build on anything else.
             ->orderByDesc('id')
-            ->limit(self::MAX_REVIEWS)
+            ->limit($this->maxReviews())
             ->get();
     }
 

@@ -9,8 +9,8 @@
         This view shows signals only. No messages are sent automatically.
     </x-ui.attention-card>
 
-    @if($error) <div class="text-ink font-bold mt-4">{{ $error }}</div> @endif
-    @if($success) <div class="text-ink font-bold mt-4">{{ $success }}</div> @endif
+    <x-ui.toast kind="error" :message="$error" />
+    <x-ui.toast kind="success" :message="$success" />
 
     <form wire:submit="recordSignal" class="mt-4 flex flex-col gap-2 bg-surface p-4 rounded border">
         <input type="text" wire:model="prospectIdentifier" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Prospect (e.g. acme-roofing)">

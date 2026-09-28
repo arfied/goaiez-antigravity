@@ -199,7 +199,7 @@ final class ReportScheduleRuntimes extends Command
         $this->error(count($named).' scheduled command(s) exited non-zero or failed to launch in this '
             .'window, with how many times: '.implode(', ', $named).'. An operator was paged the '
             .'first time each of these failed and then not again about that command for '
-            .ScheduledRunMeter::FAILED_RUN_REPEAT_HOURS.' hours, so these counts are larger than '
+            .app(ScheduledRunMeter::class)->failedRunRepeatHours().' hours, so these counts are larger than '
             .'the number of bells; the critical log lines from ScheduledRunMeter carry each one.');
     }
 

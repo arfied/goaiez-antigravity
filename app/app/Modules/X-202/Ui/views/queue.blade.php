@@ -4,12 +4,8 @@
 
         <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4 border border-rule">
             <h3 class="font-bold text-ink">Enqueue item</h3>
-            @if($success)
-                <div class="bg-surface text-ink border rounded p-4 mb-4">{{ $success }}</div>
-            @endif
-            @if($error)
-                <div class="bg-surface text-ink border rounded p-4 mb-4">{{ $error }}</div>
-            @endif
+            <x-ui.toast kind="success" :message="$success" />
+            <x-ui.toast kind="error" :message="$error" />
             <form wire:submit="enqueueItem" class="flex flex-col gap-2">
                 <input type="text" wire:model="itemType" class="border rounded p-2 text-ink bg-surface" placeholder="Item Type">
                 <input type="text" wire:model="subject" class="border rounded p-2 text-ink bg-surface" placeholder="Subject">
@@ -28,7 +24,9 @@
             <ul class="divide-y divide-rule">
                 @foreach($items as $i)
                     <li class="py-2" wire:key="item-{{ $i->id }}">
-                        <span class="font-semibold">{{ $i->subject }}</span>
+                        <a href="{{ route('x-202.item', ['id' => $i->id]) }}" class="font-semibold text-blue-600 underline" wire:navigate>
+                            {{ $i->subject }}
+                        </a>
                         <span class="text-sm text-ink-2">{{ $i->item_type }}</span>
                         <span class="text-sm text-ink-2">{{ $i->status }}</span>
                         @if($i->status === 'pending')

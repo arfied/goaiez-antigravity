@@ -10,7 +10,9 @@ use App\Modules\X121\Models\Person;
 use App\Modules\X155\Actions\FormAbandonPointAction;
 use App\Modules\X155\Actions\FormAdaptiveStepsAction;
 use App\Modules\X155\Actions\FormCaptureAction;
+use App\Modules\X155\Actions\FormCreateAction;
 use App\Modules\X155\Actions\FormGenerateAction;
+use App\Modules\X155\Actions\FormReadAction;
 use App\Modules\X155\Actions\FormReleaseAction;
 use App\Modules\X155\Actions\FormValidateAction;
 use App\Modules\X155\Events\FormCaptured;
@@ -712,6 +714,31 @@ class X155Test extends TestCase
         ]);
 
         $this->assertEquals('captured', $res['status']);
+    }
+
+    public function test_an_unreadable_date_of_birth_is_refused_and_named(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Whitespace DOB Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Whitespace DOB Form',
+            'slug' => 'whitespace-dob-form',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $res = $this->captureAction->handle($biz->id, $form->id, [
+            'first_name' => 'Adult',
+            'phone' => '+15550004444',
+            'date_of_birth' => 'Distinctive nonsense 4926',
+        ]);
+
+        $this->assertEquals('rejected', $res['status']);
+        $this->assertEquals('dob_unreadable', $res['reason']);
+        $this->assertEquals(0, Person::where('business_id', $biz->id)->where('phone', '+15550004444')->count());
+        $this->assertEquals(0, FormSubmission::where('business_id', $biz->id)->count());
     }
 
     public function test_an_array_date_of_birth_is_not_an_age_signal(): void
@@ -1617,5 +1644,136 @@ class X155Test extends TestCase
         $submission = FormSubmission::find($res['submission_id']);
         $this->assertNotNull($submission);
         $this->assertTrue($submission->is_spam);
+    }
+
+    public function test_form_create_makes_a_one_step_lead_form_with_name_and_phone_required(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Creator Tenant']);
+        Tenancy::set((int) $biz->id);
+        $action = app(FormCreateAction::class);
+        $form = $action->handle($biz->id, 'Contact us');
+
+        $this->assertEquals('Contact us', $form->form_name);
+        $this->assertEquals('contact-us', $form->slug);
+        $this->assertIsArray($form->steps);
+        $this->assertCount(1, $form->steps);
+        $this->assertEquals(['name', 'phone'], $form->steps[0]['required']);
+    }
+
+    public function test_form_create_refuses_a_duplicate_name_and_returns_the_existing_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Duplicate Tenant']);
+        Tenancy::set((int) $biz->id);
+        $action = app(FormCreateAction::class);
+        $form1 = $action->handle($biz->id, 'Duplicate Form');
+        $form2 = $action->handle($biz->id, 'Duplicate Form');
+
+        $this->assertSame($form1->id, $form2->id);
+        $this->assertEquals(1, FormDefinition::where('business_id', $biz->id)->count());
+    }
+
+    public function test_form_create_is_tenant_scoped(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Biz A']);
+        $bizB = TestCase::provisionTenant(['name' => 'Biz B']);
+
+        Tenancy::set((int) $bizA->id);
+        $action = app(FormCreateAction::class);
+        $action->handle($bizA->id, 'Shared Name');
+
+        Tenancy::set((int) $bizB->id);
+
+        $this->assertEquals(0, FormDefinition::where('business_id', $bizB->id)->count());
+
+        $formB = $action->handle($bizB->id, 'Shared Name');
+        $this->assertEquals('shared-name', $formB->slug);
+    }
+
+    public function test_form_read_returns_the_oldest_definition_shape(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Form Read Shape Tenant']);
+        $action = new FormReadAction;
+
+        $this->assertNull($action->firstDefinitionForBusiness($biz->id));
+
+        $form1 = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Oldest Form',
+            'slug' => 'oldest',
+            'schema' => ['fields' => [['name' => 'first_name']]],
+            'steps' => [['step' => 1, 'required' => ['first_name']]],
+            'honeypot_field' => 'bot_trap',
+        ]);
+
+        $form2 = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Newer Form',
+            'slug' => 'newer',
+            'schema' => ['fields' => [['name' => 'phone']]],
+            'steps' => [['step' => 1, 'required' => ['phone']]],
+            'honeypot_field' => 'bot_trap2',
+        ]);
+
+        $shape = $action->firstDefinitionForBusiness($biz->id);
+
+        $this->assertNotNull($shape);
+        $this->assertEquals($form1->id, $shape['id']);
+        $this->assertEquals([['name' => 'first_name']], $shape['fields']);
+        $this->assertEquals(['first_name'], $shape['required']);
+        $this->assertEquals('bot_trap', $shape['honeypot']);
+    }
+
+    public function test_an_incomplete_step_names_its_real_position_for_a_form_the_owner_created(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'X155 Test 4651']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = app(FormCreateAction::class)->handle($biz->id, 'Distinctive form 4651');
+
+        $res = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: ['name' => 'Distinctive 4652']
+        );
+
+        $this->assertEquals('rejected', $res['status'] ?? null);
+        $this->assertEquals('incomplete_step', $res['reason']);
+        $this->assertEquals(1, $res['step']);
+        $this->assertEquals(['phone'], $res['missing']);
+    }
+
+    public function test_form_read_prefers_the_oldest_definition_with_fields(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Form Read Shape Tenant']);
+        $action = new FormReadAction;
+
+        $empty = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Empty Form',
+            'slug' => 'empty-4901',
+            'schema' => ['fields' => []],
+            'steps' => [['step' => 1, 'required' => []]],
+        ]);
+
+        $withFields = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Real Form',
+            'slug' => 'real-4902',
+            'schema' => ['fields' => [['name' => 'phone', 'label' => 'Phone', 'type' => 'tel']]],
+            'steps' => [['step' => 1, 'required' => ['phone']]],
+        ]);
+
+        $this->assertEquals($withFields->id, $action->firstDefinitionForBusiness($biz->id)['id']);
+
+        $biz2 = TestCase::provisionTenant(['name' => 'Form Read Shape Tenant 2']);
+        $empty2 = FormDefinition::create([
+            'business_id' => $biz2->id,
+            'form_name' => 'Empty Form 2',
+            'slug' => 'empty-4901-2',
+            'schema' => ['fields' => []],
+            'steps' => [['step' => 1, 'required' => []]],
+        ]);
+
+        $this->assertEquals($empty2->id, $action->firstDefinitionForBusiness($biz2->id)['id']);
     }
 }

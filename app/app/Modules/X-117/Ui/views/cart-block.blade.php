@@ -3,7 +3,7 @@
 <p class="text-base text-ink-2">Prices come from this catalogue and are set here; nothing is charged on this screen, and stock comes off when the order is placed at checkout, not when it is paid.</p>
 @if($error) <x-ui.error-panel heading="We couldn't do that">{{ $error }}</x-ui.error-panel> @endif
 @if($waiting) <x-ui.attention-card state="attention" heading="Waiting on checkout">{{ $waiting }}</x-ui.attention-card> @endif
-@if($success) <p>{{ $success }}</p> @endif
+<x-ui.toast kind="success" :message="$success" />
 <div wire:loading><x-ui.skeleton label="Reading the cart…" /></div>
 <h3>What's on offer</h3>
 @if($sellables->isEmpty())

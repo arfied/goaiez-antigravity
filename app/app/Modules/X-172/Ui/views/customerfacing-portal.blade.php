@@ -1,9 +1,8 @@
 <div>
-    <livewire:x-124.chat-dock-every />
     
     <div class="max-w-xl mx-auto px-4 py-8" wire:loading.class="opacity-50">
         @if($errorMessage)
-            <x-ui.error-panel class="mb-6">
+            <x-ui.error-panel heading="We couldn't record that" class="mb-6">
                 {{ $errorMessage }}
             </x-ui.error-panel>
         @endif
@@ -36,11 +35,31 @@
                             @endif
                         </div>
                     @else
-                        <p class="text-ink-2 mb-6">Your job is booked and confirmed.</p>
+                        @if($jobState === 'missing')
+                            <p class="text-ink-2 mb-6">We couldn’t find this job. Please contact us directly.</p>
+                        @elseif($jobState === 'cancelled')
+                            <p class="text-ink-2 mb-6">This job was cancelled.</p>
+                        @elseif($jobState === 'completed')
+                            <p class="text-ink-2 mb-6">This job is complete.</p>
+                        @else
+                            <p class="text-ink-2 mb-6">Your job is on file. Check back here for updates.</p>
+                        @endif
                     @endif
                 @elseif(in_array($link->resource_type, ['estimate', 'invoice']))
-                    @if($isDocumentPrepared)
-                        <p class="text-ink-2 italic mb-6">This document is being prepared.</p>
+                    @if($document === null)
+                        <p class="text-ink-2 mb-6">We couldn’t find this document. Please contact us directly.</p>
+                    @else
+                        <p class="text-ink-2 mb-1">{{ $document['kind'] }} {{ $document['number'] }}</p>
+                        <p class="font-medium text-ink mb-4">{{ $document['state'] }}</p>
+                        @if(!empty($document['lines']))
+                            <table class="w-full text-sm mb-4">
+                                @foreach($document['lines'] as $line)
+                                    <tr><td class="py-1 text-ink">{{ $line['label'] }}@if($line['quantity'] > 1) × {{ $line['quantity'] }}@endif</td><td class="py-1 text-right text-ink">${{ number_format($line['subtotal_cents'] / 100, 2) }}</td></tr>
+                                @endforeach
+                            </table>
+                        @endif
+                        <p class="font-medium text-ink mb-1">Total: ${{ number_format($document['total_cents'] / 100, 2) }}</p>
+                        @if($document['secondary'])<p class="text-ink-2 mb-6">{{ $document['secondary'] }}</p>@endif
                     @endif
                 @endif
                 
@@ -50,17 +69,9 @@
                     </div>
                 @endif
 
-                <div class="flex flex-col gap-3 mt-6 border-t border-rule pt-6">
-                    <button wire:click="approve" class="h-12 bg-accent text-white rounded font-medium hover:bg-accent-hover">
-                        Approve
-                    </button>
-                    <button wire:click="requestPay" class="h-12 bg-paper border border-rule text-ink rounded font-medium hover:bg-surface">
-                        Pay
-                    </button>
-                    <button wire:click="requestFollowUp" class="h-12 bg-paper border border-rule text-ink rounded font-medium hover:bg-surface">
-                        Book a follow-up
-                    </button>
-                </div>
+                {{-- Approve / Pay / Book a follow-up are not rendered: the actions behind them
+                     record a row nothing reads and dispatch an event nothing listens to (wave 816).
+                     The component methods stay for the day they are wired. --}}
             </div>
         @else
             <x-ui.empty-state 

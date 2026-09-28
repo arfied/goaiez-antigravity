@@ -9,12 +9,36 @@ use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X121\Actions\EntityReadAction;
 use App\Modules\X181\Actions\QaMarketingSuppressionCheckAction;
+use App\Services\Config\DefaultsRegistry;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 
 final class ReviewRequestAction
 {
-    private const CADENCE_WINDOW_DAYS = 30;
+    public const CADENCE_WINDOW_DAYS = 30;
+
+    public const LOW_CSAT_BELOW = 7;
+
+    public const LOW_CSAT_JOB_AGE_DAYS = 60;
+
+    public function __construct(
+        private readonly DefaultsRegistry $registry
+    ) {}
+
+    private function cadenceWindowDays(): int
+    {
+        return $this->registry->int('reviews.request.cadence_window_days');
+    }
+
+    private function lowCsatBelow(): int
+    {
+        return $this->registry->int('reviews.request.low_csat_below');
+    }
+
+    private function lowCsatJobAgeDays(): int
+    {
+        return $this->registry->int('reviews.request.low_csat_job_age_days');
+    }
 
     private const MESSAGE_CLASS = 'marketing';
 
@@ -65,7 +89,7 @@ final class ReviewRequestAction
         // P-110: an explicit score wins (tests, G20-07); otherwise the person's latest csat_answers row is the production source.
         $csatScore ??= app(CsatAnswerReadAction::class)->latestNormalisedScore($businessId, $customerId);
 
-        if ($csatScore !== null && $csatScore < 7 && ($jobAgeDays ?? 0) >= 60) {
+        if ($csatScore !== null && $csatScore < $this->lowCsatBelow() && ($jobAgeDays ?? 0) >= $this->lowCsatJobAgeDays()) {
             $req = ReviewRequest::create([
                 'business_id' => $businessId,
                 'customer_id' => $customerId,
@@ -97,7 +121,7 @@ final class ReviewRequestAction
 
         $recentRequest = ReviewRequest::where('business_id', $businessId)
             ->where('customer_id', $customerId)
-            ->where('created_at', '>=', Carbon::now()->subDays(self::CADENCE_WINDOW_DAYS))
+            ->where('created_at', '>=', Carbon::now()->subDays($this->cadenceWindowDays()))
             ->exists();
 
         if ($recentRequest) {
@@ -108,23 +132,28 @@ final class ReviewRequestAction
             ];
         }
 
+        $person = app(EntityReadAction::class)->handle('people', $customerId, $businessId);
+        $hasPhone = $person !== null && ! empty($person['phone']);
+
+        // `queued` until C-Sms settles it to `sent` or `refused` (SendSettled); a
+        // customer with no phone is `no_phone` and nothing is dispatched (wave 818).
         $req = ReviewRequest::create([
             'business_id' => $businessId,
             'customer_id' => $customerId,
             'platform' => $platform,
-            'status' => 'sent',
+            'status' => $hasPhone ? 'queued' : 'no_phone',
             'gbp_suspended' => false,
         ]);
 
-        $person = app(EntityReadAction::class)->handle('people', $customerId, $businessId);
-        if ($person !== null && ! empty($person['phone'])) {
+        if ($hasPhone) {
             Event::dispatch(new SendRequested(
                 businessId: $businessId,
                 compositionId: $req->id,
                 recipientPhone: $person['phone'],
                 messageClass: self::MESSAGE_CLASS,
                 body: $promptTemplate,
-                segmentsCount: 1
+                segmentsCount: 1,
+                source: 'review_request'
             ));
         }
 
@@ -136,7 +165,8 @@ final class ReviewRequestAction
         ));
 
         return [
-            'status' => 'sent',
+            'status' => 'requested',
+            'request_status' => (string) $req->fresh()->status,
             'review_request_id' => $req->id,
             'platform' => $platform,
         ];

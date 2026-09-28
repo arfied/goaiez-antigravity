@@ -104,7 +104,7 @@ class X140Test extends TestCase
     public function test_screen_loads_for_authed_user(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'SEO Content Cluster Tenant', 'currency' => 'USD']);
-        $user = User::first();
+        $user = User::findOrFail($biz->owner_user_id);
 
         Tenancy::set((int) $biz->id);
 

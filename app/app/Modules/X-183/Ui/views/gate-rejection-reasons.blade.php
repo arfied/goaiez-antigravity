@@ -3,12 +3,8 @@
         <h2 class="text-xl font-bold text-ink">Drafts held back before publishing</h2>
         <div class="mb-6 flex flex-col gap-2 bg-surface p-4 rounded mt-4 border border-surface">
             <h3 class="text-lg font-bold text-ink">Evaluate Draft</h3>
-            @if($success)
-                <div class="p-2 bg-surface text-ink border rounded">{{ $success }}</div>
-            @endif
-            @if($error)
-                <div class="p-2 bg-surface text-ink border rounded">{{ $error }}</div>
-            @endif
+            <x-ui.toast kind="success" :message="$success" />
+            <x-ui.toast kind="error" :message="$error" />
             @if($drafts->isEmpty())
                 <p class="text-ink">No ungated drafts available. Drafts come from DraftReview.</p>
             @else

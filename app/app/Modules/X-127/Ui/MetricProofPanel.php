@@ -74,10 +74,11 @@ class MetricProofPanel extends Component
 
         $result = $action->handle(Tenancy::idOrFail(), trim($this->verifyKey), trim($this->verifyLiveValue));
 
-        $this->verifySuccess = $result['status'] === 'verified'
-            ? 'Metric '.$result['metric_key'].' checks out at '.$result['value'].'. The published claim matches the live value.'
-            : 'Metric '.$result['metric_key'].' did NOT match — published '.$result['previous_claim']
-              .', live '.$result['live_value'].'. The claim has been PULLED from publication.';
+        $this->verifySuccess = match (true) {
+            $result['status'] === 'verified' => 'Metric '.$result['metric_key'].' checks out at '.$result['value'].'. The published claim matches the live value.',
+            ($result['previous_claim'] ?? null) === null => 'Metric '.$result['metric_key'].' has no published claim to check — it was pulled earlier. Live value now: '.$result['live_value'].'. Publish a new claim before checking again.',
+            default => 'Metric '.$result['metric_key'].' did NOT match — published '.$result['previous_claim'].', live '.$result['live_value'].'. The claim has been PULLED from publication.',
+        };
 
         $this->verifyError = null;
         $this->verifyKey = '';

@@ -341,6 +341,114 @@ final class ZernioGbpClient implements GbpClient
     }
 
     /**
+     * @throws GbpRequestFailed
+     */
+    public function getPost(string $postId): GbpPostReceipt
+    {
+        $this->assertUsable();
+
+        $response = $this->get('/posts/'.rawurlencode($postId), [], accountScoped: true);
+
+        $returnedPostId = $response->json('post._id');
+        $status = $response->json('post.status');
+
+        $platforms = $response->json('post.platforms');
+        $platform = null;
+
+        if (is_array($platforms)) {
+            foreach ($platforms as $p) {
+                if (is_array($p) && ($p['platform'] ?? null) === self::PLATFORM) {
+                    $platform = $p;
+                    break;
+                }
+            }
+            if ($platform === null && count($platforms) > 0 && is_array($platforms[0])) {
+                $platform = $platforms[0];
+            }
+        }
+
+        $platformPostId = $platform['platformPostId'] ?? null;
+        $errorMessage = $platform['errorMessage'] ?? null;
+
+        return new GbpPostReceipt(
+            providerPostId: is_string($returnedPostId) && $returnedPostId !== '' ? $returnedPostId : null,
+            status: is_string($status) ? $status : 'unknown',
+            platformPostId: is_string($platformPostId) && $platformPostId !== '' ? $platformPostId : null,
+            errorMessage: is_string($errorMessage) && $errorMessage !== '' ? $errorMessage : null,
+        );
+    }
+
+    /**
+     * @throws GbpRequestFailed
+     */
+    public function publishPost(string $accountRef, string $content, string $idempotencyKey, array $metadata = [], ?string $imageUrl = null, ?array $callToAction = null): GbpPostReceipt
+    {
+        $this->assertUsable();
+
+        if (trim($content) === '') {
+            throw GbpRequestFailed::unreadable('post_content_empty');
+        }
+
+        $url = self::BASE.'/posts';
+
+        $platform = [
+            'platform' => self::PLATFORM,
+            'accountId' => $accountRef,
+        ];
+
+        if ($callToAction !== null) {
+            $platform['platformSpecificData'] = [
+                'topicType' => 'STANDARD',
+                'callToAction' => $callToAction,
+            ];
+        }
+
+        $payload = [
+            'content' => $content,
+            'platforms' => [
+                $platform,
+            ],
+            'publishNow' => true,
+            'metadata' => (object) $metadata,
+        ];
+
+        if ($imageUrl !== null) {
+            $payload['mediaItems'] = [['type' => 'image', 'url' => $imageUrl]];
+        }
+
+        try {
+            $response = VendorLog::timed(
+                'zernio',
+                'POST',
+                $url,
+                fn (): Response => $this->request()->withHeaders(['Idempotency-Key' => $idempotencyKey])->post($url, $payload),
+            );
+        } catch (ConnectionException $e) {
+            $failure = self::transportFailure($e);
+
+            VendorLog::failure('zernio', 'POST', $url, $failure->reason);
+
+            throw $failure;
+        }
+
+        if ($response->failed()) {
+            throw GbpRequestFailed::from($response, accountScoped: true);
+        }
+
+        $postId = $response->json('post._id');
+        $status = $response->json('post.status');
+        $platformPostId = $response->json('post.platforms.0.platformPostId');
+        $errorMessage = $response->json('post.platforms.0.errorMessage');
+
+        return new GbpPostReceipt(
+            providerPostId: is_string($postId) && $postId !== '' ? $postId : null,
+            status: is_string($status) ? $status : 'unknown',
+            platformPostId: is_string($platformPostId) && $platformPostId !== '' ? $platformPostId : null,
+            errorMessage: is_string($errorMessage) && $errorMessage !== '' ? $errorMessage : null,
+        );
+    }
+
+    /**
      * The id of the Zernio profile called `$name`, if one exists.
      *
      * Their `name` filter is documented as exact-match, and as the way to

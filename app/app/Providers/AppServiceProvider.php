@@ -22,6 +22,7 @@ use App\Contracts\VoiceProvider;
 use App\Enums\OauthProvider;
 use App\Enums\OutreachChannel;
 use App\Http\Middleware\TenantRole;
+use App\Listeners\ActivateMembershipOnPasswordReset;
 use App\Livewire\Account\ReplyExamples as AccountReplyExamples;
 use App\Livewire\Account\ReviewRules as AccountReviewRules;
 use App\Services\ActivityService;
@@ -39,6 +40,7 @@ use App\Services\Billing\MessageRates;
 use App\Services\Billing\SendCredits;
 use App\Services\Campaigns\CampaignReplyResolver;
 use App\Services\Config\CredentialStore;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Consent\IdentifierHashEpochs;
 use App\Services\Fetch\DirectFetchGateway;
 use App\Services\Fetch\RobotsPolicy;
@@ -83,6 +85,7 @@ use App\Support\ShortLinkRateLimits;
 use App\Support\UnsubscribeRateLimits;
 use App\Support\WidgetRateLimits;
 use Closure;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Console\Events\ScheduledBackgroundTaskFinished;
 use Illuminate\Console\Events\ScheduledTaskFailed;
 use Illuminate\Console\Events\ScheduledTaskFinished;
@@ -578,6 +581,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Event::listen(PasswordReset::class, ActivateMembershipOnPasswordReset::class);
         $this->routeSchemaCommandsToTheOwnerRole();
         $this->forbidLiveVendorCallsInTests();
         $this->registerNestableLivewireComponents();
@@ -861,6 +865,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(PlacesClient::class, fn ($app): GooglePlacesClient => new GooglePlacesClient(
             $app->make(PlacesSpend::class),
+            $app->make(DefaultsRegistry::class),
         ));
     }
 
@@ -892,7 +897,7 @@ class AppServiceProvider extends ServiceProvider
      * Bind the one gateway every outbound page fetch goes through.
      *
      * `40` Part 6 makes this singular by design — "No module fetches HTML on its
-     * own" — and ArchitectureTest enforces it as an import lint. Bound to the F0
+     * own" — and tests/Feature/Architecture/OutboundHttpTest.php enforces it as an import lint. Bound to the F0
      * implementation; F1-F3 are not built (BUILD-PLAN §2.5.2 slice D).
      */
     private function registerFetchGateway(): void
@@ -927,6 +932,7 @@ class AppServiceProvider extends ServiceProvider
     private function registerAuditEngine(): void
     {
         $this->app->bind(AuditEngine::class, fn ($app): AuditEngine => new AuditEngine(
+            $app->make(DefaultsRegistry::class),
             $app->make(AuditContextBuilder::class),
             [
                 $app->make(GbpCompletenessCheck::class),

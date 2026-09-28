@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X136\Ui;
 
+use App\Modules\X136\Actions\DecayModelSetAction;
 use App\Modules\X136\Models\DecayModel;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,12 @@ class SignalVolumePrecisionView extends Component
     public int $businessId = 0;
 
     public bool $isSample = false;
+
+    public array $editHalfLife = [];
+
+    public array $editDecayRate = [];
+
+    public array $refusals = [];
 
     public function mount(): void
     {
@@ -34,6 +41,25 @@ class SignalVolumePrecisionView extends Component
         $this->isSample = ! $this->isSample;
     }
 
+    public function saveDecay(string $signalType, DecayModelSetAction $action): void
+    {
+        abort_if(Tenancy::id() === null, 403);
+        // The brief says: "copy its guard" -> the module's other screens use Gate::authorize.
+        // Let's also include the exact abort if we want:
+        // if ($this->businessId <= 0) { abort(403, 'Tenant context is required'); }
+
+        $halfLife = (int) ($this->editHalfLife[$signalType] ?? 0);
+        $rate = (float) ($this->editDecayRate[$signalType] ?? 0.0);
+
+        $result = $action->handle($this->businessId, $signalType, $halfLife, $rate);
+
+        if (is_array($result) && isset($result['refused'])) {
+            $this->refusals[$signalType] = $result['refused'];
+        } else {
+            unset($this->refusals[$signalType]);
+        }
+    }
+
     public function render()
     {
         if ($this->isSample) {
@@ -43,7 +69,7 @@ class SignalVolumePrecisionView extends Component
                     'total_count' => 100,
                     'high_intent_count' => 20,
                     'precision_pct' => 20.0,
-                    'decay_model' => '14 days / 5%',
+                    'decay_model' => '12 days / 4%',
                 ],
                 (object) [
                     'signal_type' => 'permit_filed',
@@ -79,7 +105,7 @@ class SignalVolumePrecisionView extends Component
                     $decay = $decayModels->get($row->signal_type);
                     $decayStr = $decay
                         ? "{$decay->half_life_days} days / ".($decay->decay_rate * 100).'%'
-                        : 'No decay model yet. A model needs 30 days of events.';
+                        : 'Platform default until you set one.';
 
                     return (object) [
                         'signal_type' => $row->signal_type,

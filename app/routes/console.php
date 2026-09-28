@@ -101,6 +101,11 @@ Schedule::command('gbp:sync')
     ->withoutOverlapping(30)
     ->runInBackground();
 
+Schedule::command('facebook:sync-reviews')
+    ->everyFifteenMinutes()
+    ->withoutOverlapping(30)
+    ->runInBackground();
+
 Schedule::command('reviews:retry-stranded-replies')
     ->everyFifteenMinutes()
     ->withoutOverlapping(30)
@@ -309,5 +314,10 @@ Schedule::command('billing:send-trial-reminders')
 
 Schedule::command('owners:send-weekly-digest')
     ->dailyAt('06:00')
+    ->withoutOverlapping(360)
+    ->runInBackground();
+
+Schedule::command('owners:send-monthly-site-digest')
+    ->dailyAt('06:20')
     ->withoutOverlapping(360)
     ->runInBackground();

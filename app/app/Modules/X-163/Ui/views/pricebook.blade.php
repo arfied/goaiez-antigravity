@@ -5,7 +5,7 @@
         <h2 class="text-2xl font-semibold text-ink mb-6">Pricebook</h2>
 
         @if(session()->has('error'))
-            <x-ui.error-panel class="mb-8">
+            <x-ui.error-panel heading="We couldn't load the pricebook" class="mb-8">
                 {{ session('error') }}
             </x-ui.error-panel>
         @endif

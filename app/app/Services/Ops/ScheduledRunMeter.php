@@ -9,6 +9,7 @@ use App\Enums\OperatorAlertKind;
 use App\Enums\PlatformHealthSignal;
 use App\Enums\SignalState;
 use App\Providers\AppServiceProvider;
+use App\Services\Config\DefaultsRegistry;
 use Carbon\CarbonImmutable;
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Contracts\Cache\Repository as Cache;
@@ -284,7 +285,13 @@ final class ScheduledRunMeter
         private readonly PlatformHealth $health,
         private readonly OperatorAlerts $alerts,
         private readonly Cache $cache,
+        private readonly DefaultsRegistry $registry = new DefaultsRegistry,
     ) {}
+
+    public function failedRunRepeatHours(): int
+    {
+        return $this->registry->int('ops.runs.failed_run_repeat_hours');
+    }
 
     /**
      * The scheduler is about to call `Event::run()`.
@@ -678,7 +685,7 @@ final class ScheduledRunMeter
     public function failedRunCoverage(): array
     {
         $armed = 'Rings the first time a scheduled command exits non-zero or cannot be started at '
-            .'all, and then not again about that command for '.self::FAILED_RUN_REPEAT_HOURS
+            .'all, and then not again about that command for '.$this->failedRunRepeatHours()
             .' hours. It has no threshold and no off switch: a nightly sweep that has stopped '
             .'produces one failure a night, which is below any figure anybody could set. It hears '
             .'every entry on the schedule, including the ones whose own output is discarded, where '
@@ -854,7 +861,7 @@ final class ScheduledRunMeter
         if ($this->alerts->rangSince(
             OperatorAlertKind::ScheduledRunFailed,
             $command,
-            CarbonImmutable::now()->subHours(self::FAILED_RUN_REPEAT_HOURS),
+            CarbonImmutable::now()->subHours($this->failedRunRepeatHours()),
         )) {
             return;
         }

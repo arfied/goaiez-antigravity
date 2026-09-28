@@ -173,7 +173,7 @@ final class CustomerProfile extends Component
         abort_if(Tenancy::id() === null, 403);
 
         $this->validate([
-            'contactName' => ['nullable', 'string', 'max:'.CustomerEditor::MAX_NAME_LENGTH],
+            'contactName' => ['nullable', 'string', 'max:'.app(CustomerEditor::class)->maxNameLength()],
             'contactTags' => ['nullable', 'string', 'max:2000'],
             // `Rule::enum` rather than a hand-written `in`: the list of USPS
             // codes lives in exactly one place (`UsState`), and a second copy
@@ -219,7 +219,7 @@ final class CustomerProfile extends Component
         abort_if(Tenancy::id() === null, 403);
 
         $this->validate([
-            'note' => ['required', 'string', 'max:'.CrmNotes::MAX_LENGTH],
+            'note' => ['required', 'string', 'max:'.app(CrmNotes::class)->maxLength()],
         ], attributes: ['note' => 'note']);
 
         $notes->add($directory->find($this->customerId), $this->note, $this->currentUser());
@@ -439,7 +439,7 @@ final class CustomerProfile extends Component
         // was rendered with and undo it.
         $this->contactRegion = $customer->region_code ?? '';
 
-        Toaster::success('Merged. You can undo this for '.CustomerMerges::UNDO_WINDOW_DAYS.' days.');
+        Toaster::success('Merged. You can undo this for '.app(CustomerMerges::class)->undoWindowDays().' days.');
     }
 
     /**

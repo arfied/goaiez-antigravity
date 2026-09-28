@@ -7,6 +7,7 @@ namespace App\Services\Widgets;
 use App\Enums\WidgetInstallState;
 use App\Models\Plugin;
 use App\Models\WidgetInstall;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Cache;
@@ -49,9 +50,7 @@ final class WidgetInstalls
     /**
      * `41` §3.3's own 72 hours — "not seen in 72h → one plain nudge".
      *
-     * A constant rather than a registry seed (3092). It is not a tenant's to
-     * set, and a registry key implies an Ops screen and a change history for a
-     * number nobody has asked to move. Promoting it later costs one line.
+     * A PLATFORM setting is exactly an Ops edit, not a tenant's, and the owner's 2026-09-22 ruling supersedes 3092's scope.
      */
     public const int STALE_AFTER_HOURS = 72;
 
@@ -68,11 +67,22 @@ final class WidgetInstalls
      * only one that can create the row for fifteen minutes, so two simultaneous
      * first visits cannot race the unique index.
      */
-    private const int THROTTLE_SECONDS = 900;
+    public const int THROTTLE_SECONDS = 900;
 
     public function __construct(
         private readonly WidgetPlugins $plugins,
+        private readonly DefaultsRegistry $defaults,
     ) {}
+
+    private function throttleSeconds(): int
+    {
+        return $this->defaults->int('widgets.install.throttle_seconds');
+    }
+
+    private function staleAfterHours(): int
+    {
+        return $this->defaults->int('widgets.install.stale_after_hours');
+    }
 
     /**
      * Note that this feed was served to one of the tenant's own websites.
@@ -98,7 +108,7 @@ final class WidgetInstalls
             return;
         }
 
-        if (! Cache::add($this->throttleKey($plugin, $host), true, self::THROTTLE_SECONDS)) {
+        if (! Cache::add($this->throttleKey($plugin, $host), true, $this->throttleSeconds())) {
             return;
         }
 
@@ -160,7 +170,7 @@ final class WidgetInstalls
         }
 
         return new WidgetInstallStatus(
-            $latest->greaterThanOrEqualTo(CarbonImmutable::now()->subHours(self::STALE_AFTER_HOURS))
+            $latest->greaterThanOrEqualTo(CarbonImmutable::now()->subHours($this->staleAfterHours()))
                 ? WidgetInstallState::Working
                 : WidgetInstallState::Stopped,
             $sightings,

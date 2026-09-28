@@ -22,6 +22,7 @@ use App\Services\Knowledge\KnowledgeUploads;
 use App\Services\Sms\InboundMediaCapture;
 use App\Services\Sms\TenantNumbers;
 use App\Services\Voice\VoiceCalls;
+use App\Services\Zernio\ZernioWhatsappMedia;
 use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Collection;
@@ -261,6 +262,7 @@ final class TenantDeletion
         private readonly VoiceCalls $voice,
         private readonly KnowledgeUploads $knowledge,
         private readonly CampaignMedia $campaignMedia,
+        private readonly ZernioWhatsappMedia $whatsappMedia,
     ) {}
 
     /**
@@ -539,6 +541,7 @@ final class TenantDeletion
                 $this->inboundMedia->purgeAllFor((int) $business->id),
                 $this->voice->purgeVoicemailAudioFor((int) $business->id),
                 $this->knowledge->purgeAllFor((int) $business->id),
+                $this->whatsappMedia->purgeAllFor((int) $business->id),
                 // ⚠️ **NO BUSINESS ID, AND THAT IS THE FINDING RATHER THAN AN
                 // OVERSIGHT** (8876). `campaign-media/{campaign}/…` carries no
                 // tenant, so this one reads the tenant's campaign ids while they

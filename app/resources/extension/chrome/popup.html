@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>GoAiEz Prospect Scanner</title>
+<style>
+  body { font-family: sans-serif; padding: 10px; width: 300px; }
+  div { margin-bottom: 10px; }
+  label { display: block; font-weight: bold; margin-bottom: 4px; }
+  input[type="text"], input[type="password"] { width: 100%; box-sizing: border-box; padding: 4px; }
+  .help { font-size: 0.8em; color: #555; margin-top: 4px; }
+  button { width: 100%; padding: 8px; cursor: pointer; }
+  #status { font-weight: bold; margin-top: 15px; }
+</style>
+</head>
+<body>
+  <div>
+    <label for="baseUrl">Platform URL</label>
+    <input type="text" id="baseUrl" value="https://anti.goaiez.com">
+  </div>
+  <div>
+    <label for="pixelKey">Pixel key</label>
+    <input type="password" id="pixelKey">
+    <div class="help">Copy it from Your account → Tracking</div>
+  </div>
+  <div>
+    <button id="connect">Connect</button>
+  </div>
+  <div>
+    <button id="scan">Scan this page</button>
+  </div>
+  <p id="status"></p>
+  <script src="popup.js"></script>
+</body>
+</html>

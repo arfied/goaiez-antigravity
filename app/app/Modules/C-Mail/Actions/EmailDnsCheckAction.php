@@ -16,7 +16,6 @@ final class EmailDnsCheckAction
                 'dkim_status' => 'verified',
                 'spf_status' => 'verified',
                 'dmarc_status' => 'quarantine',
-                'is_marketing_paused' => false,
             ]
         );
     }

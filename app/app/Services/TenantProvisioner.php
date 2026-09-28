@@ -12,6 +12,7 @@ use App\Models\WizardProgress;
 use App\Services\Billing\Subscriptions;
 use App\Services\Billing\TrialEligibility;
 use App\Services\Compliance\TenantClassification;
+use App\Services\Industry\PlacesTypeToIndustry;
 use App\Services\Legal\BaaRecords;
 use App\Services\Pixel\PixelKeys;
 use App\Services\Sms\TenantNumbers;
@@ -54,6 +55,7 @@ final class TenantProvisioner
 {
     public function __construct(
         private readonly TenantClassification $classification,
+        private readonly PlacesTypeToIndustry $industries,
         private readonly BaaRecords $baaRecords,
         private readonly LocationProvisioner $locations,
         private readonly Subscriptions $subscriptions,
@@ -140,6 +142,8 @@ final class TenantProvisioner
             $audit instanceof PublicAudit ? $audit->categories : [],
         );
 
+        $industry = $this->industries->fromCategories($audit instanceof PublicAudit ? $audit->categories : []);
+
         // Business::provision(), never create(). A business cannot be inserted
         // the ordinary way: its RLS policy is keyed on its own id, so WITH CHECK
         // cannot match an id that does not exist yet, and USING cannot make the
@@ -160,6 +164,7 @@ final class TenantProvisioner
             'owner_user_id' => $user->id,
             'name' => $name,
             'data_classification' => $classification,
+            'industry' => $industry?->value,
         ]);
 
         // A PHI tenant gets its Business Associate Agreement opened, pending,

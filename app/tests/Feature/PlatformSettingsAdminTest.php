@@ -743,3 +743,46 @@ test('the screen still answers what the halt is set to, and names the screen tha
 
     expect((new DefaultsRegistry)->value(SendingGuard::OPERATOR_HALT_KEY))->toBe(true);
 });
+
+test('searches keys and descriptions and says how many match', function (): void {
+    Livewire::actingAs($this->admin)
+        ->test(SettingsScreen::class)
+        ->set('search', 'competitor refresh costs')
+        ->assertSee('places.tenant_daily_spend_ceiling_cents')
+        ->assertSee('1 settings match')
+        ->assertDontSee('routing.workload_window_days');
+});
+
+test('an empty search shows every group', function (): void {
+    Livewire::actingAs($this->admin)
+        ->test(SettingsScreen::class)
+        ->set('search', '')
+        ->assertSee('AI')
+        ->assertSee('Marketing')
+        ->assertDontSee('settings match');
+});
+
+test('the group index links every group that has rows', function (): void {
+    Livewire::actingAs($this->admin)
+        ->test(SettingsScreen::class)
+        ->assertSee('href="#group-marketing"', escape: false)
+        ->assertSee('Marketing (')
+        ->assertSee('href="#group-billing"', escape: false)
+        ->assertSee('Billing (');
+});
+
+test('an admin saves a list as a list, not as a string', function (): void {
+    Livewire::actingAs($this->admin)->test(SettingsScreen::class)->call('edit', 'speed.script_deferral_extra_hosts')->assertSet('draft', '[]')->set('draft', '["cdn.distinctive-4471.example", "static.distinctive-4472.example"]')->call('save')->assertHasNoErrors();
+    $registry = new DefaultsRegistry;
+    expect($registry->value('speed.script_deferral_extra_hosts'))->toBeArray()->toBe(['cdn.distinctive-4471.example', 'static.distinctive-4472.example']);
+    Livewire::actingAs($this->admin)->test(SettingsScreen::class)->call('edit', 'speed.script_deferral_extra_hosts')->assertSet('draft', '["cdn.distinctive-4471.example","static.distinctive-4472.example"]');
+});
+
+test('malformed or nested JSON stays a string rather than becoming a half-parsed value', function (): void {
+    Livewire::actingAs($this->admin)->test(SettingsScreen::class)->call('edit', 'speed.script_deferral_extra_hosts')->set('draft', '[[1,2],[3]]')->call('save');
+    $registry = new DefaultsRegistry;
+    expect($registry->value('speed.script_deferral_extra_hosts'))->toBe('[[1,2],[3]]');
+
+    Livewire::actingAs($this->admin)->test(SettingsScreen::class)->call('edit', 'speed.script_deferral_extra_hosts')->set('draft', '[not json')->call('save');
+    expect($registry->value('speed.script_deferral_extra_hosts'))->toBe('[not json');
+});

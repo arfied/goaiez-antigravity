@@ -129,4 +129,17 @@ class X119Test extends TestCase
         $this->assertEquals('chat_conversation', $res['source']);
         $this->assertEquals('Bob', $res['value']);
     }
+
+    public function test_teaching_supersedes_old_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Fact Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        app(FactResolver::class)->teach($biz->id, 'key.4946', 'Distinctive fact 4946', 'test');
+        app(FactResolver::class)->teach($biz->id, 'key.4946', 'Distinctive fact 4947', 'test');
+
+        $val = app(FactResolver::class)->lookup($biz->id, 'key.4946');
+        $this->assertEquals('Distinctive fact 4947', $val['value']);
+        $this->assertEquals(1, DB::table('facts')->where('business_id', $biz->id)->where('key', 'key.4946')->where('is_valid', true)->count());
+    }
 }

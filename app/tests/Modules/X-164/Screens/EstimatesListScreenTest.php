@@ -4,15 +4,22 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X164\Screens;
 
+use App\Enums\CreditKind;
+use App\Enums\CreditProduct;
 use App\Enums\UserRole;
+use App\Jobs\DeliverPlatformMail;
+use App\Models\Customer;
 use App\Models\User;
+use App\Modules\X121\Models\Person;
 use App\Modules\X164\Actions\EstimateDraftAction;
 use App\Modules\X164\Models\Estimate;
 use App\Modules\X164\Models\EstimateLine;
 use App\Modules\X164\Models\EstimateVersion;
 use App\Modules\X164\Ui\EstimatesList;
+use App\Services\Billing\CreditLedger;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Bus;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -32,6 +39,15 @@ class EstimatesListScreenTest extends TestCase
             ->assertDontSee('this screen is planned in');
 
         Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
         app(EstimateDraftAction::class)->handle((int) $biz->id, null, [
             ['service_name' => 'Gutter cleaning', 'quantity' => 3, 'unit_price_cents' => 4175],
         ]);
@@ -50,7 +66,17 @@ class EstimatesListScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
+        $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
 
         Livewire::test(EstimatesList::class)
             ->set('serviceName', 'Gutter cleaning')
@@ -78,6 +104,15 @@ class EstimatesListScreenTest extends TestCase
         $this->actingAs($owner);
 
         Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
 
         Livewire::test(EstimatesList::class)
             ->set('serviceName', 'Window washing')
@@ -101,7 +136,17 @@ class EstimatesListScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
+        $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
 
         Livewire::test(EstimatesList::class)
             ->set('serviceName', '')
@@ -119,7 +164,17 @@ class EstimatesListScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
+        $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
 
         Livewire::test(EstimatesList::class)
             ->set('serviceName', 'Roof repair')
@@ -137,7 +192,17 @@ class EstimatesListScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
+        $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
 
         Livewire::test(EstimatesList::class)
             ->set('serviceName', 'Gutter cleaning')
@@ -151,11 +216,10 @@ class EstimatesListScreenTest extends TestCase
 
         Livewire::test(EstimatesList::class)
             ->call('sendEstimate', $id)
-            ->assertSet('success', 'Estimate '.$estimateNumber.' is marked sent. Nothing is delivered '
-                .'to the customer yet — this records the status only.');
+            ->assertSet('error', 'Not sent — this estimate has no customer email.');
 
         $estimateTable = (new Estimate)->getTable();
-        $this->assertDatabaseHas($estimateTable, ['id' => $id, 'status' => 'sent', 'business_id' => $biz->id]);
+        $this->assertDatabaseHas($estimateTable, ['id' => $id, 'status' => 'draft', 'business_id' => $biz->id]);
     }
 
     public function test_estimates_list_shows_a_sent_estimate(): void
@@ -163,7 +227,17 @@ class EstimatesListScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
+        $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
 
         Livewire::test(EstimatesList::class)
             ->set('serviceName', 'Gutter cleaning')
@@ -174,8 +248,7 @@ class EstimatesListScreenTest extends TestCase
         $est = Estimate::where('business_id', $biz->id)->first();
         $id = $est->id;
 
-        Livewire::test(EstimatesList::class)
-            ->call('sendEstimate', $id);
+        $est->update(['status' => 'sent']);
 
         $est->refresh();
 
@@ -199,6 +272,7 @@ class EstimatesListScreenTest extends TestCase
         $ownerA = User::factory()->create(['role' => UserRole::Owner]);
         $bizA = $this->provisionTenant(['owner_user_id' => $ownerA->id]);
 
+        $this->actingAs($ownerB);
         Tenancy::set((int) $bizB->id);
 
         Livewire::test(EstimatesList::class)
@@ -210,10 +284,12 @@ class EstimatesListScreenTest extends TestCase
         $estB = Estimate::where('business_id', $bizB->id)->first();
         $bEstimateId = $estB->id;
 
+        $this->actingAs($ownerA);
         Tenancy::set((int) $bizA->id);
 
-        $this->expectException(ModelNotFoundException::class);
-        Livewire::test(EstimatesList::class)->call('sendEstimate', $bEstimateId);
+        Livewire::test(EstimatesList::class)
+            ->call('sendEstimate', $bEstimateId)
+            ->assertSet('error', 'That estimate is not here any more.');
     }
 
     public function test_can_accept_a_sent_estimate(): void
@@ -221,6 +297,15 @@ class EstimatesListScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
 
         Livewire::test(EstimatesList::class)
             ->set('serviceName', 'Culvert Relining 8309')
@@ -229,7 +314,7 @@ class EstimatesListScreenTest extends TestCase
             ->call('draftEstimate');
 
         $est = Estimate::where('business_id', $biz->id)->first();
-        Livewire::test(EstimatesList::class)->call('sendEstimate', $est->id);
+        $est->update(['status' => 'sent']);
 
         $component = Livewire::test(EstimatesList::class)
             ->set('customerSignature', 'Marisol Quintero')
@@ -255,6 +340,15 @@ class EstimatesListScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
 
         Livewire::test(EstimatesList::class)
             ->set('serviceName', 'Culvert Relining 8309')
@@ -263,7 +357,7 @@ class EstimatesListScreenTest extends TestCase
             ->call('draftEstimate');
 
         $est = Estimate::where('business_id', $biz->id)->first();
-        Livewire::test(EstimatesList::class)->call('sendEstimate', $est->id);
+        $est->update(['status' => 'sent']);
 
         Tenancy::forget();
         $this->get(route('x-164.estimates-list'))
@@ -272,6 +366,15 @@ class EstimatesListScreenTest extends TestCase
             ->assertSee('acceptEstimate(');
 
         Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
         Livewire::test(EstimatesList::class)
             ->set('customerSignature', 'Marisol Quintero')
             ->call('acceptEstimate', $est->id);
@@ -289,6 +392,15 @@ class EstimatesListScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
 
         Livewire::test(EstimatesList::class)
             ->set('serviceName', 'Culvert Relining 8309')
@@ -297,7 +409,7 @@ class EstimatesListScreenTest extends TestCase
             ->call('draftEstimate');
 
         $est = Estimate::where('business_id', $biz->id)->first();
-        Livewire::test(EstimatesList::class)->call('sendEstimate', $est->id);
+        $est->update(['status' => 'sent']);
 
         Livewire::test(EstimatesList::class)->set('customerSignature', 'Marisol Quintero')->call('acceptEstimate', $est->id);
 
@@ -311,6 +423,15 @@ class EstimatesListScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
 
         Livewire::test(EstimatesList::class)
             ->set('serviceName', 'Culvert Relining 8309')
@@ -319,7 +440,7 @@ class EstimatesListScreenTest extends TestCase
             ->call('draftEstimate');
 
         $est = Estimate::where('business_id', $biz->id)->first();
-        Livewire::test(EstimatesList::class)->call('sendEstimate', $est->id);
+        $est->update(['status' => 'sent']);
 
         $est->update(['expires_at' => now()->subDay()]);
 
@@ -339,6 +460,15 @@ class EstimatesListScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
 
         Livewire::test(EstimatesList::class)
             ->set('serviceName', 'Culvert Relining 8309')
@@ -347,7 +477,7 @@ class EstimatesListScreenTest extends TestCase
             ->call('draftEstimate');
 
         $est = Estimate::where('business_id', $biz->id)->first();
-        Livewire::test(EstimatesList::class)->call('sendEstimate', $est->id);
+        $est->update(['status' => 'sent']);
 
         Livewire::test(EstimatesList::class)
             ->set('customerSignature', '')
@@ -365,6 +495,7 @@ class EstimatesListScreenTest extends TestCase
         $bizA = $this->provisionTenant(['owner_user_id' => $ownerA->id]);
 
         Tenancy::setUser($ownerB->id);
+        $this->actingAs($ownerB);
         Tenancy::set((int) $bizB->id);
         $this->actingAs($ownerB);
 
@@ -375,9 +506,10 @@ class EstimatesListScreenTest extends TestCase
             ->call('draftEstimate');
 
         $estB = Estimate::where('business_id', $bizB->id)->first();
-        Livewire::test(EstimatesList::class)->call('sendEstimate', $estB->id);
+        $estB->update(['status' => 'sent']);
 
         Tenancy::setUser($ownerA->id);
+        $this->actingAs($ownerA);
         Tenancy::set((int) $bizA->id);
         $this->actingAs($ownerA);
 
@@ -391,12 +523,21 @@ class EstimatesListScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
 
         Livewire::test(EstimatesList::class)
             ->set('serviceName', 'Bore Lining')->set('quantity', 1)->set('unitPriceCents', 612755)
             ->call('draftEstimate');
         $est = Estimate::where('business_id', $biz->id)->firstOrFail();
-        Livewire::test(EstimatesList::class)->call('sendEstimate', $est->id);
+        $est->update(['status' => 'sent']);
         $est->update(['expires_at' => now()->subDay()]);
         Livewire::test(EstimatesList::class)
             ->set('customerSignature', 'Ingrid Halvorsen')->call('acceptEstimate', $est->id);
@@ -426,12 +567,21 @@ class EstimatesListScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
 
         Livewire::test(EstimatesList::class)
             ->set('serviceName', 'Bore Lining')->set('quantity', 1)->set('unitPriceCents', 612755)
             ->call('draftEstimate');
         $est = Estimate::where('business_id', $biz->id)->firstOrFail();
-        Livewire::test(EstimatesList::class)->call('sendEstimate', $est->id);
+        $est->update(['status' => 'sent']);
         $est->update(['expires_at' => now()->subDay()]);
         Livewire::test(EstimatesList::class)
             ->set('customerSignature', 'Ingrid Halvorsen')->call('acceptEstimate', $est->id);
@@ -454,12 +604,21 @@ class EstimatesListScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
 
         Livewire::test(EstimatesList::class)
             ->set('serviceName', 'Bore Lining')->set('quantity', 1)->set('unitPriceCents', 612755)
             ->call('draftEstimate');
         $est = Estimate::where('business_id', $biz->id)->firstOrFail();
-        Livewire::test(EstimatesList::class)->call('sendEstimate', $est->id);
+        $est->update(['status' => 'sent']);
         $est->update(['expires_at' => now()->subDay()]);
         Livewire::test(EstimatesList::class)
             ->set('customerSignature', 'Ingrid Halvorsen')->call('acceptEstimate', $est->id);
@@ -472,6 +631,15 @@ class EstimatesListScreenTest extends TestCase
             ->assertSee('refreshEstimate(');
 
         Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
         Livewire::test(EstimatesList::class)
             ->set('refreshedUnitPriceCents', '491820')
             ->call('refreshEstimate', $est->id);
@@ -491,12 +659,21 @@ class EstimatesListScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
 
         Livewire::test(EstimatesList::class)
             ->set('serviceName', 'Bore Lining')->set('quantity', 1)->set('unitPriceCents', 612755)
             ->call('draftEstimate');
         $est = Estimate::where('business_id', $biz->id)->firstOrFail();
-        Livewire::test(EstimatesList::class)->call('sendEstimate', $est->id);
+        $est->update(['status' => 'sent']);
 
         Livewire::test(EstimatesList::class)
             ->set('refreshedUnitPriceCents', '491820')
@@ -523,6 +700,7 @@ class EstimatesListScreenTest extends TestCase
         $bizA = $this->provisionTenant(['owner_user_id' => $ownerA->id]);
 
         Tenancy::setUser($ownerB->id);
+        $this->actingAs($ownerB);
         Tenancy::set((int) $bizB->id);
         $this->actingAs($ownerB);
 
@@ -530,16 +708,226 @@ class EstimatesListScreenTest extends TestCase
             ->set('serviceName', 'Bore Lining')->set('quantity', 1)->set('unitPriceCents', 612755)
             ->call('draftEstimate');
         $estB = Estimate::where('business_id', $bizB->id)->firstOrFail();
-        Livewire::test(EstimatesList::class)->call('sendEstimate', $estB->id);
+        $estB->update(['status' => 'sent']);
         $estB->update(['expires_at' => now()->subDay()]);
         Livewire::test(EstimatesList::class)
             ->set('customerSignature', 'Ingrid Halvorsen')->call('acceptEstimate', $estB->id);
 
         Tenancy::setUser($ownerA->id);
+        $this->actingAs($ownerA);
         Tenancy::set((int) $bizA->id);
         $this->actingAs($ownerA);
 
         $this->expectException(ModelNotFoundException::class);
         Livewire::test(EstimatesList::class)->set('refreshedUnitPriceCents', '491820')->call('refreshEstimate', $estB->id);
+    }
+
+    public function test_copy_portal_link_mints_a_link_the_customer_can_open_without_logging_in(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
+        $estimate = app(EstimateDraftAction::class)->handle((int) $biz->id, null, [
+            ['service_name' => 'Gutter cleaning', 'quantity' => 3, 'unit_price_cents' => 4175],
+        ]);
+        $estimate->update(['status' => 'sent']);
+
+        $component = Livewire::test(EstimatesList::class)
+            ->call('portalLink', $estimate->id)
+            ->assertHasNoErrors()
+            ->assertSet('portalUrl.'.$estimate->id, fn ($v) => is_string($v) && str_contains($v, '/portal/'));
+
+        $this->assertDatabaseHas('portal_links', [
+            'business_id' => $biz->id,
+            'resource_type' => 'estimate',
+            'resource_id' => $estimate->id,
+            'is_active' => true,
+        ]);
+
+        $url = $component->get('portalUrl')[$estimate->id];
+
+        Tenancy::forgetAll();
+        auth()->logout();
+
+        $this->get($url)->assertOk();
+    }
+
+    public function test_sixty81_success(): void
+    {
+        Bus::fake();
+        customerMailIsPermitted();
+
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
+
+        $person = Person::create(['business_id' => $biz->id, 'email' => 'est-8371@example.test']);
+        $customer = Customer::factory()->create(['business_id' => $biz->id, 'email' => 'est-8371@example.test']);
+        permitFor($customer);
+
+        $estimate = app(EstimateDraftAction::class)->handle((int) $biz->id, $person->id, [
+            ['service_name' => 'Gutter cleaning', 'quantity' => 1, 'unit_price_cents' => 5000],
+        ]);
+
+        Livewire::test(EstimatesList::class)
+            ->call('sendEstimate', $estimate->id)
+            ->assertSet('error', null)
+            ->assertSet('success', 'Emailed estimate '.$estimate->estimate_number.' to est-8371@example.test.');
+
+        $this->assertDatabaseHas('estimates', ['id' => $estimate->id, 'status' => 'sent']);
+        $this->assertDatabaseHas('outreach_messages', ['customer_id' => $customer->id, 'channel' => 'email']);
+        Bus::assertDispatched(DeliverPlatformMail::class);
+    }
+
+    public function test_sixty81_no_customer_row(): void
+    {
+        Bus::fake();
+        customerMailIsPermitted();
+
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
+
+        $person = Person::create(['business_id' => $biz->id, 'email' => 'est-8371-2@example.test']);
+
+        $estimate = app(EstimateDraftAction::class)->handle((int) $biz->id, $person->id, [
+            ['service_name' => 'Gutter cleaning', 'quantity' => 1, 'unit_price_cents' => 5000],
+        ]);
+
+        Livewire::test(EstimatesList::class)
+            ->call('sendEstimate', $estimate->id)
+            ->assertSet('success', null)
+            ->assertSet('error', 'Not sent — nobody with that email is in your customer list. Add them as a customer first.');
+
+        $this->assertDatabaseHas('estimates', ['id' => $estimate->id, 'status' => 'draft']);
+        Bus::assertNotDispatched(DeliverPlatformMail::class);
+    }
+
+    public function test_sixty81_no_consent(): void
+    {
+        Bus::fake();
+        customerMailIsPermitted();
+
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
+
+        $person = Person::create(['business_id' => $biz->id, 'email' => 'est-8371-3@example.test']);
+        $customer = Customer::factory()->create(['business_id' => $biz->id, 'email' => 'est-8371-3@example.test']);
+
+        $estimate = app(EstimateDraftAction::class)->handle((int) $biz->id, $person->id, [
+            ['service_name' => 'Gutter cleaning', 'quantity' => 1, 'unit_price_cents' => 5000],
+        ]);
+
+        Livewire::test(EstimatesList::class)
+            ->call('sendEstimate', $estimate->id)
+            ->assertSet('success', null);
+        $component = Livewire::test(EstimatesList::class)->call('sendEstimate', $estimate->id);
+        $this->assertStringContainsString('not allowed right now', $component->get('error'));
+
+        $this->assertDatabaseHas('estimates', ['id' => $estimate->id, 'status' => 'draft']);
+        Bus::assertNotDispatched(DeliverPlatformMail::class);
+    }
+
+    public function test_sixty81_staff_forbidden(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Staff]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
+
+        Livewire::test(EstimatesList::class)
+            ->call('sendEstimate', 1)
+            ->assertForbidden();
+    }
+
+    public function test_sixty81_second_send_duplicate(): void
+    {
+        Bus::fake();
+        customerMailIsPermitted();
+
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set((int) $biz->id);
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
+            100,
+            'system',
+            'test',
+            null,
+            null
+        );
+
+        $person = Person::create(['business_id' => $biz->id, 'email' => 'est-8371-5@example.test']);
+        $customer = Customer::factory()->create(['business_id' => $biz->id, 'email' => 'est-8371-5@example.test']);
+        permitFor($customer);
+
+        $estimate = app(EstimateDraftAction::class)->handle((int) $biz->id, $person->id, [
+            ['service_name' => 'Gutter cleaning', 'quantity' => 1, 'unit_price_cents' => 5000],
+        ]);
+
+        Livewire::test(EstimatesList::class)
+            ->call('sendEstimate', $estimate->id)
+            ->assertSet('error', null);
+
+        // second send
+        Livewire::test(EstimatesList::class)
+            ->call('sendEstimate', $estimate->id)
+            ->assertSet('success', null)
+            ->assertSet('error', 'Already emailed.');
+
+        $this->assertDatabaseCount('outreach_messages', 1);
     }
 }

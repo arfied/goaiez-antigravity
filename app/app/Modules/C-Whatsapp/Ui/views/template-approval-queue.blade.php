@@ -2,7 +2,7 @@
     <div class="whatsapp-queue-view p-4">
         <h2 class="text-lg font-bold text-ink">Template approval queue</h2>
         @if($pending->isEmpty())
-            <x-ui.empty-state heading="Nothing waiting for approval.">Templates you have submitted but that have not come back yet wait here.</x-ui.empty-state>
+            <x-ui.empty-state heading="Nothing waiting for approval.">Templates are reviewed by Meta through Zernio, usually within a day. Connect WhatsApp first to submit one.</x-ui.empty-state>
         @else
             <ul class="divide-y divide-rule">
                 @foreach($pending as $p)
@@ -17,13 +17,9 @@
         <div class="mt-4 border-t pt-4">
             <h3 class="font-bold">Submit Template</h3>
             
-            @if($error)
-                <div class="text-red-500 mb-2">{{ $error }}</div>
-            @endif
+            <x-ui.toast kind="error" :message="$error" />
             
-            @if($success)
-                <div class="text-green-500 mb-2">{{ $success }}</div>
-            @endif
+            <x-ui.toast kind="success" :message="$success" />
 
             <form wire:submit="submit" class="space-y-4 max-w-sm mt-2">
                 <div>

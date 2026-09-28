@@ -4,52 +4,32 @@ declare(strict_types=1);
 
 namespace App\Livewire\Advanced;
 
+use App\Models\GrowthPage;
+use App\Models\Location;
+use App\Services\Content\GrowthPages;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 #[Layout('layouts.account')]
 class Posts extends Component
 {
-    public string $postContent = '⚡ Project Completed: Finished a full commercial system inspection in local service area. Rated 5-stars by client! Book your free consultation today.';
-
-    public string $postTopic = 'project_showcase';
-
-    public bool $autoSchedule = true;
-
-    public ?string $publishNotification = null;
-
-    public function publishPost(): void
+    public function render(GrowthPages $pages): View
     {
-        $this->publishNotification = null;
-    }
+        $businessId = Auth::user()->business_id;
+        $location = Location::where('business_id', $businessId)->first();
 
-    public function render(): View
-    {
-        $mmsNumber = '+1 (555) 304-2900';
+        $rows = GrowthPage::query()
+            ->orderByDesc('id')
+            ->limit(50)
+            ->get();
 
-        $recentPosts = [
-            [
-                'date' => 'Yesterday at 10:15 AM',
-                'type' => 'Job Photo Showcase',
-                'views' => 148,
-                'clicks' => 19,
-                'summary' => 'Before & after photo sweep of recent commercial restoration in local district.',
-                'status' => 'live',
-            ],
-            [
-                'date' => '3 days ago',
-                'type' => 'Weekly Service Tip',
-                'views' => 280,
-                'clicks' => 34,
-                'summary' => '3 essential maintenance tips for local property owners before the season change.',
-                'status' => 'live',
-            ],
-        ];
+        // dd($rows);
 
         return view('livewire.advanced.posts', [
-            'mmsNumber' => $mmsNumber,
-            'recentPosts' => $recentPosts,
+            'rows' => $rows,
+            'websiteUrl' => $location?->website_url,
         ]);
     }
 }

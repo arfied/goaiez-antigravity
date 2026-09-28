@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Support\Account;
 
+use App\Enums\UserRole;
+use Illuminate\Support\Facades\Route;
+
 /**
  * The owner's navigation — one declaration for every screen an owner reaches.
  *
@@ -107,6 +110,7 @@ final class OwnerNav
 
             OwnerNavItem::make('Messages you sent', 'account.messages'),
             OwnerNavItem::make('Google reviews', 'account.connections', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
+            OwnerNavItem::make('Facebook reviews', 'account.facebook-reviews', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
             OwnerNavItem::make('Your account', 'account.settings', OwnerNavItem::GROUP_MORE, section: 'Your account'),
             OwnerNavItem::make('All screens', 'account.all-screens', OwnerNavItem::GROUP_MORE, section: 'Your account'),
 
@@ -130,6 +134,15 @@ final class OwnerNav
             // there rather than in the primary row.
             OwnerNavItem::make('Import your customers', 'account.customers.import', OwnerNavItem::GROUP_MORE, section: 'Customers'),
 
+            // The pages list (X-103). Under More because pages aren't edited every day.
+            // ⚠️ THIS ENTRY IS THE ONLY DOOR TO THE PAGES SCREEN.
+            // Architecture/OwnerNavTest fails the build on an owner screen
+            // with neither a nav entry nor a written exclusion.
+            OwnerNavItem::make('Pages', 'x-103.pages', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
+            OwnerNavItem::make('Build my site', 'x-103.site-build', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
+            OwnerNavItem::make('Site Inventory', 'x-103.site-inventory', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
+            OwnerNavItem::make('Forms', 'x-155.forms', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
+
             // The widget install (2950). Under More on the same distinction —
             // paste one line, name your website, never think about it again.
             // ⚠️ The entry is not optional polish: `Architecture/OwnerNavTest`
@@ -150,6 +163,8 @@ final class OwnerNav
             // written exclusion, and this is the only screen that will ever
             // mint a key for a tenant who predates the collector.
             OwnerNavItem::make('Let us see your website', 'account.pixel-install', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
+            OwnerNavItem::make('Your business facts', 'account.facts', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
+            OwnerNavItem::make('Use your own Google Maps key', 'account.places-key', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
 
             // Under More on the same distinction, and the label is the outcome
             // rather than the mechanism (`22`): an owner is not managing a
@@ -291,6 +306,7 @@ final class OwnerNav
             // tag is working. A screen nobody can reach would leave them guessing
             // whether we are actually collecting their data.
             OwnerNavItem::make('Is our tag working', 'x-110.install-verify', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Tag versions', 'x-110.tag-version-per', OwnerNavItem::GROUP_CATALOG),
 
             // What their pages earn (X-138). Ruled to be under More deliberately,
             // despite being potentially daily: the primary row is a design the
@@ -543,7 +559,6 @@ final class OwnerNav
             OwnerNavItem::make('Schema status', 'x-176.seo-tab-website', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Chat leads', 'x-102.offline-form-inbox', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Retired devices', 'x-207.retirement-reasons', OwnerNavItem::GROUP_CATALOG),
-            OwnerNavItem::make('Forms', 'x-155.forms', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Plugin sites', 'x-104.plugin-settings-page', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Migration status', 'x-129.migration-card', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Edge deployments', 'x-157.edge-status-per', OwnerNavItem::GROUP_CATALOG),
@@ -593,6 +608,7 @@ final class OwnerNav
             OwnerNavItem::make('Affiliate payouts', 'x-205.payout-run', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Email domain', 'c-mail.dns-card', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Domain warm-up', 'c-mail.warmup-calendars-per', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Warm-up sequence', 'c-mail.sequence-view', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Earned links', 'x-191.links-earned', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Outreach ratio', 'x-191.pitchacquire-ratio', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Dispatch board', 'x-162.dispatch-board', OwnerNavItem::GROUP_CATALOG),
@@ -603,6 +619,7 @@ final class OwnerNav
             OwnerNavItem::make('Geo-grid', 'x-16.geogrid-map', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Service area', 'x-16.servicearea-polygon', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Sends by class', 'x-193.sendsbyclass', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Quiet-hour holds', 'x-193.quiethour-holds', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Do-not-text list', 'c-sms.donottext-list', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Text thread', 'c-sms.thread', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Overdue invoices', 'x-211.ageing-by-reason', OwnerNavItem::GROUP_CATALOG),
@@ -628,14 +645,17 @@ final class OwnerNav
             OwnerNavItem::make('Inbox', 'x-01.thread', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('First wins', 'x-118.today', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Time to first minute', 'x-118.ttfm-distribution', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Import from another system', 'x-212.pick-source', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Dry-run preview', 'x-212.dryrun-preview', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Import rejections', 'x-212.postimport-audit', OwnerNavItem::GROUP_CATALOG),
-            OwnerNavItem::make('Approvals', 'x-202.queue', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Approvals', 'x-202.queue', OwnerNavItem::GROUP_CATALOG, alsoCurrentFor: ['x-202.item']),
             OwnerNavItem::make('Approval history', 'x-202.audit-export', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Fixer inbox', 'x-209.private-inbox', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('One-tap approval', 'x-209.onetap-approval-card', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Autopilot ladder', 'x-209.ladders-own-state', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Person', 'x-01.person', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Activity', 'x-01.history', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Payment risk', 'x-01.payment-risk', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Your documents', 'x-160.upload-drop', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Documents to review', 'x-160.review-screen', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Extraction error rate', 'x-160.extraction-error-rate', OwnerNavItem::GROUP_CATALOG),
@@ -650,10 +670,12 @@ final class OwnerNav
             OwnerNavItem::make('Call coaching', 'x-66.livecoaching-whisper-panel', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('What we learned', 'x-119.reviewwhatifound-screen', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Fact freshness', 'x-119.fact-freshness-per', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('Teach a fact', 'x-119.teaching-box', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Demand in your area', 'x-130.public-index-pages', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Demand by trade', 'x-130.coverage-by-trade', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('WhatsApp templates', 'c-whatsapp.template-status-card', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Template approval queue', 'c-whatsapp.template-approval-queue', OwnerNavItem::GROUP_CATALOG),
+            OwnerNavItem::make('WhatsApp conversations', 'c-whatsapp.thread', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Data coming in', 'x-156.ingest-volume-by', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Rows we could not take', 'x-156.rejectedrows-list', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Onboarding checks', 'x-118.groundcheck', OwnerNavItem::GROUP_CATALOG),
@@ -693,10 +715,10 @@ final class OwnerNav
      */
     public static function primary(): array
     {
-        return array_values(array_filter(
+        return self::visible(array_values(array_filter(
             self::all(),
             fn (OwnerNavItem $item): bool => $item->group === OwnerNavItem::GROUP_PRIMARY,
-        ));
+        )));
     }
 
     /**
@@ -704,10 +726,10 @@ final class OwnerNav
      */
     public static function more(): array
     {
-        return array_values(array_filter(
+        return self::visible(array_values(array_filter(
             self::all(),
             fn (OwnerNavItem $item): bool => $item->group === OwnerNavItem::GROUP_MORE,
-        ));
+        )));
     }
 
     /**
@@ -732,10 +754,31 @@ final class OwnerNav
      */
     public static function catalog(): array
     {
-        return array_values(array_filter(
+        return self::visible(array_values(array_filter(
             self::all(),
             fn (OwnerNavItem $item): bool => $item->group === OwnerNavItem::GROUP_CATALOG,
-        ));
+        )));
+    }
+
+    /**
+     * @param  array<int, OwnerNavItem>  $items
+     * @return array<int, OwnerNavItem>
+     */
+    private static function visible(array $items): array
+    {
+        if (! auth()->user() || auth()->user()->hasRole(UserRole::Owner, UserRole::Manager)) {
+            return $items;
+        }
+
+        return array_values(array_filter($items, function (OwnerNavItem $item): bool {
+            $route = Route::getRoutes()->getByName($item->route);
+
+            if (! $route) {
+                return true;
+            }
+
+            return ! in_array('tenant.role', $route->gatherMiddleware(), true);
+        }));
     }
 
     public static function moreIsCurrent(): bool

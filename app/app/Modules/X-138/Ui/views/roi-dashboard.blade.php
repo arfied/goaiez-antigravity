@@ -1,6 +1,17 @@
 <div>
     <div class="roi-dashboard-view p-4">
         <h2 class="text-lg font-bold">Campaign ROI Dashboard</h2>
+    @if ($results !== null)
+        <div class="mt-2 mb-6">
+            <p class="text-ink-2">What your website brought in over the last {{ $results['days'] }} days, counted from what actually happened.</p>
+            <ul class="mt-2">
+                <li>Visits to your site: {{ $results['visits'] ?? 'not measured yet — the page has not sent us a visit' }}</li>
+                <li>Calls from your tracked number: {{ $results['calls'] }}</li>
+                <li>Booking requests from the page: {{ $results['booking_requests'] }}</li>
+                <li>Jobs booked: {{ $results['booked'] }}</li>
+            </ul>
+        </div>
+    @endif
         @if($snapshots->isEmpty())
             <x-ui.empty-state
                 icon="🎯"

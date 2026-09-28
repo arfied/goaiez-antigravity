@@ -15,6 +15,7 @@ use App\Models\InboundMedia;
 use App\Models\KnowledgeSource;
 use App\Models\Voicemail;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Conversations\ConversationThreads;
 use App\Support\Tenancy;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
@@ -126,7 +127,12 @@ final class StorageRetention
      * of the size, because each row here costs a network round trip to the
      * object store rather than a share of one `DELETE`.
      */
-    private const int CHUNK = 50;
+    public const int CHUNK = 50;
+
+    private function chunk(): int
+    {
+        return $this->defaults->int('storage.retention.chunk');
+    }
 
     public function __construct(private readonly DefaultsRegistry $defaults) {}
 
@@ -215,7 +221,20 @@ final class StorageRetention
             StoredObjectKind::VoicemailRecording => $this->pruneVoicemails($cutoff),
             StoredObjectKind::KnowledgeUpload => $this->pruneKnowledgeUploads($cutoff),
             StoredObjectKind::CampaignMedia => $this->pruneCampaignMedia($cutoff),
+            StoredObjectKind::WhatsappMedia => $this->pruneWhatsappMedia($cutoff),
         };
+    }
+
+    private function pruneWhatsappMedia(CarbonInterface $cutoff): StorageSweep
+    {
+        $r = app(ConversationThreads::class)->pruneStoredMedia($cutoff, $this->chunk());
+
+        return new StorageSweep(
+            kind: StoredObjectKind::WhatsappMedia,
+            pruned: $r['pruned'],
+            refused: $r['refused'],
+            skipped: false
+        );
     }
 
     /**
@@ -448,7 +467,7 @@ final class StorageRetention
             }
         };
 
-        $query->orderBy('id')->chunkById(self::CHUNK, $sweepBatch);
+        $query->orderBy('id')->chunkById($this->chunk(), $sweepBatch);
 
         return new StorageSweep(kind: $kind, pruned: $pruned, refused: $refused, skipped: false);
     }

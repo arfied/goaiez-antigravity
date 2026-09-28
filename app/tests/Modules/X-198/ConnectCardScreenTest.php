@@ -158,7 +158,7 @@ class ConnectCardScreenTest extends TestCase
         Livewire::actingAs($owner)->test(ConnectCard::class)
             ->assertOk()
             ->assertSee('not applied')
-            ->assertDontSee('external gateway');
+            ->assertDontSee('external_gateway');
     }
 
     public function test_the_connect_card_heads_recorded_gateways_and_never_offers_to_manage_them(): void

@@ -9,9 +9,13 @@ use App\Enums\FetchOutcome;
 use App\Enums\FetchRefusalReason;
 use App\Enums\FetchTier;
 use App\Enums\RobotsVerdict;
+use App\Exceptions\FetchRedirectRefused;
 use App\Models\FetchAttempt;
 use App\Models\FetchSource;
+use App\Services\Config\DefaultsRegistry;
+use App\Support\PlatformCredentials;
 use App\Support\VendorLog;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Carbon;
@@ -61,7 +65,7 @@ final class DirectFetchGateway implements FetchGateway
      *
      * @var list<int>
      */
-    private const array COOLDOWN_HOURS = [6, 24, 72];
+    public const array COOLDOWN_HOURS = [6, 24, 72];
 
     /**
      * A response larger than this is not a page we need. Caps memory on a path
@@ -95,11 +99,31 @@ final class DirectFetchGateway implements FetchGateway
         private readonly RobotsPolicy $robots,
     ) {}
 
+    private function cooldownHours(): array
+    {
+        return app(DefaultsRegistry::class)->intList('fetch.cooldown_hours');
+    }
+
     public function permits(string $sourceKey, FetchTier $tier = FetchTier::F0): bool
     {
         $source = $this->source($sourceKey);
 
         return $source->permits($tier) && $tier->isImplemented();
+    }
+
+    /**
+     * Guzzle options that route a source's requests through the operator's
+     * proxy — only the tenant's own website, only when the credential is set.
+     *
+     * @return array{proxy?: string}
+     */
+    public static function proxyOptionsFor(string $sourceKey): array
+    {
+        if ($sourceKey !== 'tenant_site' || ! PlatformCredentials::has('fetch_proxy_url')) {
+            return [];
+        }
+
+        return ['proxy' => PlatformCredentials::get('fetch_proxy_url')];
     }
 
     public function fetch(string $sourceKey, string $url, FetchTier $tier = FetchTier::F0): FetchResult
@@ -117,6 +141,12 @@ final class DirectFetchGateway implements FetchGateway
             );
         }
 
+        $ips = app(PublicAddressGuard::class)->check($url);
+
+        if ($ips === null) {
+            return $this->refuse($source, $url, $tier, FetchRefusalReason::PrivateAddress);
+        }
+
         if ($source->kill) {
             return $this->refuse($source, $url, $tier, FetchRefusalReason::KillSwitch);
         }
@@ -131,7 +161,7 @@ final class DirectFetchGateway implements FetchGateway
             return $this->refuse($source, $url, $tier, FetchRefusalReason::AboveCeiling);
         }
 
-        if ($this->coolingDown($source)) {
+        if ($this->coolingDown($source, $url)) {
             return $this->refuse($source, $url, $tier, FetchRefusalReason::CoolingDown);
         }
 
@@ -152,11 +182,28 @@ final class DirectFetchGateway implements FetchGateway
                 : FetchRefusalReason::RobotsUnavailable);
         }
 
-        return $this->perform($source, $url, $tier);
+        return $this->perform($source, $url, $tier, $ips);
     }
 
-    private function perform(FetchSource $source, string $url, FetchTier $tier): FetchResult
+    private function perform(FetchSource $source, string $url, FetchTier $tier, array $ips = []): FetchResult
     {
+        $options = ['allow_redirects' => [
+            'max' => 3,
+            'strict' => true,
+            'on_redirect' => function ($request, $response, $uri) {
+                if (app(PublicAddressGuard::class)->check((string) $uri) === null) {
+                    throw new FetchRedirectRefused((string) $uri);
+                }
+            },
+        ]] + self::proxyOptionsFor($source->key);
+
+        if (! empty($ips) && ! isset($options['proxy'])) {
+            $parts = parse_url($url);
+            $host = $parts['host'];
+            $port = $parts['port'] ?? (isset($parts['scheme']) && $parts['scheme'] === 'https' ? 443 : 80);
+            $options['curl'] = [CURLOPT_RESOLVE => ["{$host}:{$port}:{$ips[0]}"]];
+        }
+
         try {
             $response = VendorLog::timed(
                 'fetch:'.$source->key,
@@ -166,7 +213,7 @@ final class DirectFetchGateway implements FetchGateway
                     ->timeout((int) config('fetch.timeout', 10))
                     // Redirects are followed but capped: a redirect chain is a
                     // cheap way to make one permitted fetch into many.
-                    ->withOptions(['allow_redirects' => ['max' => 3, 'strict' => true]])
+                    ->withOptions($options)
                     ->get($url),
             );
         } catch (ConnectionException) {
@@ -175,6 +222,8 @@ final class DirectFetchGateway implements FetchGateway
             $this->record($source, $url, $tier, FetchOutcome::Error);
 
             return FetchResult::failed(FetchOutcome::Error, $tier);
+        } catch (FetchRedirectRefused) {
+            return $this->refuse($source, $url, $tier, FetchRefusalReason::PrivateAddress);
         }
 
         $status = $response->status();
@@ -249,12 +298,13 @@ final class DirectFetchGateway implements FetchGateway
     /**
      * Whether the source is inside a cool-down from an earlier block.
      */
-    private function coolingDown(FetchSource $source): bool
+    private function coolingDown(FetchSource $source, string $url): bool
     {
-        return FetchAttempt::query()
-            ->where('source_key', $source->key)
-            ->coolingDown()
-            ->exists();
+        return $this->scopedToHost(
+            FetchAttempt::query()->where('source_key', $source->key)->coolingDown(),
+            $source,
+            $url,
+        )->exists();
     }
 
     /**
@@ -293,6 +343,23 @@ final class DirectFetchGateway implements FetchGateway
         return FetchResult::refused($tier, $reason);
     }
 
+    /**
+     * A tenant site is a different origin per tenant, so its cool-down and its
+     * ladder are scoped to the host that blocked us; every other source keeps
+     * `40` §6.1's per-source scope.
+     */
+    private static function hostHash(string $url): string
+    {
+        return hash('sha256', strtolower((string) parse_url($url, PHP_URL_HOST)));
+    }
+
+    private function scopedToHost(Builder $query, FetchSource $source, string $url): Builder
+    {
+        return $source->key === 'tenant_site'
+            ? $query->where('host_hash', self::hostHash($url))
+            : $query;
+    }
+
     private function record(
         FetchSource $source,
         string $url,
@@ -305,11 +372,12 @@ final class DirectFetchGateway implements FetchGateway
             // Hashed, never stored: a fetched URL can carry a business name or
             // a pasted query string, and this table has no tenant.
             'url_hash' => hash('sha256', $url),
+            'host_hash' => self::hostHash($url),
             'tier' => $tier,
             'outcome' => $outcome,
             'http_status' => $status,
             'cooldown_until' => $outcome->triggersCooldown()
-                ? Carbon::now()->addHours($this->nextCooldownHours($source))
+                ? Carbon::now()->addHours($this->nextCooldownHours($source, $url))
                 : null,
             'created_at' => Carbon::now(),
         ]);
@@ -319,15 +387,11 @@ final class DirectFetchGateway implements FetchGateway
      * 6h, then 24h, then 72h — escalating with how many times this source has
      * already been cooled down recently, per `40` §6.1's seed.
      */
-    private function nextCooldownHours(FetchSource $source): int
+    private function nextCooldownHours(FetchSource $source, string $url): int
     {
-        $recent = FetchAttempt::query()
-            ->where('source_key', $source->key)
-            ->whereNotNull('cooldown_until')
-            ->where('created_at', '>=', Carbon::now()->subDays(7))
-            ->count();
+        $recent = $this->scopedToHost(FetchAttempt::query()->where('source_key', $source->key)->whereNotNull('cooldown_until')->where('created_at', '>=', Carbon::now()->subDays(7)), $source, $url)->count();
 
-        return self::COOLDOWN_HOURS[min($recent, count(self::COOLDOWN_HOURS) - 1)];
+        return $this->cooldownHours()[min($recent, count($this->cooldownHours()) - 1)];
     }
 
     /**

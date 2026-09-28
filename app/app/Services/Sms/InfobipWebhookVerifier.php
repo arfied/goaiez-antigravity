@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Sms;
 
 use App\Contracts\VerifiesWebhookSenders;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\PlatformCredentials;
 use App\Support\WebhookMaterial;
 use Illuminate\Http\Request;
@@ -201,6 +202,11 @@ final class InfobipWebhookVerifier implements VerifiesWebhookSenders
      */
     public const int MAX_SIGNATURE_AGE_SECONDS = 300;
 
+    public function maxSignatureAgeSeconds(): int
+    {
+        return app(DefaultsRegistry::class)->int('sms.webhook.max_signature_age_seconds');
+    }
+
     /**
      * Whether this request carries a valid signature for its own body.
      *
@@ -311,7 +317,7 @@ final class InfobipWebhookVerifier implements VerifiesWebhookSenders
         Log::warning('An Infobip webhook signature verified but was refused as stale.', [
             'path' => $request->path(),
             'age_seconds' => $this->ageInSeconds($timestamp),
-            'max_age_seconds' => self::MAX_SIGNATURE_AGE_SECONDS,
+            'max_age_seconds' => $this->maxSignatureAgeSeconds(),
         ]);
 
         return false;
@@ -386,7 +392,7 @@ final class InfobipWebhookVerifier implements VerifiesWebhookSenders
 
         $seconds = $value > 100_000_000_000 ? intdiv($value, 1000) : $value;
 
-        return abs(time() - $seconds) <= self::MAX_SIGNATURE_AGE_SECONDS;
+        return abs(time() - $seconds) <= $this->maxSignatureAgeSeconds();
     }
 
     /**

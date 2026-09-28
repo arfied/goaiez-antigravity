@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Modules\X113\Ui;
 
+use App\Enums\UserRole;
 use App\Modules\X113\Actions\RoleAssignAction;
 use App\Modules\X113\Actions\StaffInviteAction;
 use App\Modules\X113\Models\Role;
 use App\Modules\X113\Models\StaffUser;
+use App\Services\Team\TeamInvites;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -22,6 +24,8 @@ class Staff extends Component
     public string $name = '';
 
     public string $email = '';
+
+    public string $inviteRole = 'staff';
 
     public ?string $success = null;
 
@@ -42,6 +46,8 @@ class Staff extends Component
 
     public function invite(StaffInviteAction $action): void
     {
+        abort_unless(auth()->user()?->hasRole(UserRole::Owner) === true, 403);
+
         $this->success = null;
         $this->error = null;
 
@@ -75,12 +81,31 @@ class Staff extends Component
             return;
         }
 
-        $user = $action->handle($businessId, $email, $name, null);
+        if ($this->inviteRole === 'manager') {
+            $mappedRole = UserRole::Manager;
+        } elseif ($this->inviteRole === 'staff') {
+            $mappedRole = UserRole::Staff;
+        } else {
+            $this->error = 'Choose Staff or Manager.';
 
-        $this->success = 'Invited '.$user->name.'. This feeds the staff list; nothing downstream is wired to it yet.';
+            return;
+        }
+
+        $result = app(TeamInvites::class)->invite($businessId, $email, $name, auth()->user(), $mappedRole);
+
+        if ($result['ok'] === false) {
+            $this->error = $result['message'];
+
+            return;
+        }
+
+        $action->handle($businessId, $email, $name, null);
+
+        $this->success = $result['message'];
 
         $this->name = '';
         $this->email = '';
+        $this->inviteRole = 'staff';
     }
 
     public function assignRole(RoleAssignAction $action): void
@@ -110,6 +135,42 @@ class Staff extends Component
         $this->assignRoleId = '';
     }
 
+    public ?string $accessSuccess = null;
+
+    public ?string $accessError = null;
+
+    public function resendInvite(int $membershipId): void
+    {
+        abort_unless(auth()->user()?->hasRole(UserRole::Owner) === true, 403);
+
+        $this->accessSuccess = null;
+        $this->accessError = null;
+
+        $result = app(TeamInvites::class)->resend($membershipId, auth()->user());
+
+        if ($result['ok']) {
+            $this->accessSuccess = $result['message'];
+        } else {
+            $this->accessError = $result['message'];
+        }
+    }
+
+    public function revokeAccess(int $membershipId): void
+    {
+        abort_unless(auth()->user()?->hasRole(UserRole::Owner) === true, 403);
+
+        $this->accessSuccess = null;
+        $this->accessError = null;
+
+        $result = app(TeamInvites::class)->revoke($membershipId, auth()->user());
+
+        if ($result['ok']) {
+            $this->accessSuccess = $result['message'];
+        } else {
+            $this->accessError = $result['message'];
+        }
+    }
+
     public function render()
     {
         $staff = ($this->businessId > 0)
@@ -120,9 +181,13 @@ class Staff extends Component
             ? Role::where('business_id', $this->businessId)->orderBy('name')->get()
             : collect();
 
+        $isOwner = auth()->user()?->hasRole(UserRole::Owner) === true;
+        $members = $isOwner ? app(TeamInvites::class)->members() : collect();
+
         return view('x-113::staff', [
             'staff' => $staff,
             'roles' => $roles,
+            'members' => $members,
         ]);
     }
 }

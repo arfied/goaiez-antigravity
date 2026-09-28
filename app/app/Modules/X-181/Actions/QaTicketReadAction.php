@@ -114,4 +114,26 @@ final class QaTicketReadAction
     {
         return QaTicket::where('business_id', $businessId)->findOrFail($ticketId);
     }
+
+    /**
+     * @param  list<int>  $ticketIds
+     * @return list<int>
+     */
+    public function awaitingCsatIds(int $businessId, array $ticketIds): array
+    {
+        if ($ticketIds === []) {
+            return [];
+        }
+
+        return QaTicket::where('business_id', $businessId)
+            ->whereIn('id', $ticketIds)
+            ->whereNotNull('csat_requested_at')
+            ->whereNotExists(function (Builder $query) {
+                $query->select(DB::raw(1))
+                    ->from('csat_answers')
+                    ->whereColumn('csat_answers.qa_ticket_id', 'qa_tickets.id');
+            })
+            ->pluck('id')
+            ->all();
+    }
 }

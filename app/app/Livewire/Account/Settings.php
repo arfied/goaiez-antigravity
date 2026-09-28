@@ -6,6 +6,9 @@ namespace App\Livewire\Account;
 
 use App\Models\Business;
 use App\Models\Location;
+use App\Modules\X207\Actions\PushBroadcastAction;
+use App\Modules\X207\Actions\PushRegisterDeviceAction;
+use App\Modules\X207\Domain\WebPushTransport;
 use App\Services\Consent\OwnerConsentService;
 use App\Services\Consent\OwnerNotifyDisclosure;
 use App\Services\Export\ExportBuilder;
@@ -93,6 +96,8 @@ final class Settings extends Component
 
     public function mount(): void
     {
+        abort_if(Tenancy::id() === null, 403);
+
         $business = Business::find(Tenancy::id());
         $this->advancedEnabled = (bool) ($business?->hasAdvancedDashboard() ?? false);
         $location = $this->location();
@@ -273,6 +278,31 @@ final class Settings extends Component
         }
     }
 
+    public function savePushSubscription(array $subscription)
+    {
+        try {
+            $business = $this->business();
+            app(PushRegisterDeviceAction::class)
+                ->registerWebSubscription($business->id, Auth::id(), $subscription);
+            Toaster::success('Alerts are on for this browser.');
+        } catch (\Exception $e) {
+            Toaster::error($e->getMessage());
+        }
+    }
+
+    public function sendTestAlert()
+    {
+        $business = $this->business();
+        $res = app(PushBroadcastAction::class)
+            ->toUser($business->id, Auth::id(), ['event_type' => 'test_alert', 'deep_link' => '/account']);
+
+        if ($res['sent'] > 0) {
+            Toaster::success('Test alert sent to '.$res['sent'].' browser(s).');
+        } else {
+            Toaster::error('No test alert went out — sent: '.$res['sent'].', failed: '.$res['failed'].', expired: '.$res['expired'].'. Turn alerts on again in this browser.');
+        }
+    }
+
     public function render(TenantPause $pause, ExportBuilder $exports, OwnerConsentService $owner): View
     {
         $business = $this->business();
@@ -331,6 +361,9 @@ final class Settings extends Component
             // version and the words live together so the two cannot drift".
             // The blade used to carry its own copy of this sentence.
             'ownerNotifyDisclosure' => OwnerNotifyDisclosure::TEXT,
+            'pushConfigured' => app(WebPushTransport::class)->isConfigured(),
+            'pushPublicKey' => app(WebPushTransport::class)->publicKey(),
+            'pushDevices' => app(PushBroadcastAction::class)->activeWebDevices($business->id, Auth::id()),
         ]);
     }
 

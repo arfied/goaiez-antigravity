@@ -8,12 +8,8 @@
             <div class="text-red-500 mb-4">Action failed.</div>
         @endif
 
-        @if($success)
-            <div class="mb-4 p-2 bg-paper border rounded text-ink">{{ $success }}</div>
-        @endif
-        @if($error)
-            <div class="mb-4 p-2 bg-paper border rounded text-ink">{{ $error }}</div>
-        @endif
+        <x-ui.toast kind="success" :message="$success" />
+        <x-ui.toast kind="error" :message="$error" />
 
         <form wire:submit="startOutreach" class="mb-6 flex flex-col gap-2 bg-paper p-4 rounded mt-4 shadow-sm border text-ink">
             <h2 class="font-bold">Start outreach to a new prospect</h2>

@@ -7,6 +7,7 @@ namespace Tests\Modules\X136\Screens;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X136\Actions\SignalScoreAction;
+use App\Modules\X136\Models\DecayModel;
 use App\Modules\X136\Ui\SignalVolumePrecisionView;
 use App\Support\Tenancy;
 use Livewire\Livewire;
@@ -60,5 +61,27 @@ class SignalVolumePrecisionViewScreenTest extends TestCase
             ->assertOk()
             ->assertSee('Volume: 1 total | 1 high-intent')
             ->assertDontSee('No signal stats yet');
+    }
+
+    public function test_a_signal_creates_its_decay_model_and_the_screen_never_promises_thirty_days(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        app(SignalScoreAction::class)->recordAndScore(
+            $biz->id,
+            'acme-roofing',
+            'pricing_visit',
+            [],
+            90.0
+        );
+
+        $this->assertTrue(DecayModel::where(['business_id' => $biz->id, 'signal_type' => 'pricing_visit'])->exists());
+
+        Livewire::test(SignalVolumePrecisionView::class)
+            ->assertDontSee('30 days of events')
+            ->assertSee(' days / ');
     }
 }

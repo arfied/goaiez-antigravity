@@ -56,14 +56,21 @@ class TemplateApprovalQueue extends Component
         }
 
         try {
-            $action->handle(
+            $template = $action->handle(
                 businessId: Tenancy::idOrFail(),
                 name: $this->name,
                 category: $this->category,
                 bodyText: $this->bodyText
             );
 
-            $this->success = "Submitted template {$this->name}.";
+            if ($template->status === 'pending_approval') {
+                $this->success = "Submitted {$this->name} to Meta through Zernio. Meta usually reviews within a day.";
+            } elseif ($template->status === 'draft') {
+                $this->success = "Saved {$this->name} as a draft — connect WhatsApp to submit it to Meta.";
+            } elseif ($template->status === 'submit_failed') {
+                $this->success = "Meta did not accept {$this->name}: {$template->status_reason}";
+            }
+
             $this->name = '';
             $this->category = '';
             $this->bodyText = '';
@@ -75,7 +82,7 @@ class TemplateApprovalQueue extends Component
     public function render()
     {
         $pending = ($this->businessId > 0)
-            ? WhatsappTemplate::where('business_id', $this->businessId)->where('status', 'pending_approval')->orderByDesc('id')->get()
+            ? WhatsappTemplate::where('business_id', $this->businessId)->whereIn('status', ['draft', 'submit_failed', 'pending_approval', 'in_appeal'])->orderByDesc('id')->get()
             : collect();
 
         return view('c-whatsapp::template-approval-queue', [

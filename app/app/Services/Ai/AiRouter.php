@@ -9,7 +9,9 @@ use App\Contracts\EmbeddingClient;
 use App\Enums\AiModel;
 use App\Enums\AiProvider;
 use App\Enums\PlatformHealthSignal;
+use App\Modules\X220\Actions\PromptRegisterAction;
 use App\Services\Ops\PlatformHealth;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\Log;
 use LogicException;
 
@@ -93,8 +95,8 @@ final class AiRouter
         // do it with a token ceiling of zero. Refused as a failure rather than
         // thrown, because every caller of this class is a queued job and this
         // class's contract is that it never throws.
-        if ($request->task->producesEmbedding()) {
-            Log::warning('embedding task sent to the completion path', [
+        if ($request->task->producesEmbedding() || $request->task->producesImage()) {
+            Log::warning('embedding or image task sent to the completion path', [
                 'task' => $request->task->value,
                 'model' => $model->value,
             ]);
@@ -143,13 +145,27 @@ final class AiRouter
             return AiResponse::failed($model, $refusal);
         }
 
+        $key = $request->promptKey ?? $request->task->value;
+        $effectiveText = ($request->system ?? '').$request->prompt;
+
+        // @phpstan-ignore class.notFound
+        $registered = app(PromptRegisterAction::class)->handle(
+            Tenancy::idOrFail(),
+            $key,
+            debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['class'] ?? 'unknown',
+            $effectiveText
+        );
+
+        $promptId = $registered->id;
+        $promptVersion = $registered->version;
+
         $response = $this->client($model)->complete($request);
 
         // Recorded whatever happened — answered, refused, or failed. A refusal
         // bills for what was generated before the classifier fired, and a call
         // that errors after the model has read the prompt can still bill for
         // input. See AiSpend::record().
-        $this->spend->record($request->task, $response);
+        $this->spend->record($request->task, $response, $promptId, $promptVersion);
 
         $this->watch($model, $response->failureReason);
 
@@ -216,9 +232,72 @@ final class AiRouter
             return EmbeddingResponse::failed($model, $refusal);
         }
 
+        // @phpstan-ignore class.notFound
+        $registered = app(PromptRegisterAction::class)->handle(
+            Tenancy::idOrFail(),
+            $request->task->value,
+            debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['class'] ?? 'unknown',
+            ''
+        );
+
         $response = $this->embeddingClient($model)->embed($request);
 
-        $this->spend->recordEmbedding($request->task, $response);
+        $this->spend->recordEmbedding($request->task, $response, $registered->id, $registered->version);
+
+        $this->watch($model, $response->failureReason);
+
+        return $response;
+    }
+
+    public function image(ImageRequest $request): ImageResponse
+    {
+        $model = $this->spend->modelFor($request->task);
+
+        if (! $request->task->producesImage()) {
+            Log::warning('non-image task sent to the image path', [
+                'task' => $request->task->value,
+                'model' => $model->value,
+            ]);
+
+            return ImageResponse::failed($model, 'not_an_image_task');
+        }
+
+        if (! $this->spend->hasTenant()) {
+            Log::warning('ai call outside tenant context', [
+                'task' => $request->task->value,
+                'model' => $model->value,
+            ]);
+
+            return ImageResponse::failed($model, 'no_tenant_context');
+        }
+
+        $refusal = $this->spend->refusal();
+
+        if ($refusal !== null) {
+            Log::warning('ai call refused by a ceiling', [
+                'task' => $request->task->value,
+                'model' => $model->value,
+                'refusal' => $refusal,
+                'spent_hundredths' => $this->spend->spentThisMonthHundredths(),
+                'cap_hundredths' => $this->spend->monthlyCapHundredths(),
+                'balance_hundredths' => $this->credits->balanceHundredths(),
+            ]);
+
+            return ImageResponse::failed($model, $refusal);
+        }
+
+        // @phpstan-ignore class.notFound
+        $registered = app(PromptRegisterAction::class)->handle(
+            Tenancy::idOrFail(),
+            $request->task->value,
+            debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['class'] ?? 'unknown',
+            $request->prompt
+        );
+
+        $client = new OpenAiImageClient($model);
+        $response = $client->generate($request);
+
+        $this->spend->recordImage($request->task, $response, $registered->id, $registered->version);
 
         $this->watch($model, $response->failureReason);
 

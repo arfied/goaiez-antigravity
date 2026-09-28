@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace Tests\Modules\X172;
 
 use App\Models\User;
+use App\Modules\X164\Models\Estimate;
+use App\Modules\X164\Models\EstimateLine;
 use App\Modules\X165\Actions\MembershipStartAction;
 use App\Modules\X165\Actions\PlanProposeAction;
+use App\Modules\X172\Actions\PortalLinkAction;
 use App\Modules\X172\Models\PortalLink;
 use App\Modules\X172\Ui\CustomerfacingPortal;
+use App\Modules\X199\Models\Invoice;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -332,7 +336,7 @@ class CustomerfacingPortalTest extends TestCase
 
         Livewire::test(CustomerfacingPortal::class, ['token' => $token])
             ->assertOk()
-            ->assertSee('Approve')
+            ->assertSee('Fix Sink')
             ->assertDontSee('Leave a review');
     }
 
@@ -371,5 +375,180 @@ class CustomerfacingPortalTest extends TestCase
             ->assertOk()
             ->assertSee('Your technician is en route.')
             ->assertDontSee('minutes out');
+    }
+
+    public function test_the_portal_does_not_call_a_cancelled_job_booked_and_confirmed(): void
+    {
+        $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $jobId = DB::table('work_orders')->insertGetId([
+            'business_id' => $biz->id,
+            'title' => 'Test Tech Job',
+            'status' => 'cancelled',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $token = 'valid_job_tok_'.uniqid();
+        PortalLink::create([
+            'business_id' => $biz->id,
+            'resource_type' => 'job',
+            'resource_id' => $jobId,
+            'token' => $token,
+            'expires_at' => now()->addHours(24),
+            'is_active' => true,
+        ]);
+
+        Livewire::test(CustomerfacingPortal::class, ['token' => $token])
+            ->assertOk()
+            ->assertSee('This job was cancelled.')
+            ->assertDontSee('booked and confirmed');
+    }
+
+    public function test_the_portal_says_the_job_is_on_file_when_nothing_confirms_it(): void
+    {
+        $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $jobId = DB::table('work_orders')->insertGetId([
+            'business_id' => $biz->id,
+            'title' => 'Test Tech Job',
+            'status' => 'pending',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $token = 'valid_job_tok_'.uniqid();
+        PortalLink::create([
+            'business_id' => $biz->id,
+            'resource_type' => 'job',
+            'resource_id' => $jobId,
+            'token' => $token,
+            'expires_at' => now()->addHours(24),
+            'is_active' => true,
+        ]);
+
+        Livewire::test(CustomerfacingPortal::class, ['token' => $token])
+            ->assertOk()
+            ->assertSee('Your job is on file')
+            ->assertDontSee('booked and confirmed');
+    }
+
+    public function test_the_portal_shows_no_action_it_cannot_perform(): void
+    {
+        $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $jobId = DB::table('work_orders')->insertGetId([
+            'business_id' => $biz->id,
+            'title' => 'Fix Sink',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('dispatch_assignments')->insert([
+            'business_id' => $biz->id,
+            'job_id' => $jobId,
+            'tech_id' => 1,
+            'status' => 'en_route',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('eta_predictions')->insert([
+            'business_id' => $biz->id,
+            'job_id' => $jobId,
+            'eta_minutes' => 15,
+            'estimated_arrival_at' => now()->addMinutes(15),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $token = 'valid_job_tok_'.uniqid();
+        $link = PortalLink::create([
+            'business_id' => $biz->id,
+            'resource_type' => 'job',
+            'resource_id' => $jobId,
+            'token' => $token,
+            'expires_at' => now()->addHours(24),
+            'is_active' => true,
+            'is_sample' => true,
+        ]);
+
+        Livewire::test(CustomerfacingPortal::class, ['token' => $token])
+            ->assertOk()
+            ->assertDontSee('Approve')
+            ->assertDontSee('Pay')
+            ->assertDontSee('Book a follow-up');
+    }
+
+    public function test_an_estimate_link_shows_the_estimate_not_a_preparing_line(): void
+    {
+        $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $estimate = Estimate::create([
+            'business_id' => $biz->id,
+            'estimate_number' => 'EST-4928',
+            'status' => 'sent',
+            'total_cents' => 45000,
+            'expires_at' => now()->addDays(10),
+        ]);
+
+        EstimateLine::create([
+            'business_id' => $biz->id,
+            'estimate_id' => $estimate->id,
+            'service_name' => 'Distinctive drain 4928',
+            'quantity' => 1,
+            'unit_price_cents' => 45000,
+            'subtotal_cents' => 45000,
+        ]);
+
+        $link = app(PortalLinkAction::class)->handle($biz->id, 'estimate', $estimate->id);
+
+        Livewire::test(CustomerfacingPortal::class, ['token' => $link->token])
+            ->assertOk()
+            ->assertSee('Estimate EST-4928')
+            ->assertSee('Awaiting your reply')
+            ->assertSee('Distinctive drain 4928')
+            ->assertSee('Total: $450.00')
+            ->assertDontSee('being prepared');
+    }
+
+    public function test_a_paid_invoice_link_says_paid(): void
+    {
+        $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'invoice_number' => 'INV-4929',
+            'status' => 'paid',
+            'total_cents' => 12000,
+            'paid_cents' => 12000,
+            'due_date' => now()->toDateString(),
+        ]);
+
+        $link = app(PortalLinkAction::class)->handle($biz->id, 'invoice', $invoice->id);
+
+        Livewire::test(CustomerfacingPortal::class, ['token' => $link->token])
+            ->assertOk()
+            ->assertSee('Invoice INV-4929')
+            ->assertSee('Paid')
+            ->assertSee('Total: $120.00');
+    }
+
+    public function test_a_document_link_whose_row_is_gone_says_so(): void
+    {
+        $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $link = app(PortalLinkAction::class)->handle($biz->id, 'estimate', 4930);
+
+        Livewire::test(CustomerfacingPortal::class, ['token' => $link->token])
+            ->assertOk()
+            ->assertSee('We couldn’t find this document')
+            ->assertDontSee('being prepared');
     }
 }

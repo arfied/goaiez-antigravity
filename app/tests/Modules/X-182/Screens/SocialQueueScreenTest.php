@@ -27,7 +27,7 @@ class SocialQueueScreenTest extends TestCase
             ->assertSee('Your account')
             ->assertDontSee('Internal Platform Console')
             ->assertDontSee('this screen is planned in')
-            ->assertSee('No posts queued.');
+            ->assertSee('No post has been published from here yet.');
 
         Tenancy::set((int) $biz->id);
         $account = SocialAccount::create(['business_id' => $biz->id, 'platform' => 'facebook', 'account_handle' => 'distinctive-handle-4471']);
@@ -39,7 +39,7 @@ class SocialQueueScreenTest extends TestCase
             ->assertOk()
             ->assertSee('Distinctive Post Body 4471')
             ->assertSee('1 comments')
-            ->assertDontSee('No posts queued.');
+            ->assertDontSee('No post has been published from here yet.');
 
         Livewire::actingAs($owner)->test(SocialQueue::class, ['businessId' => $biz->id])->assertOk();
     }

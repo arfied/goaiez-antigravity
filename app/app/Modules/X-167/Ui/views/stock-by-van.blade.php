@@ -5,9 +5,7 @@
         @if($error)
             <x-ui.error-panel heading="We couldn't add that item">{{ $error }}</x-ui.error-panel>
         @endif
-        @if($success)
-            <p>{{ $success }}</p>
-        @endif
+        <x-ui.toast kind="success" :message="$success" />
         <form wire:submit.prevent="addItem" class="mb-8">
             <label>Item name <input type="text" wire:model="newName" /></label>
             <label>SKU <input type="text" wire:model="newSku" /></label>

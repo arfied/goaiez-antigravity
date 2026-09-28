@@ -12,6 +12,7 @@ final class SendRequested
         public readonly string $recipientPhone,
         public readonly string $messageClass,
         public readonly string $body,
-        public readonly int $segmentsCount
+        public readonly int $segmentsCount,
+        public readonly ?string $source = null,
     ) {}
 }

@@ -6,11 +6,12 @@ namespace App\Modules\X191\Actions;
 
 use App\Modules\X191\Models\LinkPitch;
 use App\Modules\X191\Models\LinkTarget;
+use App\Services\Config\DefaultsRegistry;
 use InvalidArgumentException;
 
 final class LinkPitchAction
 {
-    private const MONTHLY_SEND_CEILING = 50;
+    public const MONTHLY_SEND_CEILING = 50;
 
     /**
      * Pitches an outreach backlink target.
@@ -19,6 +20,13 @@ final class LinkPitchAction
      * 3. A pitch template with no page-specific fact fails qualify gate (TEST ANCHOR & G11-34).
      * 4. ONE follow-up only, per the header (G8-20, G12-07, G17-06).
      */
+    private function monthlySendCeiling(): int
+    {
+        return $this->registry->int('links.pitch.monthly_send_ceiling');
+    }
+
+    public function __construct(private DefaultsRegistry $registry) {}
+
     public function sendPitch(
         int $businessId,
         int $targetId,
@@ -46,7 +54,7 @@ final class LinkPitchAction
             ->where('is_sent', true)
             ->count();
 
-        if ($monthlyCount >= self::MONTHLY_SEND_CEILING) {
+        if ($monthlyCount >= $this->monthlySendCeiling()) {
             throw new InvalidArgumentException('Pitch rejected: monthly send ceiling reached (TEST ANCHOR)');
         }
 

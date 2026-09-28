@@ -12,6 +12,7 @@ use App\Exceptions\MailNotDeliverable;
 use App\Models\Business;
 use App\Models\Subscription;
 use App\Notifications\RenewalReminder;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Mail\PlatformMailer;
 use App\Support\PlanPricing;
 use Illuminate\Support\Carbon;
@@ -104,7 +105,7 @@ use Illuminate\Support\Carbon;
  * ⚠️ **THE RETRY LADDER GIVEN UP IS REPLACED BY A BETTER ONE, AND THE CLAIM IS
  * WHAT MAKES THAT TRUE.** `DeliverPlatformMail`'s three attempts are gone; the
  * daily sweep re-runs against a window **sixteen days wide** (30 → 15), and
- * {@see Subscriptions::RENEWAL_REMINDER_CLAIM_MINUTES} lapses after an hour — so
+ * {@see app(\App\Services\Billing\Subscriptions::class)->renewalReminderClaimMinutes()} lapses after an hour — so
  * tomorrow's run reclaims the row and tries again, up to sixteen times, all
  * inside the lawful window. **The claim's deliberate lapse was written for a run
  * that died between claiming and dispatching (7100), and it is exactly the
@@ -199,6 +200,7 @@ final class RenewalReminders
     public const int CLOSES_DAYS_BEFORE = 15;
 
     public function __construct(
+        private readonly DefaultsRegistry $defaults,
         private readonly Subscriptions $subscriptions,
         private readonly PlatformMailer $mailer,
         private readonly PlanCharges $charges = new PlanCharges,
@@ -274,7 +276,7 @@ final class RenewalReminders
 
         $days = Carbon::now()->startOfDay()->diffInDays($renewsOn->copy()->startOfDay(), false);
 
-        if ($days > self::OPENS_DAYS_BEFORE || $days < self::CLOSES_DAYS_BEFORE) {
+        if ($days > $this->opensDaysBefore() || $days < $this->closesDaysBefore()) {
             return null;
         }
 
@@ -420,5 +422,15 @@ final class RenewalReminders
         }
 
         return $subscription->annual_term_ends_on;
+    }
+
+    public function opensDaysBefore(): int
+    {
+        return $this->defaults->int('billing.renewal.opens_days_before');
+    }
+
+    public function closesDaysBefore(): int
+    {
+        return $this->defaults->int('billing.renewal.closes_days_before');
     }
 }

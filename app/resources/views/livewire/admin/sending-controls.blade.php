@@ -615,7 +615,7 @@
 
             <p class="mt-1 text-base text-ink-2">
                 Text messages only, over the last
-                {{ \App\Services\Messaging\SendingHealth::WINDOW_HOURS }} hours.
+                {{ $this->windowHours() }} hours.
                 Email is counted separately and is in the next panel down.
             </p>
 
@@ -758,7 +758,7 @@
 
             <p class="mt-1 text-base text-ink-2">
                 Email only, over the last
-                {{ \App\Services\Messaging\SendingHealth::WINDOW_HOURS }} hours.
+                {{ $this->windowHours() }} hours.
                 Text messages are counted separately, in the panel above.
             </p>
 
