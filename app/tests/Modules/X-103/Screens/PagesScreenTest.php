@@ -1103,7 +1103,7 @@ class PagesScreenTest extends TestCase
         $this->assertArrayNotHasKey('pending_edit', $page->draft_meta ?? []);
         $this->assertFalse((bool) $page->is_published);
 
-        $this->actingAs($owner)->get(route('x-103.pages'))->assertSee('Distinctive new headline 4471');
+        $this->actingAs($owner)->get(route('x-103.pages').'?edit='.$page->id)->assertSee('Distinctive new headline 4471');
     }
 
     public function test_discard_edit_drops_the_proposal(): void
@@ -1279,7 +1279,7 @@ class PagesScreenTest extends TestCase
             ->set('editRequest.'.$page->id, 'make the headline stronger')
             ->call('askEdit', $page->id);
 
-        $this->actingAs($owner)->get(route('x-103.pages'))
+        $this->actingAs($owner)->get(route('x-103.pages').'?edit='.$page->id)
             ->assertSee('Old headline')
             ->assertSee('Distinctive new headline 4471')
             ->assertSee('Not quite?');
@@ -1440,10 +1440,9 @@ class PagesScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-103.pages'))
+        $this->get(route('x-103.pages').'?edit='.$page->id)
             ->assertOk()
-            ->assertSee('Questions customers asked (0)')
-            ->assertSee('Nothing waiting');
+            ->assertDontSee('Customer questions');
 
         Tenancy::setUser($owner->id);
         $session = ChatSession::create([
@@ -1461,12 +1460,12 @@ class PagesScreenTest extends TestCase
         ]);
         Tenancy::forget();
 
-        $this->get(route('x-103.pages'))
+        $this->get(route('x-103.pages').'?edit='.$page->id)
             ->assertOk()
-            ->assertSee('Questions customers asked (1)')
+            ->assertSee('Customer questions')
             ->assertSee('&lt;b&gt;Distinctive 4521&lt;/b&gt;?', false)
             ->assertDontSee('<b>Distinctive 4521</b>', false)
-            ->assertSee('from your site chat');
+            ->assertSee('From site chat');
     }
 
     public function test_customer_question_panel_draft_answer(): void
@@ -1614,14 +1613,14 @@ class PagesScreenTest extends TestCase
 
         app(SitePublishAction::class)->handle($biz->id, $page->id, []);
 
-        $this->get(route('x-103.pages'))
+        $this->get(route('x-103.pages').'?edit='.$page->id)
             ->assertOk()
             ->assertDontSee('Publish changes')
             ->assertSee('Unpublish');
 
         $page->update(['draft_blocks' => [['type' => 'hero', 'headline' => 'Distinctive changed headline 4945']]]);
 
-        $this->get(route('x-103.pages'))
+        $this->get(route('x-103.pages').'?edit='.$page->id)
             ->assertOk()
             ->assertSee('Publish changes')
             ->assertSee('Unpublish');

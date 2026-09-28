@@ -275,7 +275,7 @@ class SiteBuildScreenTest extends TestCase
         $this->assertSame('Old headline', $page->draft_blocks[0]['headline']);
         $this->assertSame('Distinctive proposed headline 4472', $page->draft_meta['pending_edit']['blocks'][0]['headline']);
 
-        $this->actingAs($owner)->get(route('x-103.pages'))->assertSee('Distinctive proposed headline 4472');
+        $this->actingAs($owner)->get(route('x-103.pages').'?edit='.$page->id)->assertSee('Distinctive proposed headline 4472');
     }
 
     public function test_ask_the_ai_with_no_page_says_so_and_a_manager_cannot_ask(): void
