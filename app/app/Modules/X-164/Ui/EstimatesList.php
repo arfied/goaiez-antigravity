@@ -6,12 +6,12 @@ namespace App\Modules\X164\Ui;
 
 use App\Modules\X164\Actions\EstimateAcceptAction;
 use App\Modules\X164\Actions\EstimateDraftAction;
+use App\Modules\X164\Actions\EstimateEmailAction;
 use App\Modules\X164\Actions\EstimateRefreshAction;
 use App\Modules\X164\Models\Estimate;
 use App\Modules\X164\Models\EstimateLine;
 use App\Modules\X172\Actions\PortalLinkAction;
 use App\Services\Config\DefaultsRegistry;
-use App\Services\Messaging\EstimateEmailSender;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -86,7 +86,7 @@ class EstimatesList extends Component
         $this->error = null;
         $this->success = null;
 
-        $out = app(EstimateEmailSender::class)->send($estimateId);
+        $out = app(EstimateEmailAction::class)->handle($estimateId);
 
         if ($out['sent']) {
             $this->success = $out['message'];

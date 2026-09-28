@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X164\Screens;
 
+use App\Enums\CreditKind;
+use App\Enums\CreditProduct;
 use App\Enums\UserRole;
+use App\Jobs\DeliverPlatformMail;
 use App\Models\Customer;
 use App\Models\User;
 use App\Modules\X121\Models\Person;
@@ -13,10 +16,10 @@ use App\Modules\X164\Models\Estimate;
 use App\Modules\X164\Models\EstimateLine;
 use App\Modules\X164\Models\EstimateVersion;
 use App\Modules\X164\Ui\EstimatesList;
-use App\Notifications\EstimateEmail;
+use App\Services\Billing\CreditLedger;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Bus;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -36,9 +39,9 @@ class EstimatesListScreenTest extends TestCase
             ->assertDontSee('this screen is planned in');
 
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -65,9 +68,9 @@ class EstimatesListScreenTest extends TestCase
 
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -101,9 +104,9 @@ class EstimatesListScreenTest extends TestCase
         $this->actingAs($owner);
 
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -135,9 +138,9 @@ class EstimatesListScreenTest extends TestCase
 
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -163,9 +166,9 @@ class EstimatesListScreenTest extends TestCase
 
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -191,9 +194,9 @@ class EstimatesListScreenTest extends TestCase
 
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -226,9 +229,9 @@ class EstimatesListScreenTest extends TestCase
 
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -294,9 +297,9 @@ class EstimatesListScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -337,9 +340,9 @@ class EstimatesListScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -363,9 +366,9 @@ class EstimatesListScreenTest extends TestCase
             ->assertSee('acceptEstimate(');
 
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -389,9 +392,9 @@ class EstimatesListScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -420,9 +423,9 @@ class EstimatesListScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -457,9 +460,9 @@ class EstimatesListScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -520,9 +523,9 @@ class EstimatesListScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -564,9 +567,9 @@ class EstimatesListScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -601,9 +604,9 @@ class EstimatesListScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -628,9 +631,9 @@ class EstimatesListScreenTest extends TestCase
             ->assertSee('refreshEstimate(');
 
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -656,9 +659,9 @@ class EstimatesListScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -726,9 +729,9 @@ class EstimatesListScreenTest extends TestCase
         $this->actingAs($owner);
 
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -762,17 +765,16 @@ class EstimatesListScreenTest extends TestCase
 
     public function test_sixty81_success(): void
     {
-        \Illuminate\Support\Facades\Bus::fake();
+        Bus::fake();
         customerMailIsPermitted();
-
 
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -795,22 +797,21 @@ class EstimatesListScreenTest extends TestCase
 
         $this->assertDatabaseHas('estimates', ['id' => $estimate->id, 'status' => 'sent']);
         $this->assertDatabaseHas('outreach_messages', ['customer_id' => $customer->id, 'channel' => 'email']);
-        \Illuminate\Support\Facades\Bus::assertDispatched(\App\Jobs\DeliverPlatformMail::class);
+        Bus::assertDispatched(DeliverPlatformMail::class);
     }
 
     public function test_sixty81_no_customer_row(): void
     {
-        \Illuminate\Support\Facades\Bus::fake();
+        Bus::fake();
         customerMailIsPermitted();
-
 
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -830,22 +831,21 @@ class EstimatesListScreenTest extends TestCase
             ->assertSet('error', 'Not sent — nobody with that email is in your customer list. Add them as a customer first.');
 
         $this->assertDatabaseHas('estimates', ['id' => $estimate->id, 'status' => 'draft']);
-        \Illuminate\Support\Facades\Bus::assertNotDispatched(\App\Jobs\DeliverPlatformMail::class);
+        Bus::assertNotDispatched(DeliverPlatformMail::class);
     }
 
     public function test_sixty81_no_consent(): void
     {
-        \Illuminate\Support\Facades\Bus::fake();
+        Bus::fake();
         customerMailIsPermitted();
-
 
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -867,7 +867,7 @@ class EstimatesListScreenTest extends TestCase
         $this->assertStringContainsString('not allowed right now', $component->get('error'));
 
         $this->assertDatabaseHas('estimates', ['id' => $estimate->id, 'status' => 'draft']);
-        \Illuminate\Support\Facades\Bus::assertNotDispatched(\App\Jobs\DeliverPlatformMail::class);
+        Bus::assertNotDispatched(DeliverPlatformMail::class);
     }
 
     public function test_sixty81_staff_forbidden(): void
@@ -876,9 +876,9 @@ class EstimatesListScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',
@@ -893,17 +893,16 @@ class EstimatesListScreenTest extends TestCase
 
     public function test_sixty81_second_send_duplicate(): void
     {
-        \Illuminate\Support\Facades\Bus::fake();
+        Bus::fake();
         customerMailIsPermitted();
-
 
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set((int) $biz->id);
-        app(\App\Services\Billing\CreditLedger::class)->record(
-            \App\Enums\CreditProduct::Email,
-            \App\Enums\CreditKind::Purchase,
+        app(CreditLedger::class)->record(
+            CreditProduct::Email,
+            CreditKind::Purchase,
             100,
             'system',
             'test',

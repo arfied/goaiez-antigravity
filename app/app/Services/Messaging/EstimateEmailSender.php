@@ -16,7 +16,7 @@ use App\Modules\X164\Actions\EstimateSendAction;
 use App\Modules\X164\Models\Estimate;
 use App\Notifications\EstimateEmail;
 use App\Services\Billing\EmailCredits;
-use App\Services\Consent\ConsentService;
+use App\Services\Consent\SendPermit;
 use App\Services\Mail\PlatformMailer;
 use App\Services\Messaging\Outbound\SendKey;
 use App\Support\Identifier;
@@ -30,41 +30,48 @@ final class EstimateEmailSender
     public function __construct(
         private readonly SendingGuard $guard,
         private readonly PlatformMailer $mailer,
-        private readonly ConsentService $consent,
         private readonly EmailCredits $emailCredits,
     ) {}
 
-    public function send(int $estimateId): array
+    /**
+     * @return array{customer: ?Customer, refusal: ?string}
+     */
+    public function recipientFor(int $estimateId): array
     {
         $businessId = Tenancy::idOrFail();
 
         $estimateData = app(EstimateReadAction::class)->forPortal($businessId, $estimateId);
         if ($estimateData === null) {
-            return ['sent' => false, 'message' => 'That estimate is not here any more.'];
+            return ['customer' => null, 'refusal' => 'That estimate is not here any more.'];
         }
 
         $estimate = Estimate::where('business_id', $businessId)->find($estimateId);
         if ($estimate === null || $estimate->customer_id === null) {
-            return ['sent' => false, 'message' => 'Not sent — this estimate has no customer email.'];
+            return ['customer' => null, 'refusal' => 'Not sent — this estimate has no customer email.'];
         }
 
         // The person's email is read through EntityReadAction
         $person = app(EntityReadAction::class)->handle('people', $estimate->customer_id, $businessId);
 
         if ($person === null || empty($person['email'])) {
-            return ['sent' => false, 'message' => 'Not sent — this estimate has no customer email.'];
+            return ['customer' => null, 'refusal' => 'Not sent — this estimate has no customer email.'];
         }
 
         $normalised = Identifier::normalise($person['email'], OutreachChannel::Email);
         if ($normalised === null) {
-            return ['sent' => false, 'message' => 'Not sent — this estimate has no customer email.'];
+            return ['customer' => null, 'refusal' => 'Not sent — this estimate has no customer email.'];
         }
 
         $customer = Customer::query()->where('email', $normalised)->first();
         if ($customer === null) {
-            return ['sent' => false, 'message' => 'Not sent — nobody with that email is in your customer list. Add them as a customer first.'];
+            return ['customer' => null, 'refusal' => 'Not sent — nobody with that email is in your customer list. Add them as a customer first.'];
         }
 
+        return ['customer' => $customer, 'refusal' => null];
+    }
+
+    public function deliver(int $estimateId, Customer $customer, SendPermit $permit): array
+    {
         $containment = $this->guard->refusalFor(OutreachChannel::Email);
         if ($containment !== null) {
             return ['sent' => false, 'message' => 'Not sent — email to this customer is not allowed right now: '.$containment->ownerSentence(OutreachChannel::Email).'.'];
@@ -75,17 +82,11 @@ final class EstimateEmailSender
             return ['sent' => false, 'message' => 'Not sent — email to this customer is not allowed right now: '.$mailRefusal->getMessage()];
         }
 
-        $decision = $this->consent->decide(
-            $customer,
-            OutreachChannel::Email,
-            OutreachPurpose::Transactional,
-        );
+        $businessId = Tenancy::idOrFail();
+        $estimateData = app(EstimateReadAction::class)->forPortal($businessId, $estimateId);
+        $estimate = Estimate::where('business_id', $businessId)->find($estimateId);
+        $person = app(EntityReadAction::class)->handle('people', $estimate->customer_id, $businessId);
 
-        if (! $decision->isGranted()) {
-            return ['sent' => false, 'message' => 'Not sent — email to this customer is not allowed right now: '.$decision->reason->ownerSentence(OutreachChannel::Email).'.'];
-        }
-
-        $permit = $decision->permit;
         $key = SendKey::for($permit, 'estimate:'.$estimate->id);
 
         try {
