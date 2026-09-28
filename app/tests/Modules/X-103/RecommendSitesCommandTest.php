@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103;
 
-use App\Enums\AiModel;
 use App\Models\Location;
-use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Modules\X103\Models\Page;
 use App\Support\Tenancy;
@@ -18,7 +16,6 @@ class RecommendSitesCommandTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
     }
 
     use RefreshesTenantDatabase;
@@ -28,8 +25,6 @@ class RecommendSitesCommandTest extends TestCase
         $owner = User::factory()->create();
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $location = Location::factory()->create(['business_id' => $biz->id]);
 
@@ -48,8 +43,6 @@ class RecommendSitesCommandTest extends TestCase
         $this->artisan('x103:recommend-sites')->assertSuccessful();
 
         Tenancy::set($biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $this->assertDatabaseHas('site_recommendations', ['business_id' => $biz->id, 'code' => 'hours_missing']);
     }
 }

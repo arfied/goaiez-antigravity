@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103\Screens;
 
-use App\Enums\AiModel;
 use App\Enums\UserRole;
 use App\Models\PlatformSetting;
 use App\Models\User;
@@ -24,7 +23,6 @@ class PageEditorTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Page Editor Tenant', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -49,7 +47,6 @@ class PageEditorTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Page Editor Tenant', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -89,7 +86,6 @@ class PageEditorTest extends TestCase
         $biz1 = TestCase::provisionTenant(['name' => 'Biz 1', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         $biz2 = TestCase::provisionTenant(['name' => 'Biz 2', 'currency' => 'USD']);
         Tenancy::set($biz2->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz2->id,
@@ -99,7 +95,6 @@ class PageEditorTest extends TestCase
         ]);
 
         Tenancy::set($biz1->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $this->actingAs($owner)->get(route('x-103.pages').'?edit='.$page->id)
             ->assertNotFound();
@@ -111,7 +106,6 @@ class PageEditorTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Undo Tenant', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $draftA = [['type' => 'hero', 'headline' => 'Draft A']];
         $draftB = [['type' => 'hero', 'headline' => 'Draft B']];
@@ -170,7 +164,6 @@ class PageEditorTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Undo Cap Tenant', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -205,7 +198,6 @@ class PageEditorTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Facts Tenant', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -264,7 +256,6 @@ class PageEditorTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Make Page Editor', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         Http::fake([
             'api.openai.com/*' => Http::response([

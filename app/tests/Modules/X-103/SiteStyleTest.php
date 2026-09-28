@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103;
 
-use App\Enums\AiModel;
 use App\Enums\UserRole;
 use App\Models\Business;
 use App\Models\PlatformSetting;
@@ -74,7 +73,6 @@ class SiteStyleTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -122,7 +120,6 @@ class SiteStyleTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -181,7 +178,6 @@ class SiteStyleTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,

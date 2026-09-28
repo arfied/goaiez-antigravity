@@ -2,8 +2,6 @@
 
 namespace Tests\Modules\X103;
 
-use App\Enums\AiModel;
-use App\Models\PlatformSetting;
 use App\Modules\X103\Domain\SiteBlockRenderer;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
@@ -21,7 +19,6 @@ class SiteBlockRendererTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
     }
 
     public function test_renders_fields_escaped(): void
@@ -146,8 +143,6 @@ class SiteBlockRendererTest extends TestCase
 
         $b = self::provisionTenant(['name' => 'Block Tenant']);
         Tenancy::set((int) $b->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $z = EdgeZone::create(['business_id' => $b->id, 'domain_name' => 'block.com', 'has_valid_ssl' => true, 'zone_id' => 'z_456']);
         $p = Page::create(['business_id' => $b->id, 'title' => 'Block Page', 'slug' => 'block']);

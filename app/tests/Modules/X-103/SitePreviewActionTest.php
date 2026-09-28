@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103;
 
-use App\Enums\AiModel;
 use App\Enums\IndustryFamily;
 use App\Models\IndustryStartingPoint;
-use App\Models\PlatformSetting;
 use App\Modules\X103\Actions\SitePreviewAction;
 use App\Modules\X103\Models\Page;
 use Tests\Concerns\RefreshesTenantDatabase;
@@ -18,7 +16,6 @@ class SitePreviewActionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
     }
 
     use RefreshesTenantDatabase;

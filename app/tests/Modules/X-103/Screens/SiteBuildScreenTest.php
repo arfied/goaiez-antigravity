@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103\Screens;
 
-use App\Enums\AiModel;
 use App\Enums\IndustryFamily;
 use App\Enums\UserRole;
 use App\Models\Competitor;
@@ -65,7 +64,6 @@ class SiteBuildScreenTest extends TestCase
         $user = User::factory()->create(['role' => UserRole::Owner]);
         $business = $this->provisionTenant(['owner_user_id' => $user->id, 'name' => 'Acme Corp']);
         Tenancy::set($business->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $location = Location::where('business_id', $business->id)->first();
         if (! $location) {
             $location = Location::factory()->create(['business_id' => $business->id]);
@@ -86,7 +84,6 @@ class SiteBuildScreenTest extends TestCase
         ]);
 
         Tenancy::set($business->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $user->refresh();
         $test = Livewire::actingAs($user)
             ->test(SiteBuild::class)
@@ -116,7 +113,6 @@ class SiteBuildScreenTest extends TestCase
 
         // re-run inside recrawl window reuses inventory
         Tenancy::set($business->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $user->refresh();
         Livewire::actingAs($user)
             ->test(SiteBuild::class)
@@ -130,7 +126,6 @@ class SiteBuildScreenTest extends TestCase
 
         // useDomain creates zone
         Tenancy::set($business->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $user->refresh();
         Livewire::actingAs($user)
             ->test(SiteBuild::class)
@@ -156,7 +151,6 @@ class SiteBuildScreenTest extends TestCase
         $user = User::factory()->create(['role' => UserRole::Owner]);
         $business = $this->provisionTenant(['owner_user_id' => $user->id]);
         Tenancy::set($business->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $loc = Location::where('business_id', $business->id)->first();
         if (! $loc) {
             $loc = Location::factory()->create(['business_id' => $business->id]);
@@ -166,7 +160,6 @@ class SiteBuildScreenTest extends TestCase
         $loc->save();
 
         Tenancy::set($business->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $user->refresh();
         Livewire::actingAs($user)
             ->test(SiteBuild::class)
@@ -193,7 +186,6 @@ class SiteBuildScreenTest extends TestCase
         $user = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $user->id, 'name' => 'Tenant', 'currency' => 'USD']);
         Tenancy::set($biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         CustomDomainRequest::create(['business_id' => $biz->id, 'domain' => 'acme.com', 'status' => 'requested']);
 
@@ -218,7 +210,6 @@ class SiteBuildScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set($biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $rec = SiteRecommendation::create([
             'business_id' => $biz->id,
@@ -248,7 +239,6 @@ class SiteBuildScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         Http::fake([
             'api.openai.com/*' => Http::response(
@@ -294,7 +284,6 @@ class SiteBuildScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $rec = SiteRecommendation::create([
             'business_id' => $biz->id,
@@ -353,7 +342,6 @@ class SiteBuildScreenTest extends TestCase
         ]);
 
         Tenancy::set((int) $biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $this->actingAs($owner);
         $response = $this->get(route('x-103.site-build'));
@@ -367,7 +355,6 @@ class SiteBuildScreenTest extends TestCase
         $owner2 = User::factory()->create(['role' => UserRole::Owner]);
         $biz2 = TestCase::provisionTenant(['owner_user_id' => $owner2->id]);
         Tenancy::set((int) $biz2->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $this->actingAs($owner2);
         $response2 = $this->get(route('x-103.site-build'));
         $response2->assertSee('No nearby site has been read yet');
@@ -379,7 +366,6 @@ class SiteBuildScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id, 'name' => 'Edge Tenant', 'currency' => 'USD']);
         Tenancy::set($biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         Http::fake([
             'api.openai.com/*' => Http::response(
@@ -494,7 +480,6 @@ class SiteBuildScreenTest extends TestCase
         $biz = self::provisionTenant(['owner_user_id' => $owner->id]);
         Tenancy::setUser($owner->id);
         Tenancy::set((int) $biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $this->actingAs($owner)->get(route('x-103.site-build'))
             ->assertOk()
@@ -518,7 +503,6 @@ class SiteBuildScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
         Tenancy::set($biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         IndustryStartingPoint::updateOrCreate(['family' => IndustryFamily::Trades->value], [
 
@@ -593,7 +577,6 @@ class SiteBuildScreenTest extends TestCase
         $user = User::factory()->create(['role' => UserRole::Owner]);
         $business = $this->provisionTenant(['owner_user_id' => $user->id, 'name' => 'Acme Corp']);
         Tenancy::set($business->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $location = Location::where('business_id', $business->id)->first();
         if (! $location) {
             $location = Location::factory()->create(['business_id' => $business->id]);
@@ -623,7 +606,6 @@ class SiteBuildScreenTest extends TestCase
         ]);
 
         Tenancy::set($business->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $user->refresh();
         Livewire::actingAs($user)
             ->test(SiteBuild::class)
@@ -639,7 +621,6 @@ class SiteBuildScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
-        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         Livewire::actingAs($owner)
             ->test(SiteBuild::class)
