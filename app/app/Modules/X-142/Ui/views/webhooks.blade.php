@@ -43,7 +43,7 @@
         <form wire:submit="submit" class="flex flex-col gap-2">
             <input type="text" wire:model="url" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="URL">
             <input type="text" wire:model="events" class="border rounded p-2 text-ink flex-1 bg-surface" placeholder="Events (comma-separated)">
-            <p class="text-sm text-subtle">Events you can choose: contact.created, message.received, lead.assigned, estimate.sent, estimate.accepted</p>
+            <p class="text-sm text-subtle">Events you can choose: contact.created, message.received, lead.assigned, estimate.sent, estimate.accepted, review.received</p>
             <button type="submit" class="bg-surface text-ink border rounded p-2">Submit</button>
         </form>
         <x-ui.toast kind="success" :message="$success" />

@@ -6,6 +6,7 @@ namespace Tests\Modules\X142;
 
 use App\Enums\UserRole;
 use App\Models\Business;
+use App\Models\Location;
 use App\Models\User;
 use App\Modules\X01\Events\ContactCreated;
 use App\Modules\X01\Events\ConversationUpdated;
@@ -19,7 +20,12 @@ use App\Modules\X142\Ui\WebhooksView;
 use App\Modules\X164\Events\EstimateAccepted;
 use App\Modules\X164\Events\EstimateSent;
 use App\Services\Fetch\PublicAddressGuard;
+use App\Services\Gbp\GbpReview;
+use App\Services\Gbp\GoogleReviewIngest;
+use App\Services\Reviews\FacebookReviewIngest;
 use App\Services\Webhooks\TenantWebhookClient;
+use App\Services\Zernio\FacebookReview;
+use App\Services\Zernio\FacebookReviewPage;
 use App\Support\Tenancy;
 use Illuminate\Contracts\Queue\Job;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -270,7 +276,7 @@ class WebhookDeliveryTest extends TestCase
 
         $thrown = false;
         try {
-            Tenancy::actingAs($biz->id, fn () => $action->subscribe($biz->id, 'https://hooks.example-8381.test/in', 'review.received'));
+            Tenancy::actingAs($biz->id, fn () => $action->subscribe($biz->id, 'https://hooks.example-8381.test/in', 'review.new'));
         } catch (\InvalidArgumentException $e) {
             $thrown = true;
             $this->assertStringContainsString('Choose events from:', $e->getMessage());
@@ -302,9 +308,6 @@ class WebhookDeliveryTest extends TestCase
             ->set('url', 'https://hooks.example-8381.test/in')
             ->set('events', 'contact.created')
             ->call('submit');
-
-        echo 'ERROR IS: '.$component->get('error').'
-';
 
         $sub = WebhookSubscription::first();
         $component->assertSet('newSecret', $sub->secret)
@@ -380,5 +383,159 @@ class WebhookDeliveryTest extends TestCase
         $delivery->refresh();
         $this->assertEquals(255, mb_strlen((string) $delivery->last_error));
         $this->assertEquals(str_repeat('A', 255), $delivery->last_error);
+    }
+
+    public function test_google_review_triggers_webhook(): void
+    {
+        Queue::fake();
+
+        $biz = Business::factory()->create();
+        $location = Location::factory()->create(['business_id' => $biz->id]);
+
+        $action = new WebhookSubscribeAction;
+        Tenancy::actingAs($biz->id, fn () => $action->subscribe($biz->id, 'https://hooks.example-8381.test/in', 'review.received'));
+
+        $ingest = app(GoogleReviewIngest::class);
+
+        $review = new GbpReview(
+            externalId: 'ext_1',
+            rating: 5,
+            comment: 'Great',
+            authorName: 'Alice',
+            createdAt: now(),
+            updatedAt: now(),
+            hasOwnerReply: false,
+            ownerReplyReported: false
+        );
+
+        Tenancy::actingAs($biz->id, fn () => $ingest->upsertOne($location, $review));
+
+        $deliveries = Tenancy::actingAs($biz->id, fn () => WebhookDelivery::all());
+        $this->assertCount(1, $deliveries);
+
+        $delivery = $deliveries->first();
+        $this->assertEquals('review.received', $delivery->event);
+        $this->assertEquals('google', $delivery->payload['platform']);
+        $this->assertEquals(5, $delivery->payload['rating']);
+        $this->assertEquals($location->id, $delivery->payload['location_id']);
+        $this->assertArrayHasKey('review_id', $delivery->payload);
+        $this->assertArrayNotHasKey('comment', $delivery->payload);
+        $this->assertArrayNotHasKey('text', $delivery->payload);
+        $this->assertArrayNotHasKey('reviewer_name', $delivery->payload);
+        $this->assertArrayNotHasKey('authorName', $delivery->payload);
+    }
+
+    public function test_google_review_update_triggers_no_webhook(): void
+    {
+        Queue::fake();
+
+        $biz = Business::factory()->create();
+        $location = Location::factory()->create(['business_id' => $biz->id]);
+
+        $action = new WebhookSubscribeAction;
+        Tenancy::actingAs($biz->id, fn () => $action->subscribe($biz->id, 'https://hooks.example-8381.test/in', 'review.received'));
+
+        $ingest = app(GoogleReviewIngest::class);
+
+        $review = new GbpReview(
+            externalId: 'ext_1',
+            rating: 5,
+            comment: 'Great',
+            authorName: 'Alice',
+            createdAt: now(),
+            updatedAt: now(),
+            hasOwnerReply: false,
+            ownerReplyReported: false
+        );
+
+        Tenancy::actingAs($biz->id, fn () => $ingest->upsertOne($location, $review));
+        Tenancy::actingAs($biz->id, fn () => $ingest->upsertOne($location, $review));
+
+        $deliveries = Tenancy::actingAs($biz->id, fn () => WebhookDelivery::all());
+        $this->assertCount(1, $deliveries);
+    }
+
+    public function test_facebook_review_triggers_webhook(): void
+    {
+        Queue::fake();
+
+        $biz = Business::factory()->create();
+        $location = Location::factory()->create(['business_id' => $biz->id]);
+
+        $action = new WebhookSubscribeAction;
+        Tenancy::actingAs($biz->id, fn () => $action->subscribe($biz->id, 'https://hooks.example-8381.test/in', 'review.received'));
+
+        $review = new FacebookReview(
+            externalId: 'fbr_5601',
+            rating: 5,
+            comment: 'Good',
+            authorName: 'Bob',
+            createdAt: now(),
+            updatedAt: now(),
+            hasOwnerReply: false,
+            ownerReplyReported: false,
+            recommendation: 'positive'
+        );
+        $page = new FacebookReviewPage([$review], null);
+
+        $ingest = app(FacebookReviewIngest::class);
+        Tenancy::actingAs($biz->id, fn () => $ingest->upsertPage($location, $page));
+
+        $deliveries = Tenancy::actingAs($biz->id, fn () => WebhookDelivery::all());
+        $this->assertCount(1, $deliveries);
+
+        $delivery = $deliveries->first();
+        $this->assertEquals('review.received', $delivery->event);
+        $this->assertEquals('facebook', $delivery->payload['platform']);
+        $this->assertEquals(5, $delivery->payload['rating']);
+        $this->assertEquals($location->id, $delivery->payload['location_id']);
+        $this->assertArrayHasKey('review_id', $delivery->payload);
+        $this->assertArrayNotHasKey('comment', $delivery->payload);
+    }
+
+    public function test_webhook_subscribe_action_accepts_review_received_and_refuses_new(): void
+    {
+        $biz = Business::factory()->create();
+        $action = new WebhookSubscribeAction;
+
+        $sub = Tenancy::actingAs($biz->id, fn () => $action->subscribe($biz->id, 'https://hooks.example-8381.test/in', 'review.received'));
+        $this->assertNotNull($sub);
+
+        $thrown = false;
+        try {
+            Tenancy::actingAs($biz->id, fn () => $action->subscribe($biz->id, 'https://hooks.example-8381.test/in', 'review.new'));
+        } catch (\InvalidArgumentException $e) {
+            $thrown = true;
+        }
+        $this->assertTrue($thrown);
+    }
+
+    public function test_no_webhook_for_new_review_if_not_subscribed(): void
+    {
+        Queue::fake();
+
+        $biz = Business::factory()->create();
+        $location = Location::factory()->create(['business_id' => $biz->id]);
+
+        $action = new WebhookSubscribeAction;
+        Tenancy::actingAs($biz->id, fn () => $action->subscribe($biz->id, 'https://hooks.example-8381.test/in', 'contact.created'));
+
+        $ingest = app(GoogleReviewIngest::class);
+
+        $review = new GbpReview(
+            externalId: 'ext_1',
+            rating: 5,
+            comment: 'Great',
+            authorName: 'Alice',
+            createdAt: now(),
+            updatedAt: now(),
+            hasOwnerReply: false,
+            ownerReplyReported: false
+        );
+
+        Tenancy::actingAs($biz->id, fn () => $ingest->upsertOne($location, $review));
+
+        $deliveries = Tenancy::actingAs($biz->id, fn () => WebhookDelivery::all());
+        $this->assertCount(0, $deliveries);
     }
 }

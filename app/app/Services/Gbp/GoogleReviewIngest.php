@@ -7,6 +7,7 @@ namespace App\Services\Gbp;
 use App\Enums\AutopilotActionType;
 use App\Enums\ReviewSource;
 use App\Enums\ReviewStatus;
+use App\Events\ReviewIngested;
 use App\Jobs\Reviews\GenerateReplyJob;
 use App\Models\AutopilotSettings;
 use App\Models\Location;
@@ -134,8 +135,9 @@ final class GoogleReviewIngest
          * inserted has never had a reply of ours.
          */
         $reconcile = null;
+        $insertedRowId = null;
 
-        $outcome = DB::transaction(function () use ($location, $review, &$draftReplyFor, &$reconcile): string {
+        $outcome = DB::transaction(function () use ($location, $review, &$draftReplyFor, &$reconcile, &$insertedRowId): string {
             $existing = Review::query()
                 ->where('location_id', $location->id)
                 ->where('google_review_id', $review->externalId)
@@ -183,6 +185,8 @@ final class GoogleReviewIngest
                         $draftReplyFor = (int) $row->id;
                     }
                 }
+
+                $insertedRowId = (int) $row->id;
 
                 return 'inserted';
             }
@@ -240,6 +244,16 @@ final class GoogleReviewIngest
                     'new_review',
                     '/account'
                 );
+            }
+
+            if ($insertedRowId !== null) {
+                event(new ReviewIngested(
+                    businessId: (int) $location->business_id,
+                    reviewId: $insertedRowId,
+                    platform: 'google',
+                    rating: $review->rating,
+                    locationId: (int) $location->id,
+                ));
             }
         }
 
