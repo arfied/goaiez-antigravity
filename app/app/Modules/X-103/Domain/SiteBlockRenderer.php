@@ -78,6 +78,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .site-block.services li, .site-block.team li { display: grid; gap: 0.35rem; padding: 1.25rem; border-radius: 12px; background: var(--color-card); }
 .site-block.services li span { color: var(--color-accent); font-weight: 600; }
 .site-block.services li p { margin: 0; opacity: 0.85; }
+.faq-item { padding: 1rem 0; border-top: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent); }
+.faq-item h3 { margin: 0 0 0.35rem; }
 .site-block.gallery { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
 .site-block.gallery h2 { grid-column: 1 / -1; }
 .site-block.gallery > img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; }
@@ -94,6 +96,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 </style>
 ';
 
+        $renderedCount = 0;
         foreach ($contentBlocks as $block) {
             $type = $block['type'] ?? '';
             if (! in_array($type, [
@@ -108,10 +111,19 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
                 continue;
             }
 
+            $band = '';
+            if ($type !== 'hero') {
+                $renderedCount++;
+                if ($renderedCount % 2 === 0) {
+                    $band = 'site-block--band';
+                }
+            }
+
             try {
                 $html .= View::make("x-103::site.blocks.{$type}", [
                     'block' => $block,
                     'context' => $context,
+                    'band' => $band,
                 ])->render();
             } catch (\Throwable $e) {
                 // The page still deploys without this block (owner's call whether it

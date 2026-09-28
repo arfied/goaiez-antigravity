@@ -1,4 +1,4 @@
-<div class="site-block hero">
+<div class="site-block hero {{ $band ?? '' }}">
     <div class="site-block__inner">
         <div class="hero__grid">
             <div class="stack">

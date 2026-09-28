@@ -76,7 +76,6 @@ class BlockMarkupTest extends TestCase
         $this->assertStringContainsString('DISTINCT_ABOUT_HEADING', $html);
         $this->assertStringContainsString('DISTINCT_ABOUT_TEXT', $html);
 
-        $this->assertStringContainsString('site-block--band', $html);
         $this->assertStringContainsString('site-block__inner', $html);
     }
 
@@ -148,7 +147,6 @@ class BlockMarkupTest extends TestCase
         $this->assertStringContainsString('DISTINCT_TEAM_NAME', $html);
         $this->assertStringContainsString('DISTINCT_TEAM_ROLE', $html);
 
-        $this->assertStringContainsString('site-block--band', $html);
         $this->assertStringContainsString('site-block__inner', $html);
         $this->assertStringContainsString('card', $html);
     }
@@ -232,7 +230,6 @@ class BlockMarkupTest extends TestCase
         $this->assertStringContainsString('DISTINCT_AUTHOR', $html);
         $this->assertStringContainsString('DISTINCT_SOURCE', $html);
 
-        $this->assertStringContainsString('site-block--band', $html);
         $this->assertStringContainsString('site-block__inner', $html);
         $this->assertStringContainsString('card', $html);
     }
@@ -291,5 +288,49 @@ class BlockMarkupTest extends TestCase
 
         $this->assertStringNotContainsString('DISTINCT_BOOKING_URL_NO_LABEL', $html);
         $this->assertStringNotContainsString('class="actions"', $html);
+    }
+
+    public function test_faq_items()
+    {
+        $tokens = app(IndustryStartingPoints::class)->for(null);
+        $block = [
+            'type' => 'faq',
+            'items' => [
+                ['question' => 'Q1', 'answer' => 'A1'],
+                ['question' => 'Q2', 'answer' => 'A2'],
+            ],
+        ];
+        $html = app(SiteBlockRenderer::class)->render([$block], ['tokens' => $tokens] + self::CONTEXT);
+
+        $this->assertStringContainsString('class="faq-item" data-question="Q1"', $html);
+        $this->assertStringContainsString('<h3>Q1</h3>', $html);
+        $this->assertStringContainsString('<p>A1</p>', $html);
+        $this->assertStringContainsString('class="faq-item" data-question="Q2"', $html);
+        $this->assertStringNotContainsString('Q1 - A1', $html);
+        $this->assertStringNotContainsString('Q2 - A2', $html);
+
+        $blockEmpty = [
+            'type' => 'faq',
+            'items' => [
+                ['question' => 'Q3', 'answer' => ''],
+            ],
+        ];
+        $htmlEmpty = app(SiteBlockRenderer::class)->render([$blockEmpty], ['tokens' => $tokens] + self::CONTEXT);
+        $this->assertStringNotContainsString('Q3', $htmlEmpty);
+    }
+
+    public function test_bands_alternate()
+    {
+        $tokens = app(IndustryStartingPoints::class)->for(null);
+        $blocks = [
+            ['type' => 'hero', 'headline' => 'H'],
+            ['type' => 'about', 'text' => 'A'],
+            ['type' => 'services', 'items' => [['name' => 'S']]],
+            ['type' => 'team', 'items' => [['name' => 'T']]],
+        ];
+        $html = app(SiteBlockRenderer::class)->render($blocks, ['tokens' => $tokens] + self::CONTEXT);
+
+        preg_match_all('/class="site-block ([a-z_]+(?: site-block--band)?)[^"]*"/', $html, $matches);
+        $this->assertEquals(['hero', 'about', 'services site-block--band', 'team'], $matches[1]);
     }
 }

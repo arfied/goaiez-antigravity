@@ -1,4 +1,4 @@
-<div class="site-block site-block-booking">
+<div class="site-block site-block-booking {{ $band ?? '' }}">
     <div class="site-block__inner">
         <h2>{{ $block['heading'] }}</h2>
         <form method="post" action="{{ rtrim($context['form_action_base'], '/') }}/book" class="card">

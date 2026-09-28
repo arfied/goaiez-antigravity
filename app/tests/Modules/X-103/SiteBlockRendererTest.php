@@ -127,10 +127,13 @@ class SiteBlockRendererTest extends TestCase
     </div>
   </div>
 </div>
-<div id="faq-x176" class="site-block--band">
+<div id="faq-x176" class="site-block faq site-block--band">
   <div class="site-block__inner">
-          <div class="faq-item" data-question="Q1">Q1 - A1</div>
-      </div>
+                        <div class="faq-item" data-question="Q1">
+          <h3>Q1</h3>
+          <p>A1</p>
+        </div>
+            </div>
 </div>
 ';
         $this->assertStringContainsString($fixture, $html);
@@ -220,10 +223,11 @@ class SiteBlockRendererTest extends TestCase
     {
         $renderer = new SiteBlockRenderer;
         $htmlBad = $renderer->render([['type' => 'faq', 'items' => [['question' => 'Distinctive q 4493', 'answer' => '']]]], []);
-        $this->assertStringNotContainsString('faq-item', $htmlBad);
+        $this->assertStringNotContainsString('Distinctive q 4493', $htmlBad);
 
         $htmlGood = $renderer->render([['type' => 'faq', 'items' => [['question' => 'Distinctive q 4494', 'answer' => 'Distinctive a 4495']]]], []);
-        $this->assertStringContainsString('Distinctive q 4494 - Distinctive a 4495', $htmlGood);
+        $this->assertStringContainsString('<h3>Distinctive q 4494</h3>', $htmlGood);
+        $this->assertStringContainsString('<p>Distinctive a 4495</p>', $htmlGood);
     }
 
     public function test_hero_image_renders_its_description_and_an_empty_alt_when_there_is_none(): void

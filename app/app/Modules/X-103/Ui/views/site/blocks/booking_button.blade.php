@@ -1,4 +1,4 @@
-<div class="site-block booking">
+<div class="site-block booking {{ $band ?? '' }}">
     <div class="site-block__inner">
         <div class="actions">
             @if(isset($block['url']) && is_scalar($block['url']) && trim((string) $block['url']) !== '')

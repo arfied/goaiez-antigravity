@@ -26,7 +26,7 @@ class BlockMarkupFormsTest extends TestCase
 
         $this->assertStringContainsString('https://example.com/book-now', $html);
         $this->assertStringContainsString('Book Now!', $html);
-        $this->assertStringContainsString('class="site-block booking"', $html);
+        $this->assertStringContainsString('class="site-block booking "', $html);
         $this->assertStringContainsString('class="site-block__inner"', $html);
         $this->assertStringContainsString('class="actions"', $html);
         $this->assertStringContainsString('class="site-cta site-cta--primary"', $html);
@@ -44,7 +44,7 @@ class BlockMarkupFormsTest extends TestCase
 
         $html = app(SiteBlockRenderer::class)->render([$block], ['tokens' => $tokens] + self::CONTEXT);
 
-        $this->assertStringContainsString('class="site-block booking"', $html);
+        $this->assertStringContainsString('class="site-block booking "', $html);
     }
 
     public function test_booking_form_full()
@@ -63,7 +63,7 @@ class BlockMarkupFormsTest extends TestCase
         $this->assertStringContainsString('Request an Appointment', $html);
         $this->assertStringContainsString('Haircut', $html);
         $this->assertStringContainsString('Send Request', $html);
-        $this->assertStringContainsString('class="site-block site-block-booking"', $html);
+        $this->assertStringContainsString('class="site-block site-block-booking "', $html);
         $this->assertStringContainsString('class="site-block__inner"', $html);
         $this->assertStringContainsString('class="card"', $html);
         $this->assertStringContainsString('class="site-cta site-cta--primary"', $html);
@@ -80,7 +80,7 @@ class BlockMarkupFormsTest extends TestCase
 
         $html = app(SiteBlockRenderer::class)->render([$block], ['tokens' => $tokens] + self::CONTEXT);
 
-        $this->assertStringContainsString('class="site-block site-block-booking"', $html);
+        $this->assertStringContainsString('class="site-block site-block-booking "', $html);
     }
 
     public function test_contact_full()
@@ -92,21 +92,35 @@ class BlockMarkupFormsTest extends TestCase
             'address' => '123 Fake St',
             'phone' => '555-1234',
             'email' => 'hello@example.com',
-            'hours' => [['day' => 'Monday', 'open' => '9am', 'close' => '5pm']],
+            'hours' => [
+                ['day' => 'Monday', 'open' => '9am', 'close' => '5pm'],
+                ['day' => 'Tuesday', 'open' => 'Closed', 'close' => ''],
+            ],
             'facts' => ['wifi' => 'Yes'],
             'industry_facts' => [['label' => 'License', 'value' => 'ABC-123']],
         ];
 
         $html = app(SiteBlockRenderer::class)->render([$block], ['tokens' => $tokens] + self::CONTEXT);
 
+        $this->assertStringContainsString('Visit', $html);
+        $this->assertStringContainsString('Call', $html);
+        $this->assertStringContainsString('Write', $html);
+        $this->assertStringContainsString('Hours', $html);
         $this->assertStringContainsString('123 Fake St', $html);
         $this->assertStringContainsString('555-1234', $html);
         $this->assertStringContainsString('hello@example.com', $html);
         $this->assertStringContainsString('Monday: 9am - 5pm', $html);
+        $this->assertStringContainsString('Tuesday: Closed', $html);
         $this->assertStringContainsString('wifi: Yes', $html);
         $this->assertStringContainsString('License: ABC-123', $html);
 
-        $this->assertStringContainsString('class="site-block contact site-block--band"', $html);
+        $this->assertStringContainsString('<a href="tel:5551234">', $html);
+        $this->assertStringContainsString('<a href="mailto:hello@example.com">', $html);
+
+        $this->assertStringNotContainsString('Address:', $html);
+        $this->assertStringNotContainsString('Phone:', $html);
+        $this->assertStringNotContainsString('Email:', $html);
+
         $this->assertStringContainsString('class="site-block__inner"', $html);
     }
 
@@ -120,7 +134,7 @@ class BlockMarkupFormsTest extends TestCase
 
         $html = app(SiteBlockRenderer::class)->render([$block], ['tokens' => $tokens] + self::CONTEXT);
 
-        $this->assertStringContainsString('class="site-block contact site-block--band"', $html);
+        $this->assertStringContainsString('class="site-block contact', $html);
     }
 
     public function test_faq_full()
@@ -142,7 +156,6 @@ class BlockMarkupFormsTest extends TestCase
         $this->assertStringContainsString('Q2', $html);
         $this->assertStringContainsString('A2', $html);
         $this->assertStringContainsString('id="faq-x176"', $html);
-        $this->assertStringContainsString('class="site-block--band"', $html);
         $this->assertStringContainsString('class="site-block__inner"', $html);
     }
 
@@ -219,7 +232,7 @@ class BlockMarkupFormsTest extends TestCase
         $this->assertStringContainsString('hp', $html);
         $this->assertStringContainsString('required', $html);
 
-        $this->assertStringContainsString('class="site-block site-block-form"', $html);
+        $this->assertStringContainsString('class="site-block site-block-form ', $html);
         $this->assertStringContainsString('class="site-block__inner"', $html);
         $this->assertStringContainsString('class="card"', $html);
         $this->assertStringContainsString('class="site-cta site-cta--primary"', $html);
@@ -238,6 +251,6 @@ class BlockMarkupFormsTest extends TestCase
 
         $html = app(SiteBlockRenderer::class)->render([$block], ['tokens' => $tokens] + self::CONTEXT);
 
-        $this->assertStringContainsString('class="site-block site-block-form"', $html);
+        $this->assertStringContainsString('class="site-block site-block-form ', $html);
     }
 }
