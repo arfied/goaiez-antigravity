@@ -255,4 +255,41 @@ class BlockMarkupTest extends TestCase
         $this->assertStringNotContainsString('by ', $html);
         $this->assertStringNotContainsString('on <', $html); // This avoids matching button CSS
     }
+
+    public function test_booking_button_with_label_and_url(): void
+    {
+        $html = $this->renderBlock([
+            'type' => 'booking_button',
+            'label' => 'DISTINCT_BOOKING_LABEL',
+            'url' => 'DISTINCT_BOOKING_URL',
+        ]);
+
+        $this->assertStringContainsString('DISTINCT_BOOKING_LABEL', $html);
+        $this->assertStringContainsString('DISTINCT_BOOKING_URL', $html);
+        $this->assertStringContainsString('<a ', $html);
+    }
+
+    public function test_booking_button_with_label_and_no_url(): void
+    {
+        $html = $this->renderBlock([
+            'type' => 'booking_button',
+            'label' => 'DISTINCT_BOOKING_LABEL_NO_URL',
+        ]);
+
+        $this->assertStringContainsString('DISTINCT_BOOKING_LABEL_NO_URL', $html);
+        $this->assertStringContainsString('aria-disabled="true"', $html);
+        $this->assertStringContainsString('site-cta--off', $html);
+        $this->assertStringNotContainsString('<a ', $html);
+    }
+
+    public function test_booking_button_with_no_label_renders_nothing(): void
+    {
+        $html = $this->renderBlock([
+            'type' => 'booking_button',
+            'url' => 'DISTINCT_BOOKING_URL_NO_LABEL',
+        ]);
+
+        $this->assertStringNotContainsString('DISTINCT_BOOKING_URL_NO_LABEL', $html);
+        $this->assertStringNotContainsString('class="actions"', $html);
+    }
 }

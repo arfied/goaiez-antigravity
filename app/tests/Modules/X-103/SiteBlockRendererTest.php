@@ -76,7 +76,7 @@ class SiteBlockRendererTest extends TestCase
             ['type' => 'about'],
             ['type' => 'services', 'heading' => 'bad'],
             ['type' => 'reviews_strip', 'heading' => 'bad'],
-            ['type' => 'booking_button', 'label' => 'A'],
+            ['type' => 'booking_button', 'url' => 'https://example.com/book'],
             ['type' => 'faq', 'question' => 'Q'],
             ['type' => 'video_embed', 'name' => 'V', 'contentUrl' => 'U'],
         ];

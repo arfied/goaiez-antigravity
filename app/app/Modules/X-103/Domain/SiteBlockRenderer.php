@@ -54,6 +54,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .site-cta { display: inline-block; padding: 0.85rem 1.5rem; border-radius: 999px; font-weight: 600; text-decoration: none; }
 .site-cta--primary { background: var(--color-primary); color: var(--color-canvas); }
 .site-cta--ghost { background: transparent; border: 1px solid color-mix(in srgb, var(--color-ink) 25%, transparent); color: var(--color-ink); }
+.site-cta--off { opacity: 0.55; cursor: not-allowed; }
 .card { padding: 1.5rem; border-radius: 14px; background: var(--color-band); border: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent); box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06);
     @media (prefers-reduced-motion: no-preference) { &:hover { transform: translateY(-2px); box-shadow: 0 3px 6px rgba(0,0,0,0.06), 0 10px 30px rgba(0,0,0,0.08); } }
 }
@@ -155,7 +156,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
             return true;
         }
         if ($type === 'booking_button') {
-            return $this->hasScalar($block, 'label') && $this->hasScalar($block, 'url');
+            return $this->hasScalar($block, 'label');
         }
         if ($type === 'contact') {
             return true;

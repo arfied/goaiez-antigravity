@@ -24,6 +24,11 @@ class SampleRenderTest extends TestCase
                 'subline' => 'Fast, professional, and guaranteed plumbing repairs for homes and businesses.',
             ],
             [
+                'type' => 'booking_button',
+                'label' => 'Book a plumber',
+                'url' => 'tel:5550198',
+            ],
+            [
                 'type' => 'about',
                 'heading' => 'About Calder & Sons',
                 'text' => 'With over two decades of experience, we provide top-tier plumbing services with a focus on honesty and quality workmanship.',
@@ -120,7 +125,8 @@ class SampleRenderTest extends TestCase
             ],
             [
                 'type' => 'booking_button',
-                'text' => 'Book a Plumber Now',
+                'label' => 'Book a plumber',
+                'url' => 'tel:5550198',
             ],
         ];
 
@@ -134,5 +140,7 @@ class SampleRenderTest extends TestCase
         $this->assertGreaterThan(4000, filesize($path));
         $this->assertStringContainsString('Calder', $fullHtml);
         $this->assertStringContainsString('site-block__inner', $fullHtml);
+        $this->assertEquals(2, substr_count($fullHtml, 'Book a plumber'));
+        $this->assertStringContainsString('site-cta--primary', $fullHtml);
     }
 }
