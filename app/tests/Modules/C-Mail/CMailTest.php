@@ -10,6 +10,7 @@ use App\Modules\CMail\Actions\EmailIngestEventAction;
 use App\Modules\CMail\Actions\EmailSendAction;
 use App\Modules\CMail\Actions\EmailUnsubscribeAction;
 use App\Modules\CMail\Actions\EmailWarmupAction;
+use App\Modules\CMail\Domain\TxtRecords;
 use App\Modules\CMail\Events\EmailBounced;
 use App\Modules\CMail\Events\EmailComplained;
 use App\Modules\CMail\Events\EmailReplied;
@@ -335,10 +336,27 @@ class CMailTest extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'DNS Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $domain = $this->dnsAction->handle($biz->id, 'apex-air.com');
+        $fake = new class implements TxtRecords
+        {
+            public function txt(string $name): ?array
+            {
+                if (str_starts_with($name, '_dmarc.')) {
+                    return ['v=DMARC1; p=none;'];
+                }
+                if (str_starts_with($name, 'google._domainkey.')) {
+                    return ['v=DKIM1; k=rsa; p=test'];
+                }
+
+                return ['v=spf1 include:_spf.google.com ~all'];
+            }
+        };
+
+        $action = new EmailDnsCheckAction($fake);
+        $domain = $action->handle($biz->id, 'apex-air.com');
+
         $this->assertEquals('verified', $domain->dkim_status);
         $this->assertEquals('verified', $domain->spf_status);
-        $this->assertEquals('quarantine', $domain->dmarc_status);
+        $this->assertEquals('verified', $domain->dmarc_status);
     }
 
     /**

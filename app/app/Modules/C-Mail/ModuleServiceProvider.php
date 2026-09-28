@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\CMail;
 
+use App\Modules\CMail\Domain\SystemTxtRecords;
+use App\Modules\CMail\Domain\TxtRecords;
 use App\Modules\CMail\Ui\ComplaintbounceBoard;
 use App\Modules\CMail\Ui\DnsCard;
 use App\Modules\CMail\Ui\SequenceView;
@@ -15,7 +17,7 @@ final class ModuleServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->bind(TxtRecords::class, SystemTxtRecords::class);
     }
 
     public function boot(): void

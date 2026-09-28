@@ -30,9 +30,9 @@ class DnsCard extends Component
             return;
         }
 
-        $action->handle(Tenancy::idOrFail(), $this->domainName);
+        $domain = $action->handle(Tenancy::idOrFail(), $this->domainName);
 
-        $this->success = 'Recorded domain as verified; nothing has queried DNS for it yet.';
+        $this->success = 'Checked DNS for '.$domain->domain_name.' — SPF '.$domain->spf_status.', DKIM '.$domain->dkim_status.', DMARC '.$domain->dmarc_status.'.';
         $this->reset(['domainName']);
     }
 
