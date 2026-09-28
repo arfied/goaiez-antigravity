@@ -31,6 +31,7 @@ final class SiteBlockRenderer
     --color-accent: '.$accent.';
     --font-heading: '.$fontHeading.';
     --font-body: '.$fontBody.';
+    --color-band: color-mix(in srgb, var(--color-ink) 4%, var(--color-card));
 }
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
@@ -44,7 +45,7 @@ img { max-width: 100%; height: auto; display: block; }
 a { color: var(--color-accent); }
 a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
 .site-block { margin: 0; padding: clamp(2.5rem, 6vw, 5rem) 0; }
-.site-block--band { background: var(--color-card); margin-inline: calc(50% - 50vw); padding-inline: calc(50vw - 50%); }
+.site-block--band { background: var(--color-band); margin-inline: calc(50% - 50vw); padding-inline: calc(50vw - 50%); }
 .site-block__inner { max-width: 68rem; margin-inline: auto; }
 .eyebrow { font-size: 0.72rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--color-accent); font-weight: 600; }
 .lede { font-size: 1.2rem; opacity: 0.85; max-width: 60ch; }
@@ -53,7 +54,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .site-cta { display: inline-block; padding: 0.85rem 1.5rem; border-radius: 999px; font-weight: 600; text-decoration: none; }
 .site-cta--primary { background: var(--color-primary); color: var(--color-canvas); }
 .site-cta--ghost { background: transparent; border: 1px solid color-mix(in srgb, var(--color-ink) 25%, transparent); color: var(--color-ink); }
-.card { padding: 1.5rem; border-radius: 14px; background: var(--color-card); border: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent); box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06);
+.card { padding: 1.5rem; border-radius: 14px; background: var(--color-band); border: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent); box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06);
     @media (prefers-reduced-motion: no-preference) { &:hover { transform: translateY(-2px); box-shadow: 0 3px 6px rgba(0,0,0,0.06), 0 10px 30px rgba(0,0,0,0.08); } }
 }
 .grid { display: grid; gap: 1.25rem; }
@@ -62,7 +63,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .hero__grid { display: grid; grid-template-columns: 1fr;
     @media (min-width: 52rem) { grid-template-columns: 1.1fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
 }
-.hero__media { }
+.hero__media { min-width: 0; }
 .media { overflow: hidden; border-radius: 14px; }
 .media img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .media--wide { aspect-ratio: 16 / 9; }
