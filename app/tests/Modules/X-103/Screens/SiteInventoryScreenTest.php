@@ -31,17 +31,20 @@ it('renders for a tenant', function () {
 
 it('refuses no-tenant requests', function () {
     $user = User::factory()->create();
-
     $this->actingAs($user);
     $this->withoutExceptionHandling();
 
+    $refused = false;
     try {
         $this->get(route('x-103.site-inventory'));
     } catch (TenantNotResolved $e) {
-        expect(true)->toBeTrue();
+        $refused = true;
     } catch (HttpException $e) {
         expect($e->getStatusCode())->toBe(403);
+        $refused = true;
     }
+
+    expect($refused)->toBeTrue();
 });
 
 it('crawls a two-page fake site', function () {
