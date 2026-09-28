@@ -11,6 +11,8 @@ use App\Services\Ai\AiRequest;
 use App\Services\Ai\AiRouter;
 use App\Services\Assistant\PriceBook;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Industry\IndustryStartingPoints;
+use App\Services\Industry\SiteStyle;
 use App\Support\PlanPricing;
 
 final class SiteEditProposeAction
@@ -19,7 +21,8 @@ final class SiteEditProposeAction
         private readonly PriceBook $priceBook,
         private readonly AiRouter $router,
         private readonly DefaultsRegistry $registry,
-        private readonly SiteBlockRenderer $renderer
+        private readonly SiteBlockRenderer $renderer,
+        private readonly IndustryStartingPoints $startingPoints
     ) {}
 
     public function handle(int $businessId, int $pageId, string $request, bool $continue = false): array
@@ -58,7 +61,15 @@ final class SiteEditProposeAction
             $pricesSection = "Prices you may use (never any other price):\n".implode("\n", $facts);
         }
 
+        $baseStyle = $this->startingPoints->forBusiness($businessId);
+        $currentStyleJson = json_encode([
+            'palette' => $baseStyle['palette'] ?? [],
+            'type_pairing' => $baseStyle['type_pairing'] ?? [],
+        ], JSON_UNESCAPED_SLASHES);
+        $fontStacks = implode(' | ', SiteStyle::FONT_STACKS);
+
         $prompt = "Owner request: {$request}\n\n{$pricesSection}\n\nCurrent blocks (JSON):\n".json_encode($currentBlocks, JSON_UNESCAPED_SLASHES);
+        $prompt .= "\n\nCurrent style (JSON): {$currentStyleJson}\nIf the request is about colours, fonts or mood, you may also return \"style\": {\"palette\": {…}, \"type_pairing\": {\"heading\": …, \"body\": …}} using hex colours and only these fonts: {$fontStacks}. Otherwise omit \"style\".";
 
         $response = $this->router->dispatch(new AiRequest(
             task: AiTask::SiteCopy,
@@ -79,6 +90,10 @@ final class SiteEditProposeAction
                         ],
                     ],
                     'explanation' => ['type' => 'string'],
+                    'style' => [
+                        'type' => 'object',
+                        'additionalProperties' => true,
+                    ],
                 ],
                 'required' => ['blocks', 'explanation'],
             ]
@@ -109,10 +124,23 @@ final class SiteEditProposeAction
             }
         }
 
-        if (count($validBlocks) === 0) {
+        $proposedStyle = $response->json['style'] ?? null;
+        $validStyle = null;
+        $styleRefusedReason = null;
+
+        if (is_array($proposedStyle)) {
+            $validation = SiteStyle::validate($proposedStyle, $baseStyle);
+            if ($validation['ok']) {
+                $validStyle = $validation['style'];
+            } else {
+                $styleRefusedReason = $validation['reason'];
+            }
+        }
+
+        if (count($validBlocks) === 0 && $validStyle === null) {
             return [
                 'status' => 'refused',
-                'reason' => 'no_valid_blocks',
+                'reason' => $styleRefusedReason ?? 'no_valid_blocks',
             ];
         }
 
@@ -139,20 +167,29 @@ final class SiteEditProposeAction
             'at' => $now,
         ];
 
-        $meta['pending_edit'] = [
+        $pendingEdit = [
             'request' => $request,
-            'blocks' => $validBlocks,
+            'blocks' => count($validBlocks) > 0 ? $validBlocks : $currentBlocks,
             'explanation' => $explanation,
             'model' => $response->model->value,
             'drafted_at' => $now,
             'thread' => $thread,
         ];
+
+        if ($validStyle !== null) {
+            $pendingEdit['style'] = $validStyle;
+        }
+        if ($styleRefusedReason !== null) {
+            $pendingEdit['style_refused'] = $styleRefusedReason;
+        }
+
+        $meta['pending_edit'] = $pendingEdit;
         $page->draft_meta = $meta;
         $page->save();
 
         return [
             'status' => 'proposed',
-            'blocks' => count($validBlocks),
+            'blocks' => count($validBlocks) > 0 ? count($validBlocks) : count($currentBlocks),
             'explanation' => $meta['pending_edit']['explanation'],
             'model' => $response->model->value,
             'cost_hundredths' => $response->costInHundredthsOfCents(),

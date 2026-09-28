@@ -146,7 +146,23 @@
                                             <div class="mt-2 p-2 bg-paper border border-rule">
                                                 <strong>Proposed change</strong>
                                                 <p>{{ $page->draft_meta['pending_edit']['explanation'] ?? '' }}</p>
-                                                
+
+                                                @if(isset($page->draft_meta['pending_edit']['style_refused']))
+                                                    <p class="text-sm text-ink mt-2"><strong>Proposed style refused:</strong> {{ $page->draft_meta['pending_edit']['style_refused'] }}</p>
+                                                @endif
+                                                @if(isset($page->draft_meta['pending_edit']['style']))
+                                                    <div class="mt-2">
+                                                        <strong>Proposed style:</strong>
+                                                        @if(isset($page->draft_meta['pending_edit']['style']['palette']))
+                                                            @foreach($page->draft_meta['pending_edit']['style']['palette'] as $hex)
+                                                                <span style="background: {{ $hex }}" class="inline-block w-4 h-4 rounded-full border border-rule mr-1"></span>
+                                                            @endforeach
+                                                        @endif
+                                                        @if(isset($page->draft_meta['pending_edit']['style']['type_pairing']))
+                                                            <span class="text-sm ml-2">{{ implode(' / ', array_values($page->draft_meta['pending_edit']['style']['type_pairing'])) }}</span>
+                                                        @endif
+                                                    </div>
+                                                @endif
                                                 <div class="grid grid-cols-2 gap-4 my-2">
                                                     <div>
                                                         <strong>Now</strong>

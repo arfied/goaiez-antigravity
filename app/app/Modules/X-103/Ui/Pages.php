@@ -3,6 +3,7 @@
 namespace App\Modules\X103\Ui;
 
 use App\Enums\UserRole;
+use App\Models\Business;
 use App\Modules\X103\Actions\CustomerQuestionsAction;
 use App\Modules\X103\Actions\FaqDraftAction;
 use App\Modules\X103\Actions\PageCreateAction;
@@ -431,17 +432,39 @@ class Pages extends Component
         if (! isset($meta['undo'])) {
             $meta['undo'] = [];
         }
-        $meta['undo'][] = $page->draft_blocks ?? [];
+
+        $previousSiteTokens = Business::whereKey($this->businessId)->value('site_tokens');
+        if (is_string($previousSiteTokens)) {
+            $previousSiteTokens = json_decode($previousSiteTokens, true);
+        }
+
+        $meta['undo'][] = [
+            'blocks' => $page->draft_blocks ?? [],
+            'site_tokens' => $previousSiteTokens,
+        ];
         if (count($meta['undo']) > 20) {
             array_shift($meta['undo']);
         }
 
         $page->draft_blocks = $pending['blocks'];
+
+        if (isset($pending['style'])) {
+            $tokens = is_array($previousSiteTokens) ? $previousSiteTokens : [];
+            if (isset($pending['style']['palette'])) {
+                $tokens['palette'] = array_replace($tokens['palette'] ?? [], $pending['style']['palette']);
+            }
+            if (isset($pending['style']['type_pairing'])) {
+                $tokens['type_pairing'] = array_replace($tokens['type_pairing'] ?? [], $pending['style']['type_pairing']);
+            }
+            Business::whereKey($this->businessId)->update(['site_tokens' => $tokens]);
+            $this->success = 'Applied. The new colours and fonts show on every page the next time you publish it.';
+        } else {
+            $this->success = 'Applied to the draft. Publish when you are ready — History keeps the version before this one.';
+        }
+
         unset($meta['pending_edit']);
         $page->draft_meta = $meta;
         $page->save();
-
-        $this->success = 'Applied to the draft. Publish when you are ready — History keeps the version before this one.';
     }
 
     public function undoEdit(int $pageId): void
@@ -460,7 +483,15 @@ class Pages extends Component
             return;
         }
 
-        $page->draft_blocks = array_pop($undo);
+        $entry = array_pop($undo);
+
+        if (is_array($entry) && isset($entry['blocks']) && array_key_exists('site_tokens', $entry)) {
+            $page->draft_blocks = $entry['blocks'];
+            Business::whereKey($this->businessId)->update(['site_tokens' => $entry['site_tokens']]);
+        } else {
+            $page->draft_blocks = $entry;
+        }
+
         $meta['undo'] = $undo;
         $page->draft_meta = $meta;
         $page->save();

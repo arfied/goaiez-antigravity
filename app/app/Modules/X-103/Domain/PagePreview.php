@@ -19,6 +19,17 @@ final class PagePreview
         }
 
         $tokens = app(IndustryStartingPoints::class)->forBusiness($page->business_id);
+
+        if ($proposed && isset($page->draft_meta['pending_edit']['style'])) {
+            $style = $page->draft_meta['pending_edit']['style'];
+            if (isset($style['palette'])) {
+                $tokens['palette'] = array_replace($tokens['palette'], $style['palette']);
+            }
+            if (isset($style['type_pairing'])) {
+                $tokens['type_pairing'] = array_replace($tokens['type_pairing'], $style['type_pairing']);
+            }
+        }
+
         $html = app(SiteBlockRenderer::class)->render($blocks, ['tokens' => $tokens] + self::CONTEXT);
 
         return '<!doctype html><html><head><meta charset="utf-8"><base target="_blank"></head><body>'.$html.'</body></html>';
