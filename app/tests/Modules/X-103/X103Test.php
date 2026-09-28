@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103;
 
+use App\Enums\AiModel;
 use App\Enums\TenantLinkKind;
 use App\Enums\UserRole;
 use App\Models\Business;
@@ -100,6 +101,7 @@ class X103Test extends TestCase
 
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Site Tenant', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. A site forked at selection has no FK to template library
@@ -139,6 +141,7 @@ class X103Test extends TestCase
 
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Site Tenant', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $page = $this->pageAction->handle($biz->id, 'home', 'Homepage', false);
@@ -155,6 +158,7 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Linker Tenant', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $slug = 'summer-ac-promo';
@@ -180,6 +184,7 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Linker Expiry Tenant', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $slug1 = 'expired-promo';
@@ -218,6 +223,7 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Linker Cap Tenant', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $slug = 'capped-promo';
@@ -255,6 +261,7 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Pixel Tenant']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $page = $this->pageAction->handle($biz->id, 'pixel', 'Pixel', false);
@@ -273,6 +280,7 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Law Tenant']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $page = $this->pageAction->handle($biz->id, 'law', 'Law', false);
@@ -300,6 +308,7 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Widget Tenant']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $page = $this->pageAction->handle($biz->id, 'widget', 'Widget', false);
@@ -331,6 +340,7 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Offer Tenant']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $page = $this->pageAction->handle($biz->id, 'offer', 'Offer', false);
@@ -361,6 +371,7 @@ class X103Test extends TestCase
 
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'SMS Tenant']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $page = $this->pageAction->handle($biz->id, 'sms-page', 'SMS Page', false);
@@ -377,6 +388,7 @@ class X103Test extends TestCase
 
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Invoice Tenant']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $page = $this->pageAction->handle($biz->id, 'invoice-page', 'Invoice Page', false);
@@ -394,6 +406,7 @@ class X103Test extends TestCase
 
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Review Tenant']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $page = $this->pageAction->handle($biz->id, 'review-page', 'Review Page', false);
@@ -408,6 +421,7 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Container Tenant', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $pageAction = app(PageCreateAction::class);
@@ -435,7 +449,9 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Gallery Tenant', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $location = Location::factory()->create(['business_id' => $biz->id, 'website_url' => 'https://example.com', 'website_confirmed_at' => now()]);
 
@@ -502,7 +518,9 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Team Tenant', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $location = Location::factory()->create(['business_id' => $biz->id]);
 
@@ -538,7 +556,9 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'No Team Tenant', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $location = Location::factory()->create(['business_id' => $biz->id]);
 
         $action = app(SiteDraftAction::class);
@@ -557,6 +577,7 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Draft Site Tenant', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $location = Location::where('business_id', $biz->id)->first();
         if (! $location) {
@@ -566,6 +587,7 @@ class X103Test extends TestCase
         }
 
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $invPage = SiteInventoryPage::create([
             'business_id' => $biz->id,
@@ -705,7 +727,9 @@ class X103Test extends TestCase
     public function test_the_home_page_follows_the_industry_starting_point_order(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Order Test', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $location = Location::where('business_id', $biz->id)->first();
 
         $invPage = SiteInventoryPage::create([
@@ -789,7 +813,9 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Polish Test', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -843,7 +869,9 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Polish Test Hero Subline', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -887,7 +915,9 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Budget Test', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         PlatformSetting::write('ai.monthly_cap_per_tenant', 0, 'test');
 
@@ -923,7 +953,9 @@ class X103Test extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Restore Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -959,7 +991,9 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Faq Test', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -1010,7 +1044,9 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Faq Budget Test', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         PlatformSetting::write('ai.monthly_cap_per_tenant', 0, 'test');
 
@@ -1049,7 +1085,9 @@ class X103Test extends TestCase
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Faq Place Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -1093,6 +1131,7 @@ class X103Test extends TestCase
         PlatformSetting::write('sites.seo.title_max_chars', 60, 'test');
         PlatformSetting::write('sites.seo.description_max_chars', 155, 'test');
         $biz = TestCase::provisionTenant(['name' => 'SEO Tenant']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $page = Page::create([
@@ -1135,6 +1174,7 @@ class X103Test extends TestCase
         PlatformSetting::write('sites.seo.title_max_chars', 60, 'test');
         PlatformSetting::write('sites.seo.description_max_chars', 155, 'test');
         $biz = TestCase::provisionTenant(['name' => 'SEO Tenant 2']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $page = Page::create([
@@ -1172,7 +1212,9 @@ class X103Test extends TestCase
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Pages Test Edit Booking', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -1227,6 +1269,7 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 0, 'test');
         $biz = TestCase::provisionTenant(['name' => 'SEO Tenant No Budget']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $page = Page::create([
@@ -1252,7 +1295,9 @@ class X103Test extends TestCase
     public function test_the_draft_carries_a_form_block_when_the_tenant_has_a_form(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Form Draft Tenant']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set((int) $biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $location = Location::factory()->create(['business_id' => $biz->id]);
 
         $formAction = app(FormCreateAction::class);
@@ -1275,6 +1320,7 @@ class X103Test extends TestCase
     public function test_the_draft_carries_no_form_block_when_the_tenant_has_none(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'No Form Draft Tenant']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $location = Location::factory()->create(['business_id' => $biz->id]);
 
         $draftAction = app(SiteDraftAction::class);
@@ -1291,6 +1337,7 @@ class X103Test extends TestCase
     public function test_the_rendered_form_posts_to_the_live_capture_route(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Render Form Tenant']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $block = [
             'type' => 'form',
@@ -1322,7 +1369,9 @@ class X103Test extends TestCase
     public function test_the_draft_always_carries_a_booking_form(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Draft Form Tenant']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set((int) $biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $location = Location::factory()->create(['business_id' => $biz->id]);
 
         $action = app(SiteDraftAction::class);
@@ -1339,7 +1388,9 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Hours Draft Test', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $location = Location::factory()->create([
             'business_id' => $biz->id,
@@ -1371,7 +1422,9 @@ class X103Test extends TestCase
     public function test_a_review_the_owner_ticked_but_moderation_has_not_approved_does_not_reach_the_draft(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Site Review Filter Tenant']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set((int) $biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $location = Location::factory()->create(['business_id' => $biz->id]);
 
         Review::factory()->fromGoogle()->approved()->create(['location_id' => $location->id, 'display_on_website' => true, 'rating' => 5, 'comment' => 'Distinctive approved review 4471', 'reviewer_name' => 'Alice']);
@@ -1392,7 +1445,9 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'FAQ Review Filter Tenant']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set((int) $biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -1430,6 +1485,7 @@ class X103Test extends TestCase
         $biz = $this->provisionTenant();
         $location = Location::where('business_id', $biz->id)->first();
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $action = app(SiteMissingFactsAction::class);
 
@@ -1472,6 +1528,7 @@ class X103Test extends TestCase
         $biz->update(['owner_user_id' => $owner->id]);
         Tenancy::setUser($owner->id);
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $facts = app(BusinessFacts::class);
         $facts->set($biz->id, BusinessFactKey::TAGLINE, 'Distinctive tagline 4471');
@@ -1501,6 +1558,7 @@ class X103Test extends TestCase
         $biz2 = self::provisionTenant();
         $loc2 = $biz2->locations->first();
         Tenancy::set($biz2->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $action->handle($biz2->id, $loc2->id);
 
@@ -1516,7 +1574,9 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Polish Peer Test', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -1572,7 +1632,9 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Polish No Peer Test', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $page = Page::create([
             'business_id' => $biz->id,
@@ -1607,6 +1669,7 @@ class X103Test extends TestCase
     {
         $biz = $this->provisionTenant();
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $home = Page::create([
             'business_id' => $biz->id,
@@ -1668,7 +1731,9 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Gallery Tenant', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $location = Location::factory()->create(['business_id' => $biz->id, 'website_url' => 'https://example.com', 'website_confirmed_at' => now()]);
 
@@ -1732,7 +1797,9 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Gallery Tenant', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $location = Location::factory()->create(['business_id' => $biz->id, 'website_url' => 'https://example.com', 'website_confirmed_at' => now()]);
 
@@ -1802,6 +1869,7 @@ class X103Test extends TestCase
 
         Tenancy::setUser($owner->id);
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $session = ChatSession::create([
             'business_id' => $biz->id,
@@ -1852,6 +1920,7 @@ class X103Test extends TestCase
 
     public function test_a_customer_question_is_moderated_then_answered_from_facts_and_placed_as_answered(): void
     {
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
@@ -2036,8 +2105,10 @@ class X103Test extends TestCase
     {
         PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Price Block Tenant']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $location = Location::factory()->create(['business_id' => $biz->id]);
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         PriceBookItem::create([
             'business_id' => $biz->id,
@@ -2067,7 +2138,9 @@ class X103Test extends TestCase
     public function test_the_page_weight_reads_the_stored_pictures_and_the_rendered_text(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Weight Tenant', 'currency' => 'USD']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         Tenancy::set($biz->id);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
         $location = Location::factory()->create(['business_id' => $biz->id]);
         $inventoryPage = SiteInventoryPage::create([
@@ -2170,6 +2243,7 @@ class X103Test extends TestCase
     public function test_drafts_industry_facts_into_hero_and_contact(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Care Place']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $store = app(BusinessFacts::class);
         $store->set($biz->id, 'industry', 'care');
         $store->set($biz->id, 'industry.walk_ins', 'Distinctive walk-ins 4592');
@@ -2209,6 +2283,7 @@ class X103Test extends TestCase
     public function test_polish_prompt_includes_industry_facts(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Care Place']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $store = app(BusinessFacts::class);
         $store->set($biz->id, 'industry', 'care');
         $store->set($biz->id, 'industry.parking', 'Distinctive parking 4593');
@@ -2248,6 +2323,7 @@ class X103Test extends TestCase
     public function test_the_draft_makes_no_services_page_without_a_pricebook(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'No Services Draft Tenant']);
+        PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
         $location = Location::factory()->create(['business_id' => $biz->id]);
 
         $draftAction = app(SiteDraftAction::class);

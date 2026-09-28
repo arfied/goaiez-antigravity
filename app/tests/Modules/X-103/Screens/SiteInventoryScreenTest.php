@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Enums\AiModel;
 use App\Enums\FetchRefusalReason;
 use App\Enums\UserRole;
 use App\Exceptions\TenantNotResolved;
 use App\Models\Location;
+use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Modules\X103\Actions\SiteCrawlAction;
 use App\Modules\X103\Models\Page;
@@ -55,6 +57,8 @@ it('crawls a two-page fake site', function () {
 
     $this->actingAs($owner);
     Tenancy::set($biz->id);
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
     Http::fake([
         '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
@@ -103,6 +107,8 @@ it('refuses when website is missing or unconfirmed', function () {
     Http::fake();
     $this->actingAs($owner);
     Tenancy::set($biz->id);
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
     Livewire::actingAs($owner)
         ->test(SiteInventory::class)
@@ -124,6 +130,8 @@ it('honours the max_pages registry cap', function () {
 
     $this->actingAs($owner);
     Tenancy::set($biz->id);
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
     app(DefaultsRegistry::class)->set('sites.crawl.max_pages', 2, 'test');
 
@@ -166,6 +174,8 @@ it('copies images into tenant storage', function () {
     ]);
 
     Tenancy::set($biz->id);
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
     $page = SiteInventoryPage::create([
         'business_id' => $biz->id,
@@ -234,6 +244,8 @@ it('caps copied images at max_per_site', function () {
     ]);
 
     Tenancy::set($biz->id);
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
     app(DefaultsRegistry::class)->set('sites.images.max_per_site', 1, 'test');
 
     $page = SiteInventoryPage::create([
@@ -268,6 +280,8 @@ it('saves opening hours and shows the form', function () {
     $owner = User::factory()->create(['role' => UserRole::Owner]);
     $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
     Tenancy::set($biz->id);
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
     Livewire::actingAs($owner)->test(SiteInventory::class)
         ->set('hours.0.open', '08:00')
@@ -291,6 +305,8 @@ it('lists what the draft cannot find and drops a row once the fact exists', func
     $owner = User::factory()->create(['role' => UserRole::Owner]);
     $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
     Tenancy::set($biz->id);
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
     $this->actingAs($owner)
         ->get(route('x-103.site-inventory'))
@@ -322,6 +338,8 @@ it('lets the owner describe a stored picture', function () {
     ]);
 
     Tenancy::set($biz->id);
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
     $page = SiteInventoryPage::create([
         'business_id' => $biz->id,
@@ -364,6 +382,8 @@ it('lists what a reader would trip on and drops the row once it is fixed', funct
     $owner = User::factory()->create(['role' => UserRole::Owner]);
     $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
     Tenancy::set($biz->id);
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
     $this->actingAs($owner)
         ->get(route('x-103.site-inventory'))
@@ -408,6 +428,8 @@ it('records a pictures pixel size at copy time and leaves it empty for an svg', 
     ]);
 
     Tenancy::set($biz->id);
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
     $page = SiteInventoryPage::create([
         'business_id' => $biz->id,
@@ -450,6 +472,8 @@ it('weighs each drafted page and says it is a weight not a load time', function 
     $owner = User::factory()->create(['role' => UserRole::Owner]);
     $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
     Tenancy::set($biz->id);
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
     $this->actingAs($owner)
         ->get(route('x-103.site-inventory'))
@@ -520,6 +544,8 @@ it('rejected pictures explain themselves in words', function () {
     $owner = User::factory()->create(['role' => UserRole::Owner]);
     $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
     Tenancy::set($biz->id);
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
     $page = SiteInventoryPage::create([
         'business_id' => $biz->id,
@@ -615,6 +641,8 @@ it('records a block by the site as blocked_by_site', function () {
 
     $this->actingAs($owner);
     Tenancy::set($biz->id);
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
+    PlatformSetting::write('ai.model.site_copy', AiModel::Gpt4oMini->value, 'test');
 
     Http::fake([
         '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),

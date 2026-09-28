@@ -113,8 +113,8 @@ enum AiTask: string
         return match ($this) {
             self::ReviewAnalysis, self::Moderation,
             self::ReplyGeneration,
-            self::Conversation,
-            self::SiteCopy => AiModel::Gpt4oMini,
+            self::Conversation => AiModel::Gpt4oMini,
+            self::SiteCopy => AiModel::ClaudeOpus5,
             self::KnowledgeEmbedding => AiModel::TextEmbedding3Small,
             self::SiteImage => AiModel::GptImage25Flare,
         };
@@ -155,7 +155,7 @@ enum AiTask: string
         return match ($this) {
             self::Moderation => 512,
             self::ReviewAnalysis => 1024,
-            self::SiteCopy => 2048,
+            self::SiteCopy => 8192,
             self::ReplyGeneration => 4096,
             // ⚠️ **GENEROUS FOR A 160-CHARACTER MESSAGE, AND FOR THE SAME REASON
             // AS THE REPLY TIER ABOVE.** On Claude Sonnet 5 adaptive thinking is
