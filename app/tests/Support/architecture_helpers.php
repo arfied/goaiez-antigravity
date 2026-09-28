@@ -994,6 +994,10 @@ function outboundHttpPermittedFiles(): array
         // the gateway's: an allowlist checked before any socket, three hops, and
         // a private-address rejection on every one.
         'Services/Places/ShortLinkResolver.php',
+
+        // Owner ruling 2026-09-28 (main REVIEWS): outbound webhooks to a tenant's own
+        // https URL, guarded by PublicAddressGuard, pinned, no redirects.
+        'Services/Webhooks/TenantWebhookClient.php',
     ];
 }
 /**
