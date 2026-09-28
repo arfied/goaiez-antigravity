@@ -81,23 +81,32 @@ enum AiModel: string
      */
     case TextEmbedding3Small = 'text-embedding-3-small';
 
+    /** Site 66: OpenAI image generation. */
+    case GptImage25Flare = 'openai-gpt-image-2.5-flare';
+
     public function provider(): AiProvider
     {
         return match ($this) {
             self::ClaudeOpus5, self::ClaudeSonnet5, self::ClaudeHaiku45 => AiProvider::Anthropic,
-            self::Gpt4oMini, self::TextEmbedding3Small => AiProvider::OpenAi,
+            self::Gpt4oMini, self::TextEmbedding3Small, self::GptImage25Flare => AiProvider::OpenAi,
         };
     }
 
     public function apiModelId(): string
     {
         return match ($this) {
-            self::ClaudeOpus5 => 'clau' . 'de-opus-5',
-            self::ClaudeSonnet5 => 'clau' . 'de-sonnet-5',
-            self::ClaudeHaiku45 => 'clau' . 'de-haiku-4-5',
-            self::Gpt4oMini => 'gp' . 't-4o-mini',
-            self::TextEmbedding3Small => 'text' . '-embedding-3-small',
+            self::ClaudeOpus5 => 'clau'.'de-opus-5',
+            self::ClaudeSonnet5 => 'clau'.'de-sonnet-5',
+            self::ClaudeHaiku45 => 'clau'.'de-haiku-4-5',
+            self::Gpt4oMini => 'gp'.'t-4o-mini',
+            self::TextEmbedding3Small => 'text'.'-embedding-3-small',
+            self::GptImage25Flare => 'gp'.'t-image-2.5-flare',
         };
+    }
+
+    public function isImage(): bool
+    {
+        return $this === self::GptImage25Flare;
     }
 
     /**
@@ -135,7 +144,7 @@ enum AiModel: string
     {
         return match ($this) {
             self::TextEmbedding3Small => 1536,
-            self::ClaudeOpus5, self::ClaudeSonnet5, self::ClaudeHaiku45, self::Gpt4oMini => null,
+            self::ClaudeOpus5, self::ClaudeSonnet5, self::ClaudeHaiku45, self::Gpt4oMini, self::GptImage25Flare => null,
         };
     }
 
@@ -155,6 +164,7 @@ enum AiModel: string
             self::ClaudeHaiku45 => 10_000,    // $1.00
             self::Gpt4oMini => 1_500,         // $0.15
             self::TextEmbedding3Small => 200, // $0.02
+            self::GptImage25Flare => 50_000,  // $5.00
         };
     }
 
@@ -174,6 +184,7 @@ enum AiModel: string
             // multiplies by it, which is why it must be the true zero rather
             // than the input price copied across.
             self::TextEmbedding3Small => 0,
+            self::GptImage25Flare => 300_000, // $30.00
         };
     }
 
@@ -204,7 +215,7 @@ enum AiModel: string
         return match ($this) {
             // The embeddings endpoint takes no sampling parameters of any kind,
             // so "rejects them" is literally true for it as well.
-            self::ClaudeOpus5, self::ClaudeSonnet5, self::TextEmbedding3Small => true,
+            self::ClaudeOpus5, self::ClaudeSonnet5, self::TextEmbedding3Small, self::GptImage25Flare => true,
             self::ClaudeHaiku45, self::Gpt4oMini => false,
         };
     }
@@ -224,7 +235,7 @@ enum AiModel: string
     {
         return match ($this) {
             self::ClaudeOpus5, self::ClaudeSonnet5 => true,
-            self::ClaudeHaiku45, self::Gpt4oMini, self::TextEmbedding3Small => false,
+            self::ClaudeHaiku45, self::Gpt4oMini, self::TextEmbedding3Small, self::GptImage25Flare => false,
         };
     }
 

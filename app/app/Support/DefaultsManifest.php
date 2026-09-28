@@ -550,6 +550,18 @@ final class DefaultsManifest
                 'description' => 'Per-tenant AI spend ceiling for a calendar month, in hundredths of a cent of OUR cost — not of the tenant\'s charge, which is eight times it and lives in ai_calls.retail_hundredths_cents (3304, 3358). 500,000 is $50. ⛔ DECISION 3293 DELETED THE PER-TENANT DOLLAR COST CAP AND 3295 SAYS THIS KEY GOES WITH IT: "an AI-only dollar cap is still a dollar cap, so it goes the same way, and the AI credit balance replaces it." IT IS STILL HERE, DELIBERATELY, AND 3820 IS THE ARGUMENT. The AI credit balance now exists and does refuse (3419, 3424, 3608) — but only for a tenant who HAS a balance. 3609 permits an account that has never been funded, because gating a bare zero would have stopped all AI for every tenant at once, and the unfunded set is not a corner of the plan ladder: Subscriptions provisions every new business as Plan::Base/pending_checkout, and ResetMonthlyCredits grants nothing at all to any account TrialEligibility refuses — which is every account with no confirmed Google listing. Deleting this key therefore handed every unverified account unlimited AI, permanently, in a state under the tenant\'s own control. It is OUTER CONTAINMENT behind the balance gate: AiSpend::allows() asks the balance first and this second. ⚠️ IT IS NOT RULE 43\'S CAP, which the owner deleted: rule 43 capped a tenant\'s TOTAL service cost, and messaging, Places and everything else sit outside this key entirely (3107). The four plan.*.cost_cap.* entitlements that did claim to be rule 43\'s cap are gone (3364) — they had no reader in app/ at all. This one fires. ⚠️ At AiTask\'s defaults a busy tenant costs about 61c a month, so it should never fire; if it does, read it as a signal rather than raise it. It comes out when the monthly reset has demonstrably granted in production and the owner has ruled on the unfunded account.',
             ],
 
+            'ai.image.fallback_cost_hundredths' => [
+                'seed' => 600,
+                'group' => 'AI',
+                'description' => 'Charged per generated picture when the provider reports no token usage, so no picture is unmetered',
+            ],
+
+            'sites.edit.max_images' => [
+                'seed' => 2,
+                'group' => 'Content',
+                'description' => 'Maximum number of images that can be generated per site edit proposal.',
+            ],
+
             'ai.eval.max_cases_per_run' => [
                 'seed' => 20,
                 'group' => 'AI',

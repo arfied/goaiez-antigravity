@@ -665,6 +665,9 @@ function outboundHttpPermittedFiles(): array
         // one change, and the slice would have stopped for the DPA.
         'Services/Ai/OpenAiEmbeddingClient.php',
 
+        // owner ruling 2026-09-28 "yes, generate images with openAI"; image generation only; same host api.openai.com, so no inventory row.
+        'Services/Ai/OpenAiImageClient.php',
+
         // Zernio — Google Business Profile, read through an intermediary while
         // our own GBP API application clears. A documented vendor JSON API with
         // a credential, like the entries above.

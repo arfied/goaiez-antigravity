@@ -146,6 +146,9 @@
                                             <div class="mt-2 p-2 bg-paper border border-rule">
                                                 <strong>Proposed change</strong>
                                                 <p>{{ $page->draft_meta['pending_edit']['explanation'] ?? '' }}</p>
+                                                @if(isset($page->draft_meta['pending_edit']['image_notes']))
+                                                    <p class="text-sm text-ink mt-2"><strong>Image notes:</strong> {{ $page->draft_meta['pending_edit']['image_notes'] }}</p>
+                                                @endif
 
                                                 @if(isset($page->draft_meta['pending_edit']['style_refused']))
                                                     <p class="text-sm text-ink mt-2"><strong>Proposed style refused:</strong> {{ $page->draft_meta['pending_edit']['style_refused'] }}</p>

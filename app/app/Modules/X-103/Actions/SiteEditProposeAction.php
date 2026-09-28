@@ -69,7 +69,9 @@ final class SiteEditProposeAction
         $fontStacks = implode(' | ', SiteStyle::FONT_STACKS);
 
         $prompt = "Owner request: {$request}\n\n{$pricesSection}\n\nCurrent blocks (JSON):\n".json_encode($currentBlocks, JSON_UNESCAPED_SLASHES);
+        $maxImages = $this->registry->int('sites.edit.max_images');
         $prompt .= "\n\nCurrent style (JSON): {$currentStyleJson}\nIf the request is about colours, fonts or mood, you may also return \"style\": {\"palette\": {…}, \"type_pairing\": {\"heading\": …, \"body\": …}} using hex colours and only these fonts: {$fontStacks}. Otherwise omit \"style\".";
+        $prompt .= "\n\nIf the owner asks for a picture, you may also return \"images\": [{\"block_index\": <index in your blocks>, \"description\": \"<what the picture shows>\"}], at most {$maxImages} items, only for hero or gallery blocks.";
 
         $response = $this->router->dispatch(new AiRequest(
             task: AiTask::SiteCopy,
@@ -93,6 +95,17 @@ final class SiteEditProposeAction
                     'style' => [
                         'type' => 'object',
                         'additionalProperties' => true,
+                    ],
+                    'images' => [
+                        'type' => 'array',
+                        'items' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'block_index' => ['type' => 'integer'],
+                                'description' => ['type' => 'string'],
+                            ],
+                            'required' => ['block_index', 'description'],
+                        ],
                     ],
                 ],
                 'required' => ['blocks', 'explanation'],
@@ -144,6 +157,45 @@ final class SiteEditProposeAction
             ];
         }
 
+        $requestedImages = $response->json['images'] ?? [];
+        $imagesGenerated = 0;
+        $imageNotes = [];
+
+        if (! empty($requestedImages)) {
+            $imageAction = app(SiteImageGenerateAction::class);
+            $maxImages = $this->registry->int('sites.edit.max_images');
+            $requestedImages = array_slice($requestedImages, 0, $maxImages);
+
+            foreach ($requestedImages as $imgReq) {
+                $idx = $imgReq['block_index'] ?? null;
+                $desc = $imgReq['description'] ?? null;
+
+                if ($idx === null || ! is_int($idx) || ! isset($validBlocks[$idx]) || empty($desc)) {
+                    continue;
+                }
+
+                $blockType = $validBlocks[$idx]['type'] ?? '';
+                if ($blockType !== 'hero' && $blockType !== 'gallery') {
+                    continue;
+                }
+
+                $res = $imageAction->handle($businessId, $desc);
+                if ($res['status'] === 'generated') {
+                    if ($blockType === 'hero') {
+                        $validBlocks[$idx]['image_path'] = $res['path'];
+                    } else {
+                        if (! isset($validBlocks[$idx]['items'])) {
+                            $validBlocks[$idx]['items'] = [];
+                        }
+                        $validBlocks[$idx]['items'][] = ['image_path' => $res['path']];
+                    }
+                    $imagesGenerated++;
+                } else {
+                    $imageNotes[] = "Could not generate picture '{$desc}': ".($res['reason'] ?? 'unknown');
+                }
+            }
+        }
+
         $meta = $page->draft_meta ?? [];
         $thread = [];
 
@@ -176,6 +228,10 @@ final class SiteEditProposeAction
             'thread' => $thread,
         ];
 
+        if (! empty($imageNotes)) {
+            $pendingEdit['image_notes'] = implode("\n", $imageNotes);
+        }
+
         if ($validStyle !== null) {
             $pendingEdit['style'] = $validStyle;
         }
@@ -193,6 +249,7 @@ final class SiteEditProposeAction
             'explanation' => $meta['pending_edit']['explanation'],
             'model' => $response->model->value,
             'cost_hundredths' => $response->costInHundredthsOfCents(),
+            'images' => $imagesGenerated,
         ];
     }
 }

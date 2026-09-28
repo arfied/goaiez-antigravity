@@ -406,7 +406,11 @@ class Pages extends Component
             if ($res['status'] === 'refused') {
                 $this->success = $res['reason'];
             } else {
-                $this->success = "Proposed {$res['blocks']} blocks with {$res['model']} — review it below, then Apply or Discard.";
+                $msg = "Proposed {$res['blocks']} blocks with {$res['model']} — review it below, then Apply or Discard.";
+                if (($res['images'] ?? 0) > 0) {
+                    $msg .= " Made {$res['images']} picture(s) for it.";
+                }
+                $this->success = $msg;
                 unset($this->editRequest[$pageId]);
             }
         } catch (Throwable $e) {
