@@ -6,6 +6,7 @@ namespace App\Modules\X204\Ui;
 
 use App\Modules\X204\Domain\ConsentService;
 use App\Modules\X204\Models\SendPermit;
+use App\Services\Crm\NeverContact;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -49,7 +50,14 @@ class RefusalsByReason extends Component
 
         $service->suppress(Tenancy::idOrFail(), $this->suppressPhone, $this->suppressChannel, $this->suppressReason);
 
-        $this->success = "Added {$this->suppressPhone} to this screen's refusal list and stopped any follow-up sequence to them. It does not stop other texts: to stop all texts, open their customer profile and choose Never contact them.";
+        $customer = app(NeverContact::class)->applyToNumber($this->suppressPhone, auth()->user());
+
+        if ($customer) {
+            $this->success = "Added {$this->suppressPhone} to this screen's refusal list, stopped any follow-up sequence, and marked {$customer->name} as Never contact, so no text will be sent to them.";
+        } else {
+            $this->success = "Added {$this->suppressPhone} to this screen's refusal list and stopped any follow-up sequence to them. No customer has this number, so other texts are not blocked: add them as a customer and choose Never contact them.";
+        }
+
         $this->reset(['suppressPhone']);
     }
 
