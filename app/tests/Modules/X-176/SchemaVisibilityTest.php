@@ -220,14 +220,11 @@ final class SchemaVisibilityTest extends TestCase
             }
         }
 
-        preg_match('/<div id="faq-x176">(.*?)<\/div>\n(?:<div|<nav|<script|<\/body)/s', $html, $blockMatches);
-        $visibleFaqs = [];
-        if (! empty($blockMatches)) {
-            preg_match_all('/<div class="faq-item" data-question="([^"]+)"/', $blockMatches[1], $itemMatches);
-            $visibleFaqs = $itemMatches[1];
-        }
+        preg_match_all('/<div class="faq-item" data-question="([^"]+)"/', $html, $itemMatches);
+        $visibleFaqs = $itemMatches[1];
 
         $this->assertCount(1, $schemaFaqs);
+        $this->assertNotEmpty($visibleFaqs);
         $this->assertEquals($schemaFaqs, $visibleFaqs);
     }
 
@@ -271,14 +268,11 @@ final class SchemaVisibilityTest extends TestCase
             }
         }
 
-        preg_match('/<div id="faq-x176">(.*?)<\/div>\n(?:<div|<nav|<script|<\/body)/s', $html, $blockMatches);
-        $visibleFaqs = [];
-        if (! empty($blockMatches)) {
-            preg_match_all('/<div class="faq-item" data-question="([^"]+)"/', $blockMatches[1], $itemMatches);
-            $visibleFaqs = $itemMatches[1];
-        }
+        preg_match_all('/<div class="faq-item" data-question="([^"]+)"/', $html, $itemMatches);
+        $visibleFaqs = $itemMatches[1];
 
         $this->assertCount(2, $schemaFaqs);
+        $this->assertNotEmpty($visibleFaqs);
         $this->assertEquals($schemaFaqs, $visibleFaqs);
         $this->assertSame('Distinctive question 4611?', $json['mainEntity'][0]['name'] ?? null);
     }
