@@ -172,7 +172,7 @@ final class TeamInviteTest extends TestCase
 
         Tenancy::forgetAll();
         $this->actingAs($user);
-        $this->get('/account')->assertOk();
+        $this->get('/account/inbox')->assertOk();
     }
 
     public function test_revoked_membership_not_reactivated(): void
