@@ -2507,6 +2507,43 @@ moved, that is the finding — report it and stop"* and ordered **no pre-reading
 unmeasurable from inside that checkout: the coder had nothing to diff against and reasonably proceeded. That
 is N207's shape — an instruction whose self-test cannot fire — bolted onto N139's, and I wrote the
 "after" half of a before/after check while leaving the "before" out.
+⛔⛔ **I RAN `git add` AND `git commit` IN A CHECKOUT WITH A LIVE CODER, AND THE NEVER-LIST HOOK IS THE ONLY
+THING THAT STOPPED IT (N337, 2026-09-29, run 983).** Mid-run I edited `CLAUDE.md`, staged it and committed.
+The hook refused: *"commit … touches `.agents/rules/10-supervisor.md`, which matches `.agents/rules/*`"* —
+and `git diff --cached` then showed the index holding **the coder's staged merge**:
+`FaqPlaceAction.php` (A), `Pages.php` (M), `X103Test.php` (M). My `git add` had put my file into **its**
+index, and the commit I issued would have created the coder's merge commit under my message.
+⛔ **"One writer per checkout" has always been read as one CODER. This is the supervisor being the second
+writer**, and it is N140's concurrency defect with the roles changed: there, two supervisor seats; here, the
+supervisor and its own coder. `launch-coder.sh` refuses a second coder; `--census` matches `argv[0]` of
+`agy`; neither watches *me*.
+⚠️ **And the coder's legitimate per-track restore then wiped the note.** Its report says
+`restored: .agents/rules/10-supervisor.md CLAUDE.md bin/supervise.sh` — correct behaviour, the merge
+procedure's own step 2 — which discarded my uncommitted `CLAUDE.md` edit. That is run 27's shape arriving
+through a *correct* action, and `CLAUDE.md`'s own line already said it: *"Commit supervisor notes the moment
+they are written, or do not write them."* I wrote one during a live run and it was gone inside two minutes.
+⭐ **What saved the content was writing it to `.agents/supervisor/.n336.txt` first** — 2346 bytes, still on
+disk, re-applied afterwards. The scratch-file habit exists for the tool's sake; it turned out to be the
+backup.
+**RULED, and it is cheap: no `git add`, no `git commit`, no tracked-file edit in this checkout while
+`coder.pid` is ALIVE.** The reading is `kill -0` immediately before, not at tick open (N265's rule, moved
+from *reading* a tree to *writing* one). A note written during a live run goes to a scratch file in the
+mailbox and is committed after the coder exits — which costs one minute and cannot be clobbered.
+
+⛔ **A BRIEF THAT ORDERS A NEW TEST HANDS OVER ITS FIXTURE, COPIED FROM A SIBLING TEST IN THE SAME FILE
+(N337b, same day, two consecutive waves).** Site's `FaqPlaceAction` test failed on
+`Call to undefined method App\Modules\X103\Models\Page::factory()` — **no `Page` factory exists anywhere** in
+the repo, and `X103Test.php`'s own idiom is `Page::create([...])` at `:777`, `:830`, `:875`, `:908`. My brief
+had described the fixture in prose: *"a page with a `pending_faq` in `draft_meta`"*. The coder reached for
+the framework's usual shape, which is the reasonable reading of prose.
+⚠️ **Second consecutive wave lost to the same root**: the one before it put `gpt-4o-mini` where
+`AiModel::Gpt4oMini->value` was needed, from a brief that said *"assert it is the default's value"*. Both
+times I specified **what to assert** and left **what to build it from** in prose.
+**RULED: N266 extends from rules to fixtures.** A brief that orders a new test quotes the `Model::create([…])`
+call from a sibling test in the same file, with its real column set, and names the line it came from. The
+cost is four lines; the cost of not doing it has now been two dispatches in one afternoon.
+⭐ Neither fix run spends a dispatch of the cap — both defects are this seat's.
+
 ## ⛔⛔ THREE LAWS OF LANE REVIEW (owner ruling, 2026-09-28, after N316). These are not notes.
 
 ### LAW 1 — A LANE'S WORK IS `git merge-base origin/main HEAD`..`HEAD`. NEVER `origin/main..lane`.
