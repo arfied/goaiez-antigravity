@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\AiModel;
 use App\Enums\Plan;
 use App\Livewire\Admin\PlatformSettings as SettingsScreen;
 use App\Models\PlanEntitlement;
@@ -785,4 +786,41 @@ test('malformed or nested JSON stays a string rather than becoming a half-parsed
 
     Livewire::actingAs($this->admin)->test(SettingsScreen::class)->call('edit', 'speed.script_deferral_extra_hosts')->set('draft', '[not json')->call('save');
     expect($registry->value('speed.script_deferral_extra_hosts'))->toBe('[not json');
+});
+test('edit() on ai.model.site_authoring sets modelOptions to the chat models only', function (): void {
+    Livewire::actingAs($this->admin)
+        ->test(SettingsScreen::class)
+        ->call('edit', 'ai.model.site_authoring')
+        ->assertSet('editing', 'ai.model.site_authoring')
+        ->assertSet('modelOptions', function (array $options): bool {
+            return in_array(AiModel::ClaudeOpus5->value, $options, true)
+                && in_array(AiModel::Gpt4oMini->value, $options, true)
+                && ! in_array(AiModel::TextEmbedding3Small->value, $options, true)
+                && ! in_array(AiModel::GptImage25Flare->value, $options, true);
+        });
+});
+
+test('edit() on the embedding task key sets modelOptions to the embedding model only', function (): void {
+    Livewire::actingAs($this->admin)
+        ->test(SettingsScreen::class)
+        ->call('edit', 'ai.model.knowledge_embedding')
+        ->assertSet('editing', 'ai.model.knowledge_embedding')
+        ->assertSet('modelOptions', function (array $options): bool {
+            return $options === [AiModel::TextEmbedding3Small->value];
+        });
+});
+
+test('saving an id the enum does not know saves and leaves effectiveModel at the task default', function (): void {
+    Livewire::actingAs($this->admin)
+        ->test(SettingsScreen::class)
+        ->call('edit', 'ai.model.site_authoring')
+        ->set('draft', 'not-a-real-model')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    Livewire::actingAs($this->admin)
+        ->test(SettingsScreen::class)
+        ->call('edit', 'ai.model.site_authoring')
+        ->assertSet('draft', 'not-a-real-model')
+        ->assertSet('effectiveModel', AiModel::Gpt4oMini->value);
 });
