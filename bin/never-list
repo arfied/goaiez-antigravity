@@ -1,0 +1,53 @@
+# THE NEVER-LIST — one path pattern per line, shell-glob syntax, matched against repo-relative paths.
+#
+# ⛔ THIS IS THE ONLY COPY THAT MATTERS. Read by:
+#   · bin/hooks/reference-transaction  — installed into the COMMON hooks dir, fires on the ref update a
+#     commit performs, so it catches `/usr/bin/git commit` and survives `--no-verify`.
+#   · the PATH wrapper (coder-bin/git today, bin/coder-git next) — catches it earlier, at add/rm/commit,
+#     with a message a coder can act on.
+# ⚠️ The wrapper still carries its own inline copies as of 2026-09-28; unifying them is a separate commit,
+# because the owner's order is hook first, wrapper move second, wrapper rewrite after that. Until then this
+# file is authoritative for the HOOK only, and the two are seeded identical on purpose.
+#
+# MARKERS, and they exist because the wrapper has always had these exemptions — a hook that ignored them
+# would refuse work the contract permits:
+#   @self-edit     — committable, but ONLY in a commit that touches nothing outside the @self-edit paths.
+#                    This is how the supervisor keeps its own column (CLAUDE.md, bin/supervise.sh, the list
+#                    and this hook) amendable by a commit on main, while a coder gutting a guard and
+#                    smuggling product in the same commit is still refused.
+#   @merge-exempt  — admissible in a gated merge (GOAIEZ_MERGE_OK=1 and MERGE_HEAD present). A lane merging
+#                    a main that moved these paths MUST be able to carry them; that is coder-bin/git:160.
+#   @main-exempt   — admissible in the grs-antig checkout only. coder-bin/git:95 clears the harness needle
+#                    by repo name, so Track 1 commits the harness without a flag and always has.
+#
+.claude
+.claude/*                                         @self-edit
+.agents/supervisor
+.agents/supervisor/*                              @self-edit
+.agents/rules
+.agents/rules/*                                   @merge-exempt @self-edit
+.agents/state
+.agents/state/*                                   @self-edit
+.agents/workflows/*                               @self-edit
+.agents/skills/*                                  @self-edit
+CLAUDE.md                                         @self-edit
+bin/supervise.sh                                  @self-edit
+bin/state.py                                      @merge-exempt @self-edit
+bin/never-list                                    @self-edit
+bin/hooks/*                                       @self-edit
+bin/coder-git                                     @self-edit
+app/phpunit.xml
+app/app/Doctor
+app/app/Doctor/*                                  @merge-exempt
+app/tests/Journeys
+app/tests/Journeys/*                              @main-exempt
+*seals.json
+.gitattributes
+.env
+*/.env
+.env.*
+*/.env.*
+source
+source/*
+runtime
+runtime/*
