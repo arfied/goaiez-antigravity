@@ -20,6 +20,7 @@ use App\Modules\X102\Models\ChatSession;
 use App\Modules\X102\Models\ChatTurn;
 use App\Modules\X103\Actions\CustomerQuestionsAction;
 use App\Modules\X103\Actions\FaqDraftAction;
+use App\Modules\X103\Actions\FaqPlaceAction;
 use App\Modules\X103\Actions\FunnelBuildAction;
 use App\Modules\X103\Actions\PageCreateAction;
 use App\Modules\X103\Actions\QuestionAnswerDraftAction;
@@ -2226,5 +2227,53 @@ class X103Test extends TestCase
         $html = view('x-103::site.blocks.team', ['block' => ['type' => 'team', 'items' => [['name' => 'Real Person 4912', 'role' => 'Owner'], ['name' => 'demo·Ghost 4913', 'role' => 'Tech']]], 'context' => []])->render();
         $this->assertStringContainsString('Real Person 4912', $html);
         $this->assertStringNotContainsString('Ghost 4913', $html);
+    }
+
+    public function test_faq_place_action_places_faq_and_idempotent(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'FAQ Place Action Tenant']);
+        $page = Page::factory()->create(['business_id' => $biz->id, 'slug' => 'faq', 'title' => 'FAQ']);
+        $page->draft_meta = [
+            'pending_faq' => [
+                'items' => [
+                    ['question' => 'Q1', 'answer' => 'A1'],
+                ],
+                'model' => 'test-model',
+                'source' => [
+                    'type' => 'customer_question',
+                    'id' => 999,
+                    'question' => 'Q1',
+                ],
+            ],
+        ];
+        $page->save();
+
+        $action = new FaqPlaceAction;
+
+        // First call should return true and place the FAQ
+        $this->assertTrue($action->handle($biz->id, $page->id));
+
+        $page->refresh();
+        $this->assertFalse(isset($page->draft_meta['pending_faq']));
+
+        $hasFaqBlock = false;
+        foreach ($page->draft_blocks as $block) {
+            if ($block['type'] === 'faq' && $block['source'] === 'ai') {
+                $hasFaqBlock = true;
+                break;
+            }
+        }
+        $this->assertTrue($hasFaqBlock);
+
+        $this->assertDatabaseHas('site_answered_questions', [
+            'business_id' => $biz->id,
+            'source_type' => 'customer_question',
+            'source_id' => 999,
+            'page_id' => $page->id,
+            'question' => 'Q1',
+        ]);
+
+        // Second call should return false and change nothing
+        $this->assertFalse($action->handle($biz->id, $page->id));
     }
 }
