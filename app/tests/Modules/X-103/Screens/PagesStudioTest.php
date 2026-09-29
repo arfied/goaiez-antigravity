@@ -194,6 +194,7 @@ class PagesStudioTest extends TestCase
     public function test_site_authoring_tier_is_configured()
     {
         $this->assertSame(AiModel::Gpt4oMini, AiTask::SiteAuthoring->defaultModel());
+        $this->assertSame(AiModel::Gpt4oMini, AiTask::SiteCopy->defaultModel());
         $this->assertSame('ai.model.site_authoring', AiTask::SiteAuthoring->settingKey());
     }
 }
