@@ -2428,6 +2428,31 @@ defensible answer.**
 and did not measure the population it applied to.* One command — `grep -c "public function" <the file>`
 — separated the two.
 
+⭐ **THE OWNERSHIP TABLE IS A FILE NOW, AND IT IS MEASURED (2026-09-29, owner directive "fix the
+ownership table").** `.agents/supervisor/LANE-OWNERSHIP.md`, copied into all seven lane mailboxes
+(md5 verified in each) and pointed at from `.agents/rules/10-supervisor.md`, which the coders read.
+⛔ **There was no table on disk before this.** It had only ever existed in the owner's dispatch messages
+and in my briefs, which is why two waves in one day needed a ruling to proceed — `app/app/Services/Voice/`
+and `app/app/Livewire/Admin/`. `grep -rln "ownership" --include="*.md"` finds
+`.agents/rules/08-modular-ddd-cqrs.md` (a *module* owns its tables — a different sense) and a wave
+grouping in `source/GOAIEZ-TRACKER-MODULES.md:131`. Neither is a lane→path assignment.
+**The defect was the UNIT, not missing rows:** the old table listed **module ids**, and ~2,000 tracked
+files live outside `app/app/Modules/`. The rule now is *a file outside the module trees belongs to whoever
+owns the SUBJECT it serves*, with shared trees split by **subdirectory** and genuinely shared seams listed
+as **CONTENDED** with a procedure instead of an invented owner.
+⚠️ **Every row carries its touch count, derived from the last 80 lane merges, and the derivation command
+is in the file and was run verbatim before it shipped (N252).** Two of my own assumptions died to it:
+`app/app/Livewire/` is **reviews'** by evidence (3–0 through `Account/`), not ui's as I had ruled by
+"nearest fit" an hour earlier — the split is `Account/` reviews, `Admin/`+`Advanced/` ui by this wave's
+claim; and **module ownership is not exclusive**, `X-103` having been touched by **five** lanes in the
+window. A table asserting exclusivity would have been false on its first row.
+⭐ **And it pairs with `boundary`:** a cross-module edit is legitimate at the seam (`Events\`, `Actions\`,
+`Domain\`) and a `BLOCK` at the tables (`Models\`). The same day's `boundary 0 → 2` on `main` is reviews
+reaching into X-103's models — one event that both instruments describe.
+⛔ **When the table is silent the answer is `UNRESOLVED`, never "nearest fit".** A supervisor ruling on an
+unassigned path is recorded in `REVIEWS.md` **and added to the table in the same act**, with the counts
+that support it; a ruling not written there is re-litigated within the day, and two were.
+
 ## ⛔⛔ THREE LAWS OF LANE REVIEW (owner ruling, 2026-09-28, after N316). These are not notes.
 
 ### LAW 1 — A LANE'S WORK IS `git merge-base origin/main HEAD`..`HEAD`. NEVER `origin/main..lane`.

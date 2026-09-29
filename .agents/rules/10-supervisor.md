@@ -98,3 +98,35 @@ that has already been reviewed** — fix forward.
 ## ⛔ ADDED 2026-09-27 — EVERY SOCIAL, REVIEW AND MESSAGING CHANNEL GOES THROUGH ZERNIO (owner's boss, standing)
 
 Google Business Profile (posts, reviews, replies), WhatsApp (connect, templates, sends, inbound), Facebook, Instagram, LinkedIn, TikTok and the other networks Zernio lists, and inbox DMs/comments/reviews are reached **only through Zernio** (`https://zernio.com/api/v1`, the existing `app/Services/Gbp/ZernioGbpClient.php` shows the auth, errors and credential). **Never** write a call to `graph.facebook.com`, the WhatsApp Cloud API, `mybusiness*.googleapis.com` or any Google Business Profile API, and never extend `App\Services\Providers\MetaService` — it has no callers and is not the path. A brief that touches one of these channels quotes the Zernio endpoint it read from the live docs (`.agents/supervisor/ZERNIO-DOCS-2026-09-27.md`); **work from that text, never from memory of Meta's or Google's own APIs** — that memory is exactly how this repo kept drifting back to them. If a brief's endpoint looks wrong, STOP and say so; do not substitute an official-API shape. Exceptions Zernio does not offer stay direct: Search Console, Google Places, Gmail, and browser Web Push.
+
+## ⛔ ADDED 2026-09-29 — BEFORE YOU TOUCH A PATH OUTSIDE YOUR OWN MODULE, READ THE OWNERSHIP TABLE
+
+`.agents/supervisor/LANE-OWNERSHIP.md` — a copy sits in your own mailbox, and the canonical one is
+`/home/goaiez/agents/grs-antig/.agents/supervisor/LANE-OWNERSHIP.md`, which you can read directly
+because every lane is a git worktree of the same repo. **The `grs-antig` copy rules if they differ.**
+
+It exists because two waves on 2026-09-29 had to stop for a supervisor ruling on a path no table could
+express — `app/app/Services/Voice/VoiceCalls.php` and `app/app/Livewire/Admin/PlatformSettings.php` —
+since the old table listed **module ids** and roughly two thousand tracked files live outside
+`app/app/Modules/`.
+
+**The rule it encodes: a file outside `app/app/Modules/` belongs to whoever owns the SUBJECT it serves.**
+Voice is sixty's, so a voice service is sixty's. X-103 is site's, so an `AiTask` case for site authoring
+is site's.
+
+Three things it asks of you:
+
+1. **Your brief names every path you write.** If the work needs a path the brief does not name, that is
+   the signal to stop — not to widen scope quietly.
+2. **A CONTENDED path** (§3 — `app/app/Services/Zernio/`, `app/app/Support/DefaultsManifest.php`,
+   `app/app/Enums/`, `app/tests/` outside `Modules/`) is written only when your brief names the **exact
+   file** as its own item. More than one lane legitimately writes there, so the protection is the brief,
+   not an owner.
+3. ⛔ **If the table is silent about a path, write `UNRESOLVED` with the path and stop. Do not reason
+   from "nearest fit"** — the supervisor did exactly that on 2026-09-29, assigned `app/app/Livewire/` to
+   the wrong lane, and the data refuted it within the hour.
+
+⭐ **Editing another module is not forbidden — reaching into its tables is.** `Events\`, `Actions\` and
+`Domain\` imports are the sanctioned seams and `boundary` exempts them; a `Models\` import across a module
+boundary is what that stage flags, and it went `0 → 2` on `main` that same day for exactly this. **The
+module's owner is who you ask for a new seam.**
