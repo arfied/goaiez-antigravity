@@ -819,7 +819,7 @@ class X198Test extends TestCase
         $business = Business::factory()->create(['currency' => 'USD']);
         $this->engine->connect($business->id, 'stripe', 'acct_test');
 
-        $this->app->instance(StripeGatewayClient::class, new class extends StripeGatewayClient
+        $this->app->instance(StripeGatewayClient::class, new class
         {
             public function charge(int $amountCents, string $source, string $currency, string $idempotencyKey): array
             {
