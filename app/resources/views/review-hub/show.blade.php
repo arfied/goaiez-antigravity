@@ -77,23 +77,6 @@
                             </span>
                         </p>
 
-                                                @if (($review['ticket'] ?? null) !== null)
-                            <div class="mt-3 flex items-center gap-2">
-                                @php
-                                    $ticketState = str_starts_with($review['ticket']->status, 'open') ? 'attention' : 'ok';
-                                    $ticketLabel = str_starts_with($review['ticket']->status, 'open') ? 'Open' : 'Resolved';
-                                    if (str_starts_with($review['ticket']->status, 'open') && $review['ticket']->sla_due_at && $review['ticket']->sla_due_at->isPast()) {
-                                        $ticketState = 'alert';
-                                        $ticketLabel = 'Breached';
-                                    }
-                                @endphp
-                                <x-ui.status-pill :state="$ticketState" :label="$ticketLabel" />
-                                <span class="text-[11px] text-ink-2">
-                                    Ticket #{{ $review['ticket']->id }} &middot; due {{ $review['ticket']->sla_due_at ? $review['ticket']->sla_due_at->diffForHumans() : 'N/A' }}
-                                </span>
-                            </div>
-                        @endif
-
                         @if (($review['comment'] ?? null) !== null && trim((string) $review['comment']) !== '')
                             <p class="mt-3 whitespace-pre-line">{{ $review['comment'] }}</p>
                         @endif
