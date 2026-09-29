@@ -22,8 +22,6 @@ class SiteEditorAssistant extends Component
 
     public string $pageId = '';
 
-    public string $niche = 'unmapped';
-
     public string $success = '';
 
     public string $error = '';
@@ -42,12 +40,12 @@ class SiteEditorAssistant extends Component
 
         $pid = (int) $this->pageId;
         if ($pid === 0) {
-            $this->error = 'Page ID must be provided and cannot be 0.';
+            $this->error = 'A page must be selected.';
 
             return;
         }
 
-        $result = $action->handle(Tenancy::idOrFail(), $pid, $this->niche);
+        $result = $action->handle(Tenancy::idOrFail(), $pid);
 
         $this->success = "Generated form. It places a lead-capture block and invents no price. Block ref: {$result['block_ref']}. This feeds design changes; nothing downstream is wired to it yet.";
     }

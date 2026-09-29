@@ -7,6 +7,7 @@ namespace App\Modules\CBilling\Ui;
 use App\Modules\CBilling\Actions\LedgerExplainAction;
 use App\Modules\CBilling\Actions\TopupChargeAction;
 use App\Modules\CBilling\Models\CreditLedgerEntry;
+use App\Modules\CBilling\Models\DunningState;
 use App\Modules\CBilling\Models\Meter;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -67,6 +68,7 @@ class Credits extends Component
     {
         abort_unless(auth()->check() && Tenancy::check(), 403);
 
+        $dunning = DunningState::where('business_id', Tenancy::id())->first();
         $meters = Meter::where('business_id', Tenancy::id())
             ->orderBy('meter_type')
             ->get()
@@ -84,6 +86,7 @@ class Credits extends Component
             'entries' => $entries,
             'aiBalance' => $aiBalance,
             'meterLabels' => $meterLabels,
+            'dunning' => $dunning,
             'ledgerEntryPillStates' => $this->ledgerEntryPillStates(),
         ]);
     }

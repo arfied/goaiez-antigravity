@@ -2319,3 +2319,53 @@ worktree** — every lane checkout is legitimately in that state until it takes 
 failing closed there would stop all seven lanes from committing anything the moment it was installed. The
 wrapper still guards those checkouts meanwhile. A bug in the hook itself fails **closed**, which is
 recoverable: editing a hook is a file write, not a ref update.
+
+## ⛔⛔ THREE LAWS OF LANE REVIEW (owner ruling, 2026-09-28, after N316). These are not notes.
+
+### LAW 1 — A LANE'S WORK IS `git merge-base origin/main HEAD`..`HEAD`. NEVER `origin/main..lane`.
+```
+base=$(git -C <lane> merge-base origin/main HEAD)
+git -C <lane> diff --numstat $base..HEAD
+```
+⛔ **`git diff origin/main..lane` on a lane that has not merged main renders MAIN'S ADDITIONS AS THE LANE'S
+DELETIONS.** On 2026-09-28 that made `track/ui` appear to have deleted `bin/never-list` (−67),
+`bin/hooks/reference-transaction` (−138) and 47 lines of `CLAUDE.md` — i.e. to have gutted the One Rule's
+enforcement. It had merely not merged. Base-first, its real diff was three files.
+⭐ This is N123 with the stakes raised: a reversed diff returns a **plausible, well-formed number of the right
+magnitude with the sign inverted**, so nothing looks broken — and in this direction it converts *"this lane is
+behind"* into *"this lane is sabotaging the guard"*. **The free check that it is the right way round: a side
+that only added files must report `-0`.**
+
+### LAW 2 — THE CONDUCT GREP RUNS ON THE TRANSCRIPT AND ON THAT BASE-FIRST DIFF, AND NOWHERE ELSE.
+Needles: `/usr/bin/git`, `--no-verify`, `core.hooksPath`. Transcript at
+`~/.gemini/antigravity-cli/brain/<id>/.system_generated/logs/transcript.jsonl`, `CommandLine` values
+JSON-unescaped (a plain `grep -o` returns only `\`).
+⛔ **A hit inside `bin/never-list`, `bin/hooks/reference-transaction`, or N313/N314 prose is DOCUMENTATION, not
+a bypass.** Those files exist to name those three strings. Run on `origin/main..lane` the grep returned **18**
+hits, every one a deleted line of the guard's own text — *a detector firing on its own documentation*, inside
+the one check whose false positive is an accusation of misconduct. Correctly scoped: **0**.
+⭐ **An instrument that can only accuse is the one to distrust first**, and two of them accused the same lane
+within one minute.
+
+### LAW 3 — DO NOT PRE-CLEAR `app/phpunit.xml`. MEASURE BEFORE TOUCHING A LANE TREE.
+Since `2e948aeb6` main untracks `app/phpunit.xml` and tracks `app/phpunit.xml.dist`; git reads that as a
+**rename**, so a lane that committed its own copy conflicts. **That conflict is the CODER's to resolve and it
+can:**
+```
+git add app/phpunit.xml.dist      # permitted — .dist is NOT on the never-list
+git commit --no-edit
+```
+⛔ **Never `git add app/phpunit.xml`** — refused, and correctly; it is the local pin and stays untracked.
+⛔ **And do not "help" by running `git rm --cached app/phpunit.xml` on the lane.** I did, on a *prediction*
+that the conflict was unresolvable, without measuring it — and **untracking the rename's source turned a
+CONTENT conflict into a RENAME/DELETE one**, i.e. made it worse, while the premise was false in the first
+place. Four lanes were touched on that reasoning.
+⭐ The general law, and it is the one the other two are instances of: **measure the lane before you act on it.
+A supervisor write into a lane tree is the most expensive kind of guess**, because the lane cannot see why its
+own state changed.
+
+### AND A STOP IS NOT A BLOCK.
+`track/ui`'s run 244 did nothing because it hit a merge conflict it had not been told how to resolve, quoted
+it, and ended — **which is the contract.** No assertion was read, no defect of the lane's exists, nothing is
+spent. ⭐ **Conduct BLOCK lifts when a COMPLETED wave's base-first range and transcript both contain zero of
+Law 2's three needles.** An incomplete wave neither lifts nor extends it.

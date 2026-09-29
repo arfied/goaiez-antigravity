@@ -264,6 +264,58 @@
         </div>
     @else
         <div class="max-w-3xl">
+            
+            @if($pages->isNotEmpty())
+                <div class="mb-8 space-y-6">
+                    <!-- Make Page Form -->
+                    <div class="bg-paper border border-rule rounded-[--radius-card] p-6 mb-4">
+                <form wire:submit="makePage">
+                    <h2 class="font-display text-xl font-semibold text-ink mb-2">Make me a page</h2>
+                    <p class="text-ink-2 mb-4">Say what the page is for, in your own words. It lands as an unpublished draft you can publish or delete.</p>
+                    <div class="flex gap-3">
+                        <input type="text" wire:model="pageRequest" placeholder="e.g. a page about our emergency call-out service" class="flex-1 rounded-[--radius-control] border border-rule bg-card px-4 py-3 text-lg text-ink">
+                        <x-ui.button variant="primary" size="giant" type="submit">Make it</x-ui.button>
+                    </div>
+                </form>
+            </div>
+                    
+                    <!-- Looks A/B/C -->
+                    <div class="bg-card border border-rule rounded-[--radius-card] p-6">
+                        <h3 class="font-semibold text-ink mb-4">Pick a look</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            @foreach(['a' => 'Look A', 'b' => 'Look B', 'c' => 'Look C'] as $k => $label)
+                                <div class="rounded border {{ $chosenVariant === $k ? 'border-ink' : 'border-line' }} p-2" wire:key="look-{{ $k }}">
+                                    @if(!empty($previews) && !empty($previews[$k]))
+                                        <iframe title="{{ $label }} preview" srcdoc="{{ $previews[$k] }}" sandbox="" loading="lazy" class="w-full h-48 bg-surface border border-line"></iframe>
+                                    @else
+                                        <div class="w-full h-48 bg-surface border border-line flex items-center justify-center text-ink-2 text-sm">No preview</div>
+                                    @endif
+                                    <div class="mt-2 flex items-center justify-between">
+                                        <span class="text-sm text-ink">{{ $label }}@if($chosenVariant === $k) — yours @endif</span>
+                                        <x-ui.button wire:click="chooseLook('{{ $k }}')" size="default" variant="secondary">Pick</x-ui.button>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    
+                    <!-- Publish All & Domain -->
+                    <div class="bg-card border border-rule rounded-[--radius-card] p-6">
+                        <h3 class="font-semibold text-ink mb-2">Publish</h3>
+                        <p class="text-ink-2 text-sm mb-4">Publish all drafted pages to the platform address.</p>
+                        <x-ui.button wire:click="publishAll" size="giant" variant="primary">Publish All Pages</x-ui.button>
+                        
+                        <details class="mt-4 group">
+                            <summary class="text-sm text-ink-2 cursor-pointer select-none">Custom domain</summary>
+                            <div class="mt-3 p-4 bg-paper rounded-[--radius-card] border border-rule">
+                                <p class="text-sm text-ink-2 mb-2">To configure your own domain, visit Site Build.</p>
+                                <a href="{{ route('x-103.site-build') }}" class="text-sm font-medium text-ink underline">Open Site Build</a>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            @endif
+
             <h2 class="font-display text-2xl font-semibold text-ink mb-6">Pick a page</h2>
             
             <div class="space-y-4 mb-12">
@@ -323,21 +375,31 @@
                             </div>
                         @endif
                     </div>
-                @empty
-                    <div class="text-ink-2">No pages yet. Add one below.</div>
+                                @empty
+                    <div class="bg-paper border border-rule rounded-[--radius-card] p-6 text-center max-w-xl mx-auto">
+                        <form wire:submit="makePage" class="mb-6">
+                            <label class="block font-display text-xl font-semibold text-ink mb-4">Tell us what this site is for.</label>
+                            <div class="flex gap-3">
+                                <input type="text" wire:model="pageRequest" class="flex-1 rounded-[--radius-control] border border-rule bg-card px-4 py-3 text-lg text-ink" placeholder="e.g. an electrician in London">
+                                <x-ui.button variant="primary" size="giant" type="submit">Start</x-ui.button>
+                            </div>
+                        </form>
+                        <div class="pt-6 border-t border-rule">
+                            <x-ui.button variant="secondary" size="default" wire:click="runBuild">Use my current website</x-ui.button>
+                            @if($buildStatus)
+                                <div class="mt-4 p-4 border border-line rounded-md text-left">
+                                    <p class="font-medium text-ink">Status: {{ $buildStatus }}</p>
+                                    @if($buildStatus === 'refused')
+                                        <p class="text-red-600 mt-2">Reason: {{ $buildReason }}</p>
+                                    @endif
+                                </div>
+                            @endif
+                        </div>
+                    </div>
                 @endforelse
             </div>
             
-            <div class="bg-paper border border-rule rounded-[--radius-card] p-6 mb-4">
-                <form wire:submit="makePage">
-                    <h2 class="font-display text-xl font-semibold text-ink mb-2">Make me a page</h2>
-                    <p class="text-ink-2 mb-4">Say what the page is for, in your own words. It lands as an unpublished draft you can publish or delete.</p>
-                    <div class="flex gap-3">
-                        <input type="text" wire:model="pageRequest" placeholder="e.g. a page about our emergency call-out service" class="flex-1 rounded-[--radius-control] border border-rule bg-card px-4 py-3 text-lg text-ink">
-                        <x-ui.button variant="primary" size="giant" type="submit">Make it</x-ui.button>
-                    </div>
-                </form>
-            </div>
+            
             
             <details class="group">
                 <summary class="cursor-pointer text-sm text-ink-2 hover:text-ink">Add a blank page instead</summary>

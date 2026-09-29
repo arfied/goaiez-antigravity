@@ -63,7 +63,7 @@ class SiteEditorAssistantScreenTest extends TestCase
 
         $test = Livewire::test(SiteEditorAssistant::class)
             ->set('pageId', (string) $page->id)
-            ->set('niche', 'plumbing')
+
             ->call('generate')
             ->assertSet('error', '');
 
@@ -83,7 +83,7 @@ class SiteEditorAssistantScreenTest extends TestCase
         Livewire::test(SiteEditorAssistant::class)
             ->set('pageId', '0')
             ->call('generate')
-            ->assertSet('error', 'Page ID must be provided and cannot be 0.');
+            ->assertSet('error', 'A page must be selected.');
     }
 
     public function test_can_undo_a_design_change(): void
@@ -97,7 +97,7 @@ class SiteEditorAssistantScreenTest extends TestCase
 
         Livewire::test(SiteEditorAssistant::class)
             ->set('pageId', (string) $page->id)
-            ->set('niche', 'plumbing')
+
             ->call('generate')
             ->assertSet('error', '');
 
@@ -124,7 +124,7 @@ class SiteEditorAssistantScreenTest extends TestCase
 
         Livewire::test(SiteEditorAssistant::class)
             ->set('pageId', (string) $page->id)
-            ->set('niche', 'plumbing')
+
             ->call('generate');
 
         $change = DesignChange::where('business_id', $biz->id)->firstOrFail();
@@ -151,7 +151,7 @@ class SiteEditorAssistantScreenTest extends TestCase
 
         Livewire::test(SiteEditorAssistant::class)
             ->set('pageId', (string) $page->id)
-            ->set('niche', 'plumbing')
+
             ->call('generate');
 
         $change = DesignChange::where('business_id', $biz->id)->firstOrFail();
@@ -179,7 +179,7 @@ class SiteEditorAssistantScreenTest extends TestCase
         $pageB = app(PageCreateAction::class)->handle((int) $bizB->id, 'test-slug', 'Test Page');
         Livewire::test(SiteEditorAssistant::class)
             ->set('pageId', (string) $pageB->id)
-            ->set('niche', 'plumbing')
+
             ->call('generate');
         $changeB = DesignChange::where('business_id', $bizB->id)->firstOrFail();
 

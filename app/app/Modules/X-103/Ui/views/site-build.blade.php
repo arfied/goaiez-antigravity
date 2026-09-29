@@ -33,8 +33,11 @@
                         
                         @if(!empty($ledger))
                             <div class="mt-4">
-                                <h4 class="text-sm font-medium text-ink">Ledger:</h4>
-                                <pre class="mt-2 text-xs text-ink-2 overflow-x-auto">{{ json_encode($ledger, JSON_PRETTY_PRINT) }}</pre>
+                                <p class="text-sm text-ink-2">The build process has completed its checks.</p>
+                                <details class="mt-2">
+                                    <summary class="text-xs text-ink-2 cursor-pointer select-none">Technical log for staff</summary>
+                                    <pre class="mt-2 text-xs text-ink-2 overflow-x-auto">{{ json_encode($ledger, JSON_PRETTY_PRINT) }}</pre>
+                                </details>
                             </div>
                         @endif
                     </div>
