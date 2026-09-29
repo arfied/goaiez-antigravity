@@ -2385,6 +2385,49 @@ that same morning; the window I then handed myself could only accuse. **The gene
 worth more than either rule: when a finding would be dramatic, the FIRST question is what the
 instrument could not have seen — not whether the finding is consistent with what it did see.**
 
+⛔⛔ **N331 IS WRONG ON ITS CENTRAL CLAIM, AND A `head -20` IS WHY (N334, 2026-09-29, same day).**
+N331 says the `ai.model.<task>` rung of `AiSpend::modelFor()` is unwritable and that *"flip it in admin
+later is fiction"*. **It is not fiction. It works today.** Measured, after the owner asked for a
+dropdown-plus-input on that very setting:
+- `DefaultsRegistry::set(string $key, mixed $value, string $actor): PlatformSetting` exists at
+  `app/Services/Config/DefaultsRegistry.php:316`, beside `resetToSeed`, `setEntitlement`,
+  `recordPlatformChange`, `historyFor` and `changesBy` — **a full write API with an actor and an audit
+  trail.**
+- `DefaultsRegistry::grouped():565` walks `DefaultsManifest::settings()` **and**
+  `declaredWithoutSeed()`, filing the second set under a heading named, in the source,
+  **`'Set by an operator only'`** — with the comment *"an operator scanning for something to change
+  should meet them together with the reason they are empty."*
+- `app/Livewire/Admin/PlatformSettings.php` renders `$registry->grouped()` and ships
+  `edit(string $key)`, `save()`, `resetToSeed(string $key)` and `toggle()`. It is a **generic**
+  key-addressed settings editor.
+- `ai.model.<task>` keys are generated into `declaredWithoutSeed()` per `AiTask::cases()`, so every one
+  of them **already appears in that editor and is already settable**. (`ai.model.site_copy` is the one
+  exception: seeded in `settings():306`, so it renders in its own group instead.)
+- And `Advanced/Settings` is read-only **by design**, not by omission: `d444448b3`'s own message is
+  *"the Settings screen shows the tenant's effective AI model per task **and links to the real
+  settings** (G-10)."*
+
+⛔ **The cause is mine and it is mechanical.** I established "the registry cannot write" from
+`grep -rn "public function" app/Services/Config/*.php | head -20`. The cap fell at `seedOf` (`:288`).
+`set` is at **`:316` — the very next method.** Nineteen public methods exist; I read nine and wrote
+down a property of all nineteen. ⭐ That is **N137's cap** and **N180's `-maxdepth`** in my own
+measurement: *an instrument that can only under-report is safe as a trigger and unsafe as a finding* —
+and it is the SECOND time in one session, after N333's `sed` window. The two share one shape: **I chose
+a boundary and then reasoned as if the boundary were the world.**
+**RULED: a claim about the WHOLE of an API, a file, or a set is never made from output that passed
+through `head`, `tail`, `-maxdepth`, `sed -n`, or any `[:N]` slice.** Re-run uncapped, or state the cap
+in the sentence. The cheap version is that `grep -c` beside the listing would have shown `19` against
+nine lines read, and that mismatch is the whole check.
+⚠️ **What N331 got RIGHT stands and is worth keeping separate:** nothing writes `ai.model.*` *today*
+(the rows are empty, which is why every task resolves by enum default); `Advanced/Settings` has no save
+method; and the Opus decision's real blocker — `ANTHROPIC_API_KEY` absent — is unaffected, so the
+owner's *ruling* is untouched. ⛔ But the owner chose partly on a reason of mine that was overstated,
+and that is the part to own: **a decision taken on a wrong premise is not made safe by arriving at a
+defensible answer.**
+⭐ The transferable half, and it is N276 exactly: *I measured a mechanism, wrote down what it implied,
+and did not measure the population it applied to.* One command — `grep -c "public function" <the file>`
+— separated the two.
+
 ## ⛔⛔ THREE LAWS OF LANE REVIEW (owner ruling, 2026-09-28, after N316). These are not notes.
 
 ### LAW 1 — A LANE'S WORK IS `git merge-base origin/main HEAD`..`HEAD`. NEVER `origin/main..lane`.
