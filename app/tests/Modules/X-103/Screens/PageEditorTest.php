@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103\Screens;
 
+use App\Enums\CredentialEnvironment;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Ui\Pages;
 use App\Modules\X163\Models\PriceBookItem;
+use App\Services\Config\CredentialStore;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
@@ -16,6 +18,12 @@ use Tests\TestCase;
 
 class PageEditorTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        app(CredentialStore::class)->set('anthropic_api_key', 'test', 'system', CredentialEnvironment::Live);
+    }
+
     public function test_page_editor_displays_distinctive_content(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);

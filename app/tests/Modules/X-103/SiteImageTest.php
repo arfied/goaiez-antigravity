@@ -2,12 +2,14 @@
 
 namespace Tests\Modules\X103;
 
+use App\Enums\CredentialEnvironment;
 use App\Enums\UserRole;
 use App\Models\Business;
 use App\Models\User;
 use App\Modules\X103\Domain\PagePreview;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Ui\Pages;
+use App\Services\Config\CredentialStore;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -16,6 +18,12 @@ use Tests\TestCase;
 
 class SiteImageTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        app(CredentialStore::class)->set('anthropic_api_key', 'test', 'system', CredentialEnvironment::Live);
+    }
+
     public function test_editor_generates_and_previews_hero_picture(): void
     {
         Storage::fake('local');

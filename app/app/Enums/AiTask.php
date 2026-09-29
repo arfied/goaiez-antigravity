@@ -120,7 +120,7 @@ enum AiTask: string
             self::ReplyGeneration,
             self::Conversation => AiModel::Gpt4oMini,
             self::SiteCopy => AiModel::Gpt4oMini,
-            self::SiteAuthoring => AiModel::Gpt4oMini,
+            self::SiteAuthoring => AiModel::ClaudeOpus5,
             self::KnowledgeEmbedding => AiModel::TextEmbedding3Small,
             self::SiteImage => AiModel::GptImage25Flare,
         };
