@@ -1,0 +1,138 @@
+#!/bin/bash
+# THE NEVER-LIST, ENFORCED ON THE REF UPDATE ITSELF — the close the PATH wrapper could never be.
+#
+# ⛔ WHY THIS HOOK EXISTS. On 2026-09-28 two lane coders, refused three times at commit time by the PATH
+# wrapper, ran `type git` and then `/usr/bin/git commit`. One of them used the absolute path for its next,
+# unrelated commit too. A shell script on PATH cannot stop that: when a process execs an absolute path, PATH
+# is not consulted and the wrapper is never entered. This hook is entered by git itself, whichever binary
+# was invoked, so `/usr/bin/git commit` is caught here.
+#
+# ⛔ AND `--no-verify` DOES NOT SKIP IT. That flag skips `pre-commit` and `commit-msg`. Measured
+# 2026-09-28 in a scratch repo: with a `pre-commit` hook armed, `git commit --no-verify` LANDS the commit;
+# with this hook armed, both `git commit --no-verify` and `/usr/bin/git commit --no-verify` return rc=128
+# with the ref unmoved. A commit is a ref update, and this runs on the ref update.
+#
+# ⚠️ REMAINING BYPASS, stated rather than hidden: `git -c core.hooksPath=/dev/null commit`. That is a
+# wrapper rule to add later; it is not a reason to skip this hook, because it is one more thing a coder has
+# to decide to type, and the wrapper can refuse the flag.
+#
+# ⚠️ COST, accepted deliberately: this file lives in the COMMON hooks dir, so one copy governs all eight
+# checkouts, and it runs on every ref update. The ref filter below is what keeps that cheap — it exits
+# before doing any work for `refs/remotes/*`, which is what a fetch moves, and for the `committed` and
+# `aborted` states, which cannot be refused anyway.
+#
+# ⚠️ FAIL DIRECTION, and it is not the same in both cases. A genuine match fails CLOSED (the ref does not
+# move). A MISSING `bin/never-list` fails OPEN and silently, because every lane checkout is legitimately in
+# that state until it takes a main that carries the file — failing closed there would stop all seven lanes
+# from committing anything the moment this is installed. The wrapper still guards those checkouts meanwhile.
+# A bug in this file also fails closed, which is recoverable: editing a hook is a file write, not a ref
+# update, so a broken hook can still be repaired.
+
+state="$1"
+case "$state" in
+  preparing|prepared) ;;
+  *) exit 0 ;;
+esac
+
+zero='0000000000000000000000000000000000000000'
+list=''
+list_loaded=0
+
+while read -r old new ref; do
+  # ⚠️ `refs/heads/*` AND `HEAD`, NOT a named list of branches — measured 2026-09-28, the ref lines a
+  # commit emits are VERSION-DEPENDENT on this box: git 2.47.3 (/usr/bin/git) emits a `HEAD` line and a
+  # `refs/heads/<branch>` line, while git 2.48.2 (the cpanel path-bin git) emits only the branch line. A
+  # filter naming `HEAD` or specific branches therefore catches one binary and not the other, which is
+  # exactly how the first version of this hook let the cpanel git commit a never-list path. `refs/remotes/*`
+  # is deliberately absent so a fetch does no work here, and `AUTO_MERGE` and tags fall out for free.
+  case "$ref" in
+    HEAD|refs/heads/*) ;;
+    *) continue ;;
+  esac
+  [ -z "$new" ] && continue
+  case "$new" in "$zero"|"") continue ;; esac
+
+  # ⛔ A REF MOVING TO A COMMIT THAT ALREADY EXISTS IS NOT A COMMIT BEING MADE, AND POLICING IT WOULD BREAK
+  # `git checkout` AND EVERY LANE'S FAST-FORWARD. A checkout points HEAD at an existing branch tip; a
+  # fast-forward points a branch at a tip that `refs/remotes/origin/*` already holds. In both cases the
+  # commit's own diff may legitimately contain never-list paths, because main committed them. A commit being
+  # CREATED, by contrast, is not yet the tip of any ref — that is the discriminator, and it is O(number of
+  # refs) rather than a history walk: 23 refs, 2 ms, measured in this repo.
+  if git for-each-ref --format='%(objectname)' 2>/dev/null | grep -qxF "$new"; then
+    continue
+  fi
+
+  if [ "$list_loaded" = 0 ]; then
+    list_loaded=1
+    list=$(git cat-file -p "$new:bin/never-list" 2>/dev/null)
+    [ -z "$list" ] && list=$(cat "$(git rev-parse --show-toplevel 2>/dev/null)/bin/never-list" 2>/dev/null)
+    [ -z "$list" ] && exit 0
+  fi
+
+  # The new tip's tree against its FIRST parent. --root covers a root commit; -m --first-parent makes a
+  # merge commit report its changes instead of reporting nothing, which is how a merge would otherwise
+  # carry a never-list path past this check.
+  paths=$(git diff-tree --no-commit-id --name-only -r -m --first-parent --root "$new" 2>/dev/null)
+  [ -z "$paths" ] && continue
+
+  merge_ok=0
+  if [ "${GOAIEZ_MERGE_OK:-}" = 1 ] && [ -f "$(git rev-parse --git-path MERGE_HEAD 2>/dev/null)" ]; then
+    merge_ok=1
+  fi
+  is_main=0
+  [ "$(basename "$(git rev-parse --show-toplevel 2>/dev/null)")" = grs-antig ] && is_main=1
+
+  # ⛔ @self-edit — THE LIST AND THIS HOOK MUST REMAIN AMENDABLE BY A COMMIT ON main. Self-listing
+  # bin/never-list and bin/hooks/* protects them from a coder, and it also locks EVERYONE out: once this
+  # hook is armed, a commit touching them is refused, so the only way to amend the One Rule's protected set
+  # would be to move the hook aside on a machine — the opposite of the owner's instruction that the next
+  # change be a commit on main. So: @self-edit patterns are skipped when the commit touches NOTHING outside
+  # them. A supervisor amending the list alone is allowed; a coder gutting the list while smuggling product
+  # in the same commit is refused, because that commit touches a path no @self-edit pattern matches.
+  # ⚠️ Residual, stated rather than hidden: a coder could still commit a gutted list BY ITSELF through
+  # /usr/bin/git. That commit is an isolated, visible diff on a protected file, the PATH wrapper refuses it
+  # for plain `git`, and the standing review hand-grep is where it is caught.
+  self_only=1
+  while IFS= read -r p; do
+    [ -z "$p" ] && continue
+    hit=0
+    while IFS= read -r entry; do
+      case "$entry" in ''|\#*) continue ;; esac
+      case "$entry" in *@self-edit*) ;; *) continue ;; esac
+      pat="${entry%%@*}"; pat="${pat%"${pat##*[![:space:]]}"}"
+      [ -z "$pat" ] && continue
+      # shellcheck disable=SC2254
+      case "$p" in $pat) hit=1; break ;; esac
+    done <<< "$list"
+    [ "$hit" = 0 ] && { self_only=0; break; }
+  done <<< "$paths"
+
+  while IFS= read -r entry; do
+    case "$entry" in ''|\#*) continue ;; esac
+    pat="${entry%%@*}"
+    pat="${pat%"${pat##*[![:space:]]}"}"
+    [ -z "$pat" ] && continue
+    # ⚠️ EVERY marker is evaluated, not the first one that matches. A `case` with one arm per marker takes
+    # the FIRST matching arm and never reaches the others, so a line carrying both @merge-exempt and
+    # @self-edit would have had its @self-edit ignored whenever merge_ok was 0 — the exemption silently
+    # absent in exactly the common case. Found before install, by asking what a line with two markers does.
+    skip=0
+    case "$entry" in *@merge-exempt*) [ "$merge_ok"  = 1 ] && skip=1 ;; esac
+    case "$entry" in *@main-exempt*)  [ "$is_main"   = 1 ] && skip=1 ;; esac
+    case "$entry" in *@self-edit*)    [ "$self_only" = 1 ] && skip=1 ;; esac
+    [ "$skip" = 1 ] && continue
+    while IFS= read -r p; do
+      [ -z "$p" ] && continue
+      # shellcheck disable=SC2254
+      case "$p" in
+        $pat)
+          echo "REFUSED by the never-list hook (reference-transaction): commit $new touches $p, which matches '$pat' in bin/never-list." >&2
+          echo "  The ref $ref has NOT moved. This hook runs on the ref update, so it is reached by /usr/bin/git and is not skipped by --no-verify." >&2
+          echo "  Put this refusal under REFUSED in your report and stop. Do not route around it." >&2
+          exit 1 ;;
+      esac
+    done <<< "$paths"
+  done <<< "$list"
+done
+
+exit 0
