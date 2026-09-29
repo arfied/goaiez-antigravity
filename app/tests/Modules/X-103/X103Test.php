@@ -19,6 +19,7 @@ use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X102\Models\ChatSession;
 use App\Modules\X102\Models\ChatTurn;
 use App\Modules\X103\Actions\CustomerQuestionsAction;
+use App\Modules\X103\Actions\FaqDiscardAction;
 use App\Modules\X103\Actions\FaqDraftAction;
 use App\Modules\X103\Actions\FaqPlaceAction;
 use App\Modules\X103\Actions\FunnelBuildAction;
@@ -2278,6 +2279,30 @@ class X103Test extends TestCase
             'page_id' => $page->id,
             'question' => 'Q1',
         ]);
+
+        // Second call should return false and change nothing
+        $this->assertFalse($action->handle($biz->id, $page->id));
+    }
+
+    public function test_faq_discard_action_removes_pending_faq_and_idempotent(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'FAQ Discard Action Tenant']);
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'faq-discard',
+            'title' => 'FAQ Discard',
+            'draft_blocks' => [],
+            'is_published' => false,
+        ]);
+        $page->draft_meta = ['pending_faq' => ['items' => [['question' => 'Q1', 'answer' => 'A1']], 'model' => 'test-model']];
+        $page->save();
+
+        $action = new FaqDiscardAction;
+
+        $this->assertTrue($action->handle($biz->id, $page->id));
+
+        $page->refresh();
+        $this->assertFalse(isset($page->draft_meta['pending_faq']));
 
         // Second call should return false and change nothing
         $this->assertFalse($action->handle($biz->id, $page->id));
