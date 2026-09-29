@@ -2320,6 +2320,39 @@ failing closed there would stop all seven lanes from committing anything the mom
 wrapper still guards those checkouts meanwhile. A bug in the hook itself fails **closed**, which is
 recoverable: editing a hook is a file write, not a ref update.
 
+⛔ **"FLIP IT IN ADMIN LATER" IS FICTION — `AiSpend::modelFor()` HAS THREE RUNGS AND ONLY THE ENUM
+DEFAULT IS REACHABLE (N331, 2026-09-29, site wave 370).** I briefed a model pin twice on opposite
+premises — first *"ship on Gpt4oMini, flip in admin later"*, then *"the Opus-class id"* introduced
+as an **owner ruling I cannot produce** — and never opened the resolver. Measured, rung by rung
+(`app/Services/Ai/AiSpend.php:205-245`, whose docblock lists all three):
+- **rung 1, tenant assignment** — X-219's `ModelResolveAction`. N289 already measured it: zero
+  callers outside `X219Test.php`, and nothing in the repo creates an `AiModel` row.
+- **rung 2, platform registry key `ai.model.<task>`** — `grep -rn "ai\.model\." --include=*.php app/`
+  minus `DefaultsManifest`/`AiTask` returns **two hits, both prose comments inside `AiSpend.php`
+  itself**. Nothing writes such a row. And `app/Livewire/Advanced/Settings.php`, the one screen that
+  renders the effective model, has **no `save`/`update`/`set`/`store` method** — it is a read-only
+  display of a value nobody can change.
+- **rung 3, `AiTask::defaultModel()`** — a `match` in the enum. The only reachable rung.
+⭐ **So the code pin is the only lever, and that reverses the argument on BOTH sides** — which is why
+it is a note and not a correction. "Premature, admin can flip it later" is false: admin cannot flip
+it at all. And "the pin is safe, a settings row can soften it" is equally false: there is no row.
+⛔ **The product consequence is the part a reader will care about.** `anthropic_api_key` is not
+configured on this box (openai's is). `Pages::askEdit`/`makePage` wrap their call in
+`catch (Throwable $e) { $this->error = $e->getMessage(); }`, so an Opus pin puts *"Platform credential
+[anthropic_api_key] is not configured"* on the screen for every tenant who types a sentence — the
+owner's own **"Done when"** criterion failing on a path that works on `Gpt4oMini`. **Degraded is not
+done**, and a caught exception is the easiest kind of breakage to ship because nothing goes red.
+⛔ **RULED, and it is N289/X-207's rule pointed at a CONFIG SEAM rather than at a screen: before
+briefing a change to a value that a resolution ladder reads, walk EVERY rung and establish which
+ones anything can actually write.** A documented ladder is a remedy string (N209) — nobody validates
+it, because a rung that is never exercised cannot be observed to be dead. The one command per rung is
+`grep` for a *writer*, never for a mention.
+⭐ And the cheaper half, which is the same rule as N252: **a brief may not introduce a reversal as
+"an owner ruling" unless the ruling is quoted.** Mine was not, the owner's recorded answer said the
+opposite, and the wave cost 17 tests that had been green one sha earlier. The retry cap is NOT spent
+on that — the defect is this seat's — and the remedy is to state both costed options to the owner,
+never to dispatch a third time.
+
 ## ⛔⛔ THREE LAWS OF LANE REVIEW (owner ruling, 2026-09-28, after N316). These are not notes.
 
 ### LAW 1 — A LANE'S WORK IS `git merge-base origin/main HEAD`..`HEAD`. NEVER `origin/main..lane`.
