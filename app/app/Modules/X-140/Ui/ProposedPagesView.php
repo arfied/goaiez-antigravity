@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Modules\X140\Ui;
 
 use App\Enums\UserRole;
+use App\Modules\X103\Actions\FaqDiscardAction;
+use App\Modules\X103\Actions\FaqPlaceAction;
+use App\Modules\X103\Actions\QuestionAnswerDraftAction;
 use App\Modules\X140\Actions\ContentDraftFromConversationAction;
 use App\Modules\X140\Actions\TopicIdentifyAction;
 use App\Modules\X140\Models\ContentTopic;
@@ -80,6 +83,54 @@ class ProposedPagesView extends Component
 
         $this->success = "Drafted content for '{$topicTitle}'. This feeds the topic lists; nothing downstream is wired to it yet.";
         $this->reset(['draftTopicId', 'rawContent']);
+    }
+
+    public function draftAnswer(int $topicId, int $pageId, QuestionAnswerDraftAction $action): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $topic = ContentTopic::where('business_id', $this->businessId)->findOrFail($topicId);
+        $source = $topic->sources()->first();
+        if (! $source) {
+            $this->error = 'No source found for topic.';
+
+            return;
+        }
+
+        try {
+            $res = $action->handle($this->businessId, $pageId, 'customer_inquiry', $topic->id, $source->raw_content);
+            if ($res['status'] === 'refused') {
+                $this->success = $res['reason'] === 'no_facts_available' ? 'Nothing to write from yet.' : $res['reason'];
+            } else {
+                $this->success = "Drafted answer with {$res['model']}";
+            }
+        } catch (\Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
+    public function placeAnswer(int $pageId, FaqPlaceAction $action): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if ($action->handle($this->businessId, $pageId)) {
+            $this->success = 'Answer placed on page.';
+        }
+    }
+
+    public function discardAnswer(int $pageId, FaqDiscardAction $action): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if ($action->handle($this->businessId, $pageId)) {
+            $this->success = 'Pending answer discarded.';
+        }
     }
 
     public function render()
