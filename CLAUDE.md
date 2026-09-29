@@ -2574,6 +2574,35 @@ coincidence; a pair that both expect `SPECCED` could have.
 reported it as status-less and I would have written down "no coverage lie" on evidence that could not have
 shown one. *An instrument that agrees with the right answer for the wrong reason is still broken*, and the
 only thing separating the two runs was checking a result I did not understand rather than accepting it.
+⛔ **A DRY RUN THAT PROMISES MORE THAN THE COMMIT DELIVERS, AND THE SILENCE IS IN THE OVERWRITE (N339,
+2026-09-29, X-212 screened).** Looking for a Commit control to wire onto `X-212 Ui/Commit.php` — a built
+screen that reads `MigrationRun` and has no button — the control turned out to be unshippable, for two
+measured reasons in the action it would call.
+**(1) The two halves disagree about what is importable.** `MigrationDryRunAction` rejects a record only when
+it has **neither** phone nor email (`empty($record['phone']) && empty($record['email'])`);
+`MigrationCommitAction` imports only when it **has a phone** (`! empty($record['phone'])`). So an email-only
+record is **counted as valid** by the dry run and **silently dropped** at commit — and
+`$run->update(['imported_records' => $committedCount])` then **overwrites the dry run's promise with the
+smaller number**, so the discrepancy erases its own evidence. ⭐ *That overwrite is the defect's hiding
+place*: without it, a reader comparing the two columns would see it immediately.
+⛔ **And the obvious fix is unavailable, which is what makes the shape worth recording.**
+`App\Modules\X121\Actions\PersonUpsertAction` has **exactly one** public method — `upsertByPhone` — so there
+is no email-matching path in the repository, and X-121 belongs to another lane. "Make commit import by
+email" is a cross-lane capability, not a fix. **So the honest repair is the other direction: make the dry
+run reject what the commit cannot take**, at the moment the owner can still act on it.
+**(2) `MigrationCommitAction` never checks `status`.** It `findOrFail`s and commits a run in any state —
+`started`, already `committed`, `rolled_back` — while the migration's own comment documents the vocabulary
+(`:19`). **A Commit button on top of that is a double-import button**, and the wave that wired it would have
+been the one blamed.
+⭐ **RULED, and it is N273's corollary reaching one step further.** N273 says: before wiring a control whose
+action gates on an identifier, find what PRODUCES it. **Add: before wiring a control, compare what the
+PRECEDING step promised with what the action actually does.** A two-step flow (preview → apply, dry run →
+commit, draft → publish) is exactly where the two halves drift, because each is tested alone and no test
+compares them. The one test that catches it asserts *the number the owner was promised equals the number
+delivered* — which is the third test in the dispatched brief and the only one of the three that is about the
+defect rather than the mechanism.
+⚠️ And a third, smaller: the success return hardcodes `'is_silent_mode' => true` instead of reading
+`$run->is_silent_mode`. A returned field that claims something it never checked.
 ## ⛔⛔ THREE LAWS OF LANE REVIEW (owner ruling, 2026-09-28, after N316). These are not notes.
 
 ### LAW 1 — A LANE'S WORK IS `git merge-base origin/main HEAD`..`HEAD`. NEVER `origin/main..lane`.
