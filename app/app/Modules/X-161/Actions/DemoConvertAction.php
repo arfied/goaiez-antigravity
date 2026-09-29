@@ -13,9 +13,17 @@ final class DemoConvertAction
     /**
      * Converts demo sandbox to real live tenant preserving facts with zero re-entry (TEST ANCHOR).
      */
-    public function convertToLive(int $businessId, int $demoTenantId, int $liveBusinessId): DemoTenant
+    public function convertToLive(int $businessId, int $demoTenantId, int $liveBusinessId): DemoTenant|array
     {
-        $demo = DemoTenant::where('business_id', $businessId)->findOrFail($demoTenantId);
+        $demo = DemoTenant::where('business_id', $businessId)->find($demoTenantId);
+
+        if (! $demo) {
+            return [
+                'status' => 'refused',
+                'refusal_code' => 'DEMO_NOT_FOUND',
+                'reason' => 'We could not find your demo session. It may have expired.',
+            ];
+        }
 
         $demo->update([
             'is_converted' => true,

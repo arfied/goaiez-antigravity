@@ -31,8 +31,12 @@
         <x-ui.toast kind="success" :message="$success" />
         <x-ui.toast kind="error" :message="$error" />
         <form wire:submit="generate" class="flex flex-col gap-4 mt-4">
-            <input type="number" wire:model="pageId" placeholder="Page ID" class="border rounded p-2 text-ink bg-surface">
-            <input type="text" wire:model="niche" placeholder="Niche" class="border rounded p-2 text-ink bg-surface">
+            <select wire:model="pageId" class="border rounded p-2 text-ink bg-surface">
+                <option value="">Select a page...</option>
+                @foreach($pages as $p)
+                    <option value="{{ $p->id }}">{{ $p->title }}</option>
+                @endforeach
+            </select>
             <button type="submit" class="bg-surface text-ink border rounded p-2">Generate Form</button>
         </form>
     </div>
