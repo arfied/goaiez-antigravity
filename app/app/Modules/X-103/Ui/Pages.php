@@ -6,7 +6,9 @@ use App\Enums\UserRole;
 use App\Models\Business;
 use App\Models\Location;
 use App\Modules\X103\Actions\CustomerQuestionsAction;
+use App\Modules\X103\Actions\FaqDiscardAction;
 use App\Modules\X103\Actions\FaqDraftAction;
+use App\Modules\X103\Actions\FaqPlaceAction;
 use App\Modules\X103\Actions\PageCreateAction;
 use App\Modules\X103\Actions\PageDeleteAction;
 use App\Modules\X103\Actions\PageDuplicateAction;
@@ -27,9 +29,7 @@ use App\Modules\X103\Domain\SectionOrder;
 use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
-use App\Modules\X103\Models\SiteAnsweredQuestion;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
-
 use App\Modules\X157\Actions\PlatformSiteAddressAction;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Industry\IndustryResolver;
@@ -634,49 +634,24 @@ class Pages extends Component
         }
     }
 
-    public function placeFaq(int $pageId): void
+    public function placeFaq(int $pageId, FaqPlaceAction $action): void
     {
         abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
         $this->error = null;
         $this->success = null;
 
-        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
-        $meta = $page->draft_meta ?? [];
-        if (isset($meta['pending_faq'])) {
-            $blocks = $page->draft_blocks ?? [];
-            $blocks[] = [
-                'type' => 'faq',
-                'items' => $meta['pending_faq']['items'] ?? [],
-                'source' => 'ai',
-                'model' => $meta['pending_faq']['model'] ?? 'unknown',
-            ];
-            if (isset($meta['pending_faq']['source'])) {
-                $src = $meta['pending_faq']['source'];
-                SiteAnsweredQuestion::query()->updateOrCreate(
-                    ['business_id' => $this->businessId, 'source_type' => $src['type'], 'source_id' => (int) $src['id']],
-                    ['question' => $src['question'], 'page_id' => $page->id, 'answered_at' => now()]
-                );
-            }
-            unset($meta['pending_faq']);
-            $page->update([
-                'draft_blocks' => $blocks,
-                'draft_meta' => $meta,
-            ]);
+        if ($action->handle($this->businessId, $pageId)) {
             $this->success = 'FAQ placed on page.';
         }
     }
 
-    public function discardFaq(int $pageId): void
+    public function discardFaq(int $pageId, FaqDiscardAction $action): void
     {
         abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
         $this->error = null;
         $this->success = null;
 
-        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
-        $meta = $page->draft_meta ?? [];
-        if (isset($meta['pending_faq'])) {
-            unset($meta['pending_faq']);
-            $page->update(['draft_meta' => $meta]);
+        if ($action->handle($this->businessId, $pageId)) {
             $this->success = 'Pending FAQ discarded.';
         }
     }

@@ -40,7 +40,7 @@
         @endif
         <p class="tabular-nums">Total: {{ number_format($cart->total_cents / 100, 2) }}</p>
         <p>This cart expires at {{ $cart->expires_at->format('H:i:s') }} — nothing is held for you until the order is placed.</p>
-        <x-ui.button size="default" wire:click="authorise" wire:loading.attr="disabled" wire:target="authorise">Authorise this charge</x-ui.button>
+        <x-ui.button size="default" variant="secondary" wire:click="authorise" wire:loading.attr="disabled" wire:target="authorise">Authorise this charge</x-ui.button>
         <x-ui.button size="default" wire:click="pay" :disabled="$authToken === null" wire:loading.attr="disabled" wire:target="pay">Pay {{ number_format($cart->total_cents / 100, 2) }}</x-ui.button>
     @endif
 

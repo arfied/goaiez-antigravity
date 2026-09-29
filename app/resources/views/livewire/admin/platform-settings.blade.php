@@ -90,6 +90,10 @@
                                     </span>
                                 @endif
                             </p>
+                        @elseif ($row['isModelKey'])
+                            <p class="mt-1 font-display text-lg font-semibold tabular-nums text-ink break-all">
+                                {{ $row['current'] === null ? 'Not set' : $row['current'] }}
+                            </p>
                         @else
                             <p class="mt-1 font-display text-lg font-semibold tabular-nums text-ink break-all">
                                 {{ $row['current'] === null ? 'Not set' : var_export($row['current'], true) }}
@@ -136,6 +140,55 @@
                             </p>
 
                             <p class="mt-1 text-base text-ink-2">{{ $doors[$row['key']]['why'] }}</p>
+                        @elseif ($row['isModelKey'])
+                            @if ($editing === $row['key'])
+                                <div class="mt-4 flex flex-wrap items-end gap-3">
+                                    <label class="block">
+                                        <span class="text-sm text-ink-2">New value</span>
+                                        <div class="mt-1 flex gap-2">
+                                            <select wire:model="draft" class="rounded-[--radius-field] border border-rule bg-paper px-3 py-2 text-ink">
+                                                @foreach ($modelOptions as $opt)
+                                                    <option value="{{ $opt }}">{{ $opt }}</option>
+                                                @endforeach
+                                                <option value="">(Task default)</option>
+                                            </select>
+                                            <input wire:model="draft" type="text" class="rounded-[--radius-field] border border-rule bg-paper px-3 py-2 text-ink">
+                                        </div>
+                                    </label>
+
+                                    <div class="flex items-center text-sm text-ink-2 mb-2">Effective: {{ $effectiveModel }}</div>
+
+                                    <button wire:click="save" type="button" class="rounded-[--radius-field] bg-ink px-4 py-2 text-paper">
+                                        Save
+                                    </button>
+
+                                    <button wire:click="cancel" type="button" class="rounded-[--radius-field] border border-rule px-4 py-2 text-ink">
+                                        Cancel
+                                    </button>
+                                </div>
+
+                                @include('livewire.admin.partials.registry-history', ['history' => $history])
+                            @else
+                                <div class="mt-3 flex flex-wrap items-center gap-3">
+                                    <button
+                                        wire:click="edit('{{ $row['key'] }}')"
+                                        type="button"
+                                        class="rounded-[--radius-field] border border-rule px-4 py-2 text-ink"
+                                    >
+                                        Change
+                                    </button>
+
+                                    @if ($row['isSeeded'] && $row['current'] !== $row['seed'])
+                                        <button
+                                            wire:click="resetToSeed('{{ $row['key'] }}')"
+                                            type="button"
+                                            class="rounded-[--radius-field] border border-rule px-4 py-2 text-ink"
+                                        >
+                                            Put back to default
+                                        </button>
+                                    @endif
+                                </div>
+                            @endif
                         @elseif ($row['isBoolean'])
                             <div class="mt-3 flex flex-wrap items-center gap-3">
                                 {{--

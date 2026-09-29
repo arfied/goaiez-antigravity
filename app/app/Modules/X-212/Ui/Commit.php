@@ -12,9 +12,13 @@ use Livewire\Component;
 #[Layout('components.account.layout', ['heading' => 'Migration Commit'])]
 class Commit extends Component
 {
+    public function mount(): void
+    {
+        abort_unless(Tenancy::check(), 403, 'Your current website works on one business — open it from Tenant locations first.');
+    }
+
     public function render()
     {
-        abort_unless(Tenancy::check(), 403);
         $businessId = Tenancy::idOrFail();
         $runs = MigrationRun::where('business_id', $businessId)->orderByDesc('id')->get();
 
