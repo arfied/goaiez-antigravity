@@ -11,6 +11,11 @@
 #
 # MARKERS, and they exist because the wrapper has always had these exemptions — a hook that ignored them
 # would refuse work the contract permits:
+#   ⚠️ Every @self-edit line also carries @merge-exempt, and it must: without it a lane could never merge a
+#      main that changed a guard or supervisor file, because a merge touches other paths and is therefore
+#      never 'alone'. Measured 2026-09-28 (N314) — a lane's take-main was refused on 'bin/never-list' itself.
+#      A gated merge (GOAIEZ_MERGE_OK=1 + MERGE_HEAD) is exactly how main's guards reach a lane, which is
+#      already coder-bin/git:160's policy; a fast-forward is skipped by the reachability test regardless.
 #   @self-edit     — committable, but ONLY in a commit that touches nothing outside the @self-edit paths.
 #                    This is how the supervisor keeps its own column (CLAUDE.md, bin/supervise.sh, the list
 #                    and this hook) amendable by a commit on main, while a coder gutting a guard and
@@ -21,22 +26,31 @@
 #                    by repo name, so Track 1 commits the harness without a flag and always has.
 #
 .claude
-.claude/*                                         @self-edit
+.claude/*                                         @merge-exempt @self-edit
 .agents/supervisor
-.agents/supervisor/*                              @self-edit
+.agents/supervisor/*                              @merge-exempt @self-edit
 .agents/rules
 .agents/rules/*                                   @merge-exempt @self-edit
 .agents/state
-.agents/state/*                                   @self-edit
-.agents/workflows/*                               @self-edit
-.agents/skills/*                                  @self-edit
-CLAUDE.md                                         @self-edit
-bin/supervise.sh                                  @self-edit
+.agents/state/*                                   @merge-exempt @self-edit
+.agents/workflows/*                               @merge-exempt @self-edit
+.agents/skills/*                                  @merge-exempt @self-edit
+CLAUDE.md                                         @merge-exempt @self-edit
+bin/supervise.sh                                  @merge-exempt @self-edit
 bin/state.py                                      @merge-exempt @self-edit
-bin/never-list                                    @self-edit
-bin/hooks/*                                       @self-edit
-bin/coder-git                                     @self-edit
-app/phpunit.xml
+bin/never-list                                    @merge-exempt @self-edit
+bin/hooks/*                                       @merge-exempt @self-edit
+bin/coder-git                                     @merge-exempt @self-edit
+# app/phpunit.xml — REMOVED FROM THIS LIST 2026-09-28 (N314), and the reason is the whole point:
+#   it is UNTRACKED on main as of 2e948aeb6, so this hook has nothing left to protect — and while it
+#   was listed, the hook REFUSED every lane's take-main, because such a merge DELETES the path and a
+#   deletion is a change like any other. Measured, not reasoned: a two-ahead lane merging a main that
+#   had untracked it got `rc=128 · fatal: ref updates aborted by hook`. @self-edit cannot help, because
+#   a merge touches other paths and so is never 'alone'.
+#   ⛔ RULE: a path being removed from tracking comes off this list IN THE SAME ACT as the untracking,
+#   or this hook blocks the very merges that carry the removal.
+#   Still protected where it matters: coder-bin/git's add and rm arms refuse `git add app/phpunit.xml`,
+#   so a coder cannot put it back under version control.
 app/app/Doctor
 app/app/Doctor/*                                  @merge-exempt
 app/tests/Journeys
