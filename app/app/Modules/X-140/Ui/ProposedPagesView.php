@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Modules\X140\Ui;
 
 use App\Enums\UserRole;
+use App\Modules\X103\Actions\QuestionAnswerDraftAction;
+use App\Modules\X103\Models\Page;
+use App\Modules\X103\Models\SiteAnsweredQuestion;
 use App\Modules\X140\Actions\ContentDraftFromConversationAction;
 use App\Modules\X140\Actions\TopicIdentifyAction;
 use App\Modules\X140\Models\ContentTopic;
@@ -80,6 +83,79 @@ class ProposedPagesView extends Component
 
         $this->success = "Drafted content for '{$topicTitle}'. This feeds the topic lists; nothing downstream is wired to it yet.";
         $this->reset(['draftTopicId', 'rawContent']);
+    }
+
+    public function draftAnswer(int $topicId, int $pageId, QuestionAnswerDraftAction $action): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $topic = ContentTopic::where('business_id', $this->businessId)->findOrFail($topicId);
+        $source = $topic->sources()->first();
+        if (! $source) {
+            $this->error = 'No source found for topic.';
+
+            return;
+        }
+
+        try {
+            $res = $action->handle($this->businessId, $pageId, 'customer_inquiry', $topic->id, $source->raw_content);
+            if ($res['status'] === 'refused') {
+                $this->success = $res['reason'] === 'no_facts_available' ? 'Nothing to write from yet.' : $res['reason'];
+            } else {
+                $this->success = "Drafted answer with {$res['model']}";
+            }
+        } catch (\Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
+    public function placeAnswer(int $pageId): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
+        $meta = $page->draft_meta ?? [];
+        if (isset($meta['pending_faq'])) {
+            $blocks = $page->draft_blocks ?? [];
+            $blocks[] = [
+                'type' => 'faq',
+                'items' => $meta['pending_faq']['items'] ?? [],
+                'source' => 'ai',
+                'model' => $meta['pending_faq']['model'] ?? 'unknown',
+            ];
+            if (isset($meta['pending_faq']['source'])) {
+                $src = $meta['pending_faq']['source'];
+                SiteAnsweredQuestion::query()->updateOrCreate(
+                    ['business_id' => $this->businessId, 'source_type' => $src['type'], 'source_id' => (int) $src['id']],
+                    ['question' => $src['question'], 'page_id' => $page->id, 'answered_at' => now()]
+                );
+            }
+            unset($meta['pending_faq']);
+            $page->update([
+                'draft_blocks' => $blocks,
+                'draft_meta' => $meta,
+            ]);
+            $this->success = 'Answer placed on page.';
+        }
+    }
+
+    public function discardAnswer(int $pageId): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
+        $meta = $page->draft_meta ?? [];
+        if (isset($meta['pending_faq'])) {
+            unset($meta['pending_faq']);
+            $page->update(['draft_meta' => $meta]);
+            $this->success = 'Pending answer discarded.';
+        }
     }
 
     public function render()

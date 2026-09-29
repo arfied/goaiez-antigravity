@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Livewire\Admin;
 
+use App\Enums\AiModel;
+use App\Enums\AiTask;
 use App\Enums\Plan;
 use App\Exceptions\RecordingAnnouncementNotAttested;
+use App\Services\Ai\AiSpend;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Content\Publishing;
 use App\Services\Marketing\MarketingClaims;
@@ -67,6 +70,10 @@ final class PlatformSettings extends Component
     public string $editing = '';
 
     public string $draft = '';
+
+    public array $modelOptions = [];
+
+    public string $effectiveModel = '';
 
     public string $search = '';
 
@@ -139,6 +146,21 @@ final class PlatformSettings extends Component
             Toaster::error('That setting is on or off. Use its switch — typing a value here is how one ends up saved as text that no reader accepts.');
 
             return;
+        }
+
+        if ($this->isModelKey($key)) {
+            $task = AiTask::from(substr($key, strlen('ai.model.')));
+
+            $this->modelOptions = array_values(array_map(
+                static fn (AiModel $m): string => $m->value,
+                array_filter(
+                    AiModel::cases(),
+                    static fn (AiModel $m): bool => $m->isEmbedding() === $task->producesEmbedding()
+                        && $m->isImage() === $task->producesImage(),
+                ),
+            ));
+
+            $this->effectiveModel = app(AiSpend::class)->modelFor($task)->value;
         }
 
         $this->editing = $key;
@@ -340,6 +362,8 @@ final class PlatformSettings extends Component
     {
         $this->editing = '';
         $this->draft = '';
+        $this->modelOptions = [];
+        $this->effectiveModel = '';
         $this->confirming = '';
     }
 
@@ -426,6 +450,11 @@ final class PlatformSettings extends Component
         MarketingClaims $claims,
     ): View {
         $groups = $registry->grouped();
+        foreach ($groups as $heading => $rows) {
+            foreach ($rows as $index => $row) {
+                $groups[$heading][$index]['isModelKey'] = $this->isModelKey($row['key']);
+            }
+        }
         $matchCount = 0;
 
         if ($this->search !== '') {
@@ -597,6 +626,12 @@ final class PlatformSettings extends Component
         $declared = DefaultsManifest::settings()[$key] ?? null;
 
         return $declared !== null && is_bool($declared['seed']);
+    }
+
+    private function isModelKey(string $key): bool
+    {
+        return str_starts_with($key, 'ai.model.')
+            && AiTask::tryFrom(substr($key, strlen('ai.model.'))) instanceof AiTask;
     }
 
     /**
