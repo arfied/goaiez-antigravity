@@ -2353,6 +2353,38 @@ opposite, and the wave cost 17 tests that had been green one sha earlier. The re
 on that — the defect is this seat's — and the remedy is to state both costed options to the owner,
 never to dispatch a third time.
 
+⛔⛔ **A GATE COMPOSED IN THE SAME COMMAND AS THE IRREVERSIBLE ACT IT GUARDS CANNOT STOP IT (N332,
+2026-09-29, `e7a548589`).** I put the N278 full-stage `doctor` diff and `git push origin <sha>:main`
+in **one** Bash call. The diff printed `ok boundary clean` → `FAIL boundary 2 violation(s) — fails the
+COMMIT` and **the push ran anyway**, because the shell chained the push to the diff's exit status, not
+to its *content*. A count that rose is the one blocker this file names in a single line, and the check
+that would have caught it executed a fraction of a second before the thing it existed to prevent.
+⭐ The instrument was right and the wiring was mine: N278's diff worked exactly as designed, and its
+output is in the ledger. **RULED: a measurement whose result gates an irreversible step is its OWN
+command, and the step is a SEPARATE command issued after a human or a model has READ the output.**
+⛔ This is N271 (*a check whose result will be acted on is run as its own command*) with the stakes
+moved from a grep to a push — and I had cited N271 twice in the same session before breaking it on the
+only check of the day that guarded `main`. A rule cited is not a rule kept; the cheap ones have to be
+unconditional or they are decorative.
+
+⛔⛔ **A CLAIM THAT A GUARD IS ABSENT IS MADE FROM A GREP OVER THE WHOLE FILE, NEVER FROM A LINE WINDOW
+(N333, 2026-09-29).** Comparing X-140's copied `placeAnswer` against X-103's `Pages::placeFaq` I read
+the copy with `sed -n '118,145p'`, saw no `abort_unless` where the original has one, and was one
+command from writing down *"a removed authorization guard is live on `main`, and invisible to the N237
+grep because the guard was lost in a COPY rather than in a diff."* Plausible, alarming, and **false**:
+the guard is at **`:116`** and my window started at **118**. Measured properly the component is
+guarded better than most — `mount()` refuses all but Owner/Manager/SuperAdmin, and all three mutating
+methods carry their own Owner check (`:90`, `:116`, `:148`).
+⭐ **RULED: `grep -nE "abort|hasRole|authorize|Gate::|policy" <the file>` over the whole file, always.**
+It costs exactly what the `sed` cost and **cannot exclude the answer by construction**, which a range
+chosen by hand always can.
+⛔ It is §2e's family — *an instrument is only as honest as the baseline it is handed* — with the
+baseline being **a line range I picked myself**, and it failed in the accusing direction. *An
+instrument that can only accuse is the one to distrust first* was written into this file's own ledger
+that same morning; the window I then handed myself could only accuse. **The general form, and it is
+worth more than either rule: when a finding would be dramatic, the FIRST question is what the
+instrument could not have seen — not whether the finding is consistent with what it did see.**
+
 ## ⛔⛔ THREE LAWS OF LANE REVIEW (owner ruling, 2026-09-28, after N316). These are not notes.
 
 ### LAW 1 — A LANE'S WORK IS `git merge-base origin/main HEAD`..`HEAD`. NEVER `origin/main..lane`.
