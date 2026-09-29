@@ -16,10 +16,11 @@ class HubReviewResource extends JsonResource
     {
         return [
             'id' => $this->resource->id ?? 0,
-            'author_name' => $this->resource->author_name ?? '',
+
+            'author' => $this->resource->reviewer_name ?? '',
+            'comment' => $this->resource->comment ?? '',
+            'posted_at' => $this->resource->review_create_time ?? null,
             'rating' => $this->resource->rating ?? 5,
-            'text' => $this->resource->text ?? '',
-            'review_date' => $this->resource->review_date ?? null,
         ];
     }
 }
