@@ -43,6 +43,9 @@
                         <dd class="mt-1 text-2xl font-semibold text-ink tabular-nums">
                             {{ number_format($meter->units_used) }}
                         </dd>
+                        <dd class="text-sm font-medium text-ink-2 mt-1 tabular-nums">
+                            Cost: {{ number_format($meter->cost_hundredths_cents / 10000, 4) }}
+                        </dd>
                         <dd class="text-xs text-ink-2 mt-2">
                             @if($type === 'sms_segments' || $type === 'sms')
                                 SMS stops sending when the ledger is empty.
