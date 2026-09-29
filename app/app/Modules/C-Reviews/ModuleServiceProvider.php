@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Modules\CReviews;
 
+use App\Modules\CReviews\Events\ReviewReceived;
 use App\Modules\CReviews\Listeners\AskForCsatOnTicketResolved;
 use App\Modules\CReviews\Listeners\AskForReviewOnJobCompleted;
 use App\Modules\CReviews\Listeners\RecordCsatOnReply;
 use App\Modules\CReviews\Listeners\SettleReviewRequestOnSend;
+use App\Modules\CReviews\Listeners\TriageReceivedReview;
 use App\Modules\CReviews\Ui\LossAlerts;
 use App\Modules\CReviews\Ui\QaReport;
 use App\Modules\CReviews\Ui\ReviewsQaRequests;
@@ -44,6 +46,11 @@ final class ModuleServiceProvider extends ServiceProvider
         Event::listen(
             TicketResolved::class,
             AskForCsatOnTicketResolved::class
+        );
+
+        Event::listen(
+            ReviewReceived::class,
+            TriageReceivedReview::class
         );
 
         Event::listen(

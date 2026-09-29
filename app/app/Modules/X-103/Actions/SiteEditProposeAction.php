@@ -74,7 +74,7 @@ final class SiteEditProposeAction
         $prompt .= "\n\nIf the owner asks for a picture, you may also return \"images\": [{\"block_index\": <index in your blocks>, \"description\": \"<what the picture shows>\"}], at most {$maxImages} items, only for hero or gallery blocks.";
 
         $response = $this->router->dispatch(new AiRequest(
-            task: AiTask::SiteCopy,
+            task: AiTask::SiteAuthoring,
             prompt: $prompt,
             system: $systemPrompt,
             jsonSchema: [

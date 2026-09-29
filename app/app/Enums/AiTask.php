@@ -38,6 +38,11 @@ enum AiTask: string
 
     case SiteCopy = 'site_copy';
 
+    /**
+     * the two owner-facing authoring surfaces (a page from a sentence, an edit to an existing page), split from SiteCopy so the model can be raised for them alone.
+     */
+    case SiteAuthoring = 'site_authoring';
+
     /** GBP-03: a reply to a review, in the tenant's brand voice, published publicly. */
     case ReplyGeneration = 'reply_generation';
 
@@ -115,6 +120,7 @@ enum AiTask: string
             self::ReplyGeneration,
             self::Conversation => AiModel::Gpt4oMini,
             self::SiteCopy => AiModel::Gpt4oMini,
+            self::SiteAuthoring => AiModel::Gpt4oMini,
             self::KnowledgeEmbedding => AiModel::TextEmbedding3Small,
             self::SiteImage => AiModel::GptImage25Flare,
         };
@@ -156,6 +162,7 @@ enum AiTask: string
             self::Moderation => 512,
             self::ReviewAnalysis => 1024,
             self::SiteCopy => 2048,
+            self::SiteAuthoring => 2048,
             self::ReplyGeneration => 4096,
             // ⚠️ **GENEROUS FOR A 160-CHARACTER MESSAGE, AND FOR THE SAME REASON
             // AS THE REPLY TIER ABOVE.** On Claude Sonnet 5 adaptive thinking is

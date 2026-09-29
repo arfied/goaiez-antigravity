@@ -31,6 +31,7 @@ use App\Modules\CReviews\Events\FirstWin;
 use App\Modules\CReviews\Events\ReplyPublished;
 use App\Modules\CReviews\Events\ReviewReceived;
 use App\Modules\CReviews\Events\ReviewRequested;
+use App\Modules\CReviews\Listeners\TriageReceivedReview;
 use App\Modules\CReviews\Models\CsatAnswer;
 use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewReply;
@@ -1434,5 +1435,35 @@ class CReviewsTest extends TestCase
 
         $req = $req->fresh();
         $this->assertEquals('refused', $req->status);
+    }
+
+    public function test_triage_received_review_listener_tickets(): void
+    {
+        $biz = self::provisionTenant(['name' => 'Triage Listener Test Biz']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $reqLow = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 2,
+        ]);
+
+        $reqHigh = ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'rating' => 5,
+        ]);
+
+        $listener = new TriageReceivedReview;
+
+        $listener->handle(new ReviewReceived($biz->id, $reqLow->id, 2, 'google'));
+        $listener->handle(new ReviewReceived($biz->id, $reqHigh->id, 5, 'google'));
+
+        $ticketsLow = QaTicket::where('review_request_id', $reqLow->id)->get();
+        $this->assertCount(1, $ticketsLow);
+        $this->assertNotNull($ticketsLow->first()->sla_due_at);
+
+        $ticketsHigh = QaTicket::where('review_request_id', $reqHigh->id)->get();
+        $this->assertCount(0, $ticketsHigh);
     }
 }
