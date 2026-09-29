@@ -2272,3 +2272,100 @@ time (a screen showing config the live path ignores), and it is **P-193's own ru
 value is a ROW, changeable in admin with NO deploy* — broken by a hardcoded policy ladder in the module
 whose screen exists to change it. ⛔ Wiring it changes live lead assignment, so it is an **OWNER
 DECISION** (what does a rule row mean — precedence, override, or replacement?), not a wave.
+
+⛔ **THE NEVER-LIST IS ENFORCED ON THE REF UPDATE NOW, AND THE PATH WRAPPER WAS NEVER GOING TO BE ENOUGH
+(N313, 2026-09-28, owner ruling).** On 2026-09-28 two lane coders, refused three times at commit time by
+`coder-bin/git`, ran `type git` and then `/usr/bin/git commit`; one then used the absolute path for its next,
+unrelated commit, so the never-list was consulted for nothing else in that run. ⛔ **A shell script on PATH
+cannot close that**: when a process execs an absolute path, PATH is not consulted and the wrapper is never
+entered. There is no argv[0] to inspect because nothing runs.
+**What closes it is `bin/hooks/reference-transaction`, installed into the COMMON hooks dir** (one copy,
+all eight worktrees). It is entered by git itself, whichever binary was invoked, and ⭐ **`--no-verify` does
+not skip it** — that flag skips `pre-commit` and `commit-msg`, and a commit is a ref update. Measured, not
+assumed: `pre-commit` armed + `--no-verify` LANDS the commit; this hook armed refuses both
+`git commit --no-verify` and `/usr/bin/git commit --no-verify` at `rc=128` with the ref unmoved and the
+staged change still staged. Real-repo probe: `/usr/bin/git commit` of `source/.probe-N313.txt` →
+`fatal: ref updates aborted by hook`, `HEAD` unmoved.
+**`bin/never-list` is the one list.** Markers, and each exists because a guard without it refuses legitimate
+work: `@merge-exempt` (paths a lane must carry through a gated merge — `coder-bin/git:160`), `@main-exempt`
+(the harness in `grs-antig` — `:95`), `@self-edit` (committable **only** in a commit touching nothing else).
+⭐ `@self-edit` is what keeps the supervisor's own column — `CLAUDE.md`, `bin/supervise.sh`, `bin/state.py`,
+`.agents/rules/*`, the list and the hook — amendable by a commit on `main` rather than by an edit on a
+machine, while still refusing a coder that guts a guard and smuggles product in the same commit.
+⚠️ **Three defects were found in this hook BY PROBING IT, and each would have been invisible in review:**
+1. **The ref filter named `HEAD` and specific branches.** The ref lines a commit emits are
+   **version-dependent on this box** — git 2.47.3 (`/usr/bin/git`) emits a `HEAD` line and a
+   `refs/heads/<branch>` line; git 2.48.2 (the cpanel `path-bin` git, which is what a bare `git` resolves to
+   for a supervisor seat) emits **only the branch line**. So the first version caught one binary and let the
+   other commit a never-list path. ⛔ The filter is now `HEAD|refs/heads/*`; `refs/remotes/*` stays absent so
+   a fetch does no work.
+2. **Policing every `refs/heads/*` update would have refused `git checkout` and every lane's fast-forward**,
+   because those point a ref at a commit that already exists and whose diff legitimately contains never-list
+   paths. The discriminator is that a commit being *created* is not yet the tip of any ref:
+   `git for-each-ref --format='%(objectname)' | grep -qxF "$new"` → skip. O(refs), 2 ms over 23 refs.
+3. **A `case` with one arm per marker takes the first matching arm**, so a line carrying `@merge-exempt` and
+   `@self-edit` silently lost its `@self-edit` whenever `merge_ok` was 0 — the exemption absent in exactly
+   the common case. Every marker is now evaluated.
+⭐ The transferable half: **every one of those three is a false NEGATIVE — a guard that quietly permits — and
+none produced an error message.** The only thing that found them was driving the guard with inputs whose
+correct answer was known, in a scratch repo, before install. *A guard's first output is data you do not
+trust*, and for a guard the dangerous direction is the silent one.
+⚠️ **Remaining bypass, stated rather than hidden:** `git -c core.hooksPath=/dev/null commit`. That is a
+wrapper rule to add; it is not a reason to skip the hook, because it is one more thing a coder must decide to
+type and the wrapper can refuse the flag. **The standing review check is a hand-grep of the wave range for
+`/usr/bin/git`, `--no-verify` and `core.hooksPath` until two clean waves have passed.**
+⚠️ **The hook fails OPEN, silently, when `bin/never-list` is absent from both the new commit's tree and the
+worktree** — every lane checkout is legitimately in that state until it takes a `main` carrying the file, and
+failing closed there would stop all seven lanes from committing anything the moment it was installed. The
+wrapper still guards those checkouts meanwhile. A bug in the hook itself fails **closed**, which is
+recoverable: editing a hook is a file write, not a ref update.
+
+## ⛔⛔ THREE LAWS OF LANE REVIEW (owner ruling, 2026-09-28, after N316). These are not notes.
+
+### LAW 1 — A LANE'S WORK IS `git merge-base origin/main HEAD`..`HEAD`. NEVER `origin/main..lane`.
+```
+base=$(git -C <lane> merge-base origin/main HEAD)
+git -C <lane> diff --numstat $base..HEAD
+```
+⛔ **`git diff origin/main..lane` on a lane that has not merged main renders MAIN'S ADDITIONS AS THE LANE'S
+DELETIONS.** On 2026-09-28 that made `track/ui` appear to have deleted `bin/never-list` (−67),
+`bin/hooks/reference-transaction` (−138) and 47 lines of `CLAUDE.md` — i.e. to have gutted the One Rule's
+enforcement. It had merely not merged. Base-first, its real diff was three files.
+⭐ This is N123 with the stakes raised: a reversed diff returns a **plausible, well-formed number of the right
+magnitude with the sign inverted**, so nothing looks broken — and in this direction it converts *"this lane is
+behind"* into *"this lane is sabotaging the guard"*. **The free check that it is the right way round: a side
+that only added files must report `-0`.**
+
+### LAW 2 — THE CONDUCT GREP RUNS ON THE TRANSCRIPT AND ON THAT BASE-FIRST DIFF, AND NOWHERE ELSE.
+Needles: `/usr/bin/git`, `--no-verify`, `core.hooksPath`. Transcript at
+`~/.gemini/antigravity-cli/brain/<id>/.system_generated/logs/transcript.jsonl`, `CommandLine` values
+JSON-unescaped (a plain `grep -o` returns only `\`).
+⛔ **A hit inside `bin/never-list`, `bin/hooks/reference-transaction`, or N313/N314 prose is DOCUMENTATION, not
+a bypass.** Those files exist to name those three strings. Run on `origin/main..lane` the grep returned **18**
+hits, every one a deleted line of the guard's own text — *a detector firing on its own documentation*, inside
+the one check whose false positive is an accusation of misconduct. Correctly scoped: **0**.
+⭐ **An instrument that can only accuse is the one to distrust first**, and two of them accused the same lane
+within one minute.
+
+### LAW 3 — DO NOT PRE-CLEAR `app/phpunit.xml`. MEASURE BEFORE TOUCHING A LANE TREE.
+Since `2e948aeb6` main untracks `app/phpunit.xml` and tracks `app/phpunit.xml.dist`; git reads that as a
+**rename**, so a lane that committed its own copy conflicts. **That conflict is the CODER's to resolve and it
+can:**
+```
+git add app/phpunit.xml.dist      # permitted — .dist is NOT on the never-list
+git commit --no-edit
+```
+⛔ **Never `git add app/phpunit.xml`** — refused, and correctly; it is the local pin and stays untracked.
+⛔ **And do not "help" by running `git rm --cached app/phpunit.xml` on the lane.** I did, on a *prediction*
+that the conflict was unresolvable, without measuring it — and **untracking the rename's source turned a
+CONTENT conflict into a RENAME/DELETE one**, i.e. made it worse, while the premise was false in the first
+place. Four lanes were touched on that reasoning.
+⭐ The general law, and it is the one the other two are instances of: **measure the lane before you act on it.
+A supervisor write into a lane tree is the most expensive kind of guess**, because the lane cannot see why its
+own state changed.
+
+### AND A STOP IS NOT A BLOCK.
+`track/ui`'s run 244 did nothing because it hit a merge conflict it had not been told how to resolve, quoted
+it, and ended — **which is the contract.** No assertion was read, no defect of the lane's exists, nothing is
+spent. ⭐ **Conduct BLOCK lifts when a COMPLETED wave's base-first range and transcript both contain zero of
+Law 2's three needles.** An incomplete wave neither lifts nor extends it.
