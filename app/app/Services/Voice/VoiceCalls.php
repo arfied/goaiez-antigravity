@@ -20,6 +20,7 @@ use App\Models\Conversation;
 use App\Models\Customer;
 use App\Models\Voicemail;
 use App\Modules\X121\Actions\PersonLookupAction;
+use App\Services\Conversations\ConversationThreads;
 use App\Services\Sms\TenantNumbers;
 use App\Support\Identifier;
 use App\Support\Tenancy;
@@ -463,16 +464,7 @@ final class VoiceCalls
                     'phone' => $normalised,
                 ]);
 
-                $convo = Conversation::where('person_id', $personId)->orWhere('customer_id', $customer->id)->first();
-                if (! $convo) {
-                    Conversation::create([
-                        'business_id' => $businessId,
-                        'customer_id' => $customer->id,
-                        'person_id' => $personId,
-                        'channel' => 'voice',
-                        'status' => 'open',
-                    ]);
-                }
+                app(ConversationThreads::class)->openFor($customer);
 
                 DB::table('consent_records')->insert([
                     'business_id' => $businessId,
