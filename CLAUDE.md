@@ -2544,6 +2544,36 @@ call from a sibling test in the same file, with its real column set, and names t
 cost is four lines; the cost of not doing it has now been two dispatches in one afternoon.
 ⭐ Neither fix run spends a dispatch of the cap — both defects are this seat's.
 
+⭐ **N276's OPEN QUESTION RE-RUN ON ITS OWN TRIGGER, AND THE ANSWER IS STILL ZERO (N338, 2026-09-29).**
+N276 closed with: *"is any id that is BUILT credited only by a vacuous test? Of these 83, zero — because all
+83 are SPECCED. **That is the question worth re-running if the vacuous-test count ever rises.**"* It has
+risen — `grep -rc "assertTrue(true)" tests/` is **27**, where N275 measured **22** — so the question fired.
+**Measured: of the 120 capability ids credited only by an assertion-free test, ALL 120 are `SPECCED`. Zero
+`BUILT`.** So the placeholder tests remain honest markers for unbuilt work and there is still no coverage
+lie. ⭐ Six of the 27 sites credit **no id at all** (`Feature/Advanced/BroadcastsScreenTest.php`,
+`Feature/Conversations/InboxRepliesTest.php`, `Patches/FourPatchesTest.php`, `Unit/ExampleTest.php` —
+Laravel's stock file — plus `X-207/PushTriggersTest.php` and `X-142/WebhookDeliveryTest.php`); those claim
+nothing, so they are noise rather than risk.
+
+⛔ **AND MY FIRST INSTRUMENT WAS WRONG IN BOTH DIRECTIONS, WHICH IS N275'S OWN DEFECT REPEATED BY ITS
+READER.** `capabilities.php` writes `// status: SPECCED` **above** a group of ids. I searched **forward**
+from each id for 400 characters, which produced two different false answers:
+- **`NO-STATUS` (14 ids)** — every one was the *last* entry before `];`, so nothing followed it.
+- **`CLASSIFIED` (X-109 `G3-52`)** — it took the status of the **next** group. `G3-52` sits at `:37`, the
+  `// status: CLASSIFIED` comment at `:39`, and `G2-78` — the id that label actually describes — at `:40`.
+⛔ **A forward search against a file whose convention is a preceding label reads every boundary wrong**, and
+the failure is silent: it returns a plausible status for the wrong reason. Re-run backward (nearest
+`// status:` **above** the id) the 14 `NO-STATUS` and the 1 `CLASSIFIED` all resolve to `SPECCED`, and the
+tally collapses to a single bucket of 120.
+⭐ **The controls are what made it conclusive, and they discriminate — which is the part N254 exists for.**
+Two ids with **different** expected answers: `G2-78` → `CLASSIFIED` (label directly above it) and `G3-52` →
+`SPECCED` (the one the broken search mislabelled). A pair whose expected values differ cannot both pass by
+coincidence; a pair that both expect `SPECCED` could have.
+⚠️ **The conclusion was unchanged by the fix — and that is not why the fix mattered.** Both versions said
+"zero BUILT". Had one of those 14 `NO-STATUS` ids actually been `BUILT`, the broken instrument would have
+reported it as status-less and I would have written down "no coverage lie" on evidence that could not have
+shown one. *An instrument that agrees with the right answer for the wrong reason is still broken*, and the
+only thing separating the two runs was checking a result I did not understand rather than accepting it.
 ## ⛔⛔ THREE LAWS OF LANE REVIEW (owner ruling, 2026-09-28, after N316). These are not notes.
 
 ### LAW 1 — A LANE'S WORK IS `git merge-base origin/main HEAD`..`HEAD`. NEVER `origin/main..lane`.
