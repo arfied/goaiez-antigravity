@@ -80,9 +80,16 @@ final class GatewayEngine
     public function capture(
         int $businessId,
         int $amountCents,
-        string $paymentToken,
+        ?string $paymentToken,
         string $idempotencyKey
-    ): Payment {
+    ): Payment|array {
+        if ($paymentToken === null) {
+            return [
+                'status' => 'refused',
+                'refusal_code' => 'NO_GATEWAY_TOKEN',
+                'reason' => 'No gateway token on file.',
+            ];
+        }
         // The tenant's own declared currency, read from the row that holds it. A caller-supplied
         // currency is a second place for the truth to disagree, and the lane's one
         // production capture supplied none at all, so every charge went out in dollars.
