@@ -131,14 +131,25 @@
 
                                 @if($r->rating !== null && $r->rating < $threshold)
                                     @if($r->ticket)
-                                        <span class="text-[11px] text-blue-300">
-                                            Ticket #{{ $r->ticket->id }} &middot; {{ $r->ticket->status }} &middot; due {{ $r->ticket->sla_due_at ? $r->ticket->sla_due_at->diffForHumans() : 'N/A' }}
-                                        </span>
+                                        <div class="flex items-center gap-2">
+                                            @php
+                                                $ticketState = str_starts_with($r->ticket->status, 'open') ? 'attention' : 'ok';
+                                                $ticketLabel = str_starts_with($r->ticket->status, 'open') ? 'Open' : 'Resolved';
+                                                if (str_starts_with($r->ticket->status, 'open') && $r->ticket->sla_due_at && $r->ticket->sla_due_at->isPast()) {
+                                                    $ticketState = 'alert';
+                                                    $ticketLabel = 'Breached';
+                                                }
+                                            @endphp
+                                            <x-ui.status-pill :state="$ticketState" :label="$ticketLabel" />
+                                            <span class="text-[11px] text-ink-2">
+                                                Ticket #{{ $r->ticket->id }} &middot; due {{ $r->ticket->sla_due_at ? $r->ticket->sla_due_at->diffForHumans() : 'N/A' }}
+                                            </span>
+                                        </div>
                                     @else
                                         <x-ui.button size="default" wire:click="escalateToQa({{ $r->id }})">Escalate to QA</x-ui.button>
                                     @endif
                                 @elseif($r->rating !== null && $r->rating >= $threshold)
-                                    <x-ui.button size="default" wire:click="selectReview({{ $r->id }})">Reply</x-ui.button>
+                                    <x-ui.button size="default" wire:click="selectReview({{ $r->id }})">Draft Reply</x-ui.button>
                                 @endif
                             </div>
                         </div>
