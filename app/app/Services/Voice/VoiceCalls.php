@@ -16,8 +16,10 @@ use App\Enums\VoiceUsageKind;
 use App\Events\Voice\CallMissed;
 use App\Jobs\Voice\FetchVoicemailRecordingJob;
 use App\Models\Call;
+use App\Models\Conversation;
 use App\Models\Customer;
 use App\Models\Voicemail;
+use App\Modules\X121\Actions\PersonLookupAction;
 use App\Services\Sms\TenantNumbers;
 use App\Support\Identifier;
 use App\Support\Tenancy;
@@ -446,11 +448,32 @@ final class VoiceCalls
             $customer = $this->contactFor($facts->from);
 
             if ($customer === null) {
-                // TODO(Q-045): An inbound call establishes express consent, captured by the tenant, allowing a transactional missed-call text-back.
-                $customer = Customer::create([
+                $normalised = Identifier::normalise($facts->from, OutreachChannel::Sms) ?? $facts->from;
+                $personId = app(PersonLookupAction::class)->idForPhone($businessId, $normalised);
+                if ($personId === null) {
+                    $personId = app(PersonLookupAction::class)->create($businessId, [
+                        'first_name' => 'Unknown Caller',
+                        'last_name' => '',
+                        'phone' => $normalised,
+                    ]);
+                }
+
+                $customer = Customer::forceCreate([
+                    'id' => $personId,
                     'business_id' => $businessId,
-                    'phone' => Identifier::normalise($facts->from, OutreachChannel::Sms) ?? $facts->from,
+                    'phone' => $normalised,
                 ]);
+
+                $convo = Conversation::where('person_id', $personId)->orWhere('customer_id', $personId)->first();
+                if (! $convo) {
+                    Conversation::create([
+                        'business_id' => $businessId,
+                        'customer_id' => $personId,
+                        'person_id' => $personId,
+                        'channel' => 'voice',
+                        'status' => 'open',
+                    ]);
+                }
 
                 DB::table('consent_records')->insert([
                     'business_id' => $businessId,

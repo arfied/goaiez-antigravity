@@ -311,7 +311,10 @@ final class ConversationThreads
         /** @var Conversation $thread */
         $thread = DB::transaction(function () use ($customer, $businessId): Conversation {
             $existing = Conversation::query()
-                ->where('customer_id', $customer->getKey())
+                ->where(function ($q) use ($customer) {
+                    $q->where('customer_id', $customer->getKey())
+                        ->orWhere('person_id', $customer->getKey());
+                })
                 ->where('channel', OutreachChannel::Sms->value)
                 ->whereNull('resolved_at')
                 ->orderByDesc('id')
@@ -326,6 +329,7 @@ final class ConversationThreads
                 'business_id' => $businessId,
                 'location_id' => $customer->location_id,
                 'customer_id' => $customer->getKey(),
+                'person_id' => $customer->getKey(),
                 'channel' => OutreachChannel::Sms->value,
                 // ⚠️ **NO SUBJECT.** A text message has none, and deriving one
                 // from the first line would put customer content in a column

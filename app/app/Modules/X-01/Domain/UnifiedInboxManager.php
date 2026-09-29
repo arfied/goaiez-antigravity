@@ -83,10 +83,17 @@ final class UnifiedInboxManager
 
             // Find or create Conversation for this Person
             $conversation = Tenancy::actingAs($businessId, function () use ($personId, $channel) {
-                $convo = Conversation::firstOrCreate(
-                    ['person_id' => $personId],
-                    ['channel' => $channel, 'status' => 'open']
-                );
+                $convo = Conversation::where('person_id', $personId)
+                    ->orWhere('customer_id', $personId)
+                    ->first();
+                if (! $convo) {
+                    $convo = Conversation::create([
+                        'person_id' => $personId,
+                        'customer_id' => $personId,
+                        'channel' => $channel,
+                        'status' => 'open',
+                    ]);
+                }
 
                 if (in_array($channel, ['whatsapp', 'email'])) {
                     if (! $convo->hasLoggedConsent()) {
