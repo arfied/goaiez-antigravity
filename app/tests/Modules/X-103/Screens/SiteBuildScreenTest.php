@@ -144,7 +144,7 @@ class SiteBuildScreenTest extends TestCase
         Http::assertNothingSent();
     }
 
-    public function test_no_website_stops_at_step_1(): void
+    public function test_no_website_drafts_instead_of_stopping(): void
     {
         $user = User::factory()->create(['role' => UserRole::Owner]);
         $business = $this->provisionTenant(['owner_user_id' => $user->id]);
@@ -162,10 +162,12 @@ class SiteBuildScreenTest extends TestCase
         Livewire::actingAs($user)
             ->test(SiteBuild::class)
             ->call('runBuild')
-            ->assertSet('buildStatus', 'refused')
-            ->assertSet('buildReason', 'no_website')
-            ->assertSee('Add and confirm your website on')
-            ->assertSeeHtml(route('account.locations'));
+            ->assertSet('buildStatus', 'completed');
+
+        $this->assertDatabaseHas('pages', [
+            'business_id' => $business->id,
+            'slug' => 'home',
+        ]);
     }
 
     public function test_no_tenant_403_and_other_tenant_invisible(): void

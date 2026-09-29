@@ -42,7 +42,7 @@ class PagesScreenTest extends TestCase
             ->assertOk()
             ->assertSee('Your account')
             ->assertDontSee('Internal Platform Console')
-            ->assertSee('No pages yet. Add one below.');
+            ->assertSee('Tell us what this site is for.');
 
         Livewire::test(Pages::class)->assertOk();
     }

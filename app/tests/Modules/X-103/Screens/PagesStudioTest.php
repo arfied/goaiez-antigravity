@@ -4,11 +4,14 @@ namespace Tests\Modules\X103\Screens;
 
 use App\Enums\UserRole;
 use App\Models\Business;
+use App\Models\IndustryStartingPoint;
 use App\Models\Location;
 use App\Models\User;
 use App\Modules\X103\Actions\SiteBuildRunAction;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Ui\Pages;
+use App\Support\Tenancy;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
@@ -139,5 +142,50 @@ class PagesStudioTest extends TestCase
             'business_id' => $business->id,
             'slug' => 'home',
         ]);
+    }
+
+    public function test_loop_build_choose_look_publish()
+    {
+        Storage::fake('local');
+        $user = User::factory()->create(['role' => UserRole::Owner->value]);
+        $business = Business::factory()->create(['owner_user_id' => $user->id]);
+        $location = Location::factory()->create([
+            'business_id' => $business->id,
+            'website_url' => null,
+            'primary_phone' => '1234567890',
+            'primary_phone_confirmed_at' => now(),
+        ]);
+
+        Tenancy::set($business->id);
+        $business->update(['industry' => 'trades']);
+        IndustryStartingPoint::updateOrCreate(
+            ['family' => 'trades'],
+            [
+                'palette' => ['surface' => '#ffffff', 'ink' => '#000000', 'primary' => '#ff0000', 'accent' => '#0000ff'],
+                'type_pairing' => ['heading' => 'serif', 'body' => 'sans'],
+                'section_order' => ['hero', 'about', 'gallery', 'reviews_strip', 'contact'],
+            ]
+        );
+
+        $action = app(SiteBuildRunAction::class);
+        $action->handle($business->id, $location->id);
+
+        $this->assertDatabaseHas('pages', [
+            'business_id' => $business->id,
+            'slug' => 'home',
+        ]);
+
+        $component = Livewire::actingAs($user)
+            ->test(Pages::class)
+            ->assertDontSee('No preview');
+
+        $component->call('chooseLook', 'c');
+        $business->refresh();
+        $this->assertSame('c', $business->site_variant);
+
+        $component->call('publishAll');
+
+        $home = Page::where('business_id', $business->id)->where('slug', 'home')->first();
+        $this->assertTrue($home->is_published);
     }
 }
