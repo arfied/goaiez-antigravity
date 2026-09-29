@@ -149,7 +149,7 @@
                                         <x-ui.button size="default" wire:click="escalateToQa({{ $r->id }})">Escalate to QA</x-ui.button>
                                     @endif
                                 @elseif($r->rating !== null && $r->rating >= $threshold)
-                                    <x-ui.button size="default" wire:click="selectReview({{ $r->id }})">Draft Reply</x-ui.button>
+                                    <x-ui.button size="default" wire:click="selectReview({{ $r->id }})">Reply</x-ui.button>
                                 @endif
                             </div>
                         </div>
