@@ -4,27 +4,36 @@ namespace App\Modules\X103\Ui;
 
 use App\Enums\UserRole;
 use App\Models\Business;
+use App\Models\Location;
 use App\Modules\X103\Actions\CustomerQuestionsAction;
 use App\Modules\X103\Actions\FaqDraftAction;
 use App\Modules\X103\Actions\PageCreateAction;
 use App\Modules\X103\Actions\PageDeleteAction;
 use App\Modules\X103\Actions\PageDuplicateAction;
+use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X103\Actions\PageRenameAction;
 use App\Modules\X103\Actions\PageRestoreVersionAction;
 use App\Modules\X103\Actions\PageUnpublishAction;
 use App\Modules\X103\Actions\QuestionAnswerDraftAction;
 use App\Modules\X103\Actions\SeoDraftAction;
+use App\Modules\X103\Actions\SiteBuildRunAction;
 use App\Modules\X103\Actions\SiteCopyPolishAction;
 use App\Modules\X103\Actions\SiteEditProposeAction;
 use App\Modules\X103\Actions\SitePageProposeAction;
+use App\Modules\X103\Actions\SitePreviewAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Domain\PagePreview;
+use App\Modules\X103\Domain\SectionOrder;
 use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X103\Models\SiteAnsweredQuestion;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
+
 use App\Modules\X157\Actions\PlatformSiteAddressAction;
+use App\Services\Config\DefaultsRegistry;
+use App\Services\Industry\IndustryResolver;
+use App\Services\Industry\IndustryStartingPoints;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -59,6 +68,14 @@ class Pages extends Component
 
     public string $pageRequest = '';
 
+    public ?string $buildStatus = null;
+
+    public ?string $buildReason = null;
+
+    public array $buildResult = [];
+
+    public ?int $locationId = null;
+
     public array $renameTitle = [];
 
     public array $seoTitle = [];
@@ -69,6 +86,8 @@ class Pages extends Component
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager), 403);
         $this->businessId = Tenancy::id();
+        $location = Location::where('business_id', $this->businessId)->first();
+        $this->locationId = $location ? $location->id : 0;
     }
 
     public function openEditor(int $pageId): void
@@ -774,6 +793,68 @@ class Pages extends Component
             'questions' => $questions,
             'editing' => $editing,
             'previewHtml' => $previewHtml,
+            'previews' => app(SitePreviewAction::class)->handle($this->businessId),
+            'chosenVariant' => Business::query()->whereKey($this->businessId)->value('site_variant') ?? 'a',
+            'buildStatus' => $this->buildStatus,
+            'buildReason' => $this->buildReason,
+            'buildResult' => $this->buildResult,
         ]);
+    }
+
+    public function chooseLook(string $variant, IndustryStartingPoints $sp, IndustryResolver $ir, PageReadAction $pages): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if (! in_array($variant, IndustryStartingPoints::VARIANTS, true)) {
+            $this->error = 'Invalid look.';
+
+            return;
+        }
+
+        Business::query()->whereKey($this->businessId)->update(['site_variant' => $variant]);
+
+        $home = $pages->homeFor($this->businessId);
+        if ($home && is_array($home->draft_blocks)) {
+            $family = $ir->for($this->businessId)['family'];
+            $variantTokens = $sp->variant($sp->for($family), $variant);
+            $home->draft_blocks = SectionOrder::apply($home->draft_blocks, $variantTokens['section_order']);
+            $home->save();
+        }
+
+        $this->success = 'Look '.strtoupper($variant).' picked — your pages follow it from the next draft and the next publish.';
+    }
+
+    public function runBuild(SiteBuildRunAction $action)
+    {
+        $this->error = null;
+        try {
+            $result = $action->handle($this->businessId, $this->locationId);
+            $this->buildStatus = $result['status'] ?? null;
+            if ($this->buildStatus === 'refused') {
+                $this->buildReason = $result['reason'] ?? '';
+            }
+            $this->buildResult = $result;
+            // Refresh previews etc by just letting render() happen
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
+    public function publishAll(SitePublishAction $action, PlatformSiteAddressAction $addressAction, DefaultsRegistry $registry)
+    {
+        $this->error = null;
+        try {
+            $addressAction->handle($this->businessId);
+
+            $maxPages = $registry->int('sites.build.max_pages_publish');
+            $pages = Page::where('business_id', $this->businessId)->where('is_published', false)->take($maxPages)->get();
+            foreach ($pages as $page) {
+                $action->handle($this->businessId, $page->id, $page->draft_blocks ?? []);
+            }
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
     }
 }
