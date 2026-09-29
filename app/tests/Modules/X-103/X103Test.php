@@ -2232,7 +2232,13 @@ class X103Test extends TestCase
     public function test_faq_place_action_places_faq_and_idempotent(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'FAQ Place Action Tenant']);
-        $page = Page::factory()->create(['business_id' => $biz->id, 'slug' => 'faq', 'title' => 'FAQ']);
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'faq',
+            'title' => 'FAQ',
+            'draft_blocks' => [],
+            'is_published' => false,
+        ]);
         $page->draft_meta = [
             'pending_faq' => [
                 'items' => [
