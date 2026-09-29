@@ -2482,6 +2482,31 @@ value"* in prose instead of writing the four literals out. Every time a value is
 pasted, the coder supplies the human-readable form — and `gpt-4o-mini` **is** what a person calls that
 model. No dispatch of the cap is spent on it.
 
+⛔ **A LANE'S `doctor` NUMBERS ARE NOT COMPARABLE TO `main`'s — THREE STAGES READ GITIGNORED PER-CHECKOUT
+STATE (N336, 2026-09-29, site wave 372).** site's report quoted `schema 14 · anchor 128 · journey 3` where
+`main` reads `schema 1 · anchor 4 · journey 1`. It looks like a catastrophic regression and **it is not code
+at all.**
+Measured, and the arithmetic closes exactly: `TestAnchorStage.php:55` reads
+`storage_path("app/evidence/{$m->id}/runtime-proof.json")` — i.e. `app/storage/app/evidence/`, which is
+**gitignored**. `grs-antig` holds **127** module proof directories; `grs-antig-site` holds **2**. So main
+flags 4 modules for "no runtime proof" and site flags 128, on the same tree of code.
+⚠️ **The first place I looked was the wrong one and the zero was meaningless:** `app/evidence/` returns 0
+files in *both* checkouts, which reads as "not the discriminator". The path the stage actually uses is
+`storage_path('app/evidence/…')` — a different directory. **N116 again: before believing a `0`, ask which
+tree could have held a `1`**, and here the tree was one `storage/` deeper.
+`schema` is a **database** stage — its own violation text names a Postgres role
+(`role goaiez_backup: has BYPASSRLS`) — and each checkout points at its own dev database, so it differs for
+the same reason. `journey`'s 1-vs-3 is the same evidence family; ⚠️ **that one is inferred, not measured.**
+**RULED, and it is N139's missing half:** a wave's doctor proof is **before and after IN THE SAME
+CHECKOUT**, diffed with timings stripped (N278's form). ⛔ **A lane's absolute doctor count may never be
+compared against `main`'s** for `schema`, `anchor` or `journey`. `boundary` **is** comparable — it walks
+`phpFiles()` and nothing else, which is why site's `boundary 2` matching main's `2` was the one number in
+that report worth reading.
+⭐ **My brief caused the unreadable field.** It ordered *"quote the FULL stage list … if any other stage
+moved, that is the finding — report it and stop"* and ordered **no pre-reading**, so "moved" was
+unmeasurable from inside that checkout: the coder had nothing to diff against and reasonably proceeded. That
+is N207's shape — an instruction whose self-test cannot fire — bolted onto N139's, and I wrote the
+"after" half of a before/after check while leaving the "before" out.
 ## ⛔⛔ THREE LAWS OF LANE REVIEW (owner ruling, 2026-09-28, after N316). These are not notes.
 
 ### LAW 1 — A LANE'S WORK IS `git merge-base origin/main HEAD`..`HEAD`. NEVER `origin/main..lane`.
