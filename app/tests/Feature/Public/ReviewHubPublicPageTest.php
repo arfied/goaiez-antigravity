@@ -179,7 +179,7 @@ class ReviewHubPublicPageTest extends TestCase
         Review::create([
             'business_id' => $biz->id,
             'location_id' => $location->id,
-            'customer_id' => $customer->id,
+            'customer_id' => $personId,
             'rating' => 2,
             'source' => ReviewSource::FirstParty,
             'status' => ReviewStatus::Approved,
