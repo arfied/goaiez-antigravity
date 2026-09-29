@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use App\Models\Business;
 use App\Models\Location;
 use App\Modules\X103\Actions\CustomerQuestionsAction;
+use App\Modules\X103\Actions\FaqDiscardAction;
 use App\Modules\X103\Actions\FaqDraftAction;
 use App\Modules\X103\Actions\FaqPlaceAction;
 use App\Modules\X103\Actions\PageCreateAction;
@@ -644,17 +645,13 @@ class Pages extends Component
         }
     }
 
-    public function discardFaq(int $pageId): void
+    public function discardFaq(int $pageId, FaqDiscardAction $action): void
     {
         abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
         $this->error = null;
         $this->success = null;
 
-        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
-        $meta = $page->draft_meta ?? [];
-        if (isset($meta['pending_faq'])) {
-            unset($meta['pending_faq']);
-            $page->update(['draft_meta' => $meta]);
+        if ($action->handle($this->businessId, $pageId)) {
             $this->success = 'Pending FAQ discarded.';
         }
     }
