@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X198;
 
+use App\Models\Business;
 use App\Modules\X198\Actions\MerchantConnectAction;
 use App\Modules\X198\Actions\PaymentCaptureAction;
 use App\Modules\X198\Actions\PaymentLinkAction;
@@ -120,31 +121,31 @@ class X198Test extends TestCase
      */
     public function test_g17_04_refid_deduplication(): void
     {
-        \Illuminate\Support\Facades\Event::fake([\App\Modules\X198\Events\PaymentCaptured::class]);
-        
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Gateway Deduplication', 'currency' => 'USD']);
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+        Event::fake([PaymentCaptured::class]);
 
-        $connection = \App\Modules\X198\Models\MerchantConnection::create([
+        $biz = TestCase::provisionTenant(['name' => 'Gateway Deduplication', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $connection = MerchantConnection::create([
             'business_id' => $biz->id,
             'gateway_name' => 'mock_gateway',
             'merchant_account_id' => 'mock_123',
         ]);
 
-        $action = new \App\Modules\X198\Actions\PaymentCaptureAction(new \App\Modules\X198\Domain\GatewayEngine());
-        
+        $action = new PaymentCaptureAction(new GatewayEngine);
+
         // Mock StripeGatewayClient since gateway_name=mock_gateway skips the real client in GatewayEngine (wait, it only calls Stripe if gateway_name === 'stripe')
         // Actually, if it's not stripe, it just sets status 'awaiting_processor' and gatewayStatus null!
-        
+
         $idempotencyKey = 'idem_999888';
-        
+
         // First capture
         $payment1 = $action->handle($biz->id, 5000, 'tok_abc', $idempotencyKey);
         $this->assertEquals('awaiting_processor', $payment1->status);
 
         // Second capture with same key
         $payment2 = $action->handle($biz->id, 5000, 'tok_abc', $idempotencyKey);
-        
+
         // Assert it's the exact same row (deduplicated)
         $this->assertEquals($payment1->id, $payment2->id, 'A duplicated idempotency key charges once');
     }
@@ -791,5 +792,51 @@ class X198Test extends TestCase
         $row = MerchantConnection::where('business_id', $biz->id)->where('gateway_name', 'stripe')->first();
         $this->assertSame($row->id, $connection->id);
         $this->assertSame('acct_loser', $row->merchant_account_id);
+    }
+
+    public function test_a_charge_without_a_gateway_token_refuses()
+    {
+        $business = Business::factory()->create(['currency' => 'USD']);
+        $this->engine->connect($business->id, 'stripe', 'acct_test');
+
+        $result = $this->engine->capture(
+            $business->id,
+            1000,
+            null,
+            'idem_no_token'
+        );
+
+        $this->assertIsArray($result);
+        $this->assertEquals('refused', $result['status']);
+        $this->assertEquals('NO_GATEWAY_TOKEN', $result['refusal_code']);
+
+        // writes no row
+        $this->assertEquals(0, Payment::where('business_id', $business->id)->count());
+    }
+
+    public function test_a_charge_with_a_gateway_token_proceeds()
+    {
+        $business = Business::factory()->create(['currency' => 'USD']);
+        $this->engine->connect($business->id, 'stripe', 'acct_test');
+
+        $this->app->instance(StripeGatewayClient::class, new class extends StripeGatewayClient
+        {
+            public function charge(int $amountCents, string $source, string $currency, string $idempotencyKey): array
+            {
+                return ['id' => 'ch_123', 'status' => 'succeeded'];
+            }
+        });
+
+        $result = $this->engine->capture(
+            $business->id,
+            1000,
+            'tok_test',
+            'idem_with_token'
+        );
+
+        $this->assertInstanceOf(Payment::class, $result);
+        $this->assertEquals('captured', $result->status);
+        $this->assertEquals('ch_123', $result->gateway_charge_id);
+        $this->assertEquals(1, Payment::where('business_id', $business->id)->count());
     }
 }
