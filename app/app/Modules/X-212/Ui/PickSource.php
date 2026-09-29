@@ -20,6 +20,11 @@ class PickSource extends Component
 
     public ?int $lastRunId = null;
 
+    public function mount(): void
+    {
+        abort_unless(Tenancy::check(), 403, 'Your current website works on one business — open it from Tenant locations first.');
+    }
+
     public function dryRun(MigrationDryRunAction $action): void
     {
         $this->validate(['sourceSystem' => ['required', 'in:'.implode(',', array_keys(self::SOURCES))], 'csv' => ['required', 'string', 'max:200000']]);
