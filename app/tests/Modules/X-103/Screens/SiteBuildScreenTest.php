@@ -11,7 +11,6 @@ use App\Models\CompetitorSiteNote;
 use App\Models\CompetitorSnapshot;
 use App\Models\IndustryStartingPoint;
 use App\Models\Location;
-use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVariant;
@@ -45,7 +44,6 @@ class SiteBuildScreenTest extends TestCase
 
     public function test_screen_renders_for_tenant(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -205,7 +203,6 @@ class SiteBuildScreenTest extends TestCase
 
     public function test_suggestions_show_on_build_my_site_and_dismiss_hides_one(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -235,7 +232,6 @@ class SiteBuildScreenTest extends TestCase
 
     public function test_ask_the_ai_to_do_it_proposes_on_the_home_page_and_points_at_pages(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
@@ -280,7 +276,6 @@ class SiteBuildScreenTest extends TestCase
 
     public function test_ask_the_ai_with_no_page_says_so_and_a_manager_cannot_ask(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
@@ -362,7 +357,6 @@ class SiteBuildScreenTest extends TestCase
 
     public function test_try_a_headline_proposes_starts_shows_readings_and_stops(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id, 'name' => 'Edge Tenant', 'currency' => 'USD']);
         Tenancy::set($biz->id);
@@ -550,7 +544,6 @@ class SiteBuildScreenTest extends TestCase
 
     public function test_the_build_screen_uses_the_house_button(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
@@ -562,7 +555,6 @@ class SiteBuildScreenTest extends TestCase
 
     public function test_the_tenant_id_cannot_be_overwritten_from_the_browser(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
