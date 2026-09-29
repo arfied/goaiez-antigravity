@@ -2,6 +2,8 @@
 
 namespace Tests\Modules\X103\Screens;
 
+use App\Enums\AiModel;
+use App\Enums\AiTask;
 use App\Enums\UserRole;
 use App\Models\Business;
 use App\Models\IndustryStartingPoint;
@@ -187,5 +189,11 @@ class PagesStudioTest extends TestCase
 
         $home = Page::where('business_id', $business->id)->where('slug', 'home')->first();
         $this->assertTrue($home->is_published);
+    }
+
+    public function test_site_authoring_tier_is_configured()
+    {
+        $this->assertSame(AiModel::Gpt4oMini, AiTask::SiteAuthoring->defaultModel());
+        $this->assertSame('ai.model.site_authoring', AiTask::SiteAuthoring->settingKey());
     }
 }
