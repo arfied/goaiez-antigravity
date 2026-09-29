@@ -179,8 +179,9 @@ class ReviewsQaRequests extends Component
             return;
         }
 
-        // Draft AI response - leave empty if no AI path
-        $this->replyDraft = '';
+        // A high rating produces a reply DRAFT the owner sends or discards.
+        // Nothing auto-posts, and nothing invents praise — a draft that puts words in a customer's mouth is worse than no draft.
+        $this->replyDraft = 'Thank you for the review!';
     }
 
     public function publishReply(): void
