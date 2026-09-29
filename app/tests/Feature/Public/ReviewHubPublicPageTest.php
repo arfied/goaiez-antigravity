@@ -188,7 +188,7 @@ class ReviewHubPublicPageTest extends TestCase
 
         $req = ReviewRequest::create([
             'business_id' => $biz->id,
-            'customer_id' => $customer->id,
+            'customer_id' => $personId,
             'platform' => 'google',
             'rating' => 2,
         ]);
