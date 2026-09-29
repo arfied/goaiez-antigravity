@@ -4,16 +4,18 @@ namespace Tests\Modules\X103\Screens;
 
 use App\Enums\UserRole;
 use App\Models\Business;
+use App\Models\Location;
 use App\Models\User;
+use App\Modules\X103\Actions\SiteBuildRunAction;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Ui\Pages;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 class PagesStudioTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshesTenantDatabase;
 
     public function test_pages_studio_renders_status_pills()
     {
@@ -115,5 +117,27 @@ class PagesStudioTest extends TestCase
             $this->assertStringNotContainsString($word, $responseList);
             $this->assertStringNotContainsString($word, $responseEdit);
         }
+    }
+
+    public function test_no_website_build_drafts_home_page()
+    {
+        $user = User::factory()->create(['role' => UserRole::Owner->value]);
+        $business = Business::factory()->create([
+            'owner_user_id' => $user->id,
+
+        ]);
+        $location = Location::factory()->create([
+            'business_id' => $business->id,
+            'website_url' => null, 'primary_phone' => '1234567890', 'primary_phone_confirmed_at' => now(),
+        ]);
+
+        $action = app(SiteBuildRunAction::class);
+        $result = $action->handle($business->id, $location->id);
+
+        $this->assertEquals('completed', $result['status']);
+        $this->assertDatabaseHas('pages', [
+            'business_id' => $business->id,
+            'slug' => 'home',
+        ]);
     }
 }
