@@ -20,18 +20,29 @@
 #                    This is how the supervisor keeps its own column (CLAUDE.md, bin/supervise.sh, the list
 #                    and this hook) amendable by a commit on main, while a coder gutting a guard and
 #                    smuggling product in the same commit is still refused.
-#   @merge-exempt  — admissible in a gated merge (GOAIEZ_MERGE_OK=1 and MERGE_HEAD present). A lane merging
+#   ⛔ OVERLAPPING PATTERNS: the hook evaluates EVERY entry and refuses on ANY unexempt match — it does NOT
+#      stop at the most specific one. So a path needs its exemption on EVERY pattern that matches it.
+#      Measured 2026-09-28 (N318): `app/app/Doctor/*` carried @merge-exempt while the later `*seals.json`
+#      carried none, and a lane take-main was refused on app/app/Doctor/seals.json. My own python model of
+#      this file broke on first match and reported "all OK" — the hook was right and the model lied.
+#   @merge-exempt  — admissible in a gated merge (GOAIEZ_MERGE_OK=1 and MERGE_HEAD present). ⭐ EVERY pattern
+#      carries this, and that is deliberate: this list exists to stop a coder AUTHORING a change to one of
+#      these paths, and a gated merge is never authoring — it is adopting main's copy. The hook keeps full
+#      force on an authored commit, which has no MERGE_HEAD, and that is the case N313 was written for.
+#      coder-bin/git enforces BYTE-IDENTITY to MERGE_HEAD, so a lane still cannot smuggle an edit through a
+#      merge; the hook does not check bytes and does not need to. ⛔ Marking them one at a time as each broke
+#      a lane was whack-a-mole: .gitattributes, source/*, .env* were all the next failure waiting.
 #                    a main that moved these paths MUST be able to carry them; that is coder-bin/git:160.
 #   @main-exempt   — admissible in the grs-antig checkout only. coder-bin/git:95 clears the harness needle
 #                    by repo name, so Track 1 commits the harness without a flag and always has.
 #
-.claude
+.claude                                           @merge-exempt
 .claude/*                                         @merge-exempt @self-edit
-.agents/supervisor
+.agents/supervisor                                @merge-exempt
 .agents/supervisor/*                              @merge-exempt @self-edit
-.agents/rules
+.agents/rules                                     @merge-exempt
 .agents/rules/*                                   @merge-exempt @self-edit
-.agents/state
+.agents/state                                     @merge-exempt
 .agents/state/*                                   @merge-exempt @self-edit
 .agents/workflows/*                               @merge-exempt @self-edit
 .agents/skills/*                                  @merge-exempt @self-edit
@@ -51,17 +62,17 @@ bin/coder-git                                     @merge-exempt @self-edit
 #   or this hook blocks the very merges that carry the removal.
 #   Still protected where it matters: coder-bin/git's add and rm arms refuse `git add app/phpunit.xml`,
 #   so a coder cannot put it back under version control.
-app/app/Doctor
+app/app/Doctor                                    @merge-exempt
 app/app/Doctor/*                                  @merge-exempt
-app/tests/Journeys
-app/tests/Journeys/*                              @main-exempt
-*seals.json
-.gitattributes
-.env
-*/.env
-.env.*
-*/.env.*
-source
-source/*
-runtime
-runtime/*
+app/tests/Journeys                                @merge-exempt
+app/tests/Journeys/*                              @merge-exempt @main-exempt
+*seals.json                                       @merge-exempt
+.gitattributes                                    @merge-exempt
+.env                                              @merge-exempt
+*/.env                                            @merge-exempt
+.env.*                                            @merge-exempt
+*/.env.*                                          @merge-exempt
+source                                            @merge-exempt
+source/*                                          @merge-exempt
+runtime                                           @merge-exempt
+runtime/*                                         @merge-exempt
