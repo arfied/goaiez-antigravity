@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\AiModel;
 use App\Enums\Plan;
 use App\Livewire\Admin\PlatformSettings as SettingsScreen;
 use App\Models\PlanEntitlement;
@@ -792,10 +793,10 @@ test('edit() on ai.model.site_authoring sets modelOptions to the chat models onl
         ->call('edit', 'ai.model.site_authoring')
         ->assertSet('editing', 'ai.model.site_authoring')
         ->assertSet('modelOptions', function (array $options): bool {
-            return in_array('claude-opus-5', $options, true)
-                && in_array('gpt-4o-mini', $options, true)
-                && ! in_array('text-embedding-3-small', $options, true)
-                && ! in_array('openai-gpt-image-2.5-flare', $options, true);
+            return in_array(AiModel::ClaudeOpus5->value, $options, true)
+                && in_array(AiModel::Gpt4oMini->value, $options, true)
+                && ! in_array(AiModel::TextEmbedding3Small->value, $options, true)
+                && ! in_array(AiModel::GptImage25Flare->value, $options, true);
         });
 });
 
@@ -805,9 +806,7 @@ test('edit() on the embedding task key sets modelOptions to the embedding model 
         ->call('edit', 'ai.model.knowledge_embedding')
         ->assertSet('editing', 'ai.model.knowledge_embedding')
         ->assertSet('modelOptions', function (array $options): bool {
-            return in_array('text-embedding-3-small', $options, true)
-                && ! in_array('gpt-4o-mini', $options, true)
-                && count($options) === 1;
+            return $options === [AiModel::TextEmbedding3Small->value];
         });
 });
 
@@ -823,5 +822,5 @@ test('saving an id the enum does not know saves and leaves effectiveModel at the
         ->test(SettingsScreen::class)
         ->call('edit', 'ai.model.site_authoring')
         ->assertSet('draft', 'not-a-real-model')
-        ->assertSet('effectiveModel', 'gpt-4o-mini');
+        ->assertSet('effectiveModel', AiModel::Gpt4oMini->value);
 });
