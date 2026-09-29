@@ -13,7 +13,18 @@
             <x-ui.error-panel heading="That didn't go through">{{ $error }}</x-ui.error-panel>
         @endif
 
-        <x-ui.toast kind="success" :message="$success" />
+                <x-ui.toast kind="success" :message="$success" />
+
+        @if($dunning && $dunning->status !== 'active')
+            <div class="mb-8 p-4 rounded-[--radius-card] bg-surface border border-attention">
+                <div class="flex items-center justify-between">
+                    <p class="text-sm font-medium text-ink">
+                        Your subscription payment is overdue.
+                    </p>
+                    <x-ui.button size="sm" variant="primary" href="/account/billing/payment-methods">Update Payment Method</x-ui.button>
+                </div>
+            </div>
+        @endif
 
         <div wire:loading.remove class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-8">
             <div class="bg-card overflow-hidden shadow rounded-[--radius-card] border border-rule">
@@ -32,8 +43,21 @@
                         <dd class="mt-1 text-2xl font-semibold text-ink tabular-nums">
                             {{ number_format($meter->units_used) }}
                         </dd>
-                        <dd class="text-xs text-ink-2 mt-1 tabular-nums">
+                        <dd class="text-sm font-medium text-ink-2 mt-1 tabular-nums">
                             Cost: {{ number_format($meter->cost_hundredths_cents / 10000, 4) }}
+                        </dd>
+                        <dd class="text-xs text-ink-2 mt-2">
+                            @if($type === 'sms_segments' || $type === 'sms')
+                                SMS stops sending when the ledger is empty.
+                            @elseif($type === 'voice_minutes' || $type === 'voice')
+                                Calls go to voicemail when the ledger is empty.
+                            @elseif($type === 'ai_seconds' || $type === 'ai')
+                                The AI stops answering when the ledger is empty.
+                            @elseif($type === 'email')
+                                Emails stop sending when the ledger is empty.
+                            @else
+                                Service stops when the ledger is empty.
+                            @endif
                         </dd>
                     </div>
                 </div>

@@ -97,30 +97,30 @@ final class InvoiceEngine
                 $status = 'refused';
                 $gatewayChargeId = null;
 
-                if ($cardToken !== null) {
-                    try {
-                        $gatewayEngine = app(GatewayEngine::class);
-                        $payment = $gatewayEngine->capture(
-                            businessId: $businessId,
-                            amountCents: $overflowAmount,
-                            paymentToken: $cardToken,
-                            idempotencyKey: 'overflow_'.$invoice->id.'_'.$overflowAmount
-                        );
-                        $gatewayChargeId = $payment->gateway_charge_id;
-                        // The payment row's own status, which is the gateway's word.
-                        // A pending charge has an id, so deriving from the id writes 'charged' for
-                        // money that has not settled.
-                        $status = $payment->status === 'captured' ? 'charged' : 'refused';
-                    } catch (\Exception $e) {
-                        Log::warning('Gateway capture failed: '.$e->getMessage(), [
-                            'business_id' => $businessId,
-                            'customer_id' => $customerId,
-                            'invoice_id' => $invoice->id,
-                            'amount_cents' => $overflowAmount,
-                            'exception' => $e,
-                        ]);
+                try {
+                    $gatewayEngine = app(GatewayEngine::class);
+                    $payment = $gatewayEngine->capture(
+                        businessId: $businessId,
+                        amountCents: $overflowAmount,
+                        paymentToken: $cardToken,
+                        idempotencyKey: 'overflow_'.$invoice->id.'_'.$overflowAmount
+                    );
+                    if (is_array($payment)) {
+                        $gatewayChargeId = null;
                         $status = 'refused';
+                    } else {
+                        $gatewayChargeId = $payment->gateway_charge_id;
+                        $status = $payment->status === 'captured' ? 'charged' : 'refused';
                     }
+                } catch (\Exception $e) {
+                    Log::warning('Gateway capture failed: '.$e->getMessage(), [
+                        'business_id' => $businessId,
+                        'customer_id' => $customerId,
+                        'invoice_id' => $invoice->id,
+                        'amount_cents' => $overflowAmount,
+                        'exception' => $e,
+                    ]);
+                    $status = 'refused';
                 }
 
                 $overflowCharge = OverflowCharge::create([

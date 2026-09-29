@@ -6,7 +6,6 @@ namespace Tests\Modules\X103;
 
 use App\Enums\UserRole;
 use App\Models\Business;
-use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Ui\Pages;
@@ -69,7 +68,6 @@ class SiteStyleTest extends TestCase
 
     public function test_ai_response_sets_pending_edit_style_and_preview_html(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
@@ -116,7 +114,6 @@ class SiteStyleTest extends TestCase
 
     public function test_apply_edit_and_undo_edit_with_style(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
@@ -174,7 +171,6 @@ class SiteStyleTest extends TestCase
 
     public function test_style_refused_when_ink_equals_surface(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);

@@ -14,9 +14,9 @@ final class PaymentCaptureAction
     public function handle(
         int $businessId,
         int $amountCents,
-        string $paymentToken,
+        ?string $paymentToken,
         string $idempotencyKey
-    ): Payment {
+    ): Payment|array {
         return $this->engine->capture($businessId, $amountCents, $paymentToken, $idempotencyKey);
     }
 }

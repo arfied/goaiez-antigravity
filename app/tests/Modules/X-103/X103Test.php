@@ -98,7 +98,6 @@ class X103Test extends TestCase
     {
         Event::fake([ApprovalRequested::class]);
 
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Site Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -137,7 +136,6 @@ class X103Test extends TestCase
     {
         Event::fake([PagePublished::class, SitePublished::class]);
 
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Site Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -153,7 +151,6 @@ class X103Test extends TestCase
      */
     public function test_short_linker_device_routing_and_caps(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Linker Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -178,7 +175,6 @@ class X103Test extends TestCase
     /** [G16-07] (R245) an expiring short link (P-072) */
     public function test_g16_07_an_expired_short_link_is_refused(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Linker Expiry Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -216,7 +212,6 @@ class X103Test extends TestCase
     /** [G19-07] (R245) expiring and click-capped short links */
     public function test_g19_07_a_capped_short_link_is_refused(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Linker Cap Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -253,7 +248,6 @@ class X103Test extends TestCase
 
     public function test_g9_04_every_built_page_version_carries_the_pixel(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Pixel Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -271,7 +265,6 @@ class X103Test extends TestCase
      */
     public function test_g9_04_a_published_version_carries_the_three_site_law_flags(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Law Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -298,7 +291,6 @@ class X103Test extends TestCase
      */
     public function test_g12_39_the_review_widget_is_not_yet_on_the_built_site(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Widget Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -329,7 +321,6 @@ class X103Test extends TestCase
     /** [G6-15] [G6-16] (R245) */
     public function test_g6_16_header_tenant_offer(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Offer Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -359,7 +350,6 @@ class X103Test extends TestCase
         Http::fake();
         Event::fake([SendRequested::class]);
 
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'SMS Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -375,7 +365,6 @@ class X103Test extends TestCase
     public function test_g6_32_header_x199(): void
     {
 
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Invoice Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -392,7 +381,6 @@ class X103Test extends TestCase
     public function test_g7_18_header_c_reviews(): void
     {
 
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Review Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -406,7 +394,6 @@ class X103Test extends TestCase
 
     public function test_page_create_and_site_publish_resolve_from_container(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Container Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -433,7 +420,6 @@ class X103Test extends TestCase
 
     public function test_draft_adds_gallery_from_stored_images(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Gallery Tenant', 'currency' => 'USD']);
         Tenancy::set($biz->id);
 
@@ -500,7 +486,6 @@ class X103Test extends TestCase
 
     public function test_draft_adds_team_from_active_staff(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Team Tenant', 'currency' => 'USD']);
         Tenancy::set($biz->id);
 
@@ -536,7 +521,6 @@ class X103Test extends TestCase
 
     public function test_draft_skips_team_below_minimum(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'No Team Tenant', 'currency' => 'USD']);
         Tenancy::set($biz->id);
         $location = Location::factory()->create(['business_id' => $biz->id]);
@@ -555,7 +539,6 @@ class X103Test extends TestCase
 
     public function test_draft_site_action()
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Draft Site Tenant', 'currency' => 'USD']);
 
         $location = Location::where('business_id', $biz->id)->first();
@@ -787,7 +770,6 @@ class X103Test extends TestCase
 
     public function test_polish_rewrites_hero_and_about_and_records_the_model(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Polish Test', 'currency' => 'USD']);
         Tenancy::set($biz->id);
 
@@ -841,7 +823,6 @@ class X103Test extends TestCase
 
     public function test_polish_rewrites_a_real_hero_subline_and_leaves_the_headline_alone(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Polish Test Hero Subline', 'currency' => 'USD']);
         Tenancy::set($biz->id);
 
@@ -885,7 +866,6 @@ class X103Test extends TestCase
 
     public function test_polish_refuses_when_the_budget_is_out(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Budget Test', 'currency' => 'USD']);
         Tenancy::set($biz->id);
 
@@ -921,7 +901,6 @@ class X103Test extends TestCase
     public function test_restore_puts_the_original_back(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Restore Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
 
@@ -957,7 +936,6 @@ class X103Test extends TestCase
 
     public function test_faq_draft_asks_the_router_once_and_parks_the_answer(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Faq Test', 'currency' => 'USD']);
         Tenancy::set($biz->id);
 
@@ -1008,7 +986,6 @@ class X103Test extends TestCase
 
     public function test_faq_draft_refuses_when_the_budget_is_out(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Faq Budget Test', 'currency' => 'USD']);
         Tenancy::set($biz->id);
 
@@ -1089,7 +1066,6 @@ class X103Test extends TestCase
 
     public function test_seo_draft_writes_title_and_description_within_limits(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         PlatformSetting::write('sites.seo.title_max_chars', 60, 'test');
         PlatformSetting::write('sites.seo.description_max_chars', 155, 'test');
         $biz = TestCase::provisionTenant(['name' => 'SEO Tenant']);
@@ -1131,7 +1107,6 @@ class X103Test extends TestCase
 
     public function test_seo_draft_hands_the_model_the_headline_and_the_price_list(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         PlatformSetting::write('sites.seo.title_max_chars', 60, 'test');
         PlatformSetting::write('sites.seo.description_max_chars', 155, 'test');
         $biz = TestCase::provisionTenant(['name' => 'SEO Tenant 2']);
@@ -1169,7 +1144,6 @@ class X103Test extends TestCase
 
     public function test_an_applied_edit_keeps_the_booking_form(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Pages Test Edit Booking', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
@@ -1337,7 +1311,6 @@ class X103Test extends TestCase
 
     public function test_the_drafted_contact_block_carries_the_locations_opening_hours(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Hours Draft Test', 'currency' => 'USD']);
         Tenancy::set($biz->id);
 
@@ -1390,7 +1363,6 @@ class X103Test extends TestCase
 
     public function test_faq_drafting_reads_only_moderated_reviews(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'FAQ Review Filter Tenant']);
         Tenancy::set((int) $biz->id);
 
@@ -1514,7 +1486,6 @@ class X103Test extends TestCase
 
     public function test_polish_hands_the_model_the_peer_notes_as_reference_and_writes_none_of_it_into_the_page(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Polish Peer Test', 'currency' => 'USD']);
         Tenancy::set($biz->id);
 
@@ -1570,7 +1541,6 @@ class X103Test extends TestCase
 
     public function test_polish_without_peer_notes_sends_no_reference_and_stamps_no_peers(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Polish No Peer Test', 'currency' => 'USD']);
         Tenancy::set($biz->id);
 
@@ -1666,7 +1636,6 @@ class X103Test extends TestCase
 
     public function test_the_draft_carries_each_pictures_description_and_never_invents_one(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Gallery Tenant', 'currency' => 'USD']);
         Tenancy::set($biz->id);
 
@@ -1730,7 +1699,6 @@ class X103Test extends TestCase
 
     public function test_the_draft_carries_each_pictures_size_when_the_copy_recorded_one(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Gallery Tenant', 'currency' => 'USD']);
         Tenancy::set($biz->id);
 
@@ -1852,7 +1820,6 @@ class X103Test extends TestCase
 
     public function test_a_customer_question_is_moderated_then_answered_from_facts_and_placed_as_answered(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
@@ -1938,7 +1905,6 @@ class X103Test extends TestCase
 
     public function test_a_customer_question_is_flagged_and_refused(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
@@ -1984,7 +1950,6 @@ class X103Test extends TestCase
 
     public function test_a_customer_question_is_refused_if_pending_faq_exists(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
 
@@ -2034,7 +1999,6 @@ class X103Test extends TestCase
 
     public function test_the_drafted_services_block_carries_the_price_the_blade_renders(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $biz = TestCase::provisionTenant(['name' => 'Price Block Tenant']);
         $location = Location::factory()->create(['business_id' => $biz->id]);
         Tenancy::set($biz->id);

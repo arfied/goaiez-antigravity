@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Modules\X103\Screens;
 
 use App\Enums\UserRole;
-use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Ui\Pages;
@@ -19,7 +18,6 @@ class PageEditorTest extends TestCase
 {
     public function test_page_editor_displays_distinctive_content(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Page Editor Tenant', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
@@ -43,7 +41,6 @@ class PageEditorTest extends TestCase
 
     public function test_page_editor_preview_toggles_proposed_and_draft(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Page Editor Tenant', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
@@ -102,7 +99,6 @@ class PageEditorTest extends TestCase
 
     public function test_page_editor_undo(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Undo Tenant', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
@@ -160,7 +156,6 @@ class PageEditorTest extends TestCase
 
     public function test_page_editor_undo_cap(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Undo Cap Tenant', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
@@ -194,7 +189,6 @@ class PageEditorTest extends TestCase
 
     public function test_page_editor_facts(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Facts Tenant', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
@@ -252,7 +246,6 @@ class PageEditorTest extends TestCase
 
     public function test_make_page_opens_in_editor(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Make Page Editor', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
