@@ -8,7 +8,6 @@ use App\Enums\UserRole;
 use App\Models\Competitor;
 use App\Models\CompetitorSiteNote;
 use App\Models\Location;
-use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Modules\X103\Actions\HeadlineProposeAction;
 use App\Modules\X103\Models\Page;
@@ -21,7 +20,6 @@ class HeadlineProposeActionTest extends TestCase
 {
     public function test_propose_headlines_gathers_facts_topics_and_filters_current(): void
     {
-        PlatformSetting::write('ai.monthly_cap_per_tenant', 500000, 'test');
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);

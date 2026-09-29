@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X103\Actions;
 
+use App\Models\Location;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Services\Config\DefaultsRegistry;
 
@@ -31,14 +32,20 @@ final class SiteBuildRunAction
             ->exists();
 
         $crawlResult = null;
+        $draftedWithoutCrawl = false;
         if (! $hasRecentInventory) {
             $crawlResult = $this->crawl->handle($businessId, $locationId);
             if (isset($crawlResult['status']) && $crawlResult['status'] === 'refused') {
-                return [
-                    'status' => 'refused',
-                    'reason' => $crawlResult['reason'] ?? 'refused',
-                    'crawl' => $crawlResult,
-                ];
+                $reason = $crawlResult['reason'] ?? 'refused';
+                if ($reason === 'no_website' && Location::where('id', $locationId)->exists()) {
+                    $draftedWithoutCrawl = true;
+                } else {
+                    return [
+                        'status' => 'refused',
+                        'reason' => $reason,
+                        'crawl' => $crawlResult,
+                    ];
+                }
             }
         } else {
             $crawlResult = [
@@ -51,11 +58,16 @@ final class SiteBuildRunAction
         $imagesResult = $this->images->handle($businessId, $locationId);
         $draftResult = $this->draft->handle($businessId, $locationId);
 
-        return [
+        $result = [
             'status' => 'completed',
             'crawl' => $crawlResult,
             'images' => $imagesResult,
             'draft' => $draftResult,
         ];
+        if ($draftedWithoutCrawl) {
+            $result['drafted_without_crawl'] = true;
+        }
+
+        return $result;
     }
 }
