@@ -458,17 +458,16 @@ final class VoiceCalls
                     ]);
                 }
 
-                $customer = Customer::forceCreate([
-                    'id' => $personId,
+                $customer = Customer::create([
                     'business_id' => $businessId,
                     'phone' => $normalised,
                 ]);
 
-                $convo = Conversation::where('person_id', $personId)->orWhere('customer_id', $personId)->first();
+                $convo = Conversation::where('person_id', $personId)->orWhere('customer_id', $customer->id)->first();
                 if (! $convo) {
                     Conversation::create([
                         'business_id' => $businessId,
-                        'customer_id' => $personId,
+                        'customer_id' => $customer->id,
                         'person_id' => $personId,
                         'channel' => 'voice',
                         'status' => 'open',
