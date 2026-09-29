@@ -48,4 +48,16 @@ class DryrunPreviewScreenTest extends TestCase
 
         Livewire::test(DryrunPreview::class)->assertOk();
     }
+
+    public function test_screen_refuses_without_business(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $this->actingAs($owner);
+
+        $this->get(route('x-212.dryrun-preview'))
+            ->assertForbidden();
+
+        Livewire::test(DryrunPreview::class)
+            ->assertForbidden();
+    }
 }
