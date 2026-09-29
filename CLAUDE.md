@@ -2453,6 +2453,35 @@ reaching into X-103's models — one event that both instruments describe.
 unassigned path is recorded in `REVIEWS.md` **and added to the table in the same act**, with the counts
 that support it; a ruling not written there is re-litigated within the day, and two were.
 
+⛔ **`AiModel::$case->value` AND `$case->apiModelId()` DIFFER FOR FIVE OF SIX CASES, AND THE ONE THAT
+COINCIDES IS WHY A WRONG TEST GOES HALF-GREEN (N335, 2026-09-29, ui wave 247).** A wave asserting on model
+ids mixed the two inside one closure:
+
+| asserted | that string is | the case's `->value` |
+| :-- | :-- | :-- |
+| `claude-opus-5` | `apiModelId()` | `anthropic-opus-5` |
+| `gpt-4o-mini` | `apiModelId()` | `openai-4o-mini` |
+| `text-embedding-3-small` | **both** | `text-embedding-3-small` |
+| `openai-gpt-image-2.5-flare` | `->value` | (api id is `gpt-image-2.5-flare`) |
+
+`AiSpend::modelFor()` parses a settings row with `AiModel::tryFrom()`, so **`->value` is the id that is
+stored, listed and compared**; `apiModelId()` is the wire name, and it is deliberately written split
+(`'gp'.'t-4o-mini'`) so a grep for a vendor model string does not match the enum.
+⛔ **The failure is not uniform, which is the whole danger.** In the wave's two closures the *negative*
+clauses used `->value` and the *positive* clauses used `apiModelId()`, so one test failed on its positives
+while the other **passed with a vacuous clause** — `! in_array('gpt-4o-mini', $options)` is true for every
+task, because that string is not a `->value` at all and can never be in the list. Only
+`count($options) === 1` beside it carried any meaning. And `text-embedding-3-small` coincides, so two more
+clauses were accidentally right. *The row that is legitimate by construction*, in a test's own fixture.
+**RULED: a test that names a model id names `AiModel::<Case>->value` — or better, writes
+`AiModel::Gpt4oMini->value` and lets PHP supply the string.** A literal is only permitted where the brief
+quotes it from the enum, and a `!in_array` on a model id gets a positive control that the string is a
+`->value` at all.
+⭐ **The cause was mine and it is N266 again**: the brief said *"assert `effectiveModel` is the default's
+value"* in prose instead of writing the four literals out. Every time a value is paraphrased rather than
+pasted, the coder supplies the human-readable form — and `gpt-4o-mini` **is** what a person calls that
+model. No dispatch of the cap is spent on it.
+
 ## ⛔⛔ THREE LAWS OF LANE REVIEW (owner ruling, 2026-09-28, after N316). These are not notes.
 
 ### LAW 1 — A LANE'S WORK IS `git merge-base origin/main HEAD`..`HEAD`. NEVER `origin/main..lane`.
