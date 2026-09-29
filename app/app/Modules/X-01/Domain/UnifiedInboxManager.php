@@ -89,7 +89,7 @@ final class UnifiedInboxManager
                 if (! $convo) {
                     $convo = Conversation::create([
                         'person_id' => $personId,
-                        'customer_id' => $personId,
+                        'customer_id' => null, // UNRESOLVED: no customer mapping, leaving customer_id null rather than conflating with person_id
                         'channel' => $channel,
                         'status' => 'open',
                     ]);

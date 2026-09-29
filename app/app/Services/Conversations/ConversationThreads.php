@@ -329,7 +329,7 @@ final class ConversationThreads
                 'business_id' => $businessId,
                 'location_id' => $customer->location_id,
                 'customer_id' => $customer->getKey(),
-                'person_id' => $customer->getKey(),
+                'person_id' => null, // UNRESOLVED: no person mapping, leaving person_id null rather than conflating with customer_id
                 'channel' => OutreachChannel::Sms->value,
                 // ⚠️ **NO SUBJECT.** A text message has none, and deriving one
                 // from the first line would put customer content in a column
