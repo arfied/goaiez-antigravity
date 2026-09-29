@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103;
 
-use App\Enums\CredentialEnvironment;
 use App\Enums\TenantLinkKind;
 use App\Enums\UserRole;
 use App\Models\Business;
@@ -54,7 +53,6 @@ use App\Modules\X155\Models\FormSubmission;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\InvoiceLine;
-use App\Services\Config\CredentialStore;
 use App\Services\Facts\BusinessFactKey;
 use App\Services\Facts\BusinessFacts;
 use App\Support\Money;
@@ -83,7 +81,6 @@ class X103Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        app(CredentialStore::class)->set('anthropic_api_key', 'test', 'system', CredentialEnvironment::Live);
         $this->engine = new SiteEngine;
         $this->buildAction = new SiteBuildAction($this->engine);
         $this->publishAction = new SitePublishAction($this->engine);

@@ -120,7 +120,18 @@ enum AiTask: string
             self::ReplyGeneration,
             self::Conversation => AiModel::Gpt4oMini,
             self::SiteCopy => AiModel::Gpt4oMini,
-            self::SiteAuthoring => AiModel::ClaudeOpus5,
+            // The authoring tier stays on the cheap model until an Anthropic key exists.
+            // OWNER RULING 2026-09-29: "Gpt4oMini now, Opus when the key lands."
+            // This pin is the ONLY lever. AiSpend::modelFor() documents three rungs — a tenant
+            // assignment, an ai.model.<task> platform row, then this default — and only this one is
+            // reachable: Livewire\Advanced\Settings renders the effective model with no save method,
+            // nothing in the repository writes an ai.model.* row, and X-219's ModelResolveAction has
+            // no callers. So there is no admin flip; changing the tier means changing this line.
+            // Flipping it to ClaudeOpus5 also requires, in the same wave: an ANTHROPIC_API_KEY on the
+            // box, and api.anthropic.com/* added to every Http::fake array under
+            // tests/Modules/X-103 that exercises an authoring path. Without the second, 17 tests
+            // dispatch real requests and get 401 — measured on 2026-09-29.
+            self::SiteAuthoring => AiModel::Gpt4oMini,
             self::KnowledgeEmbedding => AiModel::TextEmbedding3Small,
             self::SiteImage => AiModel::GptImage25Flare,
         };

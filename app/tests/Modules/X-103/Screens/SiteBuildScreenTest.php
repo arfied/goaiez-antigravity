@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103\Screens;
 
-use App\Enums\CredentialEnvironment;
 use App\Enums\IndustryFamily;
 use App\Enums\UserRole;
 use App\Models\Competitor;
@@ -27,7 +26,6 @@ use App\Modules\X157\Domain\DnsResolver;
 use App\Modules\X157\Models\CustomDomainRequest;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X163\Models\PriceBookItem;
-use App\Services\Config\CredentialStore;
 use App\Services\Facts\BusinessFactKey;
 use App\Services\Facts\BusinessFacts;
 use App\Support\Tenancy;
@@ -42,12 +40,6 @@ use Tests\TestCase;
 
 class SiteBuildScreenTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        app(CredentialStore::class)->set('anthropic_api_key', 'test', 'system', CredentialEnvironment::Live);
-    }
-
     use RefreshesTenantDatabase;
 
     public function test_screen_renders_for_tenant(): void

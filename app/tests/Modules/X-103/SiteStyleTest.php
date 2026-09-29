@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103;
 
-use App\Enums\CredentialEnvironment;
 use App\Enums\UserRole;
 use App\Models\Business;
 use App\Models\User;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Ui\Pages;
-use App\Services\Config\CredentialStore;
 use App\Services\Industry\IndustryStartingPoints;
 use App\Services\Industry\SiteStyle;
 use App\Support\Tenancy;
@@ -20,12 +18,6 @@ use Tests\TestCase;
 
 class SiteStyleTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        app(CredentialStore::class)->set('anthropic_api_key', 'test', 'system', CredentialEnvironment::Live);
-    }
-
     public function test_validate_drops_bad_values_and_checks_contrast(): void
     {
         $base = [
