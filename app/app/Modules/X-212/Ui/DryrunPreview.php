@@ -18,6 +18,7 @@ class DryrunPreview extends Component
 
     public function mount(): void
     {
+        abort_unless(Tenancy::check(), 403, 'Your current website works on one business — open it from Tenant locations first.');
         $this->businessId = Tenancy::id() ?? 0;
     }
 

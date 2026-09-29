@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace Tests\Modules\X140\Screens;
 
 use App\Enums\UserRole;
+use App\Models\Location;
+use App\Models\Review;
 use App\Models\User;
+use App\Modules\X103\Models\Page;
 use App\Modules\X140\Models\ContentTopic;
 use App\Modules\X140\Models\TopicSource;
 use App\Modules\X140\Ui\ProposedPagesView;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -182,5 +186,94 @@ class ProposedPagesViewScreenTest extends TestCase
         $this->assertDatabaseMissing((new TopicSource)->getTable(), [
             'business_id' => $biz->id,
         ]);
+    }
+
+    public function test_can_draft_place_and_discard_answer(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Topic Tenant', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+        $this->actingAs($biz->owner);
+
+        $topic = ContentTopic::create([
+            'business_id' => $biz->id,
+            'topic_title' => 'How to fix a leaky faucet',
+            'slug' => 'how-to-fix-a-leaky-faucet',
+            'cluster_key' => 'plumbing_issues',
+            'is_published' => false,
+        ]);
+        TopicSource::create([
+            'business_id' => $biz->id,
+            'topic_id' => $topic->id,
+            'source_type' => 'customer_inquiry',
+            'raw_content' => 'Customer asked how to fix a leaky faucet.',
+        ]);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'faq',
+            'title' => 'FAQ',
+            'draft_blocks' => [],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_faq',
+                'model' => 'gpt-4o',
+                'choices' => [
+                    [
+                        'message' => [
+                            'content' => json_encode([
+                                'flags' => [],
+                                'question' => 'How to fix a leaky faucet?',
+                                'answer' => 'Turn off the water.',
+                            ]),
+                        ],
+                    ],
+                ],
+            ], 200),
+        ]);
+
+        Review::create([
+            'business_id' => $biz->id,
+            'location_id' => Location::where('business_id', $biz->id)->first()->id,
+            'rating' => 5,
+            'comment' => 'Great service!',
+            'author_name' => 'John Doe',
+            'reviewer_email' => 'john@example.com',
+            'source' => 'google',
+            'status' => 'displayed',
+            'display_on_website' => true,
+            'reviewed_at' => now(),
+        ]);
+
+        Livewire::test(ProposedPagesView::class)
+            ->call('draftAnswer', $topic->id, $page->id)
+            ->assertSet('error', null);
+
+        $page->refresh();
+        $this->assertArrayHasKey('pending_faq', $page->draft_meta ?? []);
+        $this->assertFalse($page->is_published, 'draft exists unpublished');
+
+        Livewire::test(ProposedPagesView::class)
+            ->call('placeAnswer', $page->id)
+            ->assertSet('error', null)
+            ->assertSet('success', 'Answer placed on page.');
+
+        $page->refresh();
+        $this->assertArrayNotHasKey('pending_faq', $page->draft_meta ?? []);
+        $this->assertCount(1, $page->draft_blocks);
+        $this->assertEquals('faq', $page->draft_blocks[0]['type']);
+        $this->assertFalse($page->is_published, 'no path publishes without the owner acting');
+
+        $page->update(['draft_meta' => ['pending_faq' => ['items' => []]]]);
+        Livewire::test(ProposedPagesView::class)
+            ->call('discardAnswer', $page->id)
+            ->assertSet('error', null)
+            ->assertSet('success', 'Pending answer discarded.');
+
+        $page->refresh();
+        $this->assertArrayNotHasKey('pending_faq', $page->draft_meta ?? []);
+        $this->assertFalse($page->is_published);
     }
 }
