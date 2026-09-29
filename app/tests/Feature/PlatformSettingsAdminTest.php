@@ -786,3 +786,42 @@ test('malformed or nested JSON stays a string rather than becoming a half-parsed
     Livewire::actingAs($this->admin)->test(SettingsScreen::class)->call('edit', 'speed.script_deferral_extra_hosts')->set('draft', '[not json')->call('save');
     expect($registry->value('speed.script_deferral_extra_hosts'))->toBe('[not json');
 });
+test('edit() on ai.model.site_authoring sets modelOptions to the chat models only', function (): void {
+    Livewire::actingAs($this->admin)
+        ->test(SettingsScreen::class)
+        ->call('edit', 'ai.model.site_authoring')
+        ->assertSet('editing', 'ai.model.site_authoring')
+        ->assertSet('modelOptions', function (array $options): bool {
+            return in_array('claude-opus-5', $options, true)
+                && in_array('gpt-4o-mini', $options, true)
+                && ! in_array('text-embedding-3-small', $options, true)
+                && ! in_array('openai-gpt-image-2.5-flare', $options, true);
+        });
+});
+
+test('edit() on the embedding task key sets modelOptions to the embedding model only', function (): void {
+    Livewire::actingAs($this->admin)
+        ->test(SettingsScreen::class)
+        ->call('edit', 'ai.model.knowledge_embedding')
+        ->assertSet('editing', 'ai.model.knowledge_embedding')
+        ->assertSet('modelOptions', function (array $options): bool {
+            return in_array('text-embedding-3-small', $options, true)
+                && ! in_array('gpt-4o-mini', $options, true)
+                && count($options) === 1;
+        });
+});
+
+test('saving an id the enum does not know saves and leaves effectiveModel at the task default', function (): void {
+    Livewire::actingAs($this->admin)
+        ->test(SettingsScreen::class)
+        ->call('edit', 'ai.model.site_authoring')
+        ->set('draft', 'not-a-real-model')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    Livewire::actingAs($this->admin)
+        ->test(SettingsScreen::class)
+        ->call('edit', 'ai.model.site_authoring')
+        ->assertSet('draft', 'not-a-real-model')
+        ->assertSet('effectiveModel', 'gpt-4o-mini');
+});
