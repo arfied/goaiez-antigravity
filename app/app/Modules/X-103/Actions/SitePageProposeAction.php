@@ -42,7 +42,7 @@ final class SitePageProposeAction
         $peerCount = $reference === '' ? 0 : count($this->peers->notesFor($businessId));
 
         $response = $this->router->dispatch(new AiRequest(
-            task: AiTask::SiteCopy,
+            task: AiTask::SiteAuthoring,
             prompt: "Owner request: {$request}".($reference === '' ? '' : "\n\n".$reference),
             system: $this->registry->string('sites.page.system_prompt'),
             jsonSchema: [
