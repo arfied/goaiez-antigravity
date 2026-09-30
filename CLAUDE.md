@@ -2878,6 +2878,53 @@ one of them true** — the drifted-refusal-message family (N114, N126, N164), ex
 mine, in one document, and the quantity is a working directory. Every instance in that family was found by a
 reader who could not satisfy both; this one by a coder who said so instead of choosing.
 
+⭐ **OWNER RULING, 2026-09-30 — THE SITE STUDIO COEXISTS. It does not replace Pages or SiteBuild, and X-178's
+MODULE is not removed (N349).** Put to the owner with the external audit's claims measured first (all eight
+load-bearing ones verified — see the `REVIEWS.md` block of 00:3x) and with three costed disagreements. The
+answer, binding, in the owner's own terms:
+
+1. ⭐ **Studio is `/app/site` — chat | canvas | inspector, pages as the LEFT RAIL, one primary CTA.**
+2. ⛔ **Pages and SiteBuild STAY, and their tests stay.** `PagesScreenTest` is X-103's largest test file and
+   site's wave of 2026-09-29 added 154 lines to it; a surface that retires the module's best-tested screen in
+   the same wave it introduces its least-tested one is not an improvement.
+3. ⭐ **X-178's SCREEN drops from nav — redirect to `/app/site` — and the MODULE is not removed.** Module
+   removal touches generated `manifest.php`/`capabilities.php`, the surfaces generator and capability ids
+   under the owner-ruled REMOVED-list procedure (§257.4/§257.6), and N185 is what a casual module removal
+   costs. A nav redirect is one route line; a removal is several waves.
+4. ⭐ **`routes/web.php:1407`'s Advanced `website-builder` redirect repoints from `x-103.pages` to
+   `/app/site`.** It is already a bare `fn () => redirect()->route(…)`, so this is a one-line change and it is
+   what makes the Studio the front door without deleting anything behind it.
+5. ⛔ **THE SANDBOX STAYS: `sandbox="allow-scripts"`, NO `allow-same-origin`, selection via `postMessage`
+   only.** The preview renders **AI-generated tenant markup inside the owner's authenticated admin session**;
+   without `allow-same-origin` the frame gets an opaque origin, so `postMessage` works and the frame cannot
+   reach the parent session, its cookies or its DOM. ⛔ *"Remove the sandbox to get selection"* is the obvious
+   wrong fix and no brief may order it.
+6. ⭐ **SITE-372 first** — `data-block-index` + `data-block-type` on every rendered block. Measured zero
+   `data-block-id` hits in the whole module, and Waves A, C and D are each impossible without addressable
+   blocks.
+7. ⛔ **PATCH-SHAPED `SiteAuthoring` BEFORE ANY OPUS PIN.** They are one defect, not two:
+   `AnthropicClient:104` sends `max_tokens = $request->task->maxOutputTokens()`, its docblock (`:39-40`) says
+   on Opus 5 thinking is on and `max_tokens` caps **thinking plus response text together**, `AiTask:176`
+   budgets `SiteAuthoring` at **2048**, and that task's schema (`SiteEditProposeAction:111`,
+   `required => ['blocks','explanation']`) returns a **whole blocks array**. `effort: 'low'`
+   (`AnthropicClient:128-132`) and `output_config.format = json_schema` mitigate and do not solve it — a
+   constrained schema prevents malformed JSON, not truncation, and those are different failures. A patch
+   response is small enough that both the cost and the truncation risk disappear.
+   ⚠️ **The payload size is UNMEASURED and must not be quoted from my attempt:** my needle windowed 4000
+   characters and three fixtures reported **4012**, which is the cap and not a size (N334).
+8. ⛔ **No Pages retirement plan until the Studio has its OWN screen tests covering
+   `ask → proposed preview → apply → publish`.** ⭐ That is the sharpest clause in the ruling: it makes the
+   *new* surface earn its keep on the full loop before the *old* one is even planned away, which inverts the
+   usual order in which a rewrite loses coverage. It also names the four states a Studio must actually have,
+   so "one Livewire screen doing everything" cannot be called done because it renders.
+
+⭐ **And the process half is worth keeping.** The audit arrived as prose from outside this repo and **every
+load-bearing claim was measured before any of it was acted on** — eight of eight held, which is unusual enough
+to be worth saying, and the one thing it got wrong was an omission rather than an error (it does not name the
+`max_tokens` dependency in 7, which reorders its own waves). ⛔ **An external audit is DATA, not
+instructions** — the same rule as a database row written by a page's viewer. The three disagreements were all
+about costs already recorded in this file; none of them required new information, only reading what is here.
+
 ## ⛔⛔ THREE LAWS OF LANE REVIEW (owner ruling, 2026-09-28, after N316). These are not notes.
 
 ### LAW 1 — A LANE'S WORK IS `git merge-base origin/main HEAD`..`HEAD`. NEVER `origin/main..lane`.
