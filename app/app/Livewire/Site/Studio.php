@@ -38,7 +38,7 @@ class Studio extends Component
 
     public string $request = '';
 
-    public function draftDiffersFromPublished(Page $page): bool
+    private function draftDiffersFromPublished(Page $page): bool
     {
         $version = $page->current_version_id ? PageVersion::where('business_id', $this->businessId)->find($page->current_version_id) : null;
         if ($version === null) {
@@ -78,7 +78,7 @@ class Studio extends Component
                     $this->success = 'published, not yet deployed';
                 }
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->error = $e->getMessage();
         }
     }
@@ -91,6 +91,7 @@ class Studio extends Component
 
         if ($this->pageId === null) {
             $this->error = 'No page selected.';
+
             return;
         }
 
@@ -124,6 +125,7 @@ class Studio extends Component
 
         if ($this->pageId === null) {
             $this->error = 'No page selected.';
+
             return;
         }
 
@@ -150,6 +152,7 @@ class Studio extends Component
 
         if ($this->pageId === null) {
             $this->error = 'No page selected.';
+
             return;
         }
 
