@@ -3372,3 +3372,43 @@ files and zero `ask`/`applyProposal`/`discardProposal`** — an empty-merge trap
 a non-zero product count, an empty per-track diff and no conflicts are **all true**.
 **RULED: a branch tip is `git rev-parse refs/heads/<name>`, measured in the same command that writes it down.
 `HEAD` in a worktree is not the branch, and a detached HEAD makes them different objects with one name.**
+
+⭐ **`refs/heads/*` IS SHARED BY ALL EIGHT WORKTREES AND `HEAD` IS THE ONLY PER-WORKTREE FILE — WHICH IS WHY
+`git branch -f` CANNOT PROVE A WORKTREE IS ATTACHED (N367, 2026-09-30, owner ruling after N366).** Measured,
+both directions, rather than reasoned about:
+```
+rev-parse refs/heads/track/ui   from grs-antig    → bdb6cc23e   ┐ ONE ref, one answer,
+rev-parse refs/heads/track/ui   from grs-antig-ui → bdb6cc23e   ┘ read from either checkout
+symbolic-ref --short HEAD       from grs-antig    → main        ┐ HEAD DIFFERS per worktree
+symbolic-ref --short HEAD       from grs-antig-ui → track/ui    ┘
+rev-parse --git-dir         (ui) → .git/worktrees/grs-antig-ui   ← ui's HEAD lives here
+rev-parse --git-common-dir  (ui) → .git                          ← every ref lives here
+```
+⛔ **So a `branch -f` writes the store every worktree shares: it changes the answer for all eight at once and
+says nothing about which one has HEAD pointed at it.** A detached worktree and an attached one read the ref
+identically, which is exactly how N366 cost a wave — I moved the ref from `grs-antig`, confirmed three function
+names on the branch, pushed with a lease, and called the detach closed while the ui worktree was still detached
+at `cf0ffc8c0`.
+**RULED, in the owner's own words: proof that a lane is attached is ONLY these two lines, run INSIDE that
+worktree — `git symbolic-ref --short HEAD` printing the branch, and `rev-parse --short HEAD` equal to
+`rev-parse --short refs/heads/<branch>`. A rev-parse from another checkout is not that proof, and `branch -f`
+is not that proof.** ⭐ And the repair has two halves in a fixed order: move the ref, then `git checkout
+<branch>` in the worktree — the one navigation the N342-patched guard still permits, preserved deliberately so
+a guard written against detaching cannot strand the lane it protects.
+⭐ The family is this file's oldest with a new member: *an instrument is only as honest as the thing it reads.*
+§2e's baseline, wave 122's needle, N123's sign, N334's `head` cap, N333's line window, N350's directory,
+N365's mode bit — and now **which of two files git is consulting**, one shared and one not.
+
+⚠️ **AND THE SAME TICK'S OWN WATCHER WAS BROKEN BY A COMPOSITION, NOT BY A NEEDLE (N368).** Armed to wait for
+N359's sentinel, its condition was
+`[ "$(grep -c 'AGY_EXIT=' $L 2>/dev/null || echo 0)" -ge 1 ]`. **`grep -c` prints `0` AND returns rc=1**, so
+`|| echo 0` fires too and the substitution yields the two-line string `0\n0`; `[` then errors
+*"integer expression expected"* on every poll. ⛔ **The needle was right and had a discriminating positive
+control** (run 258's finished log → 1, run 1010's fresh log → 0). What was never controlled is **the
+expression the needle sits inside** — N252 verbatim: *a positive control on the pattern is not a positive
+control on the invocation.*
+⭐ It failed toward *keep waiting*, so the pid arm carried the watch and the verdict was correct; had the
+polarity been the other way it would have declared a live coder finished, which is N358's kill. **RULED: a
+`grep -c` inside a test is written `$(grep -c … || true)` or the count is read in its own command first** —
+the `|| echo 0` idiom is the defect, because the thing it guards against cannot happen (`grep -c` always
+prints a number) while what it adds is a second line.
