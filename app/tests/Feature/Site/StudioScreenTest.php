@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Tests\Feature\Site;
 
 use App\Enums\UserRole;
+use App\Exceptions\TenantNotResolved;
 use App\Livewire\Site\Studio;
 use App\Models\User;
 use App\Modules\X103\Models\Page;
 use Livewire\Livewire;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 test('the studio renders for a tenant owner', function () {
     $user = User::factory()->create(['role' => UserRole::Owner]);
@@ -36,12 +38,22 @@ test('the studio renders for a tenant owner', function () {
     $response->assertSee('Site studio');
 });
 
-test('studio without tenant does not 500', function () {
+test('the studio refuses a no-tenant request', function () {
     $user = User::factory()->create(['role' => UserRole::Owner]);
+    $this->actingAs($user);
+    $this->withoutExceptionHandling();
 
-    // Not setting a tenant. Tenancy::idOrFail() will throw, which is handled (usually 400).
-    $response = $this->actingAs($user)->get(route('site.studio'));
-    expect($response->status())->toBe(400);
+    $refused = false;
+    try {
+        $this->get(route('site.studio'));
+    } catch (TenantNotResolved $e) {
+        $refused = true;
+    } catch (HttpException $e) {
+        expect($e->getStatusCode())->toBe(403);
+        $refused = true;
+    }
+
+    expect($refused)->toBeTrue();
 });
 
 test('selecting a block sets the inspector and clears on page change', function () {
