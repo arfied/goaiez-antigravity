@@ -3134,3 +3134,89 @@ command. It is §2e generalised from one file to the whole tree, which is where 
 ⚠️ N130 note: ui's and money's merges are read here as *committed history*, not as working trees, so the
 liveness caveat does not apply; money's snapshot finding below is a tree reading and was taken after its
 writer exited.
+
+⛔⛔ **A `REPORT.md` WRITTEN BY A LIVE CODER IS A DRAFT, AND I KILLED A WORKING CODER ON THE STRENGTH OF ONE
+(N358, 2026-09-30, site run 386).** Timeline, measured after the fact:
+```
+08:31:16  launched; log created, 0 bytes
+08:32:46  REPORT.md — "STOPPED: … I followed the rule and stopped as required"
+08:34:16  merge commit 617a16c72 (2 parents)            ← 90 s AFTER the report
+08:35:08  SiteEditApplyAction.php created
+08:35:20  Pages.php modified
+08:35:50  SiteEditApplyActionTest.php created
+08:40     I killed agy 344856
+```
+The coder wrote "STOPPED", found its own way past two commands my brief had wrongly ordered, and worked for
+three more minutes. ⛔ **N265 rules that the TREE is not a result while the writer lives; this extends it to the
+REPORT.** Rule 10 writes the report at wave close *or stop*, and N117's corollary (*"`REPORT.md` newer than
+`coder.pid` separates finished-and-parked from waiting on the model"*) is true about **parking** and silent
+about **resuming**. **RULED: no irreversible act on a live writer's report.**
+⭐ **And the discriminating signal was in my own table, one column over.** `agy` writes its `--print` output to
+its log **at exit**:
+
+| lane | log at decision time | meaning | the kill |
+| :-- | :-- | :-- | :-- |
+| `grs-antig` | **63 bytes** | final output written ⇒ finished | justified |
+| `grs-antig-site` | **0 bytes** | ⇒ **still running** | ⛔ wrong |
+
+I printed both in one command and treated the lanes identically. **RULED: a non-empty `agy` log is the
+NECESSARY condition for a parked-coder kill** — and N352 had established that same morning that a 0-byte log is
+the normal state of a *running* coder, which is the fact I then failed to use.
+⭐ **Two measured corrections to the kill procedure itself.** (1) **`coder.pid` holds the `bash -c` WRAPPER**,
+so `cpu_ticks = 0 0` read off it says nothing about the coder; the chain is
+`bash -c → timeout -k 60 3h → agy`, and N117's progress measure must be pointed at the **agy** pid and its log.
+(2) ⭐ **Killing the agy CHILD collapses the whole chain cleanly** — agy, `timeout` and the wrapper all exited,
+the wrapper appended its own `AGY_EXIT=1` exactly as a normal exit does, `--census` printed `none` in both
+checkouts and neither tree moved. So the 2026-09-13 rule is sharper than "never kill a wrapper": **kill the agy
+pid and the wrapper reaps itself; kill the wrapper and the agy survives to write untracked.** One direction is
+safe, the other is that incident.
+⚠️ **A seat kill leaves no `kill-log.tsv` row** (supervisor shells are off `coder-bin`'s PATH), so the rows are
+hand-written into `REVIEWS.md`. ⚠️ And **editing `KICKOFF.md` mid-run changes nothing for that run** — the
+launcher captures it at dispatch via `--print "$(cat …)"`; a correction reaches a coder only by re-dispatch.
+⭐ Damage was nil and that was git, not judgement: no `MERGE_HEAD`, no rebase, the merge committed and sound,
+all three artefacts intact on disk. Cost: one wave's completion.
+⛔ The transferable half is the coarsest version of this file's oldest shape: **every other entry here is an
+instrument reading the wrong thing; this is using a SELF-REPORT as an instrument.** A report is a claim by the
+subject — evidence about intent, never about state — and the state was measurable in the same breath, for free.
+
+⛔ **FOUR CODER STOPS IN ONE DAY, ALL MINE, ALL THE SAME ROOT: I NAMED SOMETHING WHOSE EXISTENCE OR PERMISSION I
+HAD NOT MEASURED THAT SESSION (N355/N356, 2026-09-30).** Each cost one wave and nothing else, and each was
+caught by a coder refusing rather than improvising.
+1. **N348** — `php artisan` in a directory with no `artisan`.
+2. **N354** — item 0's guard read `track/site`, item 1 merged `origin/track/site`. ⛔ **The stale ref was already
+   an ancestor of main**, so the merge would have printed *"Already up to date"* and committed an **empty merge
+   that passes every other proof in the brief** (`%P`=2 ✓, per-track diff empty ✓, doctor unmoved ✓, pest green
+   ✓). **RULED: a merge brief names ONE ref and item 0's guard reads THAT ref**, plus a new field —
+   `git diff --numstat HEAD~1 HEAD -- app | wc -l` must be **non-zero**, and
+   `git merge-base --is-ancestor <ref> HEAD` must print nothing *before* the merge.
+3. **N355** — I put `composer dump-autoload` in the repo-root row of the per-command-group table **that N348
+   created**, and there is no root `composer.json`. ⛔ *A remedy artefact is not correct because the rule that
+   produced it was.* **RULED: the table is DERIVED, not remembered:** `git rev-parse --show-toplevel`,
+   `dirname $(find . -maxdepth 2 -name composer.json)`, `dirname $(find . -maxdepth 2 -name artisan)`. In this
+   repo **only `git` runs at the root**; composer, artisan, pest, phpstan and pint are all in `app/`.
+4. **N356** — I briefed `git clean`, which `coder-bin/git` refuses **unconditionally** (*"git clean is forbidden
+   (history/working tree are append-only)"*), and `git checkout HEAD -- <path>` **before** the merge, which is
+   permitted only while `MERGE_HEAD` exists — a precondition my own item ordering made unsatisfiable. Both
+   facts were already on this page. ⛔ This seat cannot read `coder-bin/git` (self-modification refusal), so
+   **refusal messages are the only way its rules are learned and recording them is mandatory.**
+⭐ And N188's ruling 3 (*clear the dirt, never document it*) hit a wall worth naming: 34 untracked scratch files
+in a lane could be cleared by **nobody the rule can reach** — the coder is refused `git clean` by design and
+this seat may not write a sibling lane's `app/**` (LAW 3). Documenting the expected tree was the only lawful
+option, so the exception is written down rather than quietly broken.
+
+⛔⛔ **THE `BRIEF.md` ARM OF N164'S OWN GUARD WAS INERT FOR EVERY BRIEF I HAVE WRITTEN (N357, 2026-09-30).**
+`launch-coder.sh:67` greps the literal **`Merge gate **OPEN`**. My kickoffs write `Merge gate **OPEN**` ✓; my
+briefs wrote `**Merge gate OPEN**` ✗ — asterisks before *Merge*, not before *OPEN*. So arm 2, added by N164
+**because a brief and a kickoff had disagreed about the merge gate**, could not fire on a brief of mine, and the
+uncovered case is exactly N164's: the brief declares OPEN while the kickoff does not.
+⭐ **Nothing broke, and that is the problem.** N103 built these arms to fail open by construction, which is
+right for safety and makes a dead arm **completely silent** — the same shape as N181's `log_gate`, N137's cap
+and N345's writer needle: *an instrument that fails open is honest about its result and silent about its own
+coverage.*
+⛔ **Fixed in the PROSE, never in the needle** — loosening the grep would weaken a guard to fit the author it
+polices. Verified with a control whose two readings **differ** (N254): `grep -c 'Merge gate \*\*OPEN' BRIEF.md`
+→ **0** before, **1** after. **RULED: a brief writes the gate line in the launcher's own words, and a brief that
+declares a gate is grepped for the launcher's needle before dispatch.** ⭐ General form: **a guard's needle and
+the document it polices are two sources of truth, and the one nobody re-reads is the document.** Wave 122 ruled
+*derive the needle from the file*; this is the mirror — **derive the file from the needle** when the needle is
+the thing that must not move.
