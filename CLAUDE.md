@@ -2603,6 +2603,35 @@ delivered* — which is the third test in the dispatched brief and the only one 
 defect rather than the mechanism.
 ⚠️ And a third, smaller: the success return hardcodes `'is_silent_mode' => true` instead of reading
 `$run->is_silent_mode`. A returned field that claims something it never checked.
+⛔ **A WAVE'S DOCTOR BASELINE IS TAKEN AFTER THE TAKE-MAIN, NOT AT STEP 0 — OTHERWISE THE DIFF MEASURES THE
+MERGE (N340, 2026-09-29, stages run 233).** Two briefs of mine ordered
+`php artisan doctor > .doctor-before.txt` as **step 0**, ahead of `git merge --no-ff origin/main`, and then
+made the after-diff a **stop condition**: *"the diff should print nothing; if it prints anything, quote it
+and stop."* stages' diff printed
+```
+<  FAIL boundary  2 violation(s) — fails the COMMIT
+>  ok boundary  clean
+```
+and the coder **stopped at the commit with the work finished and correct** — exactly as instructed.
+⛔ **Nothing in its three files caused that line.** `main` had closed those two violations hours earlier
+(reviews' X-140 wave), so the "before" was read on a tree that still carried them and the "after" on a tree
+that had merged the fix. **The diff measured the merge, and the wave's own contribution was invisible inside
+it.**
+⭐ The tell that it is not the wave: **sixty's identical brief produced an EMPTY diff in the same hour** —
+because sixty's branch had never carried X-140's violation, so its before and after both read `boundary
+clean`. Two lanes, one brief shape, opposite diffs, and the difference is which branch happened to hold the
+defect. *Two measurements that disagree on trees that differ only by inherited bytes ⇒ the cause is not the
+wave* (the wave-119 rule, in a new instrument).
+**RULED: the order is take-main → commit the merge → `doctor` BEFORE → edit → `doctor` AFTER → diff.** A
+baseline captured across an irreversible step that itself moves the measurement is not a baseline. N139 said
+capture it *before the irreversible step*; this is the correction — **before the EDITS, after the MERGE**,
+because the merge is an irreversible step that changes doctor too.
+⛔ And the stop condition was **unsatisfiable by construction** for any lane behind on a doctor-moving commit,
+which is the N207 shape: a self-test whose failure the coder cannot avoid, in a brief that then blames it for
+stopping. A brief may not make a coder responsible for a number its own step 0 mis-scoped.
+⭐ Worth keeping about the cost: it was **one wave, not a defect** — no assertion was read wrongly, nothing
+was committed, and the second dispatch is a commit-only run. *A stop is not a BLOCK*, and this one was the
+instruction working while the instruction was wrong.
 ## ⛔⛔ THREE LAWS OF LANE REVIEW (owner ruling, 2026-09-28, after N316). These are not notes.
 
 ### LAW 1 — A LANE'S WORK IS `git merge-base origin/main HEAD`..`HEAD`. NEVER `origin/main..lane`.
