@@ -90,7 +90,7 @@ class SiteStyleTest extends TestCase
             'api.anthropic.com/*' => Http::response(
                 json_encode([
                     'content' => [['type' => 'text', 'text' => json_encode([
-                        'blocks' => [],
+                        'patches' => [],
                         'explanation' => 'Changed style',
                         'style' => [
                             'palette' => ['primary' => '#c2410c'],
@@ -107,7 +107,20 @@ class SiteStyleTest extends TestCase
                 'id' => 'msg_edit',
                 'choices' => [
                     ['message' => ['content' => json_encode([
-                        'blocks' => [],
+                        'patches' => [['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Test']],
+                        'explanation' => 'Changed style',
+                        'style' => [
+                            'palette' => ['surface' => '#ffffff', 'ink' => '#ffffff'],
+                        ],
+                    ])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ], 200, ['Content-Type' => 'application/json']),
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [
+                    ['message' => ['content' => json_encode([
+                        'patches' => [],
                         'explanation' => 'Changed style',
                         'style' => [
                             'palette' => ['primary' => '#c2410c'],
@@ -209,7 +222,7 @@ class SiteStyleTest extends TestCase
             'api.anthropic.com/*' => Http::response(
                 json_encode([
                     'content' => [['type' => 'text', 'text' => json_encode([
-                        'blocks' => [['type' => 'hero', 'headline' => 'Test']],
+                        'patches' => [['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Test']],
                         'explanation' => 'Changed style',
                         'style' => [
                             'palette' => ['surface' => '#ffffff', 'ink' => '#ffffff'],
@@ -225,7 +238,7 @@ class SiteStyleTest extends TestCase
                 'id' => 'msg_edit',
                 'choices' => [
                     ['message' => ['content' => json_encode([
-                        'blocks' => [['type' => 'hero', 'headline' => 'Test']],
+                        'patches' => [['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Test']],
                         'explanation' => 'Changed style',
                         'style' => [
                             'palette' => ['surface' => '#ffffff', 'ink' => '#ffffff'],
@@ -233,7 +246,8 @@ class SiteStyleTest extends TestCase
                     ])]],
                 ],
                 'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
-            ]),
+            ], 200, ['Content-Type' => 'application/json']),
+
         ]);
 
         Livewire::actingAs($owner)

@@ -298,6 +298,9 @@ class PageEditorTest extends TestCase
             ->call('makePage');
 
         $page = Page::where('business_id', $biz->id)->where('slug', 'spring-offer')->first();
+        if (! $page) {
+            throw new \Exception('Page is null. Livewire error was: '.$lw->get('error'));
+        }
         $lw->assertSet('editingPageId', $page->id);
     }
 }

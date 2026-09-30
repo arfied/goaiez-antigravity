@@ -24,6 +24,7 @@ use App\Modules\X103\Actions\SiteEditProposeAction;
 use App\Modules\X103\Actions\SitePageProposeAction;
 use App\Modules\X103\Actions\SitePreviewAction;
 use App\Modules\X103\Actions\SitePublishAction;
+use App\Modules\X103\Domain\BlockPatchApplier;
 use App\Modules\X103\Domain\PagePreview;
 use App\Modules\X103\Domain\SectionOrder;
 use App\Modules\X103\Domain\SiteEngine;
@@ -414,7 +415,7 @@ class Pages extends Component
         $this->success = "Restored {$restored} blocks.";
     }
 
-    public function askEdit(int $pageId, SiteEditProposeAction $action): void
+    public function askEdit(int $pageId, SiteEditProposeAction $action, BlockPatchApplier $applier): void
     {
         abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
         $this->error = null;
@@ -432,7 +433,56 @@ class Pages extends Component
             if ($res['status'] === 'refused') {
                 $this->success = $res['reason'];
             } else {
-                $msg = "Proposed {$res['blocks']} blocks with {$res['model']} — review it below, then Apply or Discard.";
+                $applyResult = $applier->apply($page->draft_blocks ?? [], $res['patches']);
+                if ($applyResult['status'] === 'refused') {
+                    $this->success = $applyResult['reason'];
+
+                    return;
+                }
+
+                $meta = $page->draft_meta ?? [];
+                $thread = [];
+
+                if (isset($meta['pending_edit'])) {
+                    $thread = $meta['pending_edit']['thread'] ?? [];
+                    if (empty($thread)) {
+                        $thread[] = [
+                            'request' => $meta['pending_edit']['request'] ?? '',
+                            'explanation' => $meta['pending_edit']['explanation'] ?? '',
+                            'at' => $meta['pending_edit']['drafted_at'] ?? '',
+                        ];
+                    }
+                }
+                $now = now()->toIso8601String();
+                $thread[] = [
+                    'request' => trim((string) ($this->editRequest[$pageId] ?? '')),
+                    'explanation' => $res['explanation'],
+                    'at' => $now,
+                ];
+
+                $pendingEdit = [
+                    'request' => trim((string) ($this->editRequest[$pageId] ?? '')),
+                    'blocks' => $applyResult['blocks'],
+                    'explanation' => $res['explanation'],
+                    'model' => $res['model'],
+                    'drafted_at' => $now,
+                    'thread' => $thread,
+                ];
+                if (! empty($res['image_notes'])) {
+                    $pendingEdit['image_notes'] = $res['image_notes'];
+                }
+                if ($res['style'] !== null) {
+                    $pendingEdit['style'] = $res['style'];
+                }
+                if ($res['style_refused'] !== null) {
+                    $pendingEdit['style_refused'] = $res['style_refused'];
+                }
+                $meta['pending_edit'] = $pendingEdit;
+                $page->draft_meta = $meta;
+                $page->save();
+
+                $numEdits = count($res['patches']);
+                $msg = "Proposed {$numEdits} edits with {$res['model']} — review it below, then Apply or Discard.";
                 if (($res['images'] ?? 0) > 0) {
                     $msg .= " Made {$res['images']} picture(s) for it.";
                 }

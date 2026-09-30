@@ -1,16 +1,16 @@
 {
-    "explanation": "Update the landing page by tweaking the hero text, adding new bullet points to the features section, removing an obsolete testimonial block, and moving the call to action higher up.",
+    "explanation": "Update the landing page",
     "patches": [
         {
             "op": "set_string",
             "block_index": 0,
-            "field": "title",
+            "field": "headline",
             "value": "Welcome to our updated platform"
         },
         {
             "op": "set_string_list",
             "block_index": 1,
-            "field": "features",
+            "field": "items",
             "values": ["Faster", "More secure", "Easy to use"]
         },
         {
