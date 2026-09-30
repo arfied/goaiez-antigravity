@@ -2813,6 +2813,38 @@ second lane's module is not a wave.
 **screen** reads before you wire anything to the other. Twelfth instance of *matching a basename is not
 resolving a symbol* (N258), and the first where the collision is between a module and `app/Models`.
 
+⛔ **I TOLD THE OWNER THEIR API KEY WAS ABSENT WHEN IT WAS PRESENT, BY READING ONE RUNG OF THE TWO-RUNG
+LADDER N331 EXISTS TO WARN ABOUT (N347, 2026-09-29).** The owner said *"claude API key is saved in production
+now"*. I checked twice and both readings said **no**:
+```
+parse_ini_file(".env")            → ANTHROPIC_API_KEY present: no
+config("credentials.anthropic_api_key")  → dev: len=0 · prod: len=0
+```
+Both are **true statements about `.env`** and both are the wrong instrument. `CredentialStore.php:37` says it
+in one line: *"Store first, then `config('credentials.*')`, which is `.env`."* The resolver is
+`PlatformCredentials::has()` → `CredentialStore::resolve()` → the **`platform_credentials` table**, and only
+then `.env`. Asked properly:
+```
+PlatformCredentials::has('anthropic_api_key')  on production → PRESENT
+```
+⛔ **Two independent instruments agreeing does not make a measurement right when both read the same wrong
+rung.** `parse_ini_file` and Laravel's `config()` are different code paths to one source, and I treated their
+agreement as corroboration — which is N111's false-second-witness in a new costume: one measurement wearing
+two labels.
+⭐ **And it is N331 verbatim, committed by its author two hours after writing it.** N331's ruling is *"before
+briefing a change to a value that a resolution ladder reads, walk EVERY rung and establish which ones anything
+can actually write."* I wrote that about `AiSpend::modelFor()`'s three rungs and then read one rung of the
+credential ladder. **A rule is not kept by having been written; the cheap check has to be unconditional.**
+⛔ **The failure direction is what makes it expensive: it told the owner their own action had not taken
+effect.** An instrument that reports a credential as absent invites someone to re-enter it, or to conclude the
+storage is broken. **RULED: a credential's presence is read through `PlatformCredentials::has()` and nothing
+else — never `config()`, never `.env`, never `env()` — and the reading is a boolean, never a value** (this
+repo has leaked two passwords into pushed history already).
+⭐ The deploy caching half is real and was the *hypothesis* I nearly reported instead: `config:cache` ran at
+23:44, so a `.env` value added after it would be invisible to the running app until the cache is rebuilt. That
+is a true trap and it was not this one — writing down the mechanism I could not distinguish, rather than the
+one that sounded right, is the whole of N127's second ruling.
+
 ## ⛔⛔ THREE LAWS OF LANE REVIEW (owner ruling, 2026-09-28, after N316). These are not notes.
 
 ### LAW 1 — A LANE'S WORK IS `git merge-base origin/main HEAD`..`HEAD`. NEVER `origin/main..lane`.
