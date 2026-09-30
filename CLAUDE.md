@@ -3412,3 +3412,37 @@ polarity been the other way it would have declared a live coder finished, which 
 `grep -c` inside a test is written `$(grep -c … || true)` or the count is read in its own command first** —
 the `|| echo 0` idiom is the defect, because the thing it guards against cannot happen (`grep -c` always
 prints a number) while what it adds is a second line.
+
+⭐ **OWNER RULING, 2026-09-30 — THE LANE-MOVE PROCEDURE, AND FOUR THINGS THAT STAY PUT (N370).** Given after
+`27c918ff4` landed on main and `track/ui` was fast-forwarded onto it. All five parts are binding.
+
+1. ⛔ **NEVER `git branch -f` A BRANCH THAT IS CHECKED OUT IN A WORKTREE.** The move is, **from inside that
+   worktree only**, `git merge --ff-only <the measured `origin/main` sha>`, then push the branch. ⛔ **No
+   `update-ref`. No force. No detached window.** **The proof is unchanged: `git symbolic-ref --short HEAD`
+   plus the two `rev-parse` values equal**, both read inside that worktree.
+   ⭐ This supersedes the `branch -f` + reattach form, and the reason it was ever available is the reason it
+   is now forbidden (N369): git refuses to force-update a branch that **is** checked out, so `branch -f`
+   worked on 09-30 only because the ui worktree was **detached** at the time — the state a move must never
+   create. Once attached, the fast-forward does both halves in one operation and there is no window in which
+   the lane is off-branch. **`branch -f` is therefore reserved for the recovery case (worktree already
+   detached) and is never part of a routine move.** Measured both refusals: `branch -f` → `fatal: cannot force
+   update the branch 'track/ui' used by worktree at …`, rc=128; and `merge --ff-only` from this seat → refused
+   by the classifier, because tree-moving git is the coder's column. So a routine move is a **one-item coder
+   dispatch**, and that is not "added work" — it is the instructed second half.
+2. ⛔ **THE CARRIED LIST IS PARKED. Do not start a wave from it.** X-178's 302, `StudioLoopTest.php`'s pint
+   debt and the tenantless-500 survey are recorded and dormant. ⭐ **The next wave is a NEW BRIEF with ONE
+   item.** A carried list is a place to put things so they are not forgotten, not a queue that runs itself —
+   and a seat that treats its own backlog as a dispatch order picks the wave by what it tripped over rather
+   than by what matters (N272's manufactured wave, ruled again as procedure).
+3. ⛔ **A LOCAL UNPUSHED `chore(supervisor)` COMMIT ON `main` STAYS LOCAL. Never push notes to `origin/main`
+   as if they were the product.** A push names a **gated product sha**; notes reach `origin` only by being an
+   ancestor of the next one. ⭐ That keeps `origin/main` a list of gated trees rather than a mixture, and it
+   is why `grs-antig` sitting one or two `chore(supervisor)` commits ahead of `origin/main` is the normal
+   resting state and not a debt.
+4. ⛔ **`errors 4` IS THE NAMED FLOOR: the two journey-harness stubs that refuse to fake a real transport,
+   plus the Authorize.Net sandbox on two journeys. DO NOT "fix" those counts.** The stubs are honest by
+   design — *"a stub here makes all twelve journeys pass while touching nothing, which is worse than a red
+   suite"* is the harness's own text — and the sandbox is an external service's mood. ⭐ This closes N236's
+   open edge: the floor is not 3, it is **the set of names**, and the sandbox contributes a **variable number
+   of them**. A count comparison on §7 manufactures a false BLOCK about one gate in three; the comparison is
+   `FAILED` (which must be 0) plus **whether a name appears that is not in that set**.
