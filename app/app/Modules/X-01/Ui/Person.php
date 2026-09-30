@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\X01\Ui;
 
+use App\Enums\UserRole;
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Modules\X01\Actions\ConversationTakeoverAction;
+use App\Modules\X01\Domain\UnifiedInboxManager;
 use App\Modules\X01\Models\ContactTag;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Models\TakeoverLatch;
@@ -27,7 +30,43 @@ class Person extends Component
         $this->personId = $this->personId ?: (int) request()->query('person', 0);
     }
 
+    public ?string $error = null;
+
+    public ?string $success = null;
+
     public bool $failed = false;
+
+    public function takeOver(int $conversationId): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager), 403);
+
+        $this->error = null;
+        $this->success = null;
+
+        app(ConversationTakeoverAction::class)->handle(
+            Tenancy::idOrFail(),
+            $conversationId,
+            (int) auth()->id(),
+            (string) auth()->user()->name,
+        );
+
+        $this->success = 'You are handling this conversation. The AI will not reply until you hand it back.';
+    }
+
+    public function handBack(int $conversationId): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager), 403);
+
+        $this->error = null;
+        $this->success = null;
+
+        app(UnifiedInboxManager::class)->releaseTakeover(
+            Tenancy::idOrFail(),
+            $conversationId
+        );
+
+        $this->success = 'You have handed this conversation back to the AI.';
+    }
 
     public function render()
     {

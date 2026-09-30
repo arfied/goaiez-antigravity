@@ -16,6 +16,12 @@ use Tests\TestCase;
 
 class SiteImageTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Http::preventStrayRequests();
+    }
+
     public function test_editor_generates_and_previews_hero_picture(): void
     {
         Storage::fake('local');
@@ -33,6 +39,19 @@ class SiteImageTest extends TestCase
         $this->actingAs($owner);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode([
+                        'blocks' => [['type' => 'hero', 'headline' => 'New']],
+                        'explanation' => 'Added a photo.',
+                        'images' => [['block_index' => 0, 'description' => 'A shiny van']],
+                    ])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/v1/chat/completions' => Http::response([
                 'choices' => [['message' => ['content' => json_encode([
                     'blocks' => [['type' => 'hero', 'headline' => 'New']],
@@ -84,6 +103,27 @@ class SiteImageTest extends TestCase
         $this->actingAs($owner);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode([
+                        'blocks' => [
+                            ['type' => 'hero', 'headline' => 'test'],
+                            ['type' => 'hero', 'headline' => 'test'],
+                            ['type' => 'hero', 'headline' => 'test'],
+                        ],
+                        'explanation' => 'Added photos.',
+                        'images' => [
+                            ['block_index' => 0, 'description' => 'Pic 1'],
+                            ['block_index' => 1, 'description' => 'Pic 2'],
+                            ['block_index' => 2, 'description' => 'Pic 3'],
+                        ],
+                    ])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/v1/chat/completions' => Http::response([
                 'choices' => [['message' => ['content' => json_encode([
                     'blocks' => [
@@ -127,6 +167,19 @@ class SiteImageTest extends TestCase
         $this->actingAs($owner);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode([
+                        'blocks' => [['type' => 'hero', 'headline' => 'test']],
+                        'explanation' => 'Added photo.',
+                        'images' => [['block_index' => 0, 'description' => 'A shiny van']],
+                    ])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/v1/chat/completions' => Http::response([
                 'choices' => [['message' => ['content' => json_encode([
                     'blocks' => [['type' => 'hero', 'headline' => 'test']],
@@ -166,6 +219,19 @@ class SiteImageTest extends TestCase
         $this->actingAs($owner);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode([
+                        'blocks' => [['type' => 'hero', 'headline' => 'test']],
+                        'explanation' => 'Added photo.',
+                        'images' => [['block_index' => 0, 'description' => 'A shiny van']],
+                    ])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/v1/chat/completions' => Http::response([
                 'choices' => [['message' => ['content' => json_encode([
                     'blocks' => [['type' => 'hero', 'headline' => 'test']],

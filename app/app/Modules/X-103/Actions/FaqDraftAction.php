@@ -87,10 +87,12 @@ final class FaqDraftAction
                                 'answer' => ['type' => 'string'],
                             ],
                             'required' => ['question', 'answer'],
+                            'additionalProperties' => false,
                         ],
                     ],
                 ],
                 'required' => ['items'],
+                'additionalProperties' => false,
             ]
         ));
 

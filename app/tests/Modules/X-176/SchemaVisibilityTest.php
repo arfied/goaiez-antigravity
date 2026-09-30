@@ -162,7 +162,7 @@ final class SchemaVisibilityTest extends TestCase
             }
         }
 
-        preg_match('/<div id="videos-x176">(.*?)<\/div>\n(?:<div|<nav|<script|<\/body)/s', $html, $blockMatches);
+        preg_match('/<div id="videos-x176"[^>]*>(.*?)<\/div>\n(?:<div|<nav|<script|<\/body)/s', $html, $blockMatches);
         $visibleVideos = [];
         if (! empty($blockMatches)) {
             preg_match_all('/<div class="video-item" data-name="([^"]+)"/', $blockMatches[1], $itemMatches);
@@ -323,7 +323,7 @@ final class SchemaVisibilityTest extends TestCase
             }
         }
 
-        preg_match('/<div id="videos-x176">(.*?)<\/div>\n(?:<div|<nav|<script|<\/body)/s', $html, $blockMatches);
+        preg_match('/<div id="videos-x176"[^>]*>(.*?)<\/div>\n(?:<div|<nav|<script|<\/body)/s', $html, $blockMatches);
         $visibleVideos = [];
         if (! empty($blockMatches)) {
             preg_match_all('/<div class="video-item" data-name="([^"]+)"/', $blockMatches[1], $itemMatches);
