@@ -117,10 +117,10 @@ test('preview shows proposed changes with a marker', function () {
     $page->title = 'Home';
     $page->slug = 'home';
     $page->is_published = true;
-    $page->draft_blocks = [['type' => 'text', 'content' => 'Original Text']];
+    $page->draft_blocks = [['type' => 'hero', 'headline' => 'Original Text']];
     $page->draft_meta = [
         'pending_edit' => [
-            'blocks' => [['type' => 'text', 'content' => 'OstrichFeathers']],
+            'blocks' => [['type' => 'hero', 'headline' => 'OstrichFeathers']],
         ],
     ];
     $page->save();
@@ -130,7 +130,8 @@ test('preview shows proposed changes with a marker', function () {
     Livewire::test(Studio::class)
         ->set('pageId', $page->id)
         ->assertSee('Previewing AI proposal')
-        ->assertSee('OstrichFeathers');
+        ->assertSee('OstrichFeathers')
+        ->assertDontSee('Original Text');
 });
 
 test('the advanced website builder link reaches the studio', function () {
