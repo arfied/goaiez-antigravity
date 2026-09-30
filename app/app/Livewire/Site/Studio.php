@@ -6,6 +6,9 @@ namespace App\Livewire\Site;
 
 use App\Enums\UserRole;
 use App\Modules\X103\Actions\PageReadAction;
+use App\Modules\X103\Actions\SiteEditApplyAction;
+use App\Modules\X103\Actions\SiteEditAskAction;
+use App\Modules\X103\Actions\SiteEditDiscardAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Domain\PagePreview;
 use App\Modules\X103\Domain\SiteEngine;
@@ -17,6 +20,7 @@ use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Throwable;
 
 #[Layout('components.account.layout', ['heading' => 'Site studio'])]
 class Studio extends Component
@@ -32,7 +36,9 @@ class Studio extends Component
 
     public ?string $success = null;
 
-    private function draftDiffersFromPublished(Page $page): bool
+    public string $request = '';
+
+    public function draftDiffersFromPublished(Page $page): bool
     {
         $version = $page->current_version_id ? PageVersion::where('business_id', $this->businessId)->find($page->current_version_id) : null;
         if ($version === null) {
@@ -45,6 +51,7 @@ class Studio extends Component
 
     public function publish(int $pageId, SitePublishAction $action): void
     {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
         $this->error = null;
         $this->success = null;
 
@@ -76,6 +83,80 @@ class Studio extends Component
         }
     }
 
+    public function ask(SiteEditAskAction $action): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if ($this->pageId === null) {
+            $this->error = 'No page selected.';
+            return;
+        }
+
+        try {
+            $res = $action->handle(
+                businessId: $this->businessId,
+                pageId: $this->pageId,
+                request: trim($this->request)
+            );
+            if ($res['status'] === 'refused') {
+                $this->success = $res['reason'];
+            } else {
+                $numEdits = $res['edits'];
+                $msg = "Proposed {$numEdits} edits with {$res['model']} — review it below, then Apply or Discard.";
+                if (($res['images'] ?? 0) > 0) {
+                    $msg .= " Made {$res['images']} picture(s) for it.";
+                }
+                $this->success = $msg;
+                $this->request = '';
+            }
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
+    public function applyProposal(SiteEditApplyAction $action): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if ($this->pageId === null) {
+            $this->error = 'No page selected.';
+            return;
+        }
+
+        $res = $action->handle($this->businessId, $this->pageId);
+
+        if ($res['status'] === 'refused') {
+            $this->error = $res['reason'];
+
+            return;
+        }
+
+        if ($res['applied_style']) {
+            $this->success = 'Applied. The new colours and fonts show on every page the next time you publish it.';
+        } else {
+            $this->success = 'Applied to the draft. Publish when you are ready — History keeps the version before this one.';
+        }
+    }
+
+    public function discardProposal(SiteEditDiscardAction $action): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if ($this->pageId === null) {
+            $this->error = 'No page selected.';
+            return;
+        }
+
+        $action->handle($this->businessId, $this->pageId);
+        $this->success = 'Discarded.';
+    }
+
     public function mount(PageReadAction $pages): void
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager), 403);
@@ -87,21 +168,7 @@ class Studio extends Component
 
     public function selectBlock(int $index): void
     {
-        if ($this->pageId === null) {
-            return;
-        }
-
-        $page = Page::where('business_id', $this->businessId)->find($this->pageId);
-        if (! $page || ! is_array($page->draft_blocks) || $index < 0 || $index >= count($page->draft_blocks)) {
-            return;
-        }
-
         $this->selectedBlockIndex = $index;
-    }
-
-    public function updatedPageId(): void
-    {
-        $this->selectedBlockIndex = null;
     }
 
     public function render()
