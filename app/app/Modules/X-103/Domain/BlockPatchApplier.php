@@ -6,6 +6,8 @@ namespace App\Modules\X103\Domain;
 
 final class BlockPatchApplier
 {
+    public function __construct(private readonly SiteBlockRenderer $renderer) {}
+
     /**
      * Applies a set of patches sequentially to a list of blocks, validating the entire set first.
      *
@@ -24,7 +26,7 @@ final class BlockPatchApplier
         // Validate the ENTIRE set before mutating anything.
         foreach ($patches as $i => $patch) {
             $op = $patch['op'] ?? null;
-            if (! in_array($op, BlockPatchSchema::OPS, true)) {
+            if (! in_array($op, BlockPatchSchema::APPLIER_OPS, true)) {
                 return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: unknown op"];
             }
 
@@ -46,6 +48,15 @@ final class BlockPatchApplier
                 if (! isset($patch['field']) || ! isset($patch['values']) || ! is_array($patch['values'])) {
                     return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: set_string_list requires field and values"];
                 }
+            } elseif ($op === 'set_image_list') {
+                if (! isset($patch['field']) || ! isset($patch['images']) || ! is_array($patch['images'])) {
+                    return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: set_image_list requires field and images array"];
+                }
+                foreach ($patch['images'] as $imgIndex => $img) {
+                    if (! isset($img['image_path']) || ! is_scalar($img['image_path']) || trim((string) $img['image_path']) === '') {
+                        return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: set_image_list image $imgIndex missing or invalid image_path"];
+                    }
+                }
             } elseif ($op === 'move') {
                 $toIndex = $patch['to_index'] ?? null;
                 if (! is_int($toIndex) || $toIndex < 0 || $toIndex > $maxIndex) {
@@ -64,6 +75,8 @@ final class BlockPatchApplier
                 $appliedBlocks[$blockIndex][$patch['field']] = (string) $patch['value'];
             } elseif ($op === 'set_string_list') {
                 $appliedBlocks[$blockIndex][$patch['field']] = $patch['values'];
+            } elseif ($op === 'set_image_list') {
+                $appliedBlocks[$blockIndex][$patch['field']] = $patch['images'];
             } elseif ($op === 'remove') {
                 unset($appliedBlocks[$blockIndex]);
                 $appliedBlocks = array_values($appliedBlocks);
@@ -73,6 +86,13 @@ final class BlockPatchApplier
                 unset($appliedBlocks[$blockIndex]);
                 $appliedBlocks = array_values($appliedBlocks);
                 array_splice($appliedBlocks, $toIndex, 0, [$block]);
+            }
+        }
+
+        // Validate the result
+        foreach ($appliedBlocks as $i => $block) {
+            if (! $this->renderer->isValidBlock($block)) {
+                return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch set results in invalid block at index $i"];
             }
         }
 

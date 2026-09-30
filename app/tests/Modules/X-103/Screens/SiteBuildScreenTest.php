@@ -256,7 +256,7 @@ class SiteBuildScreenTest extends TestCase
         Http::fake([
             'api.anthropic.com/*' => Http::response(
                 json_encode([
-                    'content' => [['type' => 'text', 'text' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive proposed headline 4472']], 'explanation' => 'Did it.'])]],
+                    'content' => [['type' => 'text', 'text' => json_encode(['patches' => [['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Distinctive proposed headline 4472']], 'explanation' => 'Did it.'])]],
                     'stop_reason' => 'end_turn',
                     'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
                 ]),
@@ -268,7 +268,7 @@ class SiteBuildScreenTest extends TestCase
                     'choices' => [
                         [
                             'message' => [
-                                'content' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive proposed headline 4472']], 'explanation' => 'Did it.']),
+                                'content' => json_encode(['patches' => [['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Distinctive proposed headline 4472']], 'explanation' => 'Did it.']),
                             ],
                         ],
                     ],

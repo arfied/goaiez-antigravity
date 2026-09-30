@@ -20,7 +20,9 @@ use App\Modules\X103\Actions\QuestionAnswerDraftAction;
 use App\Modules\X103\Actions\SeoDraftAction;
 use App\Modules\X103\Actions\SiteBuildRunAction;
 use App\Modules\X103\Actions\SiteCopyPolishAction;
-use App\Modules\X103\Actions\SiteEditProposeAction;
+use App\Modules\X103\Actions\SiteEditApplyAction;
+use App\Modules\X103\Actions\SiteEditAskAction;
+use App\Modules\X103\Actions\SiteEditDiscardAction;
 use App\Modules\X103\Actions\SitePageProposeAction;
 use App\Modules\X103\Actions\SitePreviewAction;
 use App\Modules\X103\Actions\SitePublishAction;
@@ -414,25 +416,23 @@ class Pages extends Component
         $this->success = "Restored {$restored} blocks.";
     }
 
-    public function askEdit(int $pageId, SiteEditProposeAction $action): void
+    public function askEdit(int $pageId, SiteEditAskAction $action): void
     {
         abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
         $this->error = null;
         $this->success = null;
 
-        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
-
         try {
             $res = $action->handle(
                 businessId: $this->businessId,
                 pageId: $pageId,
-                request: trim((string) ($this->editRequest[$pageId] ?? '')),
-                continue: isset($page->draft_meta['pending_edit'])
+                request: trim((string) ($this->editRequest[$pageId] ?? ''))
             );
             if ($res['status'] === 'refused') {
                 $this->success = $res['reason'];
             } else {
-                $msg = "Proposed {$res['blocks']} blocks with {$res['model']} — review it below, then Apply or Discard.";
+                $numEdits = $res['edits'];
+                $msg = "Proposed {$numEdits} edits with {$res['model']} — review it below, then Apply or Discard.";
                 if (($res['images'] ?? 0) > 0) {
                     $msg .= " Made {$res['images']} picture(s) for it.";
                 }
@@ -444,57 +444,25 @@ class Pages extends Component
         }
     }
 
-    public function applyEdit(int $pageId): void
+    public function applyEdit(int $pageId, SiteEditApplyAction $action): void
     {
         abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
         $this->error = null;
         $this->success = null;
 
-        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
-        $pending = $page->draft_meta['pending_edit'] ?? null;
-        if (! $pending) {
-            $this->error = 'Nothing proposed.';
+        $res = $action->handle($this->businessId, $pageId);
+
+        if ($res['status'] === 'refused') {
+            $this->error = $res['reason'];
 
             return;
         }
 
-        $meta = $page->draft_meta;
-        if (! isset($meta['undo'])) {
-            $meta['undo'] = [];
-        }
-
-        $previousSiteTokens = Business::whereKey($this->businessId)->value('site_tokens');
-        if (is_string($previousSiteTokens)) {
-            $previousSiteTokens = json_decode($previousSiteTokens, true);
-        }
-
-        $meta['undo'][] = [
-            'blocks' => $page->draft_blocks ?? [],
-            'site_tokens' => $previousSiteTokens,
-        ];
-        if (count($meta['undo']) > 20) {
-            array_shift($meta['undo']);
-        }
-
-        $page->draft_blocks = $pending['blocks'];
-
-        if (isset($pending['style'])) {
-            $tokens = is_array($previousSiteTokens) ? $previousSiteTokens : [];
-            if (isset($pending['style']['palette'])) {
-                $tokens['palette'] = array_replace($tokens['palette'] ?? [], $pending['style']['palette']);
-            }
-            if (isset($pending['style']['type_pairing'])) {
-                $tokens['type_pairing'] = array_replace($tokens['type_pairing'] ?? [], $pending['style']['type_pairing']);
-            }
-            Business::whereKey($this->businessId)->update(['site_tokens' => $tokens]);
+        if ($res['applied_style']) {
             $this->success = 'Applied. The new colours and fonts show on every page the next time you publish it.';
         } else {
             $this->success = 'Applied to the draft. Publish when you are ready — History keeps the version before this one.';
         }
-
-        unset($meta['pending_edit']);
-        $page->draft_meta = $meta;
-        $page->save();
     }
 
     public function undoEdit(int $pageId): void
@@ -529,19 +497,14 @@ class Pages extends Component
         $this->success = 'Undone. Your draft is back to how it was before the last change.';
     }
 
-    public function discardEdit(int $pageId): void
+    public function discardEdit(int $pageId, SiteEditDiscardAction $action): void
     {
         abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
         $this->error = null;
         $this->success = null;
 
-        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
-        $meta = $page->draft_meta ?? [];
-        if (isset($meta['pending_edit'])) {
-            unset($meta['pending_edit']);
-            $page->update(['draft_meta' => $meta]);
-            $this->success = 'Discarded.';
-        }
+        $action->handle($this->businessId, $pageId);
+        $this->success = 'Discarded.';
     }
 
     public function makePage(SitePageProposeAction $action): void

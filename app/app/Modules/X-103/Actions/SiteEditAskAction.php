@@ -1,0 +1,104 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Modules\X103\Actions;
+
+use App\Modules\X103\Domain\BlockPatchApplier;
+use App\Modules\X103\Models\Page;
+use Illuminate\Support\Facades\DB;
+
+final class SiteEditAskAction
+{
+    public function __construct(
+        private readonly SiteEditProposeAction $action,
+        private readonly BlockPatchApplier $applier
+    ) {}
+
+    public function handle(int $businessId, int $pageId, string $request): array
+    {
+        return DB::transaction(function () use ($businessId, $pageId, $request) {
+            $page = Page::where('business_id', $businessId)->findOrFail($pageId);
+
+            $res = $this->action->handle(
+                businessId: $businessId,
+                pageId: $pageId,
+                request: $request,
+                continue: isset($page->draft_meta['pending_edit'])
+            );
+
+            if ($res['status'] === 'refused') {
+                return [
+                    'status' => 'refused',
+                    'reason' => $res['reason'],
+                    'edits' => 0,
+                    'model' => null,
+                    'images' => 0,
+                ];
+            }
+
+            $applyResult = $this->applier->apply($page->draft_blocks ?? [], $res['patches']);
+
+            if ($applyResult['status'] === 'refused') {
+                return [
+                    'status' => 'refused',
+                    'reason' => $applyResult['reason'],
+                    'edits' => 0,
+                    'model' => null,
+                    'images' => 0,
+                ];
+            }
+
+            $meta = $page->draft_meta ?? [];
+            $thread = [];
+
+            if (isset($meta['pending_edit'])) {
+                $thread = $meta['pending_edit']['thread'] ?? [];
+                if (empty($thread)) {
+                    $thread[] = [
+                        'request' => $meta['pending_edit']['request'] ?? '',
+                        'explanation' => $meta['pending_edit']['explanation'] ?? '',
+                        'at' => $meta['pending_edit']['drafted_at'] ?? '',
+                    ];
+                }
+            }
+            $now = now()->toIso8601String();
+            $thread[] = [
+                'request' => $request,
+                'explanation' => $res['explanation'],
+                'at' => $now,
+            ];
+
+            $pendingEdit = [
+                'request' => $request,
+                'blocks' => $applyResult['blocks'],
+                'explanation' => $res['explanation'],
+                'model' => $res['model'],
+                'drafted_at' => $now,
+                'thread' => $thread,
+            ];
+
+            if (! empty($res['image_notes'])) {
+                $pendingEdit['image_notes'] = $res['image_notes'];
+            }
+            if ($res['style'] !== null) {
+                $pendingEdit['style'] = $res['style'];
+            }
+            if ($res['style_refused'] !== null) {
+                $pendingEdit['style_refused'] = $res['style_refused'];
+            }
+
+            $meta['pending_edit'] = $pendingEdit;
+            $page->draft_meta = $meta;
+            $page->save();
+
+            return [
+                'status' => 'proposed',
+                'reason' => null,
+                'edits' => count($res['patches']),
+                'model' => $res['model'],
+                'images' => $res['images'] ?? 0,
+            ];
+        });
+    }
+}

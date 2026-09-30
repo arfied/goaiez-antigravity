@@ -1205,6 +1205,7 @@ class X103Test extends TestCase
             'title' => 'Home',
             'draft_blocks' => [
                 ['type' => 'hero', 'headline' => 'Old headline'],
+                ['type' => 'booking_form', 'heading' => 'Distinctive booking 4619', 'label' => 'Request a time', 'service' => ''],
             ],
             'is_published' => false,
         ]);
@@ -1212,7 +1213,7 @@ class X103Test extends TestCase
         Http::fake([
             'api.anthropic.com/*' => Http::response(
                 json_encode([
-                    'content' => [['type' => 'text', 'text' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471'], ['type' => 'booking_form', 'heading' => 'Distinctive booking 4619', 'label' => 'Request a time', 'service' => '']], 'explanation' => 'Rewrote the headline and added a booking form.'])]],
+                    'content' => [['type' => 'text', 'text' => json_encode(['patches' => [['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Distinctive new headline 4471']], 'explanation' => 'Rewrote the headline and added a booking form.'])]],
                     'stop_reason' => 'end_turn',
                     'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
                 ]),
@@ -1222,7 +1223,7 @@ class X103Test extends TestCase
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_edit',
                 'choices' => [
-                    ['message' => ['content' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471'], ['type' => 'booking_form', 'heading' => 'Distinctive booking 4619', 'label' => 'Request a time', 'service' => '']], 'explanation' => 'Rewrote the headline and added a booking form.'])]],
+                    ['message' => ['content' => json_encode(['patches' => [['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Distinctive new headline 4471']], 'explanation' => 'Rewrote the headline and added a booking form.'])]],
                 ],
                 'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
             ]),
@@ -1232,7 +1233,7 @@ class X103Test extends TestCase
             ->test(Pages::class)
             ->set('editRequest.'.$page->id, 'make the headline stronger')
             ->call('askEdit', $page->id)
-            ->assertSet('success', fn ($s) => str_starts_with((string) $s, 'Proposed 2 blocks'));
+            ->assertSet('success', fn ($s) => str_starts_with((string) $s, 'Proposed 1 edits'));
 
         $page->refresh();
         $this->assertSame('Old headline', $page->draft_blocks[0]['headline']);

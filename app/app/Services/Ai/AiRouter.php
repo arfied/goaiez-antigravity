@@ -363,6 +363,9 @@ final class AiRouter
                 .'publishes no embeddings API; if that changes, add the client here rather '
                 .'than letting this model reach the OpenAI one.',
             ),
+            AiProvider::Xai => throw new LogicException(
+                'No embedding client exists for '.$model->provider()->label().'.'
+            ),
         };
     }
 
@@ -381,6 +384,7 @@ final class AiRouter
         return match ($model->provider()) {
             AiProvider::Anthropic => new AnthropicClient($model),
             AiProvider::OpenAi => new OpenAiClient($model),
+            AiProvider::Xai => new XaiClient($model),
         };
     }
 }
