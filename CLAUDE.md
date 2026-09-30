@@ -2925,6 +2925,39 @@ to be worth saying, and the one thing it got wrong was an omission rather than a
 instructions** — the same rule as a database row written by a page's viewer. The three disagreements were all
 about costs already recorded in this file; none of them required new information, only reading what is here.
 
+⛔ **RENDERED MARKUP IS PARSED BY OTHER MODULES, SO THE GREP BEFORE CHANGING IT IS REPO-WIDE — A MODULE-SCOPED
+ONE CANNOT SEE THE BREAKAGE (N350, 2026-09-30, SITE-372 → wave 994).** SITE-372 added
+`data-block-index` / `data-block-type` to X-103's twelve block wrappers. Its own module went **247 passed**, its
+golden-master fixture was updated, and the merge onto main gated **`FAILED 2`**:
+```
+✗ SchemaVisibilityTest::test_video_corresponds
+✗ SchemaVisibilityTest::test_f1_video_corresponds_with_hierarchy
+   Failed asserting that two arrays are equal. − 0 => 'My Test Video'
+```
+in **`tests/Modules/X-176/`** — a different module. Its regex at `:165` and `:326` is
+`'/<div id="videos-x176">(.*?)<\/div>…/s'`, requiring `>` **immediately** after the id, so the new attributes
+displaced the match, `$visibleVideos` came back empty, and the comparison against the schema's video list
+failed.
+⛔ **My SITE-372 brief ordered the wrong scope in as many words:** *"grep that screen's EXISTING test file"*.
+X-103 renders the markup; **X-176 parses it** for schema/`llms.txt`/sitemap. The correct check is the whole
+test tree, and it finds four files hardcoding these wrappers — three using prefix
+`assertStringContainsString` (which still matches) and X-176's two regexes (which cannot).
+**RULED: before a wave changes rendered markup, `grep -rn '<the literal wrapper string>' app/tests/` over the
+ENTIRE tree, and read every hit for whether it requires a character the change displaces.** A needle that
+demands `>` right after an attribute value is the same defect waiting on the next markup change, so the sweep
+is reported as a list the next wave inherits.
+⭐ **This is N343's limit, stated as a positive rule rather than a caveat.** N343 ruled that a module-scoped
+`pest` filter is briefable and belongs in every wave; its own text says *"a narrow filter proves the wave's own
+tests, and only the full suite can prove nothing else broke."* ⛔ **Both halves are load-bearing and I used
+only the first.** The filter did its job — it caught nothing because there was nothing in X-103 to catch — and
+the closing gate did its job, which is exactly the division of labour N207 exists to create. **A green narrow
+filter is not evidence about other modules, and a brief that treats it as one has moved the suite's job onto a
+grep.**
+⚠️ And the shape underneath is this file's oldest, in a new place: *an instrument is only as honest as the
+SCOPE it is handed.* §2e's baseline, wave 122's needle, N123's sign, N334's `head` cap, N333's line window —
+and now a **directory**. Every one of them was a real measurement answering a smaller question than the one
+being asked.
+
 ## ⛔⛔ THREE LAWS OF LANE REVIEW (owner ruling, 2026-09-28, after N316). These are not notes.
 
 ### LAW 1 — A LANE'S WORK IS `git merge-base origin/main HEAD`..`HEAD`. NEVER `origin/main..lane`.
