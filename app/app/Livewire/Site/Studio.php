@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Site;
 
 use App\Enums\UserRole;
+use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X103\Domain\PagePreview;
 use App\Modules\X103\Models\Page;
 use App\Support\Tenancy;
@@ -22,10 +23,13 @@ class Studio extends Component
 
     public ?int $selectedBlockIndex = null;
 
-    public function mount(): void
+    public function mount(PageReadAction $pages): void
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager), 403);
         $this->businessId = Tenancy::id();
+
+        $home = $pages->homeFor($this->businessId) ?? Page::where('business_id', $this->businessId)->orderBy('id')->first();
+        $this->pageId = $home?->id;
     }
 
     public function selectBlock(int $index): void
@@ -73,10 +77,18 @@ HTML;
             }
         }
 
+        $selectedBlockType = null;
+        if ($this->selectedBlockIndex !== null && $selectedPage && is_array($selectedPage->draft_blocks)) {
+            if (isset($selectedPage->draft_blocks[$this->selectedBlockIndex])) {
+                $selectedBlockType = $selectedPage->draft_blocks[$this->selectedBlockIndex]['type'] ?? 'unknown';
+            }
+        }
+
         return view('livewire.site.studio', [
             'pages' => $pages,
             'selectedPage' => $selectedPage,
             'previewHtml' => $previewHtml,
+            'selectedBlockType' => $selectedBlockType,
         ]);
     }
 }
