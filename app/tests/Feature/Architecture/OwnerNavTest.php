@@ -46,6 +46,7 @@ function ownerRouteExclusions(): array
         'x-219.assignment-matrix' => 'Module configuration screens added in A3. Not part of the general navigation tree.',
         'c-mail.complaintbounce-board' => 'Not in navigation yet.',
         'x-202.item' => 'detail page reached from the queue',
+        'x-178.site-editor-assistant' => 'Dropped from nav in UI-248, replaced by Studio.',
     ];
 }
 
