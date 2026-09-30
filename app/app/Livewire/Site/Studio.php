@@ -168,7 +168,21 @@ class Studio extends Component
 
     public function selectBlock(int $index): void
     {
+        if ($this->pageId === null) {
+            return;
+        }
+
+        $page = Page::where('business_id', $this->businessId)->find($this->pageId);
+        if (! $page || ! is_array($page->draft_blocks) || $index < 0 || $index >= count($page->draft_blocks)) {
+            return;
+        }
+
         $this->selectedBlockIndex = $index;
+    }
+
+    public function updatedPageId(): void
+    {
+        $this->selectedBlockIndex = null;
     }
 
     public function render()
