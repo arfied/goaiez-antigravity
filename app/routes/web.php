@@ -144,6 +144,7 @@ use App\Livewire\Setup\FindBusiness;
 use App\Livewire\Setup\HowCustomersReach;
 use App\Livewire\Setup\ReviewRules;
 use App\Livewire\Setup\Welcome;
+use App\Livewire\Site\Studio;
 use App\Livewire\Support\Accounts as SupportAccounts;
 use App\Livewire\Support\DataRequestQueue as SupportDataRequestQueue;
 use App\Livewire\Support\Tickets as SupportTickets;
@@ -1404,7 +1405,7 @@ Route::middleware(['auth', 'tenant.role', EnsureAdvancedDashboard::class])
         Route::get('/integrations', Integrations::class)->name('integrations');
         Route::get('/posts', Posts::class)->name('posts');
         Route::get('/voice', Voice::class)->name('voice');
-        Route::get('/website-builder', fn () => redirect()->route('x-103.pages'))->name('website-builder');
+        Route::get('/website-builder', fn () => redirect()->route('site.studio'))->name('website-builder');
     });
 
 /*
@@ -2263,3 +2264,12 @@ Route::get('/{token}', ShortLinkController::class)
     ->where('token', '[A-Za-z0-9]{'.ShortLinks::TOKEN_LENGTH.'}')
     ->middleware('throttle:short-link')
     ->name('short-link.resolve');
+
+/*
+|--------------------------------------------------------------------------
+| Studio
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'tenant.role'])
+    ->get('/app/site', Studio::class)
+    ->name('site.studio');
