@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X212;
 
+use App\Enums\UserRole;
+use App\Models\User;
 use App\Modules\X121\Models\Person;
 use App\Modules\X212\Actions\MigrationCommitAction;
 use App\Modules\X212\Actions\MigrationDryRunAction;
@@ -16,9 +18,11 @@ use App\Modules\X212\Events\MigrationStarted;
 use App\Modules\X212\Models\MigrationRecord;
 use App\Modules\X212\Models\MigrationReject;
 use App\Modules\X212\Models\MigrationRun;
+use App\Modules\X212\Ui\Commit;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X212Test extends TestCase
@@ -197,5 +201,74 @@ class X212Test extends TestCase
         $this->assertEquals(0, $record->record_index);
         $this->assertIsArray($record->raw_data);
         $this->assertEquals('+15551230001', $record->raw_data['phone']);
+    }
+
+    public function test_committing_a_dry_run_imports_the_validated_records(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::set((int) $biz->id);
+
+        $records = [
+            ['phone' => '+15551230001', 'email' => '', 'first_name' => 'Ada'],
+            ['phone' => '+15551230002', 'email' => '', 'first_name' => 'Grace'],
+            ['phone' => '', 'email' => 'only@example.test', 'first_name' => 'Eve'],
+        ];
+
+        $run = $this->dryRunAction->handle($biz->id, 'test_source', $records);
+
+        Livewire::actingAs($owner)->test(Commit::class)->call('commitRun', $run->id);
+
+        $run->refresh();
+        $this->assertEquals('committed', $run->status);
+        $this->assertEquals(2, $run->imported_records);
+
+        $person1 = Person::where('business_id', $biz->id)->where('phone', '+15551230001')->first();
+        $this->assertNotNull($person1);
+        $person2 = Person::where('business_id', $biz->id)->where('phone', '+15551230002')->first();
+        $this->assertNotNull($person2);
+    }
+
+    public function test_a_committed_run_cannot_be_committed_twice(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::set((int) $biz->id);
+
+        $records = [
+            ['phone' => '+15551230001', 'email' => '', 'first_name' => 'Ada'],
+        ];
+
+        $run = $this->dryRunAction->handle($biz->id, 'test_source', $records);
+
+        $component = Livewire::actingAs($owner)->test(Commit::class);
+        $component->call('commitRun', $run->id);
+
+        $run->refresh();
+        $this->assertEquals(1, $run->imported_records);
+
+        $component->call('commitRun', $run->id);
+        $run->refresh();
+        $this->assertEquals(1, $run->imported_records);
+        $component->assertSee('Only a run that has been dry-run and not yet committed can be committed.');
+    }
+
+    public function test_the_commit_screen_offers_no_button_for_a_committed_run(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::set((int) $biz->id);
+
+        $records = [
+            ['phone' => '+15551230001', 'email' => '', 'first_name' => 'Ada'],
+        ];
+
+        $run = $this->dryRunAction->handle($biz->id, 'test_source', $records);
+
+        Livewire::actingAs($owner)->test(Commit::class)->call('commitRun', $run->id);
+
+        $this->actingAs($owner)->get(route('x-212.commit'))
+            ->assertDontSee('Import these')
+            ->assertSee('[committed]');
     }
 }
