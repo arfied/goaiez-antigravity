@@ -1,4 +1,4 @@
-<div class="site-block contact {{ $band ?? '' }}">
+<div class="site-block contact {{ $band ?? '' }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="contact">
     <div class="site-block__inner">
         @if(isset($block['address']) && is_scalar($block['address']) && trim((string)$block['address']) !== '')
             <h3>Visit</h3>

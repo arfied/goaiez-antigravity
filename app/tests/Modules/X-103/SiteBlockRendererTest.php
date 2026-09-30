@@ -118,14 +118,14 @@ class SiteBlockRendererTest extends TestCase
         ];
         $html = $renderer->render($blocks, []);
 
-        $fixture = '<div id="videos-x176">
+        $fixture = '<div id="videos-x176" data-block-index="0" data-block-type="video_embed">
   <div class="site-block__inner">
     <div class="media media--wide">
       <div class="video-item" data-name="Test Video" data-url="https://video.com">Test Video</div>
     </div>
   </div>
 </div>
-<div id="faq-x176" class="site-block faq site-block--band">
+<div id="faq-x176" class="site-block faq site-block--band" data-block-index="1" data-block-type="faq">
   <div class="site-block__inner">
                         <div class="faq-item" data-question="Q1">
           <h3>Q1</h3>
@@ -323,5 +323,46 @@ class SiteBlockRendererTest extends TestCase
 
         $this->assertStringNotContainsString('url(', $html);
         $this->assertStringNotContainsString('@import', $html);
+    }
+
+    public function test_every_rendered_block_carries_its_index_and_type(): void
+    {
+        $renderer = new SiteBlockRenderer;
+        $blocks = [
+            ['type' => 'hero', 'headline' => 'Hero'],
+            ['type' => 'about', 'text' => 'About'],
+            ['type' => 'services', 'items' => [['name' => 'Service']]],
+        ];
+
+        $html = $renderer->render($blocks, []);
+
+        $this->assertStringContainsString('data-block-index="0"', $html);
+        $this->assertStringContainsString('data-block-type="hero"', $html);
+        $this->assertStringContainsString('data-block-index="1"', $html);
+        $this->assertStringContainsString('data-block-type="about"', $html);
+        $this->assertStringContainsString('data-block-index="2"', $html);
+        $this->assertStringContainsString('data-block-type="services"', $html);
+
+        $this->assertEquals(3, substr_count($html, 'data-block-index='));
+    }
+
+    public function test_a_skipped_block_contributes_no_index(): void
+    {
+        $renderer = new SiteBlockRenderer;
+        $blocks = [
+            ['type' => 'about', 'text' => 'About'],
+            ['type' => 'unknown_type', 'foo' => 'bar'],
+            ['type' => 'services', 'items' => [['name' => 'Service']]],
+        ];
+
+        $html = $renderer->render($blocks, []);
+
+        $this->assertStringContainsString('data-block-index="0"', $html);
+        $this->assertStringContainsString('data-block-type="about"', $html);
+        $this->assertStringContainsString('data-block-index="2"', $html);
+        $this->assertStringContainsString('data-block-type="services"', $html);
+
+        $this->assertStringNotContainsString('data-block-index="1"', $html);
+        $this->assertEquals(2, substr_count($html, 'data-block-index='));
     }
 }

@@ -1,4 +1,4 @@
-<div id="faq-x176" class="site-block faq {{ $band ?? '' }}">
+<div id="faq-x176" class="site-block faq {{ $band ?? '' }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="faq">
   <div class="site-block__inner">
     @if (isset($block['items']) && is_array($block['items']))
       @foreach ($block['items'] as $item)
