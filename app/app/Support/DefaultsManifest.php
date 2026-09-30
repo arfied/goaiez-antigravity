@@ -308,6 +308,11 @@ final class DefaultsManifest
                 'group' => 'Content',
                 'description' => 'The model router\'s per-task override for site_copy (seed = the same model the Conversation task seeds).',
             ],
+            'ai.model.site_authoring' => [
+                'seed' => AiTask::SiteAuthoring->defaultModel()->value,
+                'group' => 'Content',
+                'description' => 'The model router\'s per-task override for site_authoring — the task behind "Ask the AI" on a page and behind a proposed new page. Its response is a whole blocks array, so a model change here is also a cost change.',
+            ],
             'social.zernio_enabled' => [
                 'seed' => false,
                 'group' => 'Content',

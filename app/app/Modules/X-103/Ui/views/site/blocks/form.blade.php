@@ -1,4 +1,4 @@
-<div class="site-block site-block-form {{ $band ?? '' }}">
+<div class="site-block site-block-form {{ $band ?? '' }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="form">
     <div class="site-block__inner">
         <form method="post" action="{{ rtrim($context['form_action_base'], '/') }}/forms/{{ $block['definition_id'] }}" class="card">
             @foreach($block['fields'] as $field)

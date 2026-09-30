@@ -19,7 +19,9 @@ use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X102\Models\ChatSession;
 use App\Modules\X102\Models\ChatTurn;
 use App\Modules\X103\Actions\CustomerQuestionsAction;
+use App\Modules\X103\Actions\FaqDiscardAction;
 use App\Modules\X103\Actions\FaqDraftAction;
+use App\Modules\X103\Actions\FaqPlaceAction;
 use App\Modules\X103\Actions\FunnelBuildAction;
 use App\Modules\X103\Actions\PageCreateAction;
 use App\Modules\X103\Actions\QuestionAnswerDraftAction;
@@ -81,6 +83,7 @@ class X103Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Http::preventStrayRequests();
         $this->engine = new SiteEngine;
         $this->buildAction = new SiteBuildAction($this->engine);
         $this->publishAction = new SitePublishAction($this->engine);
@@ -786,6 +789,15 @@ class X103Test extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => 'Polished text']],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_eval',
                 'choices' => [
@@ -838,6 +850,15 @@ class X103Test extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => 'Polished text']],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_eval',
                 'choices' => [
@@ -948,6 +969,18 @@ class X103Test extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['items' => [
+                        ['question' => 'Q1', 'answer' => 'A1'],
+                        ['question' => 'Q2', 'answer' => 'A2'],
+                    ]])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_faq',
                 'choices' => [
@@ -1084,6 +1117,15 @@ class X103Test extends TestCase
         $longTitle = 'This is a very long title that exceeds the limit of sixty characters by a significant margin';
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['title' => $longTitle, 'description' => 'Short desc'])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_seo',
                 'choices' => [
@@ -1125,6 +1167,15 @@ class X103Test extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['title' => 'Title', 'description' => 'Desc'])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_seo',
                 'choices' => [
@@ -1159,6 +1210,15 @@ class X103Test extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471'], ['type' => 'booking_form', 'heading' => 'Distinctive booking 4619', 'label' => 'Request a time', 'service' => '']], 'explanation' => 'Rewrote the headline and added a booking form.'])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_edit',
                 'choices' => [
@@ -1375,6 +1435,17 @@ class X103Test extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['items' => [
+                        ['question' => 'Q1', 'answer' => 'A1'],
+                    ]])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_faq',
                 'choices' => [
@@ -1519,6 +1590,15 @@ class X103Test extends TestCase
         ])->save();
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => 'Fresh copy about clean gutters 5599']],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_eval',
                 'choices' => [
@@ -1555,6 +1635,15 @@ class X103Test extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => 'Fresh copy 5599']],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_eval',
                 'choices' => [
@@ -1843,6 +1932,25 @@ class X103Test extends TestCase
         $turn = ChatTurn::create(['business_id' => $biz->id, 'chat_session_id' => $chat->id, 'author_type' => 'visitor', 'message' => 'Distinctive question 4531?', 'created_at' => now()]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::sequence()
+                ->pushResponse(Http::response(
+                    json_encode([
+                        'content' => [['type' => 'text', 'text' => json_encode(['flags' => []])]],
+                        'stop_reason' => 'end_turn',
+                        'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                    ]),
+                    200,
+                    ['Content-Type' => 'application/json']
+                ))
+                ->pushResponse(Http::response(
+                    json_encode([
+                        'content' => [['type' => 'text', 'text' => json_encode(['question' => 'Distinctive question 4531?', 'answer' => 'Answer'])]],
+                        'stop_reason' => 'end_turn',
+                        'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                    ]),
+                    200,
+                    ['Content-Type' => 'application/json']
+                )),
             'api.openai.com/*' => Http::sequence()
                 ->push([
                     'id' => 'chatcmpl-mod',
@@ -1919,6 +2027,16 @@ class X103Test extends TestCase
         $turn = ChatTurn::create(['business_id' => $biz->id, 'chat_session_id' => $chat->id, 'author_type' => 'visitor', 'message' => 'Bad question?', 'created_at' => now()]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::sequence()
+                ->pushResponse(Http::response(
+                    json_encode([
+                        'content' => [['type' => 'text', 'text' => json_encode(['flags' => ['personal_data']])]],
+                        'stop_reason' => 'end_turn',
+                        'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                    ]),
+                    200,
+                    ['Content-Type' => 'application/json']
+                )),
             'api.openai.com/*' => Http::sequence()
                 ->push([
                     'id' => 'chatcmpl-mod',
@@ -2189,6 +2307,15 @@ class X103Test extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => '{}']],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             '*' => Http::response([
                 'id' => 'msg_123',
                 'role' => 'assistant',
@@ -2226,5 +2353,83 @@ class X103Test extends TestCase
         $html = view('x-103::site.blocks.team', ['block' => ['type' => 'team', 'items' => [['name' => 'Real Person 4912', 'role' => 'Owner'], ['name' => 'demo·Ghost 4913', 'role' => 'Tech']]], 'context' => []])->render();
         $this->assertStringContainsString('Real Person 4912', $html);
         $this->assertStringNotContainsString('Ghost 4913', $html);
+    }
+
+    public function test_faq_place_action_places_faq_and_idempotent(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'FAQ Place Action Tenant']);
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'faq',
+            'title' => 'FAQ',
+            'draft_blocks' => [],
+            'is_published' => false,
+        ]);
+        $page->draft_meta = [
+            'pending_faq' => [
+                'items' => [
+                    ['question' => 'Q1', 'answer' => 'A1'],
+                ],
+                'model' => 'test-model',
+                'source' => [
+                    'type' => 'customer_question',
+                    'id' => 999,
+                    'question' => 'Q1',
+                ],
+            ],
+        ];
+        $page->save();
+
+        $action = new FaqPlaceAction;
+
+        // First call should return true and place the FAQ
+        $this->assertTrue($action->handle($biz->id, $page->id));
+
+        $page->refresh();
+        $this->assertFalse(isset($page->draft_meta['pending_faq']));
+
+        $hasFaqBlock = false;
+        foreach ($page->draft_blocks as $block) {
+            if ($block['type'] === 'faq' && $block['source'] === 'ai') {
+                $hasFaqBlock = true;
+                break;
+            }
+        }
+        $this->assertTrue($hasFaqBlock);
+
+        $this->assertDatabaseHas('site_answered_questions', [
+            'business_id' => $biz->id,
+            'source_type' => 'customer_question',
+            'source_id' => 999,
+            'page_id' => $page->id,
+            'question' => 'Q1',
+        ]);
+
+        // Second call should return false and change nothing
+        $this->assertFalse($action->handle($biz->id, $page->id));
+    }
+
+    public function test_faq_discard_action_removes_pending_faq_and_idempotent(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'FAQ Discard Action Tenant']);
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'faq-discard',
+            'title' => 'FAQ Discard',
+            'draft_blocks' => [],
+            'is_published' => false,
+        ]);
+        $page->draft_meta = ['pending_faq' => ['items' => [['question' => 'Q1', 'answer' => 'A1']], 'model' => 'test-model']];
+        $page->save();
+
+        $action = new FaqDiscardAction;
+
+        $this->assertTrue($action->handle($biz->id, $page->id));
+
+        $page->refresh();
+        $this->assertFalse(isset($page->draft_meta['pending_faq']));
+
+        // Second call should return false and change nothing
+        $this->assertFalse($action->handle($biz->id, $page->id));
     }
 }

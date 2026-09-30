@@ -74,7 +74,8 @@ final class OpenAiEmbeddingClient implements EmbeddingClient
         }
 
         if ($response->failed()) {
-            VendorLog::failure('openai', 'POST', self::ENDPOINT, 'http_'.$response->status(), Tenancy::id());
+            $detail = (string) data_get($response->json(), 'error.message', '');
+            VendorLog::failure('openai', 'POST', self::ENDPOINT, 'http_'.$response->status().($detail !== '' ? ': '.mb_substr($detail, 0, 300) : ''), Tenancy::id());
 
             return EmbeddingResponse::failed($this->model, 'http_'.$response->status());
         }

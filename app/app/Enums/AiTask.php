@@ -173,7 +173,11 @@ enum AiTask: string
             self::Moderation => 512,
             self::ReviewAnalysis => 1024,
             self::SiteCopy => 2048,
-            self::SiteAuthoring => 2048,
+            // ⚠️ **2× THE TWO-SENTENCE TIER (8192).** SiteAuthoring returns a whole blocks
+            // array plus an explanation — the largest visible output of any tier. 8192 is
+            // argued from the ReplyGeneration precedent (4096 for two sentences), not computed,
+            // because real multi-section pages are far larger than test fixtures.
+            self::SiteAuthoring => 8192,
             self::ReplyGeneration => 4096,
             // ⚠️ **GENEROUS FOR A 160-CHARACTER MESSAGE, AND FOR THE SAME REASON
             // AS THE REPLY TIER ABOVE.** On Claude Sonnet 5 adaptive thinking is

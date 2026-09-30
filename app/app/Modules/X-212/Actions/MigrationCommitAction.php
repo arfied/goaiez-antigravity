@@ -17,6 +17,14 @@ final class MigrationCommitAction
         return DB::transaction(function () use ($businessId, $migrationRunId, $records) {
             $run = MigrationRun::where('business_id', $businessId)->findOrFail($migrationRunId);
 
+            if ($run->status !== 'dry_run_ready') {
+                return [
+                    'status' => 'refused',
+                    'reason' => 'This run reads '.$run->status.'. Only a run that has been dry-run and not yet committed can be committed.',
+                    'migration_run_id' => $run->id,
+                ];
+            }
+
             $committedCount = 0;
             foreach ($records as $record) {
                 if (! empty($record['phone'])) {
@@ -43,7 +51,7 @@ final class MigrationCommitAction
                 'status' => 'committed',
                 'migration_run_id' => $run->id,
                 'imported_records' => $committedCount,
-                'is_silent_mode' => true,
+                'is_silent_mode' => $run->is_silent_mode,
             ];
         });
     }

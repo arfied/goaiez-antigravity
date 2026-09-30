@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X103\Actions;
 
 use App\Enums\AiTask;
+use App\Enums\ModerationFlag;
 use App\Models\Review;
 use App\Modules\X103\Models\Page;
 use App\Services\Ai\AiRequest;
@@ -13,7 +14,6 @@ use App\Services\Assistant\PriceBook;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Content\ContentModerator;
 use App\Services\Content\PageCopy;
-use App\Enums\ModerationFlag;
 use App\Support\PlanPricing;
 use Illuminate\Support\Carbon;
 
@@ -85,6 +85,7 @@ final class QuestionAnswerDraftAction
                     'answer' => ['type' => 'string'],
                 ],
                 'required' => ['question', 'answer'],
+                'additionalProperties' => false,
             ]
         ));
 
@@ -101,7 +102,7 @@ final class QuestionAnswerDraftAction
                 [
                     'question' => $response->json['question'],
                     'answer' => $response->json['answer'],
-                ]
+                ],
             ],
             'model' => $response->model->value,
             'drafted_at' => Carbon::now()->toIso8601String(),
