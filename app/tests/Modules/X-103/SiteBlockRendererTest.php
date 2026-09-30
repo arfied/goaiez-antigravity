@@ -118,14 +118,14 @@ class SiteBlockRendererTest extends TestCase
         ];
         $html = $renderer->render($blocks, []);
 
-        $fixture = '<div id="videos-x176">
+        $fixture = '<div id="videos-x176" data-block-index="0" data-block-type="video_embed">
   <div class="site-block__inner">
     <div class="media media--wide">
       <div class="video-item" data-name="Test Video" data-url="https://video.com">Test Video</div>
     </div>
   </div>
 </div>
-<div id="faq-x176" class="site-block faq site-block--band">
+<div id="faq-x176" class="site-block faq site-block--band" data-block-index="1" data-block-type="faq">
   <div class="site-block__inner">
                         <div class="faq-item" data-question="Q1">
           <h3>Q1</h3>
