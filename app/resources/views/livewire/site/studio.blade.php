@@ -81,6 +81,14 @@
                                     <p><span class="font-semibold">Type:</span> {{ $selectedBlockType }}</p>
                                 @endif
                             </div>
+                            @if($selectedBlockType === 'hero')
+                                <div class="mt-3">
+                                    <label for="block-headline" class="block text-sm font-bold text-ink mb-1">Headline</label>
+                                    <input id="block-headline" type="text" wire:model="blockHeadline"
+                                           class="w-full border border-rule rounded p-2 text-sm bg-paper text-ink">
+                                    <button wire:click="setBlockField" class="mt-2 w-full px-4 py-2 bg-brand text-paper font-bold rounded">Save headline</button>
+                                </div>
+                            @endif
                         @else
                             <p class="text-sm text-ink-2">Select a block on the canvas.</p>
                         @endif
