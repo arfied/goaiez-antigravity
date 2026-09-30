@@ -3094,3 +3094,43 @@ only reason the second version was trusted.
 ⭐ Same family as N253, and sharper: that was a liveness check that could not say *finished*; this is one that
 could not say *alive*. Both were one tick old, and this file's oldest rule caught both — *after building
 anything that measures, its FIRST output is data you do not trust.*
+
+⛔⛔ **"RESTORE WHAT `git diff --cached --name-only` LISTS" IS CATASTROPHIC FOR A LANE STRICTLY BEHIND MAIN,
+AND IT HAS BEEN SAFE ONLY BY ACCIDENT OF LANE POSITION (N353, 2026-09-30, MONEY-59).** The `.gitattributes`
+note above rules that the eight per-track paths are *"a superset by construction; the instruction is
+'restore what `git diff --cached --name-only` actually lists', never 'run these eight commands'"*. That is
+right when a lane is **ahead** — the index then holds only what the merge had to resolve. ⛔ **When a lane is
+strictly behind main, the index after `git merge --no-ff --no-commit origin/main` holds MAIN'S ENTIRE
+CHANGESET**, and a coder that restores the listing reverts all of it.
+
+Measured on `605345e59`:
+```
+main's changeset since the lane's parent   81 files
+the merge failed to take                   67
+every dropped file is one main changed     comm -13 → empty
+the ones it DID take                       14 — and they are exactly the files main ADDED
+```
+⭐ **`git checkout HEAD -- <path>` FAILS on a path absent from `HEAD`**, so new files survive and only
+*modified* ones revert. 67 + 14 = 81. That asymmetry is the fingerprint: **a merge that lost every modified
+file and kept every added one was restored by listing, not by policy.** It is one `comm` to confirm and it
+names the cause without a transcript.
+
+⛔ **RULED, and the wording matters because the failure was a reader taking the first of two clauses:**
+the restore set is **the INTERSECTION of the per-track list with the index** —
+`git diff --cached --name-only > .idx` then, for each of the eight paths, restore it **only if `.idx` names
+it**. A brief states the eight paths explicitly and says *"restore a path only if BOTH lists contain it; the
+index listing alone is not the restore list, and for a lane behind main it is main's entire changeset."*
+⭐ **And the free sanity check that costs one command and would have caught this before the commit:**
+`git diff --cached --name-only | wc -l` beside the number of per-track paths restored. Restoring 67 of 81
+when the per-track list has eight entries is visible without knowing anything about the content.
+
+⛔ **The gate cannot see this, which is the second half of the finding.** §2 measures the last commit against
+*our* `HEAD`; §2e adds the second-parent baseline but **only for `JourneyHarness.php`**. A merge that drops
+the incoming side across 67 **product** files diffs to nothing against `HEAD`, prints `none` at §2, and
+passes §2e. **RULED: every merge review runs `git diff --numstat <merge> <merge>^2` over EVERYTHING, and the
+only legitimate entries are per-track paths.** On the same day, ui's clean merge returned exactly one line
+(`.agents/rules/10-supervisor.md`) and money's returned 67 — the check discriminates perfectly and costs one
+command. It is §2e generalised from one file to the whole tree, which is where it should have been written.
+⚠️ N130 note: ui's and money's merges are read here as *committed history*, not as working trees, so the
+liveness caveat does not apply; money's snapshot finding below is a tree reading and was taken after its
+writer exited.
