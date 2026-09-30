@@ -643,7 +643,7 @@ function outboundHttpPermittedFiles(): array
         'Services/Oauth/MicrosoftTokenRefresher.php',
         'Services/Oauth/MicrosoftSocialiteProvider.php',
 
-        // The two AI providers (row 3 slice A0). On Laravel's HTTP client rather
+        // The three AI providers (row 3 slice A0). On Laravel's HTTP client rather
         // than the official SDKs, and this list is one of the reasons why:
         // AppServiceProvider::forbidLiveVendorCallsInTests() notes that
         // Http::preventStrayRequests() "covers every call in app/Services because
@@ -652,6 +652,7 @@ function outboundHttpPermittedFiles(): array
         // both that guard and this lint — on the one vendor billing per token.
         'Services/Ai/AnthropicClient.php',
         'Services/Ai/OpenAiClient.php',
+        'Services/Ai/XaiClient.php',
 
         // The embeddings client (lane L5 phase 1). A third file rather than a
         // widened second one, because Anthropic publishes no embeddings API and
