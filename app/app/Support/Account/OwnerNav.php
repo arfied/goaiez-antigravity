@@ -138,6 +138,7 @@ final class OwnerNav
             // ⚠️ THIS ENTRY IS THE ONLY DOOR TO THE PAGES SCREEN.
             // Architecture/OwnerNavTest fails the build on an owner screen
             // with neither a nav entry nor a written exclusion.
+            OwnerNavItem::make('Site studio', 'site.studio', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
             OwnerNavItem::make('Pages', 'x-103.pages', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
             OwnerNavItem::make('Build my site', 'x-103.site-build', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
             OwnerNavItem::make('Site Inventory', 'x-103.site-inventory', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
@@ -636,7 +637,6 @@ final class OwnerNav
             OwnerNavItem::make('Browser extension', 'x-196.extension-popup', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Proposed pages', 'x-140.proposed-pages', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Payment methods', 'x-120.card-screen', OwnerNavItem::GROUP_CATALOG),
-            OwnerNavItem::make('Site studio', 'site.studio', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Connect your AI', 'x-142.connect-your-ai', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Webhooks', 'x-142.webhooks', OwnerNavItem::GROUP_CATALOG),
             OwnerNavItem::make('Sync conflicts', 'x-173.conflicts-list', OwnerNavItem::GROUP_CATALOG),

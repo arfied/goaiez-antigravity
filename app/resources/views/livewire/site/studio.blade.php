@@ -37,7 +37,40 @@
                     <!-- Inspector -->
                     <div class="w-64 border border-rule p-4 rounded bg-paper flex flex-col">
                         <div class="mb-4">
-                            <a href="{{ route('x-103.pages', ['edit' => $pageId]) }}" class="block w-full text-center px-4 py-2 bg-brand text-white font-bold rounded">Open in Pages</a>
+                            @if(isset($selectedPage) && isset($selectedPage->draft_meta['pending_edit']))
+                                <div class="mb-2 p-2 bg-yellow-100 text-yellow-800 text-sm font-bold rounded" id="proposal-marker">
+                                    Previewing AI proposal
+                                </div>
+                            @endif
+                            @if($error)
+                                <div class="mb-2 p-2 bg-red-100 text-red-800 text-sm rounded">{{ $error }}</div>
+                            @endif
+                            @if($success)
+                                <div class="mb-2 p-2 bg-green-100 text-green-800 text-sm rounded">{{ $success }}</div>
+                            @endif
+
+                            @if(isset($selectedPage) && isset($selectedPage->draft_meta['pending_edit']))
+                                <div class="flex items-center gap-2 mb-2">
+                                    <button wire:click="applyProposal" class="flex-1 text-center px-4 py-2 bg-brand text-paper font-bold rounded">Apply</button>
+                                    <button wire:click="discardProposal" class="text-sm underline text-ink-2">Discard</button>
+                                </div>
+                            @elseif(empty($selectedPage->draft_blocks))
+                                <a href="{{ route('x-103.site-build') }}" class="block w-full text-center px-4 py-2 bg-brand text-paper font-bold rounded mb-2">Generate site</a>
+                            @elseif($this->draftDiffersFromPublished($selectedPage))
+                                <button wire:click="publish({{ $pageId }})" class="block w-full text-center px-4 py-2 bg-brand text-paper font-bold rounded mb-2">Publish draft</button>
+                            @endif
+                            
+                            @if(isset($selectedPage) && !empty($selectedPage->draft_blocks))
+                            <div class="mt-4">
+                                <label for="ask-input" class="block text-sm font-bold text-ink mb-1">Ask AI to edit</label>
+                                <textarea id="ask-input" wire:model="request" class="w-full border border-rule rounded p-2 text-sm bg-paper text-ink" placeholder="E.g. Make it sound more professional..."></textarea>
+                                <button wire:click="ask" class="block w-full text-center px-4 py-2 bg-brand text-paper font-bold rounded mt-2">Ask</button>
+                            </div>
+                            @endif
+                            
+                            <div class="text-center mt-4">
+                                <a href="{{ route('x-103.pages', ['edit' => $pageId]) }}" class="text-sm underline text-brand">Open in Pages</a>
+                            </div>
                         </div>
                         
                         <h2 class="font-bold mb-2">Inspector</h2>
@@ -55,7 +88,7 @@
                 </div>
             @else
                 <div class="flex items-center justify-center h-full">
-                    <p class="text-ink-2">You have no pages yet. Run 'Build my site' on the Pages screen first.</p>
+                    <p class="text-ink-2">You have no pages yet. <a href="{{ route('x-103.site-build') }}" class="underline text-brand">Run 'Build my site'</a> first.</p>
                 </div>
             @endif
         </div>
