@@ -19,6 +19,7 @@ class SiteBlockRendererTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Http::preventStrayRequests();
     }
 
     public function test_renders_fields_escaped(): void

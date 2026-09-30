@@ -16,6 +16,12 @@ use Tests\TestCase;
 
 class PageEditorTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Http::preventStrayRequests();
+    }
+
     public function test_page_editor_displays_distinctive_content(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
@@ -202,6 +208,15 @@ class PageEditorTest extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['blocks' => [], 'explanation' => ''])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_edit',
                 'choices' => [
@@ -227,6 +242,15 @@ class PageEditorTest extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['blocks' => [], 'explanation' => ''])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_edit2',
                 'choices' => [
@@ -251,6 +275,15 @@ class PageEditorTest extends TestCase
         Tenancy::set($biz->id);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['title' => 'Distinctive spring offer 4471', 'slug' => 'Spring Offer!', 'blocks' => [['type' => 'hero', 'headline' => 'Distinctive headline 4472', 'subline' => 'Book before the rain.'], ['type' => 'faq', 'items' => [['question' => 'When?', 'answer' => 'All spring.']]], ['type' => 'marquee', 'text' => 'x']], 'explanation' => 'A page for the spring offer.'])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_edit',
                 'choices' => [

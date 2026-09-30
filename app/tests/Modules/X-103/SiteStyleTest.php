@@ -18,6 +18,12 @@ use Tests\TestCase;
 
 class SiteStyleTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Http::preventStrayRequests();
+    }
+
     public function test_validate_drops_bad_values_and_checks_contrast(): void
     {
         $base = [
@@ -81,6 +87,22 @@ class SiteStyleTest extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode([
+                        'blocks' => [],
+                        'explanation' => 'Changed style',
+                        'style' => [
+                            'palette' => ['primary' => '#c2410c'],
+                            'type_pairing' => ['heading' => 'Georgia, serif'],
+                        ],
+                    ])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_edit',
                 'choices' => [
@@ -184,6 +206,21 @@ class SiteStyleTest extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode([
+                        'blocks' => [['type' => 'hero', 'headline' => 'Test']],
+                        'explanation' => 'Changed style',
+                        'style' => [
+                            'palette' => ['surface' => '#ffffff', 'ink' => '#ffffff'],
+                        ],
+                    ])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_edit',
                 'choices' => [
