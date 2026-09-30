@@ -48,6 +48,9 @@
                 <div>
                     <h3 class="text-lg font-semibold text-ink mb-3">Timeline</h3>
                     
+                    @if($error) <p class="mb-4 text-red-600">{{ $error }}</p> @endif
+                    @if($success) <p class="mb-4 text-green-600">{{ $success }}</p> @endif
+                    
                     @if ($messages->isEmpty())
                         <x-ui.empty-state icon="○" heading="No messages yet">
                             Conversations with this person will appear here.
@@ -66,8 +69,10 @@
                                                 {{ $channel }}
                                             </span>
                                             <span class="text-sm font-medium {{ $message->direction === 'outbound' ? 'text-ok' : 'text-attention' }}">
-                                                {{ ucfirst($message->direction->value) }}
+                                                {{ ucfirst($message->direction->value ?? '') }}
                                             </span>
+                                            <button wire:click="takeOver({{ $message->conversation_id }})" class="bg-brand text-white px-2 py-0.5 text-xs rounded">Take over</button>
+                                            <button wire:click="handBack({{ $message->conversation_id }})" class="border border-rule text-ink-2 px-2 py-0.5 text-xs rounded">Hand back</button>
                                         </div>
                                         <span class="text-xs text-ink-3">{{ $message->created_at?->diffForHumans() }}</span>
                                     </div>
