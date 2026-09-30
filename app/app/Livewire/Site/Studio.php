@@ -6,6 +6,7 @@ namespace App\Livewire\Site;
 
 use App\Enums\UserRole;
 use App\Modules\X103\Actions\PageReadAction;
+use App\Modules\X103\Actions\SiteBlockFieldSetAction;
 use App\Modules\X103\Actions\SiteEditApplyAction;
 use App\Modules\X103\Actions\SiteEditAskAction;
 use App\Modules\X103\Actions\SiteEditDiscardAction;
@@ -37,6 +38,28 @@ class Studio extends Component
     public ?string $success = null;
 
     public string $request = '';
+
+    public string $blockHeadline = '';
+
+    public function setBlockField(SiteBlockFieldSetAction $action): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if ($this->pageId === null || $this->selectedBlockIndex === null) {
+            $this->error = 'No page or block selected.';
+
+            return;
+        }
+
+        $res = $action->handle($this->businessId, $this->pageId, $this->selectedBlockIndex, 'headline', $this->blockHeadline);
+        if ($res['status'] === 'refused') {
+            $this->error = $res['reason'];
+        } else {
+            $this->success = 'Headline saved.';
+        }
+    }
 
     private function draftDiffersFromPublished(Page $page): bool
     {
@@ -181,6 +204,7 @@ class Studio extends Component
         }
 
         $this->selectedBlockIndex = $index;
+        $this->blockHeadline = $page->draft_blocks[$index]['headline'] ?? '';
     }
 
     public function updatedPageId(): void
@@ -230,9 +254,11 @@ HTML;
         }
 
         $selectedBlockType = null;
+        $currentHeadline = null;
         if ($this->selectedBlockIndex !== null && $selectedPage && is_array($selectedPage->draft_blocks)) {
             if (isset($selectedPage->draft_blocks[$this->selectedBlockIndex])) {
                 $selectedBlockType = $selectedPage->draft_blocks[$this->selectedBlockIndex]['type'] ?? 'unknown';
+                $currentHeadline = $selectedPage->draft_blocks[$this->selectedBlockIndex]['headline'] ?? null;
             }
         }
 
@@ -241,6 +267,7 @@ HTML;
             'selectedPage' => $selectedPage,
             'previewHtml' => $previewHtml,
             'selectedBlockType' => $selectedBlockType,
+            'currentHeadline' => $currentHeadline,
         ]);
     }
 }
