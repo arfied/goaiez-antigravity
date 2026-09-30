@@ -2748,6 +2748,71 @@ state the expected pin move in the brief as an item.** ⛔ A pin that moves *una
 indistinguishable at the gate from a regression, and it cost this wave a dispatch it did not need: the
 coder could not have known a number had to move, because the document that made it move did not say so.
 
+⛔ **THE "DOES ANYTHING WRITE THIS MODEL" NEEDLE HAS NOW BEEN WRONG IN THREE SUCCESSIVE GENERATIONS, ALWAYS
+IN THE SAME DIRECTION, AND HERE IS THE CATALOGUE THAT ENDS IT (N345, 2026-09-29).** N341 found it blind to
+service-owned writes. Re-derived against the 73-screen control backlog it still called **10** drivers unfed,
+and **four of those ten were written all along** — including the three N341 itself had named, which is the
+sharpest possible proof that writing a rule down does not fix the instrument. The idioms it could not see:
+- `new Model;` — **paren-less, and it is valid PHP.** `GrowthPages.php:66` (`new GrowthPage;`),
+  `AutoTopUps.php:177` (`new AutoTopUpArrangement;`), `CreditLedger.php:1007` (`new CreditLedgerEntry;`).
+  A needle of `new Model\(` misses every one.
+- `Model::query()->insertOrIgnore(` — `Dunning.php:639`. A needle of `->insert\(` cannot match
+  `insertOrIgnore(`, because the `\(` is not there.
+- `DB::table('<the table>')->insert|upsert|updateOrInsert(` — no model class appears at all.
+**RULED: the writer needle is the union of these, and the model's own file is excluded because a method on
+the model is not a caller:**
+```
+Model::(create|insert|insertOrIgnore|updateOrCreate|firstOrCreate|firstOrNew|forceCreate)\(
+Model::query\(\)->(create|insert|insertOrIgnore|updateOrCreate|firstOrCreate|upsert)\(
+new Model[(;]
+DB::table\('<table>'\)->(insert|insertOrIgnore|upsert|updateOrInsert)\(
+```
+With that union: **80 FED rows, 6 UNFED**, against 69/17 before. ⛔ **And the operative ruling is not the
+catalogue, which will be incomplete again — it is that this needle is a TRIGGER and never a finding.** An
+`UNFED` row is read by hand before it is written down, because its failure direction is a **false refusal**
+(N264), and a refusal gets recorded as settled and nobody re-opens it.
+⚠️ **A second defect of mine in the same measurement, and it is N252 verbatim.** Chasing why the shell said
+`4` and Python said `0` on "the same" pattern, I wrote down that `(?:…)` is PCRE and `grep -E` cannot parse
+it. **False, and withdrawn:** GNU grep here matches it fine. The real difference was that my shell "control"
+used `(?:create)` with **one** alternative while the Python pattern had four — *I changed the pattern and the
+shell together and called it a control.* ⭐ Two rules already cover it and I broke both: a positive control
+is a case measured to be positive (N254), and a documented command is verified by running the documented line
+**verbatim** (N252). The withdrawal is recorded here rather than the sentence quietly deleted.
+
+⛔ **A MODULE-LEVEL DUPLICATE OF A LIVE SERVICE IS THE COMMONEST REASON A FINISHED ACTION HAS NO CALLER, AND
+THE TELL IS TWO CLASSES SHARING A BASENAME (N346, 2026-09-29).** Screening three candidate waves tonight, all
+three were refused, and two were refused for this one shape — which makes it the default hypothesis for an
+uncalled writer, not an exotic case.
+**(1) C-Billing's credit ledger is TWO ledgers and the module one is dead.** Measured:
+
+| class | table | written by | read by |
+| :-- | :-- | :-- | :-- |
+| `App\Models\CreditLedgerEntry` | `credit_ledger` | `app/Services/Billing/CreditLedger.php:1007` | `Livewire/Advanced/Credits.php`, `Livewire/Account/Credit.php` |
+| `App\Modules\CBilling\Models\CreditLedgerEntry` | `credit_ledger_entries` | `BillingLedgerEngine.php:54,88,130` | **nothing** |
+
+So `LedgerGrantAction` / `LedgerDebitAction` are finished, uncalled, and write a table **no screen reads**,
+while the ledger an owner actually sees is written by a service in `app/Services/`. Wiring them would put
+credit somewhere invisible. ⛔ **Refused — and it is X-219's shape exactly** (a module duplicating a live
+`app/Services/` path, with the live side reachable and the module side closed-loop). The product question —
+*delete the duplicate, or repoint the actions at `credit_ledger`* — is an **OWNER DECISION**, and it is
+larger than a wave because `credit_ledger` is money in a customer's account.
+**(2) X-170 `CommissionReleaseAction` — refused on the root, not on the seam.** Its anchor is *"No commission
+row moves to RELEASED without a matching payment.captured"* and it takes a `?string $paymentCapturedId`.
+⭐ Unlike X-167's `approved_action_id`, that identifier **does** have a producer — `X-198 Payment` rows with
+`status = 'captured'`, joinable on `commissions.invoice_id` ↔ `payments.invoice_id` — so the N273 corollary is
+*satisfied* here and the wave looked clean. It is refused for two other reasons, both measured:
+`Commission` is created only by `CommissionEngine:46`, reachable only through the **uncalled**
+`CommissionComputeAction`, so the screen is empty for every tenant (N277's unfed root); and **X-170 belongs
+to `pricebook`, the one BLOCKED lane**, while `PaymentReadAction` — which would need the new
+`capturedForInvoice` method — belongs to `money`.
+⭐ **The ownership check is what stopped that one, and it cost one `grep`.** `LANE-OWNERSHIP.md` exists because
+of this; consulting it *before* writing a brief is what it is for, and a wave spanning a blocked lane and a
+second lane's module is not a wave.
+**RULED, and it is one command before any uncalled-writer wave: `find app -name '<TheModel>.php' -path
+'*Models*'` and read the screen's `use` line.** If two classes share the basename, establish which table the
+**screen** reads before you wire anything to the other. Twelfth instance of *matching a basename is not
+resolving a symbol* (N258), and the first where the collision is between a module and `app/Models`.
+
 ## ⛔⛔ THREE LAWS OF LANE REVIEW (owner ruling, 2026-09-28, after N316). These are not notes.
 
 ### LAW 1 — A LANE'S WORK IS `git merge-base origin/main HEAD`..`HEAD`. NEVER `origin/main..lane`.
