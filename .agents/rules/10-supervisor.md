@@ -130,3 +130,64 @@ Three things it asks of you:
 `Domain\` imports are the sanctioned seams and `boundary` exempts them; a `Models\` import across a module
 boundary is what that stage flags, and it went `0 → 2` on `main` that same day for exactly this. **The
 module's owner is who you ask for a new seam.**
+
+## ⛔ ADDED 2026-09-30 — FOUR THINGS MEASURED ON REAL WAVES THIS WEEK. Each one cost a wave.
+
+### 1. ⛔ THE BRIEF'S FIELD LIST SUPERSEDES THE SHAPE ABOVE, FOR THAT WAVE ONLY
+
+When `BRIEF.md` ends with its own list of field names, **write exactly those fields, in that order, and do not
+merge them with the canonical shape above.** The shape above is the default for a wave whose brief names no
+fields.
+
+⚠️ **This is the supervisor's defect, not yours.** For a week, briefs have specified ad-hoc field lists
+(`TREE-0`, `TAKE-MAIN`, `DOCTOR-PRE`, …) while this rule specified a different one, and nothing said which won.
+Two waves answered by abandoning both and writing prose bullets, which is the reasonable response to two
+contradictory instructions and left every number unmeasured. ⛔ **If a brief's list and this shape ever
+disagree in a way the sentence above does not settle, say so in the report and follow the BRIEF.**
+
+⭐ And in either shape the rule is the same one: **paste raw output, never a summary.** *"Passed static
+analysis"* is not a measurement — `{"tool":"phpstan","result":…,"errors":2}` is. A field that summarises is
+read as a field that measured, and the two are indistinguishable afterwards.
+
+### 2. ⛔ WRITE `REPORT.md` LAST — AFTER THE COMMIT, AFTER THE CHECKS
+
+⛔ **Not when you decide something. Not mid-wave. Last.**
+
+On 2026-09-30 a run wrote a report saying *"STOPPED …"*, then found its own way past two commands the brief had
+wrongly ordered and **worked for three more minutes** — taking main, committing a merge, writing an action and
+its tests. The supervisor read that report as final, concluded the process was finished and parked, and
+**killed it.** The work survived only because git had it.
+
+⭐ The report is the *last* thing you write, so that its existence means the wave is over. If you must record a
+decision mid-wave, put it in the report's `REFUSED` or a `state.py note` — **never by writing the report early
+and continuing.**
+
+### 3. ⛔ NO DELIBERATION IN SHIPPED CODE
+
+A wave committed this, verbatim, into a production action:
+
+```php
+// skipped_non_person_maps: wait, does it count per map or per map per reject?
+// "skip the others and count them". I will count per map encountered during loops, or maybe just per map?
+// I'll count per map * per reject as written, or maybe it should be the total maps skipped. Let's fix that…
+```
+
+It also left the variable those comments argue about **dead**, because the final line recomputed the value a
+different way. ⛔ **Think in your own scratch space; commit conclusions.** A comment explains *why the code is
+as it is* — never what you considered and rejected, and never a brief quoted back at itself. ⚠️ `phpstan` does
+not flag an unused local at this level, so nothing but a human reading catches the dead variable beside it.
+
+### 4. ⛔ NEVER PUT A TEST SUITE IN A BACKGROUND TASK — AND TWO COMMANDS THE GUARD REFUSES OUTRIGHT
+
+- ⛔ **`run_command` converts anything that outruns `WaitMsBeforeAsync` into a background task, and the CLI
+  kills background tasks on exit after a 5-second grace.** So *"I've scheduled a background task to wait for the
+  tests"* produces **no reading at all**. A module-scoped filter — `./vendor/bin/pest tests/Modules/X-nnn` — is
+  ~15 s and runs in the foreground; the **full suite is the supervisor's** and a `GATE` field reading
+  *"not run — the supervisor gates this wave"* is correct, not a gap.
+- ⛔ **`git clean` is refused by the shared guard in every form** — *"git clean is forbidden (history/working
+  tree are append-only)"*. If a brief orders it, the brief is wrong: report that and stop.
+- ⛔ **`git checkout HEAD -- <path>` works only while a `MERGE_HEAD` exists**, i.e. *during* a merge. Before or
+  after one it is refused, whatever `GOAIEZ_MERGE_OK` says.
+
+⭐ And a new file matches the conventions of the directory it joins — in `app/app/Modules/*/Actions/` that means
+`declare(strict_types=1);` and `final class`. Read a sibling before writing a new one.
