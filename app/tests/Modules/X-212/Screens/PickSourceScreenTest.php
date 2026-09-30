@@ -30,7 +30,7 @@ class PickSourceScreenTest extends TestCase
         Livewire::test(PickSource::class)->assertOk();
     }
 
-    public function test_a_dry_run_records_a_run_and_rejects_rows_without_a_contact(): void
+    public function test_a_dry_run_records_a_run_and_rejects_rows_without_a_phone(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
@@ -46,12 +46,16 @@ class PickSourceScreenTest extends TestCase
         $this->assertSame('jobber', $run->source_system);
         $this->assertSame('dry_run_ready', $run->status);
         $this->assertSame(3, $run->total_records);
-        $this->assertSame(2, $run->imported_records);
-        $this->assertSame(1, $run->rejected_records);
+        $this->assertSame(1, $run->imported_records);
+        $this->assertSame(2, $run->rejected_records);
         $this->assertTrue($run->is_silent_mode);
 
-        $this->assertSame(1, MigrationReject::where('migration_run_id', $run->id)->count());
-        $this->assertSame(1, (int) MigrationReject::where('migration_run_id', $run->id)->first()->record_index);
+        $rejects = MigrationReject::where('migration_run_id', $run->id)
+            ->orderBy('record_index')
+            ->pluck('record_index')
+            ->map(fn ($i) => (int) $i)
+            ->all();
+        $this->assertSame([1, 2], $rejects, 'row 1 has no contact at all; row 2 has an email and no phone, and this import matches people by phone');
 
         $this->actingAs($owner)->get(route('x-212.dryrun-preview'))->assertSee('jobber');
     }
