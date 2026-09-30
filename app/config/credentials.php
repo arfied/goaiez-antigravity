@@ -65,6 +65,8 @@ return [
 
     'openai_api_key' => env('OPENAI_API_KEY'),
 
+    'xai_api_key' => env('XAI_API_KEY'),
+
     /*
     | Infobip — numbers, SMS/10DLC, WhatsApp, voice, and brand registration.
     | `CLAUDE.md` names it the single vendor for all of those; email is

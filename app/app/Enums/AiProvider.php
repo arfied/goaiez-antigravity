@@ -29,6 +29,8 @@ enum AiProvider: string
 
     case OpenAi = 'openai';
 
+    case Xai = 'xai';
+
     /**
      * The PlatformCredentials key holding this provider's API key.
      */
@@ -37,6 +39,7 @@ enum AiProvider: string
         return match ($this) {
             self::Anthropic => 'anthropic_api_key',
             self::OpenAi => 'openai_api_key',
+            self::Xai => 'xai_api_key',
         };
     }
 
@@ -45,6 +48,7 @@ enum AiProvider: string
         return match ($this) {
             self::Anthropic => 'Anthropic',
             self::OpenAi => 'OpenAI',
+            self::Xai => 'xAI (Grok)',
         };
     }
 }

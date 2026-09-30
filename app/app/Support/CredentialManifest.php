@@ -111,6 +111,13 @@ final class CredentialManifest
                 'degradation' => 'Tasks routed to OpenAI fail as a recorded AI call and the queued job moves on. Same held-for-a-human outcome on the moderation path.',
             ],
 
+            'xai_api_key' => [
+                'vendor' => 'AI providers',
+                'label' => 'xAI (Grok) API key',
+                'description' => 'The third provider behind AiRouter.',
+                'degradation' => 'Tasks routed to xAI fail as a recorded AI call and the queued job moves on. Same held-for-a-human outcome on the moderation path.',
+            ],
+
             'fetch_proxy_url' => [
                 'vendor' => 'Outbound proxy',
                 'label' => 'Tenant-site fetch proxy URL',
