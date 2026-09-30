@@ -66,14 +66,14 @@ final class BlockPatchTest extends TestCase
 
     public function test_a_bad_index_refuses_the_whole_set_and_changes_nothing(): void
     {
-        $applier = new BlockPatchApplier;
+        $applier = $applier = app(BlockPatchApplier::class);
         $blocks = [
-            ['type' => 'hero', 'title' => 'Old Title'],
+            ['type' => 'hero', 'headline' => 'Old Title'],
             ['type' => 'text', 'content' => 'Hello'],
         ];
 
         $patches = [
-            ['op' => 'set_string', 'block_index' => 0, 'field' => 'title', 'value' => 'New Title'],
+            ['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'New Title'],
             ['op' => 'set_string', 'block_index' => 99, 'field' => 'content', 'value' => 'Bad Index'],
         ];
 
@@ -86,13 +86,13 @@ final class BlockPatchTest extends TestCase
 
     public function test_an_unknown_op_refuses_the_whole_set(): void
     {
-        $applier = new BlockPatchApplier;
+        $applier = $applier = app(BlockPatchApplier::class);
         $blocks = [
-            ['type' => 'hero', 'title' => 'Old Title'],
+            ['type' => 'hero', 'headline' => 'Old Title'],
         ];
 
         $patches = [
-            ['op' => 'set_string', 'block_index' => 0, 'field' => 'title', 'value' => 'New Title'],
+            ['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'New Title'],
             ['op' => 'unknown_op', 'block_index' => 0],
         ];
 
@@ -105,9 +105,9 @@ final class BlockPatchTest extends TestCase
 
     public function test_set_field_cannot_change_a_block_type(): void
     {
-        $applier = new BlockPatchApplier;
+        $applier = $applier = app(BlockPatchApplier::class);
         $blocks = [
-            ['type' => 'hero', 'title' => 'Old Title'],
+            ['type' => 'hero', 'headline' => 'Old Title'],
         ];
 
         $patches = [
@@ -123,15 +123,15 @@ final class BlockPatchTest extends TestCase
 
     public function test_the_sample_fixture_applies(): void
     {
-        $applier = new BlockPatchApplier;
+        $applier = $applier = app(BlockPatchApplier::class);
         $fixturePath = __DIR__.'/fixtures/patch-sample.json';
         $payload = json_decode(file_get_contents($fixturePath), true);
 
         $blocks = [
-            ['type' => 'hero', 'title' => 'Old Title'],
-            ['type' => 'features', 'features' => []],
-            ['type' => 'testimonial', 'text' => 'Great!'],
-            ['type' => 'cta', 'link' => '#'],
+            ['type' => 'hero', 'headline' => 'Old Title'],
+            ['type' => 'services', 'items' => []],
+            ['type' => 'about', 'text' => 'Great!'],
+            ['type' => 'booking_button', 'label' => '#'],
         ];
 
         $result = $applier->apply($blocks, $payload['patches']);
@@ -140,9 +140,9 @@ final class BlockPatchTest extends TestCase
         $this->assertSame(4, $result['applied']);
 
         $expectedBlocks = [
-            ['type' => 'hero', 'title' => 'Welcome to our updated platform'],
-            ['type' => 'cta', 'link' => '#'],
-            ['type' => 'features', 'features' => ['Faster', 'More secure', 'Easy to use']],
+            ['type' => 'hero', 'headline' => 'Welcome to our updated platform'],
+            ['type' => 'booking_button', 'label' => '#'],
+            ['type' => 'services', 'items' => ['Faster', 'More secure', 'Easy to use']],
         ];
 
         $this->assertSame($expectedBlocks, $result['blocks']);
@@ -150,20 +150,20 @@ final class BlockPatchTest extends TestCase
 
     public function test_patches_apply_in_the_order_given(): void
     {
-        $applier = new BlockPatchApplier;
+        $applier = $applier = app(BlockPatchApplier::class);
         $blocks = [
-            ['type' => 'hero', 'title' => 'Old Title'],
+            ['type' => 'hero', 'headline' => 'Old Title'],
         ];
 
         $patches = [
-            ['op' => 'set_string', 'block_index' => 0, 'field' => 'title', 'value' => 'First Title'],
-            ['op' => 'set_string', 'block_index' => 0, 'field' => 'title', 'value' => 'Second Title'],
+            ['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'First Title'],
+            ['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Second Title'],
         ];
 
         $result = $applier->apply($blocks, $patches);
 
         $this->assertSame('applied', $result['status']);
         $this->assertSame(2, $result['applied']);
-        $this->assertSame('Second Title', $result['blocks'][0]['title']);
+        $this->assertSame('Second Title', $result['blocks'][0]['headline']);
     }
 }

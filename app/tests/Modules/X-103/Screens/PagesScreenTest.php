@@ -1092,7 +1092,7 @@ class PagesScreenTest extends TestCase
         Http::fake([
             'api.anthropic.com/*' => Http::response(
                 json_encode([
-                    'content' => [['type' => 'text', 'text' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471'], ['type' => 'about', 'text' => 'We fix roofs.']], 'explanation' => 'Rewrote the headline and added an about block.'])]],
+                    'content' => [['type' => 'text', 'text' => json_encode(['patches' => [['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Distinctive new headline 4471']], 'explanation' => 'Rewrote the headline and added an about block.'])]],
                     'stop_reason' => 'end_turn',
                     'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
                 ]),
@@ -1102,7 +1102,7 @@ class PagesScreenTest extends TestCase
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_edit',
                 'choices' => [
-                    ['message' => ['content' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471'], ['type' => 'about', 'text' => 'We fix roofs.']], 'explanation' => 'Rewrote the headline and added an about block.'])]],
+                    ['message' => ['content' => json_encode(['patches' => [['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Distinctive new headline 4471']], 'explanation' => 'Rewrote the headline and added an about block.'])]],
                 ],
                 'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
             ]),
@@ -1112,12 +1112,11 @@ class PagesScreenTest extends TestCase
             ->test(Pages::class)
             ->set('editRequest.'.$page->id, 'make the headline stronger')
             ->call('askEdit', $page->id)
-            ->assertSet('success', fn ($s) => str_starts_with((string) $s, 'Proposed 2 blocks'));
+            ->assertSet('success', fn ($s) => str_starts_with((string) $s, 'Proposed 1 edits'));
 
         $page->refresh();
         $this->assertSame('Old headline', $page->draft_blocks[0]['headline']);
         $this->assertSame('Distinctive new headline 4471', $page->draft_meta['pending_edit']['blocks'][0]['headline']);
-        $this->assertSame('ai', $page->draft_meta['pending_edit']['blocks'][0]['source']);
 
         Livewire::actingAs($owner)
             ->test(Pages::class)
@@ -1150,7 +1149,7 @@ class PagesScreenTest extends TestCase
         Http::fake([
             'api.anthropic.com/*' => Http::response(
                 json_encode([
-                    'content' => [['type' => 'text', 'text' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471'], ['type' => 'about', 'text' => 'We fix roofs.']], 'explanation' => 'Rewrote the headline and added an about block.'])]],
+                    'content' => [['type' => 'text', 'text' => json_encode(['patches' => [['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Distinctive new headline 4471']], 'explanation' => 'Rewrote the headline and added an about block.'])]],
                     'stop_reason' => 'end_turn',
                     'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
                 ]),
@@ -1160,7 +1159,7 @@ class PagesScreenTest extends TestCase
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_edit',
                 'choices' => [
-                    ['message' => ['content' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471'], ['type' => 'about', 'text' => 'We fix roofs.']], 'explanation' => 'Rewrote the headline and added an about block.'])]],
+                    ['message' => ['content' => json_encode(['patches' => [['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Distinctive new headline 4471']], 'explanation' => 'Rewrote the headline and added an about block.'])]],
                 ],
                 'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
             ]),
@@ -1199,7 +1198,7 @@ class PagesScreenTest extends TestCase
         Http::fake([
             'api.anthropic.com/*' => Http::response(
                 json_encode([
-                    'content' => [['type' => 'text', 'text' => json_encode(['blocks' => [['type' => 'hero'], ['type' => 'marquee', 'text' => 'x']], 'explanation' => 'x'])]],
+                    'content' => [['type' => 'text', 'text' => json_encode(['patches' => [], 'explanation' => 'x'])]],
                     'stop_reason' => 'end_turn',
                     'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
                 ]),
@@ -1209,7 +1208,7 @@ class PagesScreenTest extends TestCase
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_edit',
                 'choices' => [
-                    ['message' => ['content' => json_encode(['blocks' => [['type' => 'hero'], ['type' => 'marquee', 'text' => 'x']], 'explanation' => 'x'])]],
+                    ['message' => ['content' => json_encode(['patches' => [], 'explanation' => 'x'])]],
                 ],
                 'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
             ]),
@@ -1253,7 +1252,7 @@ class PagesScreenTest extends TestCase
             'api.anthropic.com/*' => Http::sequence()
                 ->pushResponse(Http::response(
                     json_encode([
-                        'content' => [['type' => 'text', 'text' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471']], 'explanation' => 'Rewrote the headline.'])]],
+                        'content' => [['type' => 'text', 'text' => json_encode(['patches' => [['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Distinctive new headline 4471']], 'explanation' => 'Rewrote the headline.'])]],
                         'stop_reason' => 'end_turn',
                         'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
                     ]),
@@ -1262,7 +1261,7 @@ class PagesScreenTest extends TestCase
                 ))
                 ->pushResponse(Http::response(
                     json_encode([
-                        'content' => [['type' => 'text', 'text' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive second headline 7731']], 'explanation' => 'Shortened it.'])]],
+                        'content' => [['type' => 'text', 'text' => json_encode(['patches' => [['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Distinctive second headline 7731']], 'explanation' => 'Shortened it.'])]],
                         'stop_reason' => 'end_turn',
                         'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
                     ]),
@@ -1273,14 +1272,14 @@ class PagesScreenTest extends TestCase
                 ->pushResponse(Http::response([
                     'id' => 'msg_edit',
                     'choices' => [
-                        ['message' => ['content' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471']], 'explanation' => 'Rewrote the headline.'])]],
+                        ['message' => ['content' => json_encode(['patches' => [['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Distinctive new headline 4471']], 'explanation' => 'Rewrote the headline.'])]],
                     ],
                     'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
                 ]))
                 ->pushResponse(Http::response([
                     'id' => 'msg_edit_2',
                     'choices' => [
-                        ['message' => ['content' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive second headline 7731']], 'explanation' => 'Shortened it.'])]],
+                        ['message' => ['content' => json_encode(['patches' => [['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Distinctive second headline 7731']], 'explanation' => 'Shortened it.'])]],
                     ],
                     'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
                 ])),
@@ -1325,7 +1324,7 @@ class PagesScreenTest extends TestCase
         Http::fake([
             'api.anthropic.com/*' => Http::response(
                 json_encode([
-                    'content' => [['type' => 'text', 'text' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471']], 'explanation' => 'Rewrote the headline.'])]],
+                    'content' => [['type' => 'text', 'text' => json_encode(['patches' => [['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Distinctive new headline 4471']], 'explanation' => 'Rewrote the headline.'])]],
                     'stop_reason' => 'end_turn',
                     'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
                 ]),
@@ -1335,7 +1334,7 @@ class PagesScreenTest extends TestCase
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_edit',
                 'choices' => [
-                    ['message' => ['content' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471']], 'explanation' => 'Rewrote the headline.'])]],
+                    ['message' => ['content' => json_encode(['patches' => [['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Distinctive new headline 4471']], 'explanation' => 'Rewrote the headline.'])]],
                 ],
                 'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
             ]),
