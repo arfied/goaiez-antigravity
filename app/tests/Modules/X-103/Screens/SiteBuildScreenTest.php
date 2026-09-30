@@ -40,6 +40,12 @@ use Tests\TestCase;
 
 class SiteBuildScreenTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Http::preventStrayRequests();
+    }
+
     use RefreshesTenantDatabase;
 
     public function test_screen_renders_for_tenant(): void
@@ -71,6 +77,15 @@ class SiteBuildScreenTest extends TestCase
         $location->save();
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => '{}']],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'https://example.com' => Http::response(
                 '<html><head><title>Home</title></head><body><h1>Welcome</h1><img src="logo.png"><a href="/about">About</a></body></html>', 200
             ),
@@ -239,6 +254,15 @@ class SiteBuildScreenTest extends TestCase
         Tenancy::set($biz->id);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive proposed headline 4472']], 'explanation' => 'Did it.'])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response(
                 json_encode([
                     'choices' => [
@@ -364,6 +388,15 @@ class SiteBuildScreenTest extends TestCase
         Tenancy::set($biz->id);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['headlines' => ['Distinctive option 4582', 'Distinctive option 4583']])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response(
                 json_encode([
                     'choices' => [
@@ -580,6 +613,15 @@ class SiteBuildScreenTest extends TestCase
         $location->save();
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => '{}']],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'https://example.com' => Http::response(
                 '<html><head><title>Home</title></head><body><h1>Welcome</h1><img src="logo.png"><a href="/about">About</a></body></html>', 200
             ),
