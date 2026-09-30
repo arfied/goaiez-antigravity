@@ -6,8 +6,13 @@ namespace App\Livewire\Site;
 
 use App\Enums\UserRole;
 use App\Modules\X103\Actions\PageReadAction;
+use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Domain\PagePreview;
+use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Models\Page;
+use App\Modules\X103\Models\PageVersion;
+use App\Modules\X157\Actions\LatestDeploymentForPageAction;
+use App\Modules\X157\Actions\PlatformSiteAddressAction;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -23,10 +28,58 @@ class Studio extends Component
 
     public ?int $selectedBlockIndex = null;
 
+    public ?string $error = null;
+
+    public ?string $success = null;
+
+    private function draftDiffersFromPublished(Page $page): bool
+    {
+        $version = $page->current_version_id ? PageVersion::where('business_id', $this->businessId)->find($page->current_version_id) : null;
+        if ($version === null) {
+            return true;
+        }
+        $strip = fn (array $blocks): array => array_values(array_filter($blocks, fn ($b) => ! in_array($b['type'] ?? '', SiteEngine::REQUIRED_BLOCK_TYPES, true)));
+
+        return json_encode($strip($page->draft_blocks ?? [])) !== json_encode($strip(is_array($version->content_blocks) ? $version->content_blocks : []));
+    }
+
+    public function publish(int $pageId, SitePublishAction $action): void
+    {
+        $this->error = null;
+        $this->success = null;
+
+        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
+
+        if ($page->is_published && ! $this->draftDiffersFromPublished($page)) {
+            $this->error = 'That page is already published, and the draft has no changes.';
+
+            return;
+        }
+
+        try {
+            app(PlatformSiteAddressAction::class)->handle($this->businessId);
+
+            $result = $action->handle($this->businessId, $page->id, $page->draft_blocks ?? []);
+            if ($result['status'] === 'published') {
+                $deployment = app(LatestDeploymentForPageAction::class)->handle($this->businessId, $page->id);
+
+                if ($deployment && $deployment->status === 'deployed') {
+                    $this->success = $page->slug.' is live at '.url('/sites/'.$this->businessId.'/'.$deployment->deploy_hash);
+                } elseif ($deployment && $deployment->status === 'rolled_back') {
+                    $this->success = $page->slug.' was published but the deploy was rolled back: '.$deployment->rollback_reason;
+                } else {
+                    $this->success = 'published, not yet deployed';
+                }
+            }
+        } catch (\Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
     public function mount(PageReadAction $pages): void
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager), 403);
-        $this->businessId = Tenancy::id();
+        $this->businessId = Tenancy::idOrFail();
 
         $home = $pages->homeFor($this->businessId) ?? Page::where('business_id', $this->businessId)->orderBy('id')->first();
         $this->pageId = $home?->id;
@@ -34,7 +87,21 @@ class Studio extends Component
 
     public function selectBlock(int $index): void
     {
+        if ($this->pageId === null) {
+            return;
+        }
+
+        $page = Page::where('business_id', $this->businessId)->find($this->pageId);
+        if (! $page || ! is_array($page->draft_blocks) || $index < 0 || $index >= count($page->draft_blocks)) {
+            return;
+        }
+
         $this->selectedBlockIndex = $index;
+    }
+
+    public function updatedPageId(): void
+    {
+        $this->selectedBlockIndex = null;
     }
 
     public function render()
@@ -46,7 +113,8 @@ class Studio extends Component
 
         if ($this->pageId !== null) {
             $selectedPage = Page::where('business_id', $this->businessId)->findOrFail($this->pageId);
-            $previewHtml = app(PagePreview::class)->html($selectedPage, false);
+            $hasProposal = isset($selectedPage->draft_meta['pending_edit']);
+            $previewHtml = app(PagePreview::class)->html($selectedPage, $hasProposal);
 
             $script = <<<'HTML'
 <script>

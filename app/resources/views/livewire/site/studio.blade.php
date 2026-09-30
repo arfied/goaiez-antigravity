@@ -37,7 +37,26 @@
                     <!-- Inspector -->
                     <div class="w-64 border border-rule p-4 rounded bg-paper flex flex-col">
                         <div class="mb-4">
-                            <a href="{{ route('x-103.pages', ['edit' => $pageId]) }}" class="block w-full text-center px-4 py-2 bg-brand text-white font-bold rounded">Open in Pages</a>
+                            @if(isset($selectedPage) && isset($selectedPage->draft_meta['pending_edit']))
+                                <div class="mb-2 p-2 bg-yellow-100 text-yellow-800 text-sm font-bold rounded">
+                                    Previewing AI proposal
+                                </div>
+                            @endif
+                            @if($error)
+                                <div class="mb-2 p-2 bg-red-100 text-red-800 text-sm rounded">{{ $error }}</div>
+                            @endif
+                            @if($success)
+                                <div class="mb-2 p-2 bg-green-100 text-green-800 text-sm rounded">{{ $success }}</div>
+                            @endif
+
+                            @if(empty($selectedPage->draft_blocks))
+                                <a href="{{ route('x-103.site-build') }}" class="block w-full text-center px-4 py-2 bg-brand text-white font-bold rounded mb-2">Build my site</a>
+                            @else
+                                <button wire:click="publish({{ $pageId }})" class="block w-full text-center px-4 py-2 bg-brand text-white font-bold rounded mb-2">Publish draft</button>
+                            @endif
+                            <div class="text-center">
+                                <a href="{{ route('x-103.pages', ['edit' => $pageId]) }}" class="text-sm underline text-brand">Open in Pages</a>
+                            </div>
                         </div>
                         
                         <h2 class="font-bold mb-2">Inspector</h2>
@@ -55,7 +74,7 @@
                 </div>
             @else
                 <div class="flex items-center justify-center h-full">
-                    <p class="text-ink-2">You have no pages yet. Run 'Build my site' on the Pages screen first.</p>
+                    <p class="text-ink-2">You have no pages yet. <a href="{{ route('x-103.site-build') }}" class="underline text-brand">Run 'Build my site'</a> first.</p>
                 </div>
             @endif
         </div>
