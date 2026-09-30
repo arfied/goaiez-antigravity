@@ -31,14 +31,13 @@ final class MigrationDryRunAction
         $rejectCount = 0;
 
         foreach ($records as $index => $record) {
-            // Validation: require phone or email
-            if (empty($record['phone']) && empty($record['email'])) {
+            if (empty($record['phone'])) {
                 MigrationReject::create([
                     'business_id' => $businessId,
                     'migration_run_id' => $run->id,
                     'record_index' => $index,
                     'raw_data' => $record,
-                    'rejection_reason' => 'Missing contact identifier (phone or email required)',
+                    'rejection_reason' => 'No phone number — this import matches people by phone, so a record with only an email cannot be brought in',
                 ]);
 
                 Event::dispatch(new MigrationRecordRejected($businessId, $run->id, $index, 'missing_contact'));
