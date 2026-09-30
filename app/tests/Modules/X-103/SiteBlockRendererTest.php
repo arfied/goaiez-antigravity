@@ -324,4 +324,45 @@ class SiteBlockRendererTest extends TestCase
         $this->assertStringNotContainsString('url(', $html);
         $this->assertStringNotContainsString('@import', $html);
     }
+
+    public function test_every_rendered_block_carries_its_index_and_type(): void
+    {
+        $renderer = new SiteBlockRenderer;
+        $blocks = [
+            ['type' => 'hero', 'headline' => 'Hero'],
+            ['type' => 'about', 'text' => 'About'],
+            ['type' => 'services', 'items' => [['name' => 'Service']]],
+        ];
+
+        $html = $renderer->render($blocks, []);
+
+        $this->assertStringContainsString('data-block-index="0"', $html);
+        $this->assertStringContainsString('data-block-type="hero"', $html);
+        $this->assertStringContainsString('data-block-index="1"', $html);
+        $this->assertStringContainsString('data-block-type="about"', $html);
+        $this->assertStringContainsString('data-block-index="2"', $html);
+        $this->assertStringContainsString('data-block-type="services"', $html);
+
+        $this->assertEquals(3, substr_count($html, 'data-block-index='));
+    }
+
+    public function test_a_skipped_block_contributes_no_index(): void
+    {
+        $renderer = new SiteBlockRenderer;
+        $blocks = [
+            ['type' => 'about', 'text' => 'About'],
+            ['type' => 'unknown_type', 'foo' => 'bar'],
+            ['type' => 'services', 'items' => [['name' => 'Service']]],
+        ];
+
+        $html = $renderer->render($blocks, []);
+
+        $this->assertStringContainsString('data-block-index="0"', $html);
+        $this->assertStringContainsString('data-block-type="about"', $html);
+        $this->assertStringContainsString('data-block-index="2"', $html);
+        $this->assertStringContainsString('data-block-type="services"', $html);
+
+        $this->assertStringNotContainsString('data-block-index="1"', $html);
+        $this->assertEquals(2, substr_count($html, 'data-block-index='));
+    }
 }

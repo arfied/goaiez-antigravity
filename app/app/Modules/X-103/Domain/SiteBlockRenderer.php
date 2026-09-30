@@ -97,7 +97,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 ';
 
         $renderedCount = 0;
-        foreach ($contentBlocks as $block) {
+        foreach ($contentBlocks as $blockIndex => $block) {
             $type = $block['type'] ?? '';
             if (! in_array($type, [
                 'hero', 'about', 'services', 'reviews_strip',
@@ -124,6 +124,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
                     'block' => $block,
                     'context' => $context,
                     'band' => $band,
+                    'blockIndex' => $blockIndex,
                 ])->render();
             } catch (\Throwable $e) {
                 // The page still deploys without this block (owner's call whether it
