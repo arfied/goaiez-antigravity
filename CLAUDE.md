@@ -2845,6 +2845,39 @@ repo has leaked two passwords into pushed history already).
 is a true trap and it was not this one — writing down the mechanism I could not distinguish, rather than the
 one that sounded right, is the whole of N127's second ruling.
 
+⛔ **"EVERY COMMAND RUNS THERE" + `php artisan doctor` IS A CONTRADICTION I HAVE SHIPPED IN EVERY MERGE BRIEF,
+AND TWO CODERS RESOLVED IT OPPOSITE WAYS (N348, 2026-09-30, wave 992).** Every brief opens *"Checkout:
+`/home/goaiez/agents/grs-antig`. **Every command runs there.**"* and then item 1 says `php artisan doctor`.
+⛔ **There is no `artisan` at the repo root** — `ls artisan` → *no such file*; it is **`app/artisan`**, because
+the Laravel application lives one directory down. So the brief names a working directory and then, four lines
+later, a command that cannot run in it.
+**Wave 992's coder stopped at item 1 and refused**, quoting the reason and citing my own closing line
+(*"if any instruction here is wrong, stop and say so rather than working around it"*). ⭐ **That is exactly
+right and it cost one wave and nothing else** — a stop is not a BLOCK, no assertion was read, no dispatch of
+the cap is spent (the wave-126 ruling). **Wave 991's coder, on the identical instruction ninety minutes
+earlier, silently `cd`-ed into `app/` and produced `.doctor-pre-w991.txt` (1768 bytes, 23:34).** One
+sentence, two readings, and the *compliant* one is the one that looks like a failure.
+⭐ **The tell I had and did not use: I have been running it correctly by hand all session** —
+`cd …/grs-antig/app; php artisan doctor > ../.agents/supervisor/.doctor-t992.txt` — so my own shell knew what
+my brief did not say. **A command I only ever run with a `cd` in front of it may not be written into a brief
+without one.**
+**RULED: a brief states the directory PER COMMAND GROUP, never once at the top.** Three groups exist in this
+repo and they are not interchangeable:
+```
+repo root  /home/goaiez/agents/grs-antig        git, composer dump-autoload, bin/supervise.sh
+app/       /home/goaiez/agents/grs-antig/app    php artisan *, ./vendor/bin/pest, phpstan, pint
+mailbox    .agents/supervisor/                  every artefact path (N172)
+```
+⛔ And the artefact redirect is where this bites twice: from `app/`, `.agents/supervisor/.doctor-pre-wN.txt`
+resolves to **`app/.agents/supervisor/…`**, which is why SITE-371 left `app/.doctor-post.txt` and
+`app/.pest-post-s371.txt` behind in the same hour — *the same ambiguity, two waves, two different symptoms*.
+A brief that orders a command in `app/` and an artefact in the mailbox writes the redirect as `../` or
+absolute, and says which.
+⭐ The general shape is this file's oldest one pointed at myself: **two statements about one quantity, only
+one of them true** — the drifted-refusal-message family (N114, N126, N164), except here both statements were
+mine, in one document, and the quantity is a working directory. Every instance in that family was found by a
+reader who could not satisfy both; this one by a coder who said so instead of choosing.
+
 ## ⛔⛔ THREE LAWS OF LANE REVIEW (owner ruling, 2026-09-28, after N316). These are not notes.
 
 ### LAW 1 — A LANE'S WORK IS `git merge-base origin/main HEAD`..`HEAD`. NEVER `origin/main..lane`.
