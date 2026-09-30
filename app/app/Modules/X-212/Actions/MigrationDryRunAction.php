@@ -7,6 +7,7 @@ namespace App\Modules\X212\Actions;
 use App\Modules\X212\Events\MigrationDryRunReady;
 use App\Modules\X212\Events\MigrationRecordRejected;
 use App\Modules\X212\Events\MigrationStarted;
+use App\Modules\X212\Models\MigrationRecord;
 use App\Modules\X212\Models\MigrationReject;
 use App\Modules\X212\Models\MigrationRun;
 use Illuminate\Support\Facades\Event;
@@ -31,19 +32,25 @@ final class MigrationDryRunAction
         $rejectCount = 0;
 
         foreach ($records as $index => $record) {
-            // Validation: require phone or email
-            if (empty($record['phone']) && empty($record['email'])) {
+            if (empty($record['phone'])) {
                 MigrationReject::create([
                     'business_id' => $businessId,
                     'migration_run_id' => $run->id,
                     'record_index' => $index,
                     'raw_data' => $record,
-                    'rejection_reason' => 'Missing contact identifier (phone or email required)',
+                    'rejection_reason' => 'No phone number — this import matches people by phone, so a record with only an email cannot be brought in',
                 ]);
 
                 Event::dispatch(new MigrationRecordRejected($businessId, $run->id, $index, 'missing_contact'));
                 $rejectCount++;
             } else {
+                MigrationRecord::create([
+                    'business_id' => $businessId,
+                    'migration_run_id' => $run->id,
+                    'record_index' => $index,
+                    'raw_data' => $record,
+                ]);
+
                 $validCount++;
             }
         }

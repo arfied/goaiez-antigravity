@@ -13,7 +13,10 @@ use App\Modules\X212\Domain\X212Engine;
 use App\Modules\X212\Events\MigrationCommitted;
 use App\Modules\X212\Events\MigrationDryRunReady;
 use App\Modules\X212\Events\MigrationStarted;
+use App\Modules\X212\Models\MigrationRecord;
 use App\Modules\X212\Models\MigrationReject;
+use App\Modules\X212\Models\MigrationRun;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -104,5 +107,95 @@ class X212Test extends TestCase
         $engine->validateImport([
             ['first_name' => 'Alice', 'phone' => '', 'email' => ''],
         ]);
+    }
+
+    public function test_dry_run_rejects_email_only_record(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Migration Agreement Tenant']);
+        Tenancy::set((int) $biz->id);
+
+        $records = [
+            ['phone' => '', 'email' => 'only@example.test', 'first_name' => 'Eve'],
+            ['phone' => '+15551230001', 'email' => '', 'first_name' => 'Ada'],
+        ];
+
+        $run = $this->dryRunAction->handle($biz->id, 'test_source', $records);
+
+        $this->assertEquals(1, $run->rejected_records);
+        $this->assertEquals(1, $run->imported_records);
+
+        $reject = MigrationReject::where('migration_run_id', $run->id)->first();
+        $this->assertNotNull($reject);
+        $this->assertStringContainsString('No phone number', $reject->rejection_reason);
+    }
+
+    public function test_commit_refuses_run_not_dry_run_ready(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Migration Agreement Tenant']);
+        Tenancy::set((int) $biz->id);
+
+        $run = MigrationRun::create([
+            'business_id' => $biz->id,
+            'source_system' => 'test_source',
+            'status' => 'started',
+            'total_records' => 1,
+            'imported_records' => 0,
+            'rejected_records' => 0,
+            'is_silent_mode' => true,
+        ]);
+
+        $peopleCountBefore = Person::where('business_id', $biz->id)->count();
+
+        $records = [['phone' => '+15551230001', 'first_name' => 'Ada']];
+
+        $result = $this->commitAction->handle($biz->id, $run->id, $records);
+
+        $this->assertEquals('refused', $result['status']);
+
+        $peopleCountAfter = Person::where('business_id', $biz->id)->count();
+        $this->assertEquals($peopleCountBefore, $peopleCountAfter);
+    }
+
+    public function test_dry_run_promise_and_commit_result_agree(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Migration Agreement Tenant']);
+        Tenancy::set((int) $biz->id);
+
+        $records = [
+            ['phone' => '+15551230001', 'email' => '', 'first_name' => 'Ada'],
+            ['phone' => '', 'email' => 'only@example.test', 'first_name' => 'Eve'],
+        ];
+
+        $run = $this->dryRunAction->handle($biz->id, 'test_source', $records);
+        $promisedCount = $run->imported_records;
+
+        $commitRecords = [
+            ['phone' => '+15551230001', 'email' => '', 'first_name' => 'Ada'],
+        ];
+        $result = $this->commitAction->handle($biz->id, $run->id, $commitRecords);
+
+        $this->assertEquals($promisedCount, $result['imported_records']);
+    }
+
+    public function test_dry_run_persists_valid_records(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Migration Valid Records Tenant']);
+        Tenancy::set((int) $biz->id);
+
+        $records = [
+            ['phone' => '+15551230001', 'email' => '', 'first_name' => 'Ada'],
+            ['phone' => '', 'email' => 'only@example.test', 'first_name' => 'Eve'],
+        ];
+
+        $run = $this->dryRunAction->handle($biz->id, 'test_source', $records);
+
+        $count = MigrationRecord::where('migration_run_id', $run->id)->count();
+        $this->assertEquals(1, $count);
+
+        $record = MigrationRecord::where('migration_run_id', $run->id)->first();
+        $this->assertNotNull($record);
+        $this->assertEquals(0, $record->record_index);
+        $this->assertIsArray($record->raw_data);
+        $this->assertEquals('+15551230001', $record->raw_data['phone']);
     }
 }

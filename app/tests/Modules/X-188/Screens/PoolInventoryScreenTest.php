@@ -51,4 +51,57 @@ class PoolInventoryScreenTest extends TestCase
 
         Livewire::test(PoolInventory::class)->assertOk();
     }
+
+    public function test_claiming_assigns_a_number(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $this->assertDatabaseMissing('number_pool', ['business_id' => $biz->id]);
+
+        Livewire::test(PoolInventory::class)
+            ->call('claimNumber')
+            ->assertOk();
+
+        $this->assertDatabaseHas('number_pool', [
+            'business_id' => $biz->id,
+            'status' => 'assigned',
+        ]);
+    }
+
+    public function test_claiming_twice_yields_same_number(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $this->assertDatabaseMissing('number_pool', ['business_id' => $biz->id]);
+
+        $component = Livewire::test(PoolInventory::class);
+
+        $component->call('claimNumber')->assertOk();
+        $this->assertEquals(1, NumberPool::where('business_id', $biz->id)->count());
+
+        $assignedNumber = NumberPool::where('business_id', $biz->id)->first()->phone_number;
+
+        $component->call('claimNumber')->assertOk();
+
+        $this->assertEquals(1, NumberPool::where('business_id', $biz->id)->count());
+        $this->assertDatabaseHas('number_pool', [
+            'business_id' => $biz->id,
+            'phone_number' => $assignedNumber,
+        ]);
+    }
+
+    public function test_non_owner_is_refused(): void
+    {
+        $staff = User::factory()->create(['role' => UserRole::Staff]);
+        $this->provisionTenant();
+        $this->actingAs($staff);
+
+        Livewire::test(PoolInventory::class)
+            ->call('claimNumber')
+            ->assertForbidden();
+    }
 }
