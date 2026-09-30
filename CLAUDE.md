@@ -3319,3 +3319,56 @@ improvised.
 **RULED, and it is cheaper than any of the six: before a brief names a path, a ref, a sha or a command, run the
 one command that proves it exists.** `ls`, `git rev-parse --short`, `find -maxdepth 2 -name`. ⭐ The command-group
 table is now DERIVED at the top of every merge brief rather than remembered, and that is the form the rule takes.
+
+⛔⛔ **A SHIM INSTALL IS VERIFIED BY `test -x`, AND I ALMOST BROKE `git` FOR ALL EIGHT LANES BECAUSE `bash -n`
+CANNOT SEE A MODE BIT (N365, 2026-09-30, owner ruling).** N342's patch was built here, parser-verified, and
+driven in a scratch repo against seven known-answer inputs — `checkout feature` and a tag allowed; `HEAD~1`,
+`HEAD`, `HEAD^`, `@~1` and a bare sha all refused. ⛔ **And the file went in at mode 644.** I wrote it with a
+Python `open(…,'w')`, `mv` preserved that mode, and `/home/goaiez/agents/coder-bin/git` landed **not
+executable**. PATH finds the file and the mode bit refuses it; **bash does NOT fall through to the next PATH
+entry**, so every lane coder's `git` would have died with a permission error until somebody noticed.
+⭐ **The install printed `parses` and that line was TRUE.** `bash -n` returned rc=0 on a non-executable file,
+because a syntax checker reads bytes and knows nothing about a mode. ⛔ **And N151's own remedy would not have
+caught it either** — the md5 moved exactly as N151 requires, and an md5 is equally blind to a permission bit.
+Two honest instruments, both silent on the one property that mattered.
+**RULED, and it is the owner's wording: after any shim install, `test -x` on the live PATH `git`, or abort.
+`bash -n` and md5 are not that check.** The install is three commands and the third is now non-negotiable:
+```
+cp <patched> /home/goaiez/agents/coder-bin/.git.new
+mv /home/goaiez/agents/coder-bin/.git.new /home/goaiez/agents/coder-bin/git
+test -x /home/goaiez/agents/coder-bin/git && bash -n /home/goaiez/agents/coder-bin/git && echo INSTALLED || echo "⛔ ABORT — chmod 755 it now"
+```
+⭐ **And the conclusive post-install check is behavioural, against the LIVE file, not a copy.** An md5 match
+between a probed copy and an installed file proves identity of *content*; it proves nothing about whether the
+installed thing can run. Driving `/home/goaiez/agents/coder-bin/git` itself in a scratch repo is what settled it
+— `checkout feature` rc=0, `checkout HEAD~1` rc=1, `status --short` rc=0 — and that is the form every future
+guard install takes.
+⭐ The family this joins is the day's largest: *an instrument is only as honest as the property it measures.*
+§2e's baseline, wave 122's needle, N123's sign, N334's cap, N333's window, N360's second-parent diff, N361's
+choice of tip — and now a **mode bit** that two passing checks could not see.
+
+⭐ **N342 IS CLOSED AT THE GUARD (2026-09-30, owner ruling, second occurrence of the same command).**
+`coder-bin/git` is now 265 lines. The old test was *"does the argument exist as a path"*, and **"exists as a
+path" is not the test** — `HEAD~1` is neither a path nor a branch, so it fell through to `exec` and detached
+HEAD twice: stages put one commit off-branch on 09-29, the ui lane put **six** off-branch on 09-30, the entire
+Site studio loop. The new arm refuses any 2-argument `checkout` whose target resolves to neither
+`refs/heads/<x>` nor `refs/tags/<x>` — so `HEAD`, `HEAD~N`, `HEAD^`, `@~N`, a bare sha and a remote-tracking
+ref like `origin/main` are all refused, every one of which detaches.
+⭐ **It cannot strand the lane it protects:** `git checkout <local branch>` still works, which is exactly a
+detached lane's recovery route, and `git checkout HEAD -- <files>` is untouched because the merge-restore
+opening handles it at 3+ arguments.
+⚠️ **One ambiguity in the ruling, implemented literally and recorded rather than resolved silently:** it says
+*"not an existing branch or tag"* (tags allowed) and also *"whose destination is not a named branch must
+fail"* (tags refused). **A tag checkout detaches too** — the probe printed git's own *"Note: switching to
+'v1'"*. Tags are allowed because the enumeration is explicit and this repo has **zero tags** and no tag
+workflow, so the clause cannot bite; deleting the `refs/tags` test makes it branch-only the day a tag appears.
+
+⭐ **AND THE BRANCH-POINTER RULE THAT CAME WITH IT (owner, 2026-09-30).** ⛔ *"Do not write a brief that names
+`track/<lane>` as a sha unless you just ran `rev-parse refs/heads/track/<lane>` in the same breath. Checkout
+HEAD is not the branch."* I had read `git -C <lane> rev-parse --short HEAD` — the **checkout's** HEAD — and
+written it into a merge brief as the branch's tip. The brief then compared the branch, disagreed with itself,
+and stopped. ⭐ The stop was the guard working: merging the real branch tip would have carried **34 real product
+files and zero `ask`/`applyProposal`/`discardProposal`** — an empty-merge trap with a full tree, where `%P`=2,
+a non-zero product count, an empty per-track diff and no conflicts are **all true**.
+**RULED: a branch tip is `git rev-parse refs/heads/<name>`, measured in the same command that writes it down.
+`HEAD` in a worktree is not the branch, and a detached HEAD makes them different objects with one name.**
