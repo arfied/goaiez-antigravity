@@ -7,6 +7,7 @@ namespace App\Modules\X212\Actions;
 use App\Modules\X212\Events\MigrationDryRunReady;
 use App\Modules\X212\Events\MigrationRecordRejected;
 use App\Modules\X212\Events\MigrationStarted;
+use App\Modules\X212\Models\MigrationRecord;
 use App\Modules\X212\Models\MigrationReject;
 use App\Modules\X212\Models\MigrationRun;
 use Illuminate\Support\Facades\Event;
@@ -43,6 +44,13 @@ final class MigrationDryRunAction
                 Event::dispatch(new MigrationRecordRejected($businessId, $run->id, $index, 'missing_contact'));
                 $rejectCount++;
             } else {
+                MigrationRecord::create([
+                    'business_id' => $businessId,
+                    'migration_run_id' => $run->id,
+                    'record_index' => $index,
+                    'raw_data' => $record,
+                ]);
+
                 $validCount++;
             }
         }

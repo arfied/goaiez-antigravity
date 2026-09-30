@@ -13,6 +13,7 @@ use App\Modules\X212\Domain\X212Engine;
 use App\Modules\X212\Events\MigrationCommitted;
 use App\Modules\X212\Events\MigrationDryRunReady;
 use App\Modules\X212\Events\MigrationStarted;
+use App\Modules\X212\Models\MigrationRecord;
 use App\Modules\X212\Models\MigrationReject;
 use App\Modules\X212\Models\MigrationRun;
 use App\Support\Tenancy;
@@ -174,5 +175,27 @@ class X212Test extends TestCase
         $result = $this->commitAction->handle($biz->id, $run->id, $commitRecords);
 
         $this->assertEquals($promisedCount, $result['imported_records']);
+    }
+
+    public function test_dry_run_persists_valid_records(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Migration Valid Records Tenant']);
+        Tenancy::set((int) $biz->id);
+
+        $records = [
+            ['phone' => '+15551230001', 'email' => '', 'first_name' => 'Ada'],
+            ['phone' => '', 'email' => 'only@example.test', 'first_name' => 'Eve'],
+        ];
+
+        $run = $this->dryRunAction->handle($biz->id, 'test_source', $records);
+
+        $count = MigrationRecord::where('migration_run_id', $run->id)->count();
+        $this->assertEquals(1, $count);
+
+        $record = MigrationRecord::where('migration_run_id', $run->id)->first();
+        $this->assertNotNull($record);
+        $this->assertEquals(0, $record->record_index);
+        $this->assertIsArray($record->raw_data);
+        $this->assertEquals('+15551230001', $record->raw_data['phone']);
     }
 }
