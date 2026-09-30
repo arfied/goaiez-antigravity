@@ -33,11 +33,11 @@ class WebsiteBuilderRedirectTest extends TestCase
         return [$user, $business];
     }
 
-    public function test_website_builder_redirects_to_x103_pages(): void
+    public function test_website_builder_redirects_to_the_site_studio(): void
     {
         [$user, $business] = $this->createTenant(advanced: true);
 
         $response = $this->actingAs($user)->get(route('advanced.website-builder'));
-        $response->assertRedirect(route('x-103.pages'));
+        $response->assertRedirect(route('site.studio'));
     }
 }
