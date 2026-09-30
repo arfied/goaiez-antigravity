@@ -105,6 +105,7 @@ final class HeadlineProposeAction
                     ],
                 ],
                 'required' => ['headlines'],
+                'additionalProperties' => false,
             ]
         ));
 
