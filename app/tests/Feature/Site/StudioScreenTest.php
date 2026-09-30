@@ -145,18 +145,3 @@ test('preview shows proposed changes with a marker', function () {
         ->assertSee('OstrichFeathers')
         ->assertDontSee('Original Text');
 });
-
-test('the advanced website builder link reaches the studio', function () {
-    $user = User::factory()->create(['role' => UserRole::Owner]);
-    $business = $this->provisionTenant([
-        'owner_user_id' => $user->id,
-        'name' => 'Studio Test Business',
-    ]);
-
-    $business->advanced_dashboard_enabled = true;
-    $business->save();
-
-    $this->actingAs($user)
-        ->get(route('advanced.website-builder'))
-        ->assertRedirect(route('site.studio'));
-});

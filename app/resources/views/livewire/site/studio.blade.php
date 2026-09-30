@@ -38,15 +38,15 @@
                     <div class="w-64 border border-rule p-4 rounded bg-paper flex flex-col">
                         <div class="mb-4">
                             @if(isset($selectedPage) && isset($selectedPage->draft_meta['pending_edit']))
-                                <div class="mb-2 p-2 bg-yellow-100 text-yellow-800 text-sm font-bold rounded" id="proposal-marker">
+                                <div class="mb-2 p-2 bg-attention-bg text-attention text-sm font-bold rounded" id="proposal-marker">
                                     Previewing AI proposal
                                 </div>
                             @endif
                             @if($error)
-                                <div class="mb-2 p-2 bg-red-100 text-red-800 text-sm rounded">{{ $error }}</div>
+                                <div class="mb-2 p-2 bg-alert-bg text-alert text-sm rounded">{{ $error }}</div>
                             @endif
                             @if($success)
-                                <div class="mb-2 p-2 bg-green-100 text-green-800 text-sm rounded">{{ $success }}</div>
+                                <div class="mb-2 p-2 bg-ok-bg text-ok text-sm rounded">{{ $success }}</div>
                             @endif
 
                             @if(isset($selectedPage) && isset($selectedPage->draft_meta['pending_edit']))
