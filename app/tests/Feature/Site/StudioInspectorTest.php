@@ -7,6 +7,7 @@ use App\Livewire\Site\Studio;
 use App\Models\User;
 use App\Modules\X103\Models\Page;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -100,5 +101,122 @@ class StudioInspectorTest extends TestCase
 
         $page->refresh();
         $this->assertEquals($originalBlocks, $page->draft_blocks);
+    }
+
+    public function test_ask_then_edit_and_the_proposal_moves_while_the_draft_does_not(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $business = TestCase::provisionTenant(['name' => 'Inspector Owner', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($business->id);
+
+        $page = Page::create([
+            'business_id' => $business->id, 'slug' => 'p'.rand(), 'title' => 'T',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old', 'subline' => 'Old'],
+                ['type' => 'about', 'text' => 'Unchanged'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [
+                    ['message' => ['content' => json_encode([
+                        'patches' => [
+                            ['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'NEWPROPOSED'],
+                        ],
+                        'explanation' => 'Updated hero.',
+                    ])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ], 200, ['Content-Type' => 'application/json']),
+        ]);
+
+        $lw = Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->set('request', 'Change hero')
+            ->call('ask');
+
+        $lw->call('selectBlock', 0)
+            ->set('blockHeadline', 'Edited Proposed')
+            ->call('setBlockField');
+
+        $page->refresh();
+        $this->assertSame('Edited Proposed', $page->draft_meta['pending_edit']['blocks'][0]['headline']);
+        $this->assertSame('Old', $page->draft_blocks[0]['headline']);
+    }
+
+    public function test_after_discard_draft_blocks_is_unchanged_from_before_the_ask(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $business = TestCase::provisionTenant(['name' => 'Inspector Owner', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($business->id);
+
+        $page = Page::create([
+            'business_id' => $business->id, 'slug' => 'p'.rand(), 'title' => 'T',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old', 'subline' => 'Old'],
+                ['type' => 'about', 'text' => 'Unchanged'],
+            ],
+            'is_published' => false,
+        ]);
+
+        $originalBlocks = $page->draft_blocks;
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [
+                    ['message' => ['content' => json_encode([
+                        'patches' => [
+                            ['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'NEWPROPOSED'],
+                        ],
+                        'explanation' => 'Updated hero.',
+                    ])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ], 200, ['Content-Type' => 'application/json']),
+        ]);
+
+        $lw = Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->set('request', 'Change hero')
+            ->call('ask');
+
+        $lw->call('selectBlock', 0)
+            ->set('blockHeadline', 'Edited Proposed')
+            ->call('setBlockField');
+
+        $lw->call('discardProposal');
+
+        $page->refresh();
+        $this->assertEquals($originalBlocks, $page->draft_blocks);
+    }
+
+    public function test_a_refused_ask_leaves_success_null_and_sets_error(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $business = TestCase::provisionTenant(['name' => 'Inspector Owner', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($business->id);
+
+        $page = Page::create([
+            'business_id' => $business->id, 'slug' => 'p'.rand(), 'title' => 'T',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old', 'subline' => 'Old'],
+                ['type' => 'about', 'text' => 'Unchanged'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->set('request', '')
+            ->call('ask')
+            ->assertSet('success', null)
+            ->assertNotSet('error', null);
     }
 }

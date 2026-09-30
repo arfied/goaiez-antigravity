@@ -20,7 +20,11 @@ final class SiteBlockFieldSetAction
         return DB::transaction(function () use ($businessId, $pageId, $blockIndex, $field, $value) {
             $page = Page::where('business_id', $businessId)->findOrFail($pageId);
 
-            $result = $this->applier->apply($page->draft_blocks ?? [], [[
+            $pending = $page->draft_meta['pending_edit']['blocks'] ?? null;
+            $targetIsPending = is_array($pending);
+            $blocks = $targetIsPending ? $pending : ($page->draft_blocks ?? []);
+
+            $result = $this->applier->apply($blocks, [[
                 'op' => 'set_string',
                 'block_index' => $blockIndex,
                 'field' => $field,
@@ -32,19 +36,23 @@ final class SiteBlockFieldSetAction
             }
 
             $meta = $page->draft_meta ?? [];
-            if (! isset($meta['undo'])) {
-                $meta['undo'] = [];
-            }
-            $previousSiteTokens = Business::whereKey($businessId)->value('site_tokens');
-            if (is_string($previousSiteTokens)) {
-                $previousSiteTokens = json_decode($previousSiteTokens, true);
-            }
-            $meta['undo'][] = ['blocks' => $page->draft_blocks ?? [], 'site_tokens' => $previousSiteTokens];
-            if (count($meta['undo']) > 20) {
-                array_shift($meta['undo']);
+            if ($targetIsPending) {
+                $meta['pending_edit']['blocks'] = $result['blocks'];
+            } else {
+                if (! isset($meta['undo'])) {
+                    $meta['undo'] = [];
+                }
+                $previousSiteTokens = Business::whereKey($businessId)->value('site_tokens');
+                if (is_string($previousSiteTokens)) {
+                    $previousSiteTokens = json_decode($previousSiteTokens, true);
+                }
+                $meta['undo'][] = ['blocks' => $page->draft_blocks ?? [], 'site_tokens' => $previousSiteTokens];
+                if (count($meta['undo']) > 20) {
+                    array_shift($meta['undo']);
+                }
+                $page->draft_blocks = $result['blocks'];
             }
 
-            $page->draft_blocks = $result['blocks'];
             $page->draft_meta = $meta;
             $page->save();
 

@@ -124,9 +124,7 @@ class Studio extends Component
                 pageId: $this->pageId,
                 request: trim($this->request)
             );
-            if ($res['status'] === 'refused') {
-                $this->success = $res['reason'];
-            } else {
+            if ($res['status'] === 'proposed') {
                 $numEdits = $res['edits'];
                 $msg = "Proposed {$numEdits} edits with {$res['model']} — review it below, then Apply or Discard.";
                 if (($res['images'] ?? 0) > 0) {
@@ -134,6 +132,8 @@ class Studio extends Component
                 }
                 $this->success = $msg;
                 $this->request = '';
+            } else {
+                $this->error = $res['reason'];
             }
         } catch (Throwable $e) {
             $this->error = $e->getMessage();
@@ -199,12 +199,19 @@ class Studio extends Component
         }
 
         $page = Page::where('business_id', $this->businessId)->find($this->pageId);
-        if (! $page || ! is_array($page->draft_blocks) || $index < 0 || $index >= count($page->draft_blocks)) {
+        if (! $page) {
+            return;
+        }
+
+        $pending = $page->draft_meta['pending_edit']['blocks'] ?? null;
+        $blocks = is_array($pending) ? $pending : ($page->draft_blocks ?? []);
+
+        if (! is_array($blocks) || $index < 0 || $index >= count($blocks)) {
             return;
         }
 
         $this->selectedBlockIndex = $index;
-        $this->blockHeadline = $page->draft_blocks[$index]['headline'] ?? '';
+        $this->blockHeadline = $blocks[$index]['headline'] ?? '';
     }
 
     public function updatedPageId(): void
@@ -254,11 +261,12 @@ HTML;
         }
 
         $selectedBlockType = null;
-        $currentHeadline = null;
-        if ($this->selectedBlockIndex !== null && $selectedPage && is_array($selectedPage->draft_blocks)) {
-            if (isset($selectedPage->draft_blocks[$this->selectedBlockIndex])) {
-                $selectedBlockType = $selectedPage->draft_blocks[$this->selectedBlockIndex]['type'] ?? 'unknown';
-                $currentHeadline = $selectedPage->draft_blocks[$this->selectedBlockIndex]['headline'] ?? null;
+        if ($this->selectedBlockIndex !== null && $selectedPage) {
+            $pending = $selectedPage->draft_meta['pending_edit']['blocks'] ?? null;
+            $blocks = is_array($pending) ? $pending : ($selectedPage->draft_blocks ?? []);
+
+            if (is_array($blocks) && isset($blocks[$this->selectedBlockIndex])) {
+                $selectedBlockType = $blocks[$this->selectedBlockIndex]['type'] ?? 'unknown';
             }
         }
 
@@ -267,7 +275,6 @@ HTML;
             'selectedPage' => $selectedPage,
             'previewHtml' => $previewHtml,
             'selectedBlockType' => $selectedBlockType,
-            'currentHeadline' => $currentHeadline,
         ]);
     }
 }
