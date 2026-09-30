@@ -13,7 +13,7 @@
                 @foreach($pages as $page)
                     <li>
                         <button wire:click="$set('pageId', {{ $page->id }})" 
-                                class="w-full text-left px-2 py-1 text-sm rounded hover:bg-paper-2 {{ $pageId === $page->id ? 'font-bold bg-paper-2' : '' }}">
+                                class="w-full text-left px-2 py-1 text-sm rounded hover:bg-canvas {{ $pageId === $page->id ? 'font-bold bg-card' : '' }}">
                             {{ $page->title ?: 'Untitled' }}
                         </button>
                     </li>
@@ -25,12 +25,6 @@
         <div class="flex-1 p-4">
             @if($pageId)
                 <div class="flex gap-4 h-full">
-                    <!-- Chat Placeholder -->
-                    <div class="w-64 border border-rule p-4 rounded bg-paper">
-                        <h2 class="font-bold mb-2">Chat</h2>
-                        <p class="text-sm text-ink-2">AI chat will live here in a later wave.</p>
-                    </div>
-
                     <!-- Canvas -->
                     <div class="flex-1">
                         <iframe title="Site preview"
@@ -41,22 +35,15 @@
                     </div>
 
                     <!-- Inspector -->
-                    <div class="w-64 border border-rule p-4 rounded bg-paper">
+                    <div class="w-64 border border-rule p-4 rounded bg-paper flex flex-col">
+                        <div class="mb-4">
+                            <a href="{{ route('x-103.pages', ['edit' => $pageId]) }}" class="block w-full text-center px-4 py-2 bg-brand text-white font-bold rounded">Open in Pages</a>
+                        </div>
+                        
                         <h2 class="font-bold mb-2">Inspector</h2>
                         @if($selectedBlockIndex !== null)
                             <div class="text-sm">
                                 <p><span class="font-semibold">Block Index:</span> {{ $selectedBlockIndex }}</p>
-                                @php
-                                    $selectedBlockType = null;
-                                    if ($selectedPage && is_array($selectedPage->draft_blocks)) {
-                                        // The blocks array might be sequential or keyed, 
-                                        // so we should look for the block at the given index.
-                                        // Usually draft_blocks is a sequential array.
-                                        if (isset($selectedPage->draft_blocks[$selectedBlockIndex])) {
-                                            $selectedBlockType = $selectedPage->draft_blocks[$selectedBlockIndex]['type'] ?? 'unknown';
-                                        }
-                                    }
-                                @endphp
                                 @if($selectedBlockType)
                                     <p><span class="font-semibold">Type:</span> {{ $selectedBlockType }}</p>
                                 @endif
@@ -68,7 +55,7 @@
                 </div>
             @else
                 <div class="flex items-center justify-center h-full">
-                    <p class="text-ink-2">Select a page to edit.</p>
+                    <p class="text-ink-2">You have no pages yet. Run 'Build my site' on the Pages screen first.</p>
                 </div>
             @endif
         </div>
