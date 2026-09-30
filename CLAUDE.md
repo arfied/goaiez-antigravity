@@ -3220,3 +3220,40 @@ declares a gate is grepped for the launcher's needle before dispatch.** ⭐ Gene
 the document it polices are two sources of truth, and the one nobody re-reads is the document.** Wave 122 ruled
 *derive the needle from the file*; this is the mirror — **derive the file from the needle** when the needle is
 the thing that must not move.
+
+⛔⛔ **N358's FINDING STANDS AND ITS REMEDY WAS FALSE ON ITS FIRST USE — `agy` WRITES TO ITS LOG THROUGHOUT THE
+RUN (N359, 2026-09-30, one hour after N358).** N358 ruled *"a non-empty `agy` log is the NECESSARY condition for
+a parked-coder kill"*, derived from two readings (63 bytes = finished, 0 bytes = running). I armed a watcher on
+that rule and its **first output** was `opens as finishing(log=185b)` **seconds after dispatch**, on a run that
+had barely started. The log said:
+```
+root agent idle; waiting up to 8h0m0s for 2 background task(s)
+I've scheduled a background task to wait for the tests. I will proceed with the rest of the steps once …
+```
+⛔ **So `agy` writes progress lines while it works, and log-bytes says nothing about exit.** Measured across
+every `agy-*-run*.log` on the box: they run **400–2100 bytes** and are full of progress content. The 0-byte and
+63-byte readings N358 generalised from were simply *early* and *short*.
+
+⭐ **The correct sentinel is the WRAPPER'S OWN, and it discriminates perfectly.** `launch-coder.sh` ends its
+command with `echo "AGY_EXIT=$?" >> <log>`, so:
+```
+grep -c "AGY_EXIT=" <log>   → 1  ⇒ the run is OVER (normally, by timeout, or killed)
+                            → 0  ⇒ still running, whatever its REPORT.md says
+```
+Controlled on cases with **known and opposite** answers (N254): run 387, live at the time → **0**; run 386,
+killed → **1**; and every completed run in `/home/goaiez/tmp/` → **1**. It is also consistent with N184, whose
+empty-exit signature is *"an 11-byte log"* — that is `AGY_EXIT=0\n` and nothing else.
+**RULED: `AGY_EXIT=` in the log is the only finished-signal. Not log bytes, not `REPORT.md`, not the wrapper's
+CPU, not `coder.pid`.**
+
+⭐ **N358's actual finding is untouched and is the important half:** a `REPORT.md` written by a live writer is a
+draft, no irreversible act may rest on it, and I killed a working coder that way. The wrapper-vs-child chain
+correction stands too (`coder.pid` names the `bash -c`; kill the **agy** pid and the chain collapses cleanly).
+⛔ What was wrong was the *instrument I reached for to replace the bad one* — and it was wrong **in the same
+direction**, because a non-empty log makes a running coder look finished, which is exactly the misreading that
+caused the kill. **A remedy invented in the same breath as the finding inherits the finding's blind spot.**
+⭐ Fifth instrument of mine to be wrong in one day, and the thing that caught this one — as with the marker-file
+glob and the `.gate-*.txt` match — was **the watcher printing its own opening state against a hand reading**
+(N352's rule). Two for two: both times a control fired, it was my rule that was wrong, not the world. ⛔ *After
+building anything that measures, its FIRST output is data you do not trust* — including, and especially, when
+the thing it replaced was also mine.
