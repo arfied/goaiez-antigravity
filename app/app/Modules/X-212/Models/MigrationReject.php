@@ -15,5 +15,6 @@ class MigrationReject extends Model
     protected $casts = [
         'record_index' => 'integer',
         'raw_data' => 'array',
+        'resolved_at' => 'datetime',
     ];
 }
