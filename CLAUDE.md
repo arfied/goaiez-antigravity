@@ -2958,6 +2958,63 @@ SCOPE it is handed.* §2e's baseline, wave 122's needle, N123's sign, N334's `he
 and now a **directory**. Every one of them was a real measurement answering a smaller question than the one
 being asked.
 
+⛔⛔ **ANTHROPIC REJECTS EVERY JSON SCHEMA THIS APPLICATION SENDS, AND THE MODEL-ID FIX WAS A SECOND BUG ON THE
+SAME DEAD PATH (N351, 2026-09-30).** After N-the-model-id fix shipped and deployed, the owner reported
+`Done. http_400` **again**. The client discards the vendor's body (`AnthropicClient:88-91` logs only
+`'http_'.$response->status()` and `VendorLog::failure` stores only that string), so there was no evidence on
+disk. One real call with the body built by the client's own `body()` method via reflection produced the answer:
+
+```
+{"type":"error","error":{"type":"invalid_request_error",
+ "message":"output_config.format.schema: For 'object' type, 'additionalProperties' must be explicitly set to false"}}
+```
+
+Measured three ways on the live API, one call each:
+
+| schema | status |
+| :-- | :-- |
+| `additionalProperties` **omitted** | **400** |
+| `additionalProperties: true` | **400** — *"'additionalProperties: true' is not supported"* |
+| `additionalProperties: false` | **200** |
+
+⛔ **So every schema-constrained AI call in this repo 400s on Anthropic**, not just "Ask the AI":
+`SiteEditProposeAction` and `SitePageProposeAction` (`site_authoring`, which is 100% schema'd), and
+`HeadlineProposeAction`, `FaqDraftAction`, `SeoDraftAction`, `QuestionAnswerDraftAction` (`site_copy` — all four
+send a schema and none sets `additionalProperties: false`). Only `SiteCopyPolishAction`, which sends no schema,
+works on Anthropic.
+⭐ **The schemas are not wrong — they are valid for OpenAI and invalid for Anthropic**, and the client treats the
+two providers' structured-output dialects as interchangeable. That is why everything worked for months: every
+task defaulted to an OpenAI model, so the Anthropic branch was never exercised. **Two independent bugs were
+sitting on one dead path**, and fixing the first (the model id) only moved the failure one layer down.
+
+⛔ **RULED: the blocks schema CANNOT be expressed in Anthropic's strict mode, and that is the finding — not a
+formatting fix.** `additionalProperties: false` means *no keys beyond `properties`*, and a block legitimately
+carries arbitrary fields (`headline`, `subline`, `items`, …). Setting it to `false` on
+`blocks.items` would forbid every real block. So:
+- the four `site_copy` schemas **are** enumerable and can simply gain `additionalProperties: false` — a correct,
+  small fix;
+- `site_authoring` cannot, and ⭐ **that is a second, independent argument for the owner's patch-shaped ruling
+  (N349 item 7)**: a patch has a fixed shape (`op`, `block_index`, `field`, `value`) which strict mode *can*
+  express, while a whole-blocks array cannot. The ruling was made on cost and truncation; it is also the only
+  shape that can carry a schema on this provider.
+
+⚠️ **Immediate action taken, and it was a product change made without asking:** both `ai.model.site_copy` and
+`ai.model.site_authoring` reverted to `Gpt4oMini` in production, restoring a working builder. Justified because
+the Opus pin bought nothing while every call 400'd, and each is one reversible row — but it **is** the owner's
+setting and the reversal is reported, not buried.
+
+⭐ **Two process lessons, and the first one cost two rounds.**
+1. ⛔ **A client that discards a vendor's error body turns a one-command diagnosis into a guessing game.**
+   `AnthropicClient` returns `http_400` and logs `http_400`. The owner's report — the same five characters — was
+   the *entire* evidence available, twice. **Any vendor client must capture the response body on failure**, at
+   least truncated, into `VendorLog`. Every minute spent on the model-id hypothesis would have been saved by one
+   logged line.
+2. ⛔ **I fixed the first plausible cause and reported the defect closed.** The model id **was** wrong and the fix
+   **is** correct — and I said "your 400 is fixed in production" on the strength of a mechanism that explained
+   the symptom, without ever having seen a 200 from the real path. *A mechanism that explains a symptom is not a
+   measurement that the symptom is gone.* The probe that settled this (build the real body, POST it, print the
+   vendor's words) was available the whole time and costs one call.
+
 ## ⛔⛔ THREE LAWS OF LANE REVIEW (owner ruling, 2026-09-28, after N316). These are not notes.
 
 ### LAW 1 — A LANE'S WORK IS `git merge-base origin/main HEAD`..`HEAD`. NEVER `origin/main..lane`.
