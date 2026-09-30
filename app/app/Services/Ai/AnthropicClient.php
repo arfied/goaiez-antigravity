@@ -100,7 +100,7 @@ final class AnthropicClient implements AiClient
     private function body(AiRequest $request): array
     {
         $body = [
-            'model' => $this->model->value,
+            'model' => $this->model->apiModelId(),
             'max_tokens' => $request->task->maxOutputTokens(),
             'messages' => [
                 ['role' => 'user', 'content' => $request->prompt],
