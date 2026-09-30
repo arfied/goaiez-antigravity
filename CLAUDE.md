@@ -3064,3 +3064,33 @@ own state changed.
 it, and ended — **which is the contract.** No assertion was read, no defect of the lane's exists, nothing is
 spent. ⭐ **Conduct BLOCK lifts when a COMPLETED wave's base-first range and transcript both contain zero of
 Law 2's three needles.** An incomplete wave neither lifts nor extends it.
+
+⛔⛔ **A `kill -0` LIVENESS PROBE FROM A MONITOR SHELL REPORTS EVERY LIVE CODER AS DEAD, AND THE REMEDY IT
+THEN RECOMMENDS IS A SECOND WRITER PER CHECKOUT (N352, 2026-09-30).** A watcher armed over three concurrent
+lanes emitted, within seconds of arming:
+```
+site run 385 EMPTY-EXIT — pid dead, no report, log only 0 bytes (N184: re-launch …)
+money run 59 EMPTY-EXIT — …
+ui run 252 EMPTY-EXIT — …
+```
+**All three were alive**, measured by hand one command later: `agy 93953 · 126041 · 154969`, each with the
+right `cwd`. Two independent defects, and **either alone produces the same false verdict**:
+- ⛔ **`kill -0` is a SIGNAL, and it fails from a sandboxed watcher shell.** The identical probe on the
+  identical pids succeeds from an ordinary Bash call. `[ -d /proc/<pid> ]` is a **read**, needs no signal, and
+  is what §1b's own census form already uses. **RULED: liveness inside a monitor is `/proc` existence, never
+  `kill -0`.**
+- ⛔ **A 0-byte `agy` log is the NORMAL state of a RUNNING coder** — the CLI writes its log at exit. All three
+  read 0 bytes while healthy. N184's empty exit is **11 bytes *with the pid gone***; size alone is not a
+  signal, and my condition was `log < 200 bytes` with the pid test already broken beneath it.
+⭐ **The direction is the whole cost.** The verdict was `EMPTY-EXIT`, whose documented remedy is *re-launch*,
+and following it would have put a **second `agy` into each of three live checkouts** — the 2026-09-03
+one-writer incident tripled, arriving through the one door `launch-coder.sh`, `coder.pid` and `--census` all
+fail to watch, because each of them watches a *coder* and none watches the supervisor's own tooling.
+⭐ **RULED: a watcher over a live coder OPENS BY PRINTING ITS OWN INITIAL STATE against a reading taken by
+hand.** The re-armed detector's first three lines were `CONTROL <lane> opens as running (expected: running)`,
+which is a positive control that is **conclusive when the detector is sound and harmless when it is dead** —
+the 2026-09-06 probe rule, applied to an instrument rather than to a guard. It cost three lines and it is the
+only reason the second version was trusted.
+⭐ Same family as N253, and sharper: that was a liveness check that could not say *finished*; this is one that
+could not say *alive*. Both were one tick old, and this file's oldest rule caught both — *after building
+anything that measures, its FIRST output is data you do not trust.*
