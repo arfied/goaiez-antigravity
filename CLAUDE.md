@@ -2632,6 +2632,122 @@ stopping. A brief may not make a coder responsible for a number its own step 0 m
 ⭐ Worth keeping about the cost: it was **one wave, not a defect** — no assertion was read wrongly, nothing
 was committed, and the second dispatch is a commit-only run. *A stop is not a BLOCK*, and this one was the
 instruction working while the instruction was wrong.
+⛔⛔ **"THIS SCREEN IS PERMANENTLY EMPTY" IS NOT DERIVABLE BY GREP IN THIS CODEBASE — WRITES GO THROUGH FIVE
+IDIOMS AND THE NEEDLE SEES ONE (N341, 2026-09-29).** Screening the eight `app/Livewire/Advanced/*` dashboards
+for unfed tables, the creator needle
+`grep -rlE "Model::(create|updateOrCreate|firstOrCreate|insert|upsert)\("` returned **0 writers** for
+`Review`, `Location`, `Campaign`, `ReviewAsk`, `GrowthPage` and `AutoTopUpArrangement`.
+⛔ **`Review` and `Location` having no writer is absurd on its face** — `Review` is the whole of C-Reviews and
+`Location` is what the site builder reads `website_url` from. That absurdity is the only reason I looked
+again, and it is a thin thread to hang an instrument on.
+**The five write idioms in this repo, measured:**
+1. `Model::create(` — the only one the needle saw.
+2. **`Model::query()->create(`** — `app/Services/Feedback/FeedbackSubmission.php:109` writes `Review` exactly
+   this way. One `query()->` and the needle is blind.
+3. **`new Model(` + `->save()`**.
+4. **`$parent->relation()->create(`**.
+5. ⛔ **A SERVICE CLASS THAT OWNS THE WRITES** — `app/Services/Billing/AutoTopUps.php` for
+   `AutoTopUpArrangement`, a `GrowthPages` service for `GrowthPage`, `NumberPoolManager`/`TenantNumbers` for
+   `NumberPool`. **No model-name needle can ever see these**, because the model name appears only inside the
+   service.
+Widening to idioms 1–4 moved four of the six from `0` to non-zero (`Review` 0→**3**, `Call` 1→**3**,
+`Customer` 1→**4**, `Location`/`Campaign`/`ReviewAsk` 0→**1**). The last two needed the service read by hand.
+⛔⛔ **THE CONSEQUENCE IS RETROACTIVE AND IT REOPENS A CLOSED CONCLUSION.** N290 declared the control backlog
+*"exhausted of wave-shaped work"* because *"every remaining screen is broken at the root — creator outside
+DemoFill: none"* for six models. Tonight, before finding this, I had already measured **two of those six as
+wrong**: `GoldenSet` is created by `GoldenCaseFromApprovalListener:26` and `DecayModel` by
+`DecayModelSetAction:24`. **This is why.** An instrument that under-reports *writers* **over-reports unfed
+screens**, so it manufactures exactly the finding that closes a backlog — *"there is nothing left"* — which
+N259 already named as the largest finding you can wrongly draw from an under-reporting instrument.
+**RULED: a screen is never called unfed on a grep alone.** The needle is a **trigger**; the finding requires
+reading the module's service layer for the model in question. ⭐ And the cheap sanity check that costs one
+command and would have caught this six times over: **before believing a `0`, name a screen in the product
+that obviously displays that model's rows.** If `Review` has no writer, C-Reviews does not work — and that
+sentence is available without any tooling at all.
+
+⛔⛔ **A LANE COMMITTED ONTO A DETACHED HEAD AND EVERY SIGNAL LOOKED RIGHT (N342, 2026-09-29, stages runs
+233/234).** `track/stages` reads `5cd18e0da`; the lane's checkout HEAD reads `9d84b1e9d`; the work is in the
+second. The reflog names the cause in one line:
+```
+9d84b1e9d HEAD@{0}: commit: fix(X-212): the dry run rejects what the commit cannot import …
+5cd18e0da HEAD@{1}: checkout: moving from track/stages to HEAD~0
+```
+A coder ran **`git checkout HEAD~0`** — a no-op-looking expression that **detaches HEAD at the current
+commit** — and its next commit therefore landed **off-branch**. The commit succeeded, `git status` was clean,
+`git log --oneline -1` showed the right subject, the report's `COMMIT` field was correct, and
+`git branch -a --contains 9d84b1e9d` prints `* (HEAD detached from 5cd18e0da)`. **Nothing in the wave's own
+evidence could show it**, because every field was true about HEAD and none was about the branch.
+⛔ **`coder-bin/git` permits it.** Its guard refuses `git checkout <arg>` only when the arg **exists as a
+path** (`[ -e "$2" ]`, `:134`) — written for run 27's clobber. `HEAD~0` is not a path and not a branch, so it
+falls straight through. A sha, `HEAD`, `@{1}` and `origin/main` all pass the same way.
+⭐ **What caught it was a check written for a different failure.** Main's merge brief carries
+*"if `git rev-parse --short track/<lane>` does not print `<reviewed tip>`, the branch moved after review: stop"*
+— added for N182's fast-forward hazard. Run 989 refused with *"The rev-parse output (5cd18e0da) does not
+match the reviewed tip (9d84b1e9d)"*. **A tip-comparison guard is the only instrument in this system that
+compares the BRANCH to what was reviewed**; everything else reads HEAD. Keep it in every merge brief.
+⭐ **And the lane CAN recover itself, which I first concluded it could not.** `git switch` is refused outright,
+but `git checkout <branch>` is **allowed** by that same `[ -e "$2" ]` test — a branch name is not a path. So
+the recovery is two permitted commands, in this order:
+```
+git checkout track/stages          # reattach; leaves 9d84b1e9d dangling for the moment
+git merge --ff-only 9d84b1e9d      # fast-forward the branch onto the work
+```
+⛔ **Order matters and reversing it loses the commit from the branch's view.** I nearly recorded this as an
+owner action on the belief that a detached lane is stuck; re-reading the guard's own condition rather than
+remembering it (N103: *read the guard, do not remember it*) produced a two-command fix the coder can run.
+⚠️ **The guard gap itself is an OWNER ACTION — this seat is refused that file.** Both a Bash write and even a
+read-only `md5sum` of `coder-bin/git` were denied as *self-modification*; the refusal is correct and was
+confirmed a true no-op by reading line 134 back through a different tool (still ends `;;`, no `N342` marker,
+guard intact). The patch, to go after `:134`:
+```sh
+    if [ "$sub" = "checkout" ] && [ $# -eq 2 ] && ! $REAL show-ref --verify --quiet "refs/heads/$2"; then
+      echo "REFUSED by coder guard: that is not a local branch, so it would DETACH HEAD and your next commit would land off-branch (N342)." >&2; exit 1; fi
+```
+⭐ It closes the detach door **and leaves `git checkout <branch>` working**, which is exactly the command a
+detached lane needs — a guard that forbade both would strand the lane it was protecting. ⭐ And `bash -n`
+**is** available to this seat now (measured, rc=0), where N164 recorded it refused — so that patch can be
+parser-verified before it goes in, which N151 could not do for its own guard edit.
+
+⛔ **N207 BANS A SUITE FOR ITS DURATION, AND I READ IT AS BANNING EVERY MEASUREMENT — A 15-SECOND
+`--filter` WOULD HAVE CAUGHT BOTH REDS OF WAVE 989 (N343, 2026-09-29).** The gate on `c57da54c0` went
+`FAILED 0 → 2`, and **neither red was a product defect**: X-212's `PickSourceScreenTest:49-54` still
+asserted the counts from before its own wave changed the rule, and `SchemeTokenTest`'s `$neutral` pin had
+moved for a button my own brief wrote. Both are the wave's own module, both would have failed in seconds.
+⭐ **N207's ruling is explicit that it is about DURATION, not about who may measure** — *"`pint --dirty`
+and `php artisan doctor` may still be briefed — both finish in seconds — so the rule is about duration,
+not about who may measure: anything that can outrun `WaitMsBeforeAsync` is this seat's."* A whole suite is
+2m50s and becomes a background task the CLI kills. **`./vendor/bin/pest tests/Modules/X-212` is ~15s and
+cannot.** The repo's own oldest field note says the same thing from the other side: *"a run that prints
+zero bytes — first, narrow it; `--filter` anything and the real exception appears immediately."*
+**RULED: every wave brief ends with `./vendor/bin/pest <the module's own test dir>` — the module it
+touched and nothing wider — as the coder's own pre-commit check, with the expected FAILED count stated.
+The CLOSING gate stays this seat's.** ⛔ The two are not in tension: a narrow filter proves *the wave's own
+tests pass*, and only the full suite can prove *nothing else broke*. Wave 989 needed the first and got
+neither.
+⭐ And the shape is this file's most expensive one, in a new place: **a rule stated with its reason, applied
+by its headline.** N207's headline is *"NO BRIEF ASKS A CODER TO RUN A SUITE"* and its body says *duration*;
+for eleven days I applied the headline. Same defect as N235 reading phpstan as "the standing 2" — the
+instrument was available and I had stopped reaching for it.
+
+⚠️ **A BRIEF THAT WRITES A `class=` ATTRIBUTE INTO AN OWNER-LAYOUT BLADE HAS EDITED AN ARCHITECTURE PIN
+(N344, 2026-09-29, wave 987/989).** My X-188 brief supplied the claim button verbatim —
+`class="rounded bg-brand text-white px-4 py-2"` — and `text-white` is a **fixed neutral**, so
+`SchemeTokenTest`'s `$neutral` pin went `2 → 3` the moment the blade landed. N242(1) already rules that
+`#[Layout('components.account.layout')]` keys **three** pin files; this is the same rule one level down:
+**the utilities inside such a view are pinned too**, and a brief that writes markup is choosing a pin's
+value whether or not it knows the pin exists.
+⭐ **The move is BENIGN here, and the pin's own message says so in its own words** — *"neither direction is
+by itself a defect, because `text-white` on a saturated button reads in both schemes"*. `bg-brand` is
+saturated; the added hit is verbatim the message's example. That is N242(3) working as designed: **read
+both directions in the string before reaching for the number.** Derived rather than inferred, all three
+hits printed (N240): `settings.blade.php :: dark:border-gray-700`, `settings.blade.php :: text-white`,
+`pool-inventory.blade.php :: text-white`.
+**RULED: before a brief ships markup for a screen declaring the owner layout, run
+`grep -rn "bg-\|text-\|border-" tests/Feature/Architecture/*.php` for the utility families it uses, and
+state the expected pin move in the brief as an item.** ⛔ A pin that moves *unannounced* is
+indistinguishable at the gate from a regression, and it cost this wave a dispatch it did not need: the
+coder could not have known a number had to move, because the document that made it move did not say so.
+
 ## ⛔⛔ THREE LAWS OF LANE REVIEW (owner ruling, 2026-09-28, after N316). These are not notes.
 
 ### LAW 1 — A LANE'S WORK IS `git merge-base origin/main HEAD`..`HEAD`. NEVER `origin/main..lane`.
