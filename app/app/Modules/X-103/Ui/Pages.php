@@ -21,11 +21,11 @@ use App\Modules\X103\Actions\SeoDraftAction;
 use App\Modules\X103\Actions\SiteBuildRunAction;
 use App\Modules\X103\Actions\SiteCopyPolishAction;
 use App\Modules\X103\Actions\SiteEditApplyAction;
-use App\Modules\X103\Actions\SiteEditProposeAction;
+use App\Modules\X103\Actions\SiteEditAskAction;
+use App\Modules\X103\Actions\SiteEditDiscardAction;
 use App\Modules\X103\Actions\SitePageProposeAction;
 use App\Modules\X103\Actions\SitePreviewAction;
 use App\Modules\X103\Actions\SitePublishAction;
-use App\Modules\X103\Domain\BlockPatchApplier;
 use App\Modules\X103\Domain\PagePreview;
 use App\Modules\X103\Domain\SectionOrder;
 use App\Modules\X103\Domain\SiteEngine;
@@ -416,73 +416,22 @@ class Pages extends Component
         $this->success = "Restored {$restored} blocks.";
     }
 
-    public function askEdit(int $pageId, SiteEditProposeAction $action, BlockPatchApplier $applier): void
+    public function askEdit(int $pageId, SiteEditAskAction $action): void
     {
         abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
         $this->error = null;
         $this->success = null;
 
-        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
-
         try {
             $res = $action->handle(
                 businessId: $this->businessId,
                 pageId: $pageId,
-                request: trim((string) ($this->editRequest[$pageId] ?? '')),
-                continue: isset($page->draft_meta['pending_edit'])
+                request: trim((string) ($this->editRequest[$pageId] ?? ''))
             );
             if ($res['status'] === 'refused') {
                 $this->success = $res['reason'];
             } else {
-                $applyResult = $applier->apply($page->draft_blocks ?? [], $res['patches']);
-                if ($applyResult['status'] === 'refused') {
-                    $this->success = $applyResult['reason'];
-
-                    return;
-                }
-
-                $meta = $page->draft_meta ?? [];
-                $thread = [];
-
-                if (isset($meta['pending_edit'])) {
-                    $thread = $meta['pending_edit']['thread'] ?? [];
-                    if (empty($thread)) {
-                        $thread[] = [
-                            'request' => $meta['pending_edit']['request'] ?? '',
-                            'explanation' => $meta['pending_edit']['explanation'] ?? '',
-                            'at' => $meta['pending_edit']['drafted_at'] ?? '',
-                        ];
-                    }
-                }
-                $now = now()->toIso8601String();
-                $thread[] = [
-                    'request' => trim((string) ($this->editRequest[$pageId] ?? '')),
-                    'explanation' => $res['explanation'],
-                    'at' => $now,
-                ];
-
-                $pendingEdit = [
-                    'request' => trim((string) ($this->editRequest[$pageId] ?? '')),
-                    'blocks' => $applyResult['blocks'],
-                    'explanation' => $res['explanation'],
-                    'model' => $res['model'],
-                    'drafted_at' => $now,
-                    'thread' => $thread,
-                ];
-                if (! empty($res['image_notes'])) {
-                    $pendingEdit['image_notes'] = $res['image_notes'];
-                }
-                if ($res['style'] !== null) {
-                    $pendingEdit['style'] = $res['style'];
-                }
-                if ($res['style_refused'] !== null) {
-                    $pendingEdit['style_refused'] = $res['style_refused'];
-                }
-                $meta['pending_edit'] = $pendingEdit;
-                $page->draft_meta = $meta;
-                $page->save();
-
-                $numEdits = count($res['patches']);
+                $numEdits = $res['edits'];
                 $msg = "Proposed {$numEdits} edits with {$res['model']} — review it below, then Apply or Discard.";
                 if (($res['images'] ?? 0) > 0) {
                     $msg .= " Made {$res['images']} picture(s) for it.";
@@ -548,19 +497,14 @@ class Pages extends Component
         $this->success = 'Undone. Your draft is back to how it was before the last change.';
     }
 
-    public function discardEdit(int $pageId): void
+    public function discardEdit(int $pageId, SiteEditDiscardAction $action): void
     {
         abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
         $this->error = null;
         $this->success = null;
 
-        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
-        $meta = $page->draft_meta ?? [];
-        if (isset($meta['pending_edit'])) {
-            unset($meta['pending_edit']);
-            $page->update(['draft_meta' => $meta]);
-            $this->success = 'Discarded.';
-        }
+        $action->handle($this->businessId, $pageId);
+        $this->success = 'Discarded.';
     }
 
     public function makePage(SitePageProposeAction $action): void
