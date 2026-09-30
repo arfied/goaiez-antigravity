@@ -115,6 +115,7 @@ class Pages extends Component
 
     public function addPage(PageCreateAction $action): void
     {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
         $this->error = null;
         $this->success = null;
 
@@ -222,6 +223,7 @@ class Pages extends Component
 
     public function publish(int $pageId, SitePublishAction $action): void
     {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
         $this->error = null;
         $this->success = null;
 
@@ -766,6 +768,7 @@ class Pages extends Component
 
     public function runBuild(SiteBuildRunAction $action)
     {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
         $this->error = null;
         try {
             $result = $action->handle($this->businessId, $this->locationId);
@@ -782,6 +785,7 @@ class Pages extends Component
 
     public function publishAll(SitePublishAction $action, PlatformSiteAddressAction $addressAction, DefaultsRegistry $registry)
     {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
         $this->error = null;
         try {
             $addressAction->handle($this->businessId);
