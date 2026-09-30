@@ -32,6 +32,12 @@ use Tests\TestCase;
 
 class PagesScreenTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Http::preventStrayRequests();
+    }
+
     public function test_screen_renders_for_tenant(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
@@ -819,6 +825,15 @@ class PagesScreenTest extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => 'Polished UI text']],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_eval',
                 'choices' => [
@@ -861,6 +876,15 @@ class PagesScreenTest extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => 'Polished subline text']],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_eval',
                 'choices' => [
@@ -949,6 +973,17 @@ class PagesScreenTest extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['items' => [
+                        ['question' => 'Q1', 'answer' => 'A1'],
+                    ]])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_faq',
                 'choices' => [
@@ -1004,6 +1039,15 @@ class PagesScreenTest extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['title' => 'Drafted Title', 'description' => 'Drafted Desc'])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_seo',
                 'choices' => [
@@ -1046,6 +1090,15 @@ class PagesScreenTest extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471'], ['type' => 'about', 'text' => 'We fix roofs.']], 'explanation' => 'Rewrote the headline and added an about block.'])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_edit',
                 'choices' => [
@@ -1095,6 +1148,15 @@ class PagesScreenTest extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471'], ['type' => 'about', 'text' => 'We fix roofs.']], 'explanation' => 'Rewrote the headline and added an about block.'])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_edit',
                 'choices' => [
@@ -1135,6 +1197,15 @@ class PagesScreenTest extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['blocks' => [['type' => 'hero'], ['type' => 'marquee', 'text' => 'x']], 'explanation' => 'x'])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_edit',
                 'choices' => [
@@ -1179,6 +1250,25 @@ class PagesScreenTest extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::sequence()
+                ->pushResponse(Http::response(
+                    json_encode([
+                        'content' => [['type' => 'text', 'text' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471']], 'explanation' => 'Rewrote the headline.'])]],
+                        'stop_reason' => 'end_turn',
+                        'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                    ]),
+                    200,
+                    ['Content-Type' => 'application/json']
+                ))
+                ->pushResponse(Http::response(
+                    json_encode([
+                        'content' => [['type' => 'text', 'text' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive second headline 7731']], 'explanation' => 'Shortened it.'])]],
+                        'stop_reason' => 'end_turn',
+                        'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                    ]),
+                    200,
+                    ['Content-Type' => 'application/json']
+                )),
             'api.openai.com/*' => Http::sequence()
                 ->pushResponse(Http::response([
                     'id' => 'msg_edit',
@@ -1233,6 +1323,15 @@ class PagesScreenTest extends TestCase
         ]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Distinctive new headline 4471']], 'explanation' => 'Rewrote the headline.'])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_edit',
                 'choices' => [
@@ -1260,6 +1359,15 @@ class PagesScreenTest extends TestCase
         Tenancy::set($biz->id);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['title' => 'Distinctive spring offer 4471', 'slug' => 'Spring Offer!', 'blocks' => [['type' => 'hero', 'headline' => 'Distinctive headline 4472', 'subline' => 'Book before the rain.'], ['type' => 'faq', 'items' => [['question' => 'When?', 'answer' => 'All spring.']]], ['type' => 'marquee', 'text' => 'x']], 'explanation' => 'A page for the spring offer.'])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_edit',
                 'choices' => [
@@ -1290,6 +1398,15 @@ class PagesScreenTest extends TestCase
         Page::create(['business_id' => $biz->id, 'slug' => 'spring-offer', 'title' => 'Existing', 'is_published' => false]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['title' => 'Distinctive spring offer 4471', 'slug' => 'Spring Offer!', 'blocks' => [['type' => 'hero', 'headline' => 'Distinctive headline 4472', 'subline' => 'Book before the rain.'], ['type' => 'faq', 'items' => [['question' => 'When?', 'answer' => 'All spring.']]], ['type' => 'marquee', 'text' => 'x']], 'explanation' => 'A page for the spring offer.'])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_edit',
                 'choices' => [
@@ -1316,6 +1433,15 @@ class PagesScreenTest extends TestCase
         Tenancy::set($biz->id);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['title' => 'x', 'slug' => 'x', 'blocks' => [['type' => 'hero'], ['type' => 'marquee', 'text' => 'x']], 'explanation' => 'x'])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_edit',
                 'choices' => [
@@ -1373,6 +1499,15 @@ class PagesScreenTest extends TestCase
         ])->save();
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => 'Fresh copy 5599']],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_eval',
                 'choices' => [
@@ -1467,6 +1602,25 @@ class PagesScreenTest extends TestCase
         $turn = ChatTurn::create(['business_id' => $biz->id, 'chat_session_id' => $chat->id, 'author_type' => 'visitor', 'message' => 'Distinctive question 4535?', 'created_at' => now()]);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::sequence()
+                ->pushResponse(Http::response(
+                    json_encode([
+                        'content' => [['type' => 'text', 'text' => json_encode(['flags' => []])]],
+                        'stop_reason' => 'end_turn',
+                        'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                    ]),
+                    200,
+                    ['Content-Type' => 'application/json']
+                ))
+                ->pushResponse(Http::response(
+                    json_encode([
+                        'content' => [['type' => 'text', 'text' => json_encode(['question' => 'Distinctive question 4535?', 'answer' => 'Answer'])]],
+                        'stop_reason' => 'end_turn',
+                        'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                    ]),
+                    200,
+                    ['Content-Type' => 'application/json']
+                )),
             'api.openai.com/*' => Http::sequence()
                 ->push([
                     'id' => 'chatcmpl-mod',

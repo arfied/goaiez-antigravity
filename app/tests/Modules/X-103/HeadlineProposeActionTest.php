@@ -18,6 +18,12 @@ use Tests\TestCase;
 
 class HeadlineProposeActionTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Http::preventStrayRequests();
+    }
+
     public function test_propose_headlines_gathers_facts_topics_and_filters_current(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
@@ -25,6 +31,15 @@ class HeadlineProposeActionTest extends TestCase
         Tenancy::set($biz->id);
 
         Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['headlines' => ['Distinctive option 4582', 'Distinctive option 4583', 'Distinctive current headline 4581']])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
             'api.openai.com/*' => Http::response(
                 json_encode([
                     'choices' => [

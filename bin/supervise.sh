@@ -472,7 +472,7 @@ if [ $want_tests -eq 1 ]; then
   # has a different cause: pest had genuinely printed nothing yet.
   # Do not re-add it without re-running that control.
   pest_started=$(date -Is)
-  ptmp=$(mktemp "${TMPDIR:-/tmp}/pest-XXXXXX"); timeout 1800 ./vendor/bin/pest > "$ptmp" 2>&1 & pjob=$!; pest_pid=$(pgrep -P "$pjob" 2>/dev/null | head -1); pest_pid=${pest_pid:-$pjob}; wait "$pjob"; rc=$?; out=$(cat "$ptmp"); rm -f "$ptmp"
+  ptmp=$(mktemp "${TMPDIR:-/tmp}/pest-XXXXXX"); timeout 1800 php -d display_errors=1 -d error_reporting=E_ALL ./vendor/bin/pest > "$ptmp" 2>&1 & pjob=$!; pest_pid=$(pgrep -P "$pjob" 2>/dev/null | head -1); pest_pid=${pest_pid:-$pjob}; wait "$pjob"; rc=$?; out=$(cat "$ptmp"); rm -f "$ptmp"
   log_gate pest "$pest_started" "$rc" "${pest_pid:--}"
   [ "${lock_held:-0}" -eq 1 ] && flock -u 9 2>/dev/null
   if [ $rc -eq 124 ]; then

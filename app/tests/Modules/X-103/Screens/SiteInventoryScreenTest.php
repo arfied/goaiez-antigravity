@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Enums\FetchRefusalReason;
 use App\Enums\UserRole;
+use App\Exceptions\TenantNotResolved;
 use App\Models\Location;
 use App\Models\User;
 use App\Modules\X103\Actions\SiteCrawlAction;
@@ -11,13 +12,16 @@ use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\SiteInventoryImage;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Modules\X103\Ui\SiteInventory;
-use App\Exceptions\TenantNotResolved;
 use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Http;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
+beforeEach(function () {
+    Http::preventStrayRequests();
+});
 
 it('renders for a tenant', function () {
     $owner = User::factory()->create(['role' => UserRole::Owner]);
@@ -60,6 +64,15 @@ it('crawls a two-page fake site', function () {
     Tenancy::set($biz->id);
 
     Http::fake([
+        'api.anthropic.com/*' => Http::response(
+            json_encode([
+                'content' => [['type' => 'text', 'text' => '{}']],
+                'stop_reason' => 'end_turn',
+                'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+            ]),
+            200,
+            ['Content-Type' => 'application/json']
+        ),
         '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
         'https://example.com' => Http::response(
             '<html><head><title>Home</title></head><body><h1>Welcome</h1><img src="/logo.png" alt="  Our distinctive van 4471 "><a href="/services">Services</a></body></html>',
@@ -131,6 +144,15 @@ it('honours the max_pages registry cap', function () {
     app(DefaultsRegistry::class)->set('sites.crawl.max_pages', 2, 'test');
 
     Http::fake([
+        'api.anthropic.com/*' => Http::response(
+            json_encode([
+                'content' => [['type' => 'text', 'text' => '{}']],
+                'stop_reason' => 'end_turn',
+                'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+            ]),
+            200,
+            ['Content-Type' => 'application/json']
+        ),
         '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
         'https://example.com' => Http::response(
             '<html><body><a href="/page2">Page 2</a><a href="/page3">Page 3</a></body></html>',
@@ -186,6 +208,15 @@ it('copies images into tenant storage', function () {
 
     Storage::fake('local');
     Http::fake([
+        'api.anthropic.com/*' => Http::response(
+            json_encode([
+                'content' => [['type' => 'text', 'text' => '{}']],
+                'stop_reason' => 'end_turn',
+                'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+            ]),
+            200,
+            ['Content-Type' => 'application/json']
+        ),
         '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
         'https://example.com/valid.png' => Http::response($pngBytes, 200, ['Content-Type' => 'image/png']),
         'https://example.com/not-image.html' => Http::response('<html></html>', 200, ['Content-Type' => 'text/html']),
@@ -253,6 +284,15 @@ it('caps copied images at max_per_site', function () {
 
     Storage::fake('local');
     Http::fake([
+        'api.anthropic.com/*' => Http::response(
+            json_encode([
+                'content' => [['type' => 'text', 'text' => '{}']],
+                'stop_reason' => 'end_turn',
+                'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+            ]),
+            200,
+            ['Content-Type' => 'application/json']
+        ),
         '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
         'https://example.com/img1.png' => Http::response($pngBytes, 200, ['Content-Type' => 'image/png']),
         'https://example.com/img2.png' => Http::response($pngBytes, 200, ['Content-Type' => 'image/png']),
@@ -429,6 +469,15 @@ it('records a pictures pixel size at copy time and leaves it empty for an svg', 
 
     Storage::fake('local');
     Http::fake([
+        'api.anthropic.com/*' => Http::response(
+            json_encode([
+                'content' => [['type' => 'text', 'text' => '{}']],
+                'stop_reason' => 'end_turn',
+                'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+            ]),
+            200,
+            ['Content-Type' => 'application/json']
+        ),
         '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
         'https://example.com/valid.png' => Http::response($pngBytes, 200, ['Content-Type' => 'image/png']),
         'https://example.com/not-image.html' => Http::response('<html></html>', 200, ['Content-Type' => 'text/html']),
@@ -620,6 +669,15 @@ it('records a block by the site as blocked_by_site', function () {
     Tenancy::set($biz->id);
 
     Http::fake([
+        'api.anthropic.com/*' => Http::response(
+            json_encode([
+                'content' => [['type' => 'text', 'text' => '{}']],
+                'stop_reason' => 'end_turn',
+                'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+            ]),
+            200,
+            ['Content-Type' => 'application/json']
+        ),
         '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
         'https://example.com' => Http::response('<html><title>Attention Required! | Cloudflare</title></html>', 403, ['Content-Type' => 'text/html']),
     ]);

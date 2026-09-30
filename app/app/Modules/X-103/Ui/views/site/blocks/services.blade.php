@@ -1,4 +1,4 @@
-<div class="site-block services {{ $band ?? '' }}">
+<div class="site-block services {{ $band ?? '' }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="services">
     <div class="site-block__inner">
         @if(isset($block['heading']) && is_scalar($block['heading']) && trim((string)$block['heading']) !== '')
             <h2>{{ $block['heading'] }}</h2>

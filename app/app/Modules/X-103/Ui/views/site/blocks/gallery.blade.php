@@ -1,4 +1,4 @@
-<div class="site-block gallery {{ $band ?? '' }}">
+<div class="site-block gallery {{ $band ?? '' }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="gallery">
     @if(isset($block['heading']) && is_scalar($block['heading']) && trim((string)$block['heading']) !== '')
         <h2>{{ $block['heading'] }}</h2>
     @endif
