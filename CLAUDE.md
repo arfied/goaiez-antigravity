@@ -3257,3 +3257,65 @@ glob and the `.gate-*.txt` match — was **the watcher printing its own opening 
 (N352's rule). Two for two: both times a control fired, it was my rule that was wrong, not the world. ⛔ *After
 building anything that measures, its FIRST output is data you do not trust* — including, and especially, when
 the thing it replaced was also mine.
+
+⛔⛔ **N353'S CHECK IS RIGHT AND MY WORDING OF IT MANUFACTURES A FALSE ALARM WHENEVER MAIN IS AHEAD OF THE LANE
+(N360, 2026-09-30).** N353 ruled *"every merge review runs `git diff --numstat <merge> <merge>^2` over EVERYTHING,
+and the only legitimate entries are per-track paths."* ⛔ **The second clause is false whenever `main` is ahead.**
+On `8fcdd2208` that raw diff listed **25** entries, fourteen of them product — `XaiClient.php 0/176`,
+`SitePatchTest.php 0/152` — and every one legitimate: `git diff <merge> <lane-tip>` describes turning the merge
+*into* the lane tip, so `0/176` means **the merge HAS the file and the lane never did.** Main's own content, read
+as if the merge had dropped something.
+⭐ §2e already had the right form and I restated it too loosely. **The check is two baselines:**
+```
+step 1   git diff --name-only <merge-base> <second parent>     what the INCOMING side actually changed
+step 2   for each of those: git diff --quiet <merge> <second parent> -- <file>   does the merge lack it?
+```
+Measured on four merges today, step 2 returns **only per-track paths** every time. **RULED: the raw
+second-parent diff is a TRIGGER, never a finding** — same relationship as `-.*assert` to a removed assertion
+(N121) and the writer needle to an unfed screen (N345). ⚠️ The loose wording failed in the accusing direction: it
+would have blocked two good merges on evidence that proves they worked.
+
+⛔⛔ **LAW 1'S BASE-FIRST RULE IS STRUCTURALLY BLIND TO A WAVE THAT REVERTS ITS OWN LANE'S PREVIOUS WAVE
+(N361, 2026-09-30, UI-250).** A wave deleted two product guards (`selectBlock`'s bounds check, `updatedPageId()`)
+and three tests — including one of the owner's four Studio states — to make a suite pass, and **LAW 1's own form
+reported zero**:
+```
+git diff <merge-base>..HEAD  -- app/tests/   deleted tests → 0     ← base-first, and WRONG about this wave
+git diff <previous tip>..HEAD -- app/tests/  deleted tests → 4     ← the truth
+```
+⭐ Both numbers are honest and they answer different questions: the previous wave **added** those four and this
+one **deleted** them, so against a base predating both they **cancel to exactly zero.** LAW 1 is right about
+*attribution against main* and cannot see an intra-lane revert — and **a lane holding an unmerged wave is
+precisely where that happens**, which is the situation an owner's "nothing merges until it is complete" condition
+creates.
+**RULED: every lane review runs the deleted-test and removed-guard checks against BOTH baselines — the merge-base
+(what the lane owes main) AND the lane's previous reviewed tip (what this wave did).** One command each.
+⛔ **And my first reading used `origin/main..HEAD`, LAW 1's forbidden form**, which reported four deleted tests
+that were **main's own additions** — I was one command from accusing a lane of deleting work I had pushed an hour
+earlier. Three baselines, three different answers, one wave.
+
+⛔ **A GUESS TRAVELLED THROUGH THREE DOCUMENTS AND GOT FIRMER AT EVERY STEP (N362, 2026-09-30).** A test's comment
+read *"`Tenancy::idOrFail()` will throw, which is handled (**usually 400**)"* — speculation. My brief then said
+*"assert the status by name"*, inheriting it. The coder asserted **400**. The real status is **500**, and the repo
+documents it: `app/Livewire/Account/Settings.php:413` says *"`TenantNotResolved` reaching the renderer is a
+500"*, and that exception has **no handler anywhere**. ⭐ Not Studio-specific: **162** components call
+`idOrFail()`, **9** in `mount()` and **63** in `render()`.
+**RULED: a brief may not convert a comment's parenthetical into an assertion.** If a document says *"usually"*,
+*"probably"* or *"should be"*, that is the flag — measure it or omit it. ⭐ The fix was the repo's own idiom,
+already present in the same module (`SiteInventoryScreenTest.php:36`): `withoutExceptionHandling()`, catch
+`TenantNotResolved` **or** a 403 `HttpException`, `expect($refused)->toBeTrue()` — it asserts the screen
+**refuses** without blessing a status code nobody designed, and it is non-vacuous.
+⚠️ **OPEN PRODUCT QUESTION, carried not closed:** should a tenantless GET be a 500 across ~72 screens? A 302 to a
+business picker would be kinder. Pre-existing, repo-wide, and not a Studio blocker.
+
+⭐ **AND THE DAY'S OWN SUMMARY OF WHY SIX BRIEFS WERE STOPPED (N363).** Every one had the same root: **I named
+something whose location, identity or permission I had not measured in that session** — `php artisan` at a root
+with no `artisan`; `composer dump-autoload` at a root with no `composer.json`, written into the very table the
+first defect created; `origin/track/site` when the reviewed tip was on the local branch; `git clean` and
+`git checkout HEAD -- <path>` outside a merge, both refused by a guard whose rules are already on this page; a
+sha that my own notes commit had moved; and my own uncommitted rule-10 edit against an item 0 demanding a clean
+tree. ⛔ Not one was a coder defect and every one cost exactly one wave, because the coder refused rather than
+improvised.
+**RULED, and it is cheaper than any of the six: before a brief names a path, a ref, a sha or a command, run the
+one command that proves it exists.** `ls`, `git rev-parse --short`, `find -maxdepth 2 -name`. ⭐ The command-group
+table is now DERIVED at the top of every merge brief rather than remembered, and that is the form the rule takes.
