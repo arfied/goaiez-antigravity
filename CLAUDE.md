@@ -3632,3 +3632,46 @@ wrong instrument when the quantity is owned elsewhere.* There the ceiling was in
 'N[0-9]\{3\}' | sort -u | tail`, across every checkout — one command, and the only form that cannot
 collide.** It pairs with the N379 gap: a note committed to `CLAUDE.md` must reach a ledger, **and** the
 ledger consulted for the ceiling must be all of them.
+
+⛔⛔⛔ **A PEST CLOSURE APPENDED TO A PHPUNIT CLASS FILE SILENTLY REMOVES THAT CLASS'S TESTS FROM THE SUITE,
+AND ONLY THE FALLING TOTAL CAN SHOW IT (N386, 2026-10-01, UI-259 run 270).** My brief wrote a new test as a
+Pest `test('…', function () {…})` closure and told the coder to append it to
+`app/tests/Modules/X-103/Screens/PagesScreenTest.php`. That file is a **PHPUnit class** — `:35
+class PagesScreenTest extends TestCase`, 50 `public function test_` methods, closing at `:1763` — so the
+closure landed at `:1765`, after the class. **Pest then claims the file and the class's 50 methods are no
+longer collected.** The arithmetic closed exactly:
+```
+−50 class methods  +1 closure  +2 new StudioScreenTest tests  =  −47
+gate before 8d934a93a  tests 4583 · passed 4574 · FAILED 6 · errors 3
+gate after  7408ab7f6  tests 4536 · passed 4527 · FAILED 6 · errors 3     ← identical failure set
+```
+⛔ **Every other check was green**: deleted test methods 0, deleted closures 0, removed assertions exactly
+the two authorised, forbidden paths none, counts control exact, `php -l` clean, pint clean, phpstan 2,
+doctor diff empty, **§7 name set identical**. ⭐ **The ONLY instrument that fired was the suite TOTAL** —
+`CLAUDE.md`'s one-line blocker read in the other direction, *a count that FELL* — and it is N233's ruling in
+its sharpest form: *an instrument that reports a plausible improvement is unsafe as both*, because nothing
+downstream asks a second question of a green failure set.
+⭐ **How it was localised, and the order matters** — definitions at each revision via `git grep` (4501 ·
+4501 · 4504, so **+3 and 0 deleted**, proving the 47 were not in the diff); then dataset expansion
+(+82 → +32, ≈50 cases lost); then **two gate readings on the IDENTICAL tree, both 4536**, which ruled out the
+shared host and made it a deterministic property of the tree (the wave-119 rule used to *include* code
+rather than exclude it); then the per-file definition counts, where `PagesScreenTest`'s **51** against a drop
+of **47** named the file in one line.
+**RULED, two parts.**
+1. ⛔ **Before a brief appends a test to an existing file, it reads that file's DECLARATION FORM and writes
+   the new test in it.** `grep -cE '^\s*public function test_|^\s*(test|it)\(' <the file>` — the larger
+   count wins, and a file containing `class … extends TestCase` takes a **method**, never a closure. This is
+   N113 one level worse: that was a *needle* being Pest-shaped against a mixed repo and cost a miscount;
+   this was a *brief* being Pest-shaped against a PHPUnit file and cost **49 tests removed from the suite
+   with no failure, no error and no mention anywhere**.
+2. ⛔ **Every wave review compares the suite TOTAL, not only `FAILED` and the error names.** `FAILED 0` plus
+   an identical error set is compatible with any number of tests silently vanishing. The comparison is
+   lane-gate to lane-gate (N380) and the arithmetic is `expected total = previous total + tests added`.
+⭐ **And the fix proved itself by prediction.** The fix brief stated `tests 4586 = 4583 + 3` *before* the
+run; the gate returned `tests 4586 · passed 4577` — both exact, 4574 + 3 passing. A falsifiable number
+written down in advance is the cheapest conclusive proof this system has, and it is the same pair of numbers
+that hid the defect.
+⚠️ **The coder's conduct was right throughout** — it stopped three times that day on instructions of mine
+that were wrong (a fixture that did not exist, a seed that nothing reads, an unsatisfiable `assertDontSee`)
+and on the fourth it wrote exactly what it was given. **No dispatch of the retry cap was spent on any of
+them**; all four items were the supervisor's.
