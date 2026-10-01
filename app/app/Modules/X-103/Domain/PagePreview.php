@@ -12,7 +12,7 @@ final class PagePreview
 {
     private const CONTEXT = ['businessName' => '', 'deployHash' => 'weight', 'tenant_storage_url_prefix' => '/m/', 'form_action_base' => '/f'];
 
-    public function html(Page $page, bool $proposed): string
+    public function html(Page $page, bool $proposed, ?int $selectedIndex = null): string
     {
         $blocks = $page->draft_blocks ?? [];
         if ($proposed && isset($page->draft_meta['pending_edit']['blocks'])) {
@@ -65,6 +65,25 @@ final class PagePreview
             }
         }
 
-        return '<!doctype html><html><head><meta charset="utf-8"><base target="_blank"></head><body>'.$html.'</body></html>';
+        // Preview-only shell. EdgeDeployAction builds its own document and does not call this class, so
+        // nothing here can reach a published page. Uses only the custom properties SiteBlockRenderer's
+        // own :root already defines — no new token.
+        $previewShell = '<style>'
+            .'html{background:color-mix(in srgb, var(--color-ink) 18%, var(--color-canvas));}'
+            .'body{min-height:100vh;}'
+            .'.hero__grid:not(:has(.hero__media)){grid-template-columns:1fr;}'
+            .'</style>';
+
+        if ($selectedIndex !== null) {
+            $needle = 'data-block-index="'.$selectedIndex.'"';
+            $html = str_replace($needle, $needle.' data-selected-block="'.$selectedIndex.'"', $html);
+            // The outline rule ships ONLY when something is selected, so a preview with no selection
+            // contains the string `data-selected-block` nowhere at all. That is what makes the absence
+            // assertable, and it is also why no dead rule is shipped.
+            $previewShell .= '<style>[data-selected-block]{outline:3px solid var(--color-accent);outline-offset:4px;}</style>';
+        }
+
+        return '<!doctype html><html><head><meta charset="utf-8"><base target="_blank"></head>'
+            .'<body data-preview-page="1">'.$html.$previewShell.'</body></html>';
     }
 }
