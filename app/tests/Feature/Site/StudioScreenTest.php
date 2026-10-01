@@ -145,3 +145,32 @@ test('preview shows proposed changes with a marker', function () {
         ->assertSee('OstrichFeathers')
         ->assertDontSee('Original Text');
 });
+
+test('the primary CTAs render with defined background tokens', function () {
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = $this->provisionTenant([
+        'owner_user_id' => $user->id,
+        'name' => 'Studio Test Business',
+    ]);
+
+    $page = new Page;
+    $page->business_id = $business->id;
+    $page->title = 'Home';
+    $page->slug = 'home';
+    $page->is_published = true;
+    $page->draft_blocks = [['type' => 'hero', 'headline' => 'Original Text']];
+    $page->draft_meta = [
+        'pending_edit' => [
+            'blocks' => [['type' => 'hero', 'headline' => 'OstrichFeathers']],
+        ],
+    ];
+    $page->save();
+
+    $this->actingAs($user)
+        ->get(route('site.studio'))
+        ->assertOk()
+        ->assertSee('Apply')
+        ->assertSee('Ask')
+        ->assertDontSee('bg-brand')
+        ->assertSee('bg-ink', false);
+});
