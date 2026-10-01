@@ -3818,3 +3818,31 @@ and its own `Http::fake` already returns `'explanation' => 'x'`. That test MUST 
 `'x'` is replaced with a distinctive string — measured absent repo-wide before the brief shipped
 (`no pricing section` → **0** in `tests/` and `app/`), against a control with a known non-zero answer (the
 coaching sentence → exactly **2** sites, the action and that test).
+
+⚠️ **A BRIEF'S PROOF GREP FIRED ON THE VERY COMMENT THE SAME BRIEF ORDERED RETAINED (N391, 2026-10-01,
+MAIN-1023).** Item 6 ordered `grep -c 'default' SiteEditAskAction.php` → **0** as proof that no `default`
+arm had been added, and item 3 ordered — in capitals — that the guard comment stay. That comment reads
+*"A `default` arm here would silently absorb the next refusal reason"*, so it **contains the needle**: the
+two expectations cannot both hold, and the file measured **1** before the wave even started.
+⭐ **This is already a named trap in this file, about `--census`:** *"a detector that reads whole command
+lines will fire on its own documentation"* — §1b flagged a `bash -c` whose command merely *named* `agy`,
+which was a previous tick's own census one-liner. Same mechanism, moved from a process census to a brief's
+proof step, and the thing being matched is the prose explaining the property the grep checks.
+**RULED: a needle for "this construct is absent" matches the CONSTRUCT'S SYNTAX, never its name.** Here
+`grep -cE "default'? *=>"` → **0**, measured, with the comment at **1** — both properties hold and only my
+needle was wrong. The general test is one question: *could this needle match a comment, a docblock or a
+test name that describes the thing rather than being it?* If yes, anchor on punctuation the prose cannot
+carry (`=>`, `· FAILED`, `class="…"`).
+⭐ **The coder retained the comment and reported the contradiction**, rather than deleting four lines of
+guard rationale to make my grep pass. That is the third consecutive wave saved by the closing line of every
+brief, and the third consecutive wave where the defect was mine; no dispatch of the retry cap is spent on
+any of them.
+⚠️ **AND THREE SEPARATE `-` LINES IN THIS ONE WAVE WERE MOVES, NOT LOSSES — N121 THREE TIMES IN ONE REVIEW.**
+`SiteEditAskAction.php` showed `-9`, of which five lines were the guard comment **relocated** (its text is
+verbatim in the `+` block); `PagesScreenTest.php` showed two `use` lines deleted, which were pint's
+`ordered_imports` **swapping** `BusinessFactKey` ahead of `BusinessFacts` (both present at `:24-25`, both
+in the diff as `+`). The counts said *removed*; reading the lines said *moved*, every time, and the
+discriminating check was the symbol count being **2 before and 2 after** rather than the diff's sign.
+⭐ Worth recording as the happy half: `pint --dirty` took the pint debt list **224 → 223** by clearing
+`PagesScreenTest.php`'s `ordered_imports`. The change that looked least ordered was the formatter paying
+down debt, and N255's exemption clause is what made it legible rather than a deviation.
