@@ -3446,3 +3446,24 @@ prints a number) while what it adds is a second line.
    open edge: the floor is not 3, it is **the set of names**, and the sandbox contributes a **variable number
    of them**. A count comparison on §7 manufactures a false BLOCK about one gate in three; the comparison is
    `FAILED` (which must be 0) plus **whether a name appears that is not in that set**.
+
+⛔⛔ **OWNER RULING, 2026-10-01 — A LONE ZERO FROM A DOUBLE-QUOTED NEEDLE IS NOT A FINDING. SIBLING NEEDLES ON
+THE SAME FILE FIRST. DO NOT ALARM PRODUCTION FROM A SHELL ESCAPE (N374).** Promoted from a near-miss the owner
+read in the ledger. Verifying a deploy I ran
+`grep -c "\$this->error = \$res\['reason'\]" <the deployed Studio.php>` → **0**, and ruling from that zero would
+have reported **a production deployment missing its fix** — an alarm about the owner's own deploy, on evidence
+that was my own shell escaping. The code was there at `:136`, with siblings at `:58` and `:158`.
+**RULED, three parts, and the first is the owner's wording:**
+1. ⛔ **A zero from a needle carrying `$`, `[`, `]`, `\` or any regex metacharacter inside DOUBLE quotes is not
+   a finding.** Re-run it single-quoted, or anchor on a plain substring with no metacharacters, before it is
+   allowed to mean anything.
+2. ⭐ **Sibling needles on the same file first.** Three predictions on the same artefact that come back exactly
+   right (`2`, `1`, `0`) are what turn a lone zero from a conclusion into a suspicion — a control set that
+   **discriminates** (N254), not one that merely agrees.
+3. ⛔ **Never alarm production from a grep.** The failure direction of a false zero is always the accusing one,
+   and on a deploy the accusation lands on the owner's own act. Print the hits (N240 part 1) and read them;
+   `grep -n 'this->error' <the file>` settled this in one command.
+⭐ The family is this file's oldest and this is its fourth instance in one session — wave 122's needle, N240's
+four, N271's composition, N252's invocation. ⛔ The transferable half is not "escape better": it is that **a
+measurement whose failure mode is an accusation needs a control BEFORE it is believed, and the cheapest control
+is three predictions on the artefact you are already holding.**
