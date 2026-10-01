@@ -3531,3 +3531,46 @@ CONFIRMATION (N379).** Wave (b) accepted at `6bef33ba8`. Three parts, binding.
    `app/Modules/<MOD>/Ui/views/<name>` for a `<ns>::<name>` literal — and proves it by printing which files it
    opened, not by agreeing with a report. A confirming measurement is the one place nobody asks a second
    question (N233), so its control must be the *set of inputs it actually read*.
+
+⛔⛔ **N336'S MECHANISM REACHES §7: A LANE'S `FAILED` COUNT MAY NEVER BE COMPARED AGAINST MAIN'S EITHER
+(N380, 2026-10-01, UI-256 / ui run 266).** The lane's closing gate read `FAILED 6 · errors 3` where main's,
+fifty minutes earlier, read `FAILED 0 · errors 3`. Six names present in one and absent in the other, and
+**every one is payment/gateway** on a wave that touched a site-studio component, a blade and a studio test.
+Reading the messages — which N137 fixed the printer to supply — settles it in one look: all six are a
+**missing file under the gitignored `storage/app/evidence/`**:
+```
+X-117/checkout.json  does not exist      X-199/invoice.json   does not exist
+X-211/recovery.json  does not exist      "Artifact missing. You must run php artisan x198:evidence-charge first."
+```
+Measured cause: **the ui lane holds 1 evidence dir; `main` holds 127** — the same gitignored tree N336
+identified for `schema`, `anchor` and `journey`.
+⭐ **Conclusive from the lane's OWN prior gate**, which is the instrument N236 asks for: `.gate-ut130.txt`
+(2026-09-28, three days before the wave existed) reads `FAILED 6 · errors 3` with the **identical six names
+and identical three errors**. Zero new names; the wave introduced nothing.
+⛔ **RULED: N336 is stated about `doctor` stages and extends to the test suite. The comparison is
+lane-gate to lane-gate, as a SET OF NAMES, never lane-count against main-count.** Comparing `6` to `0`
+would have blocked a clean wave on six payment tests it never touched — the accusing direction, again.
+⛔ **And the remedy is NOT `php artisan x198:evidence-charge` in the lane to green the suite.** Generating
+evidence artifacts to turn a red green is the N185 shape. Those six pass on `main`, which holds the
+artifacts, and that is where they belong.
+⚠️ **The same tree also moved `anchor 127 → 128`** against the lane's own 2026-09-22 reading, and a count
+that rose is this file's one named blocker — so it was chased rather than waved past.
+`TestAnchorStage:55` reads `storage_path("app/evidence/{$m->id}/runtime-proof.json")`, a per-MODULE path,
+and the commit contains **0** paths under `app/app/Modules/` and **0** under `storage/app/evidence`, so the
+wave cannot be the cause. The +1 over nine days is most likely module growth absorbed from `main` —
+⚠️ **hypothesis, not measured**, because this seat does not hold the lane's 09-22 sha to count modules at.
+Recorded as the mechanism that cannot be distinguished rather than the one that sounds right (N127).
+⛔ **And my own brief carried N336's defect a second time, one day after ruling on it:** it ordered the
+*after* `doctor` list with *"no stage may RISE"* and ordered **no before**, so "rise" was unmeasurable from
+inside that checkout. ⭐ The coder quoted the full list and claimed nothing, which is right. **A brief that
+states a before/after condition orders BOTH readings, in the same checkout — N139 and N340 together, and
+this is the third time the "after" half shipped alone.**
+
+⚠️ **A LEDGER-NUMBERING GAP OF MY OWN, FOUND WHILE DERIVING N380.** `N379` (the owner's 2026-10-01 rulings —
+the `text-brand` links stay, `text-ink` is a different defect, namespace the instrument) was committed into
+**this file** as `d4be7bfab` and **never appended to `REVIEWS.md`**, whose ceiling therefore still read
+`N378`. N153 makes the append-only ledger the *only* authority for the next free number, so the next seat
+deriving it would have reused `N379`. ⭐ The rule needs its mirror stated: **a note written into `CLAUDE.md`
+is appended to the ledger in the same act**, or the ledger — the thing N153 points every future derivation
+at — silently under-reports the ceiling. Same family as N112: two documents about one record, and the
+authoritative one was the empty one.
