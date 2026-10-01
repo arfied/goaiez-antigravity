@@ -31,13 +31,24 @@ final class BlockPatchApplier
             }
 
             $blockIndex = $patch['block_index'] ?? null;
-            $maxIndex = count($blocks) - 1;
+            // An add is an INSERT POSITION, so one past the last block is legal and means "at the end".
+            $maxIndex = $op === 'add_block' ? count($blocks) : count($blocks) - 1;
             if (! is_int($blockIndex) || $blockIndex < 0 || $blockIndex > $maxIndex) {
                 return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: block_index out of range"];
             }
 
             if (($patch['field'] ?? null) === 'type') {
                 return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: field cannot be type"];
+            }
+
+            if ($op === 'add_block') {
+                $addType = $patch['type'] ?? null;
+                if (! is_string($addType) || ! in_array($addType, BlockPatchSchema::ADDABLE_TYPES, true)) {
+                    return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: add_block cannot add a '".(is_string($addType) ? $addType : 'missing')."' section — only ".implode(', ', BlockPatchSchema::ADDABLE_TYPES)." can be written without inventing reviews, people, images, prices or a real link"];
+                }
+                if (! isset($patch['fields']) || ! is_array($patch['fields'])) {
+                    return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: add_block requires fields"];
+                }
             }
 
             if ($op === 'set_string') {
@@ -71,7 +82,18 @@ final class BlockPatchApplier
             $op = $patch['op'];
             $blockIndex = $patch['block_index'];
 
-            if ($op === 'set_string') {
+            if ($op === 'add_block') {
+                $newBlock = ['type' => $patch['type']];
+                foreach ($patch['fields'] as $k => $v) {
+                    if (is_string($k) && is_scalar($v)) {
+                        $newBlock[$k] = (string) $v;
+                    }
+                }
+                // array_splice clamps an index past the end, which is what makes the append case safe even
+                // though the range was validated against the ORIGINAL block count while this pass is
+                // sequential and an earlier patch may already have changed the length.
+                array_splice($appliedBlocks, $blockIndex, 0, [$newBlock]);
+            } elseif ($op === 'set_string') {
                 $appliedBlocks[$blockIndex][$patch['field']] = (string) $patch['value'];
             } elseif ($op === 'set_string_list') {
                 $appliedBlocks[$blockIndex][$patch['field']] = $patch['values'];
