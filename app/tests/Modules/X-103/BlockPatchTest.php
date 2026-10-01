@@ -166,4 +166,134 @@ final class BlockPatchTest extends TestCase
         $this->assertSame(2, $result['applied']);
         $this->assertSame('Second Title', $result['blocks'][0]['headline']);
     }
+
+    public function test_add_block_inserts_an_about_section_at_the_given_index(): void
+    {
+        $applier = app(BlockPatchApplier::class);
+        $blocks = [
+            ['type' => 'hero', 'headline' => 'Old Title'],
+            ['type' => 'about', 'text' => 'Hello'],
+        ];
+
+        $patches = [
+            ['op' => 'add_block', 'block_index' => 1, 'type' => 'about', 'fields' => ['text' => 'We have painted North London since 2011.']],
+        ];
+
+        $result = $applier->apply($blocks, $patches);
+
+        $this->assertSame('applied', $result['status']);
+        $this->assertCount(3, $result['blocks']);
+        $this->assertSame('about', $result['blocks'][1]['type']);
+        $this->assertSame('We have painted North London since 2011.', $result['blocks'][1]['text']);
+    }
+
+    public function test_add_block_appends_when_the_index_equals_the_block_count(): void
+    {
+        $applier = app(BlockPatchApplier::class);
+        $blocks = [
+            ['type' => 'hero', 'headline' => 'Old Title'],
+            ['type' => 'about', 'text' => 'Hello'],
+        ];
+
+        $patches = [
+            ['op' => 'add_block', 'block_index' => 2, 'type' => 'about', 'fields' => ['text' => 'We have painted North London since 2011.']],
+        ];
+
+        $result = $applier->apply($blocks, $patches);
+
+        $this->assertSame('applied', $result['status']);
+        $this->assertCount(3, $result['blocks']);
+        $this->assertSame('about', $result['blocks'][2]['type']);
+    }
+
+    public function test_add_block_refuses_an_index_past_the_end(): void
+    {
+        $applier = app(BlockPatchApplier::class);
+        $blocks = [
+            ['type' => 'hero', 'headline' => 'Old Title'],
+            ['type' => 'about', 'text' => 'Hello'],
+        ];
+
+        $patches = [
+            ['op' => 'add_block', 'block_index' => 3, 'type' => 'about', 'fields' => ['text' => 'We have painted North London since 2011.']],
+        ];
+
+        $result = $applier->apply($blocks, $patches);
+
+        $this->assertSame('refused', $result['status']);
+        $this->assertSame(0, $result['applied']);
+        $this->assertSame($blocks, $result['blocks']);
+        $this->assertStringContainsString('block_index out of range', $result['reason']);
+    }
+
+    public function test_add_block_adds_a_faq_with_a_question_and_an_answer(): void
+    {
+        $applier = app(BlockPatchApplier::class);
+        $blocks = [
+            ['type' => 'hero', 'headline' => 'Old Title'],
+            ['type' => 'about', 'text' => 'Hello'],
+        ];
+
+        $patches = [
+            ['op' => 'add_block', 'block_index' => 1, 'type' => 'faq', 'fields' => ['question' => 'Q1', 'answer' => 'A1']],
+        ];
+
+        $result = $applier->apply($blocks, $patches);
+
+        $this->assertSame('applied', $result['status']);
+    }
+
+    public function test_add_block_refuses_a_reviews_strip_because_it_would_invent_reviews(): void
+    {
+        $applier = app(BlockPatchApplier::class);
+        $blocks = [
+            ['type' => 'hero', 'headline' => 'Old Title'],
+            ['type' => 'about', 'text' => 'Hello'],
+        ];
+
+        $patches = [
+            ['op' => 'add_block', 'block_index' => 1, 'type' => 'reviews_strip', 'fields' => ['text' => 'reviews']],
+        ];
+
+        $result = $applier->apply($blocks, $patches);
+
+        $this->assertSame('refused', $result['status']);
+        $this->assertStringContainsString('reviews', $result['reason']);
+    }
+
+    public function test_add_block_refuses_a_hero_with_an_empty_headline(): void
+    {
+        $applier = app(BlockPatchApplier::class);
+        $blocks = [
+            ['type' => 'hero', 'headline' => 'Old Title'],
+            ['type' => 'about', 'text' => 'Hello'],
+        ];
+
+        $patches = [
+            ['op' => 'add_block', 'block_index' => 1, 'type' => 'hero', 'fields' => ['headline' => '  ']],
+        ];
+
+        $result = $applier->apply($blocks, $patches);
+
+        $this->assertSame('refused', $result['status']);
+        $this->assertSame($blocks, $result['blocks']);
+    }
+
+    public function test_add_block_refuses_when_fields_are_missing(): void
+    {
+        $applier = app(BlockPatchApplier::class);
+        $blocks = [
+            ['type' => 'hero', 'headline' => 'Old Title'],
+            ['type' => 'about', 'text' => 'Hello'],
+        ];
+
+        $patches = [
+            ['op' => 'add_block', 'block_index' => 1, 'type' => 'about'],
+        ];
+
+        $result = $applier->apply($blocks, $patches);
+
+        $this->assertSame('refused', $result['status']);
+        $this->assertStringContainsString('requires fields', $result['reason']);
+    }
 }
