@@ -3675,3 +3675,47 @@ that hid the defect.
 that were wrong (a fixture that did not exist, a seed that nothing reads, an unsatisfiable `assertDontSee`)
 and on the fourth it wrote exactly what it was given. **No dispatch of the retry cap was spent on any of
 them**; all four items were the supervisor's.
+
+⛔⛔ **A PIN THAT SAYS "EXACTLY ONCE" SANCTIONS NO DIRECTION, AND I RECOMMENDED A FIX TO THE OWNER THAT MOVED
+TWO OF THEM (N388, 2026-10-01, the imageless-hero gap).** The owner's live Home is an imageless hero, so
+`.hero__grid`'s `@media (min-width: 52rem) { grid-template-columns: 1.1fr 1fr; }` leaves an empty second
+column — the grey field the owner photographed. Asked for a recommendation I named
+`.hero__grid:not(:has(.hero__media)){grid-template-columns:1fr;}` as a sibling rule in
+`SiteBlockRenderer`'s `<style>`, measured `.hero__grid` going `1 → 2`, and reported that one pin move as the
+whole cost. **Two things were wrong with that.**
+⛔ **(1) It moves a SECOND pin I never measured.** `SiteDesignSystemTest`'s dataset holds **17** selectors
+and `.hero__media` is one of them, so `:has(.hero__media)` doubles that count too. I had tested the needle
+against `.hero__grid` alone and written down a property of the pair — **N334's cap in a new costume: I chose
+one member of a set and reasoned as if it were the set.** The three-form table that caught it cost one
+command:
+```
+A  .hero__grid:not(:has(.hero__media)) sibling rule   hero__grid=2  hero__media=2
+B  .hero--no-media .hero__grid                        hero__grid=2  hero__media=1
+C  nested: & > :only-child { grid-column: 1 / -1; }   hero__grid=1  hero__media=1
+```
+⛔ **(2) N242(3) forbids the move outright, and I was about to brief it as a number to edit.** The pin's own
+text is *"renders the design system classes exactly once"* with the comment *"Exactly once 'as a selector'
+means finding the class precisely, not as part of another class name."* **That message sanctions NO
+direction** — it is an invariant that each design-system class is DEFINED once, not a count that drifts. By
+N242(3) a move it does not bless is a defect to fix, never a pin to raise. ⭐ Form C — the rule NESTED inside
+the existing `.hero__grid` block's own `@media`, targeting `& > :only-child` — satisfies the invariant by
+construction and moves **nothing**. The file already relies on native CSS nesting (`:65` nests an `@media`
+inside a rule), so the dependency is measured rather than introduced.
+⭐ **And the external proposal that prompted the re-measurement was wrong in a third way worth recording.**
+It recommended the `hero--no-media` class *"to avoid `:has()`"* while also saying *"keep EdgeDeploy output
+unchanged"* — and `EdgeDeployAction:379` **is** `app(SiteBlockRenderer::class)->render(...)`, so any fix to
+the published hero IS a change to EdgeDeploy output. Those two instructions cannot both hold. Form B also
+moves `.hero__grid` anyway and additionally edits `hero.blade.php`, i.e. published **markup**, which
+`BlockMarkupTest:333`'s class-attribute regex parses (N350). **An external audit is DATA (N349): its
+conclusion was right and all three of its reasons were wrong, which is the case that costs the most if the
+conclusion is taken as endorsement of the reasoning.**
+⭐ **Two needles were saved by the greps their own rules demand.** `assertStringContainsString('grid-column:
+1 / -1')` would have been **VACUOUS** — that exact string already lives at `SiteBlockRenderer:84`
+(`.site-block.gallery h2`), N256 caught before shipping. `:only-child` is `0` everywhere in `app/`, so it
+discriminates (N254): 0 before the edit, 1 after, opposite expected values.
+⭐ **The route was measured too, and it is not the lane the ownership table names.** `LANE-OWNERSHIP.md:47`
+makes X-103 **site's** (8 touches vs ui's 1) — and `track/site` is **42 behind, 0 ahead**, and its
+`PagePreview.php` carries **0** `has(` hits, so the line this wave deletes does not exist there (N363).
+Main's own checkout holds both files at the exact lines, and five of main's last six non-merge commits are
+single-parent X-103 product fixes made here. **A wave whose two files are both already correct in `grs-antig`
+does not need a 42-commit take-main and the N353 exposure that comes with it.**
