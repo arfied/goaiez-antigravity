@@ -3719,3 +3719,57 @@ makes X-103 **site's** (8 touches vs ui's 1) — and `track/site` is **42 behind
 Main's own checkout holds both files at the exact lines, and five of main's last six non-merge commits are
 single-parent X-103 product fixes made here. **A wave whose two files are both already correct in `grs-antig`
 does not need a 42-commit take-main and the N353 exposure that comes with it.**
+
+⛔⛔ **N256'S QUESTION HAS TWO DIRECTIONS AND I ONLY EVER ASK IT IN ONE — A NEGATIVE ASSERTION FAILS BY
+BEING UNSATISFIABLE, NOT BY BEING VACUOUS (N389, 2026-10-01, MAIN-1021 run 1021).** My brief's new test
+carried two needles. For the positive one I asked N256's question and it **saved the wave**:
+`assertStringContainsString('grid-column: 1 / -1')` would have passed whether or not the edit landed,
+because that exact string already lives at `SiteBlockRenderer:84` (`.site-block.gallery h2`). I swapped it
+for `:only-child`, measured at **0** occurrences under `app/`, and recorded the control.
+⛔ **Then, four lines further down the same test, I wrote
+`assertStringNotContainsString('hero__media', $html)` and never asked the question at all.** The
+stylesheet defines `.hero__media { min-width: 0; }` at `:69`, inside the `<style>` string that ships on
+**every** render, so that substring is on the page unconditionally and the assertion **cannot pass for any
+input**. The coder measured it, abstained from committing, and quoted the reason.
+⭐ **The two directions are one grep and opposite failures, and that is the rule:**
+```
+assertSee / assertStringContainsString  → could this string appear if the thing did NOT happen?   (vacuous)
+assertDontSee / ...NotContainsString    → does this string appear for ANY OTHER reason?      (unsatisfiable)
+```
+I have been running only the first for days. **RULED: every assertion in a brief gets the grep in ITS OWN
+direction, and a negative assertion's grep is over the whole rendered artefact — stylesheet included.**
+⛔ **Second time in two days a `<style>` block made a negative assertion unsatisfiable, both mine.** N383
+was the `[data-selected-block]` outline rule against `assertDontSee('data-selected-block')`, and its own
+ruling already says *"the N256 grep covers the document's own CSS and script text, not only its markup."*
+I wrote that sentence and then failed it on a CSS **class definition** rather than an attribute selector —
+the same mechanism one noun over. A rule cited is not a rule kept (N332).
+⭐ **And the sound idiom was 300 lines away in a file I had already printed this tick.**
+`BlockMarkupTest::test_hero_minimum:65` asserts `assertStringNotContainsString('class="hero__media"', …)`
+— the **attribute** form, which only the markup can produce and the stylesheet never can. It appeared in
+my own N350 sweep output earlier in the same session and I did not reuse it. N337b says a brief that orders
+a new test quotes a sibling's **fixture**; I quoted the fixture at `:71–82` and left the **assertion** to
+memory. **RULED: N337b covers the assertions, not only the fixture.**
+⭐ **The redundancy is the better finding: the test was mostly unnecessary.** `test_hero_minimum` already
+proves an imageless hero renders no media div. The only thing MAIN-1021 adds that nothing else asserts is
+that the stylesheet carries the collapse rule — one needle, `:only-child`. A brief that had read the
+sibling test for its *coverage* rather than its *fixture* would have ordered one assertion instead of three.
+⚠️ Carried, not fixed (the N262 precedent — a vacuous assertion beside a sound one is worth writing down,
+not a dispatch): `BlockMarkupTest:50`'s `assertStringContainsString('hero__media', $html)` is vacuous for
+exactly the same reason, passing off the stylesheet. Its sibling at `:65` is sound, so the property is
+genuinely covered.
+⛔ **Two further defects in the same brief, both ordering, both mine.**
+**(1) `php -r` cannot boot Laravel.** My pin proof was
+`php -r '$h=app(App\Modules\X103\Domain\SiteBlockRenderer::class)->render([],[]); …'` and exited **255** —
+`function_exists("app")` is **false** in a bare `php -r`, measured. ⭐ N287 already ruled the remedy and I
+had it backwards: *cite the test and let the coder run the test*. The pin proof is
+`./vendor/bin/pest tests/Modules/X-103/SiteDesignSystemTest.php`, which IS the pin, rather than a
+hand-rolled re-implementation of its needle.
+**(2) The diff proofs sat BEFORE the commit, so their range was empty by construction.** Items 4b/4c read
+`git diff 70cb38f0e..HEAD`, and item 5 is what creates the commit — so at the moment they run, both sides
+are the same object and the added/deleted test counts are `0` for a reason that has nothing to do with the
+wave. That is **N340 in a proof rather than in a baseline**: a check whose answer an earlier step of my own
+brief made unobtainable. **RULED: a diff-range proof is ordered AFTER the commit it measures, always.**
+⭐ **No dispatch of the retry cap is spent.** No assertion was read wrongly, no product defect exists, and
+both product edits landed byte-exact as briefed (`only-child` = 1 in the renderer, `has(` = 0 in
+`PagePreview`). The coder stopped and quoted three true reasons; all three items are this seat's. That is
+the wave-126 ruling and the fifth consecutive day it has been the thing that held.
