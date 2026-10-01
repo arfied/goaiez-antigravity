@@ -365,4 +365,21 @@ class SiteBlockRendererTest extends TestCase
         $this->assertStringNotContainsString('data-block-index="1"', $html);
         $this->assertEquals(2, substr_count($html, 'data-block-index='));
     }
+
+    public function test_an_imageless_hero_grid_collapses_to_one_column(): void
+    {
+        $renderer = new SiteBlockRenderer;
+        $blocks = [
+            ['type' => 'hero', 'headline' => 'Asul and Blue'],
+        ];
+
+        $html = $renderer->render($blocks, []);
+
+        // The ATTRIBUTE form, not the bare class name: the stylesheet defines `.hero__media` on every
+        // render, so only `class="hero__media"` distinguishes markup that actually emitted a media div.
+        $this->assertStringContainsString('hero__grid', $html);
+        $this->assertStringNotContainsString('class="hero__media"', $html);
+        // And the stylesheet carries the rule that makes that child span both columns at desktop width.
+        $this->assertStringContainsString(':only-child', $html);
+    }
 }

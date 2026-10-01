@@ -71,7 +71,6 @@ final class PagePreview
         $previewShell = '<style>'
             .'html{background:color-mix(in srgb, var(--color-ink) 18%, var(--color-canvas));}'
             .'body{min-height:100vh;}'
-            .'.hero__grid:not(:has(.hero__media)){grid-template-columns:1fr;}'
             .'</style>';
 
         if ($selectedIndex !== null) {

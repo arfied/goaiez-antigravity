@@ -62,7 +62,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .grid--2 { grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); }
 .grid--3 { grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
 .hero__grid { display: grid; grid-template-columns: 1fr;
-    @media (min-width: 52rem) { grid-template-columns: 1.1fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+    @media (min-width: 52rem) { grid-template-columns: 1.1fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center;
+        & > :only-child { grid-column: 1 / -1; }
+    }
 }
 .hero__media { min-width: 0; }
 .media { overflow: hidden; border-radius: 14px; }
