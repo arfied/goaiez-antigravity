@@ -19,6 +19,8 @@ use App\Modules\X103\Events\SitePublished;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X103\Ui\Pages;
+use App\Services\Facts\BusinessFacts;
+use App\Services\Facts\BusinessFactKey;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Support\Tenancy;
@@ -1758,3 +1760,30 @@ class PagesScreenTest extends TestCase
             ->assertSee('Unpublish');
     }
 }
+
+test('add hero writes one hero block on an empty page from the business name and the saved tagline', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = TestCase::provisionTenant(['name' => 'Faq Controls Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+    Tenancy::set($biz->id);
+
+    $page = Page::create([
+        'business_id' => $biz->id,
+        'slug' => 'faq-controls',
+        'title' => 'FAQ',
+        'draft_blocks' => [],
+        'is_published' => false,
+    ]);
+
+    app(BusinessFacts::class)->set($biz->id, BusinessFactKey::TAGLINE, 'Soft serve and milk tea, made to order');
+
+    $this->actingAs($owner);
+
+    \Livewire\Livewire::test(Pages::class)
+        ->call('addHero', $page->id);
+
+    $page->refresh();
+    expect(count($page->draft_blocks))->toBe(1);
+    expect($page->draft_blocks[0]['type'])->toBe('hero');
+    expect($page->draft_blocks[0]['headline'])->toBe('Faq Controls Test');
+    expect($page->draft_blocks[0]['subline'])->toBe('Soft serve and milk tea, made to order');
+});

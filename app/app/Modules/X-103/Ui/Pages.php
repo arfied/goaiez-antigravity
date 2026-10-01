@@ -36,6 +36,8 @@ use App\Modules\X157\Actions\PlatformSiteAddressAction;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Industry\IndustryResolver;
 use App\Services\Industry\IndustryStartingPoints;
+use App\Services\Facts\BusinessFacts;
+use App\Services\Facts\BusinessFactKey;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -205,6 +207,42 @@ class Pages extends Component
         $this->videoUrl = '';
         $this->videoDate = '';
         $this->success = 'Block added.';
+    }
+
+    public function addHero(int $pageId, BusinessFacts $facts): void
+    {
+        abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
+
+        if (isset($page->draft_meta['pending_edit'])) {
+            $this->error = 'Apply or discard the AI proposal first.';
+
+            return;
+        }
+
+        $blocks = $page->draft_blocks ?? [];
+        foreach ($blocks as $block) {
+            if (($block['type'] ?? '') === 'hero') {
+                $this->error = 'This page already has a hero.';
+
+                return;
+            }
+        }
+
+        $stated = $facts->all($this->businessId);
+        $hero = [
+            'type' => 'hero',
+            'headline' => (string) Business::whereKey($this->businessId)->value('name'),
+            'subline' => (string) ($stated[BusinessFactKey::TAGLINE] ?? ''),
+            'source' => 'owner: add hero',
+        ];
+        array_unshift($blocks, $hero);
+        $page->update(['draft_blocks' => $blocks]);
+
+        $this->success = 'Hero added.';
     }
 
     public function removeBlock(int $pageId, int $index): void
