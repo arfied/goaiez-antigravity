@@ -41,11 +41,15 @@ final class SiteEditAskAction
             return [
                 'status' => 'refused',
                 'reason' => $res['reason'],
-                'message' => match ($res['reason']) {
+                // ⛔ NO fallback value, deliberately. Both Ask screens read
+                // `$res['message'] ?? $res['reason']`, so a reason this map does not carry shows its raw
+                // code rather than a generic sentence. A `default` arm here would silently absorb the next
+                // refusal reason added to SiteEditProposeAction — the owner would see something plausible
+                // and nobody would learn the new code existed. That is what `boundary` flagged.
+                'message' => [
                     'no_valid_blocks' => 'The AI did not propose a change. Name the block and the exact words you want, for example: on the hero, set the headline to …',
                     'empty_request' => 'Type what you want changed first.',
-                    default => 'The AI could not make that change.',
-                },
+                ][$res['reason']] ?? null,
                 'edits' => 0,
                 'model' => null,
                 'images' => 0,
