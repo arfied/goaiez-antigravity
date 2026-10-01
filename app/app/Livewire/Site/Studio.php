@@ -23,7 +23,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Throwable;
 
-#[Layout('components.account.layout', ['heading' => 'Site studio'])]
+#[Layout('components.account.layout', ['heading' => 'Site studio', 'maxWidth' => 'max-w-full'])]
 class Studio extends Component
 {
     #[Locked]

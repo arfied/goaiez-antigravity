@@ -1,5 +1,5 @@
 <div>
-    <div class="flex h-full min-h-[80vh]"
+    <div class="flex min-h-screen"
          x-data
          x-on:message.window="
             if ($event.data.source === 'studio-canvas') {
@@ -7,7 +7,7 @@
             }
          ">
         <!-- Left Rail: Pages -->
-        <div class="w-64 border-r border-rule p-4 overflow-y-auto">
+        <div class="w-48 shrink-0 border-r border-rule p-4 overflow-y-auto">
             <h2 class="text-sm font-semibold mb-2">Pages</h2>
             <ul class="space-y-1">
                 @foreach($pages as $page)
@@ -22,20 +22,20 @@
         </div>
 
         <!-- Main Content -->
-        <div class="flex-1 p-4">
+        <div class="flex-1 min-w-0 p-4">
             @if($pageId)
-                <div class="flex gap-4 h-full">
+                <div class="flex gap-4">
                     <!-- Canvas -->
-                    <div class="flex-1">
+                    <div class="flex-1 min-w-0">
                         <iframe title="Site preview"
                                 sandbox="allow-scripts"
                                 srcdoc="{{ $previewHtml }}"
-                                class="w-full h-full min-h-[70vh] border border-rule bg-canvas"
+                                class="w-full min-h-screen border border-rule bg-canvas"
                                 id="studio-canvas"></iframe>
                     </div>
 
                     <!-- Inspector -->
-                    <div class="w-64 border border-rule p-4 rounded bg-paper flex flex-col">
+                    <div class="w-96 shrink-0 border border-rule p-4 rounded bg-paper flex flex-col">
                         <div class="mb-4">
                             @if(isset($selectedPage) && isset($selectedPage->draft_meta['pending_edit']))
                                 <div class="mb-2 p-2 bg-attention-bg text-attention text-sm font-bold rounded" id="proposal-marker">
