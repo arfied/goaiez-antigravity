@@ -37,8 +37,8 @@ class X120Filler implements DemoFiller
             'gateway_customer_id' => self::MARKER.'cus_5100',
             'brand' => 'mastercard',
             'last_four' => '5100',
-            'exp_month' => now()->month,
-            'exp_year' => now()->year,
+            'exp_month' => now()->subMonthNoOverflow()->month,
+            'exp_year' => now()->subMonthNoOverflow()->year,
             'is_default' => false,
             'alert_sent' => false,
         ]);

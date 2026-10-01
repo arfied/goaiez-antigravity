@@ -144,7 +144,7 @@ class SendOwnerMonthlyDigestsTest extends TestCase
             'page_id' => $page2->id,
             'commit_id' => 'def',
             'content_blocks' => '[]',
-            'created_at' => now()->subDays(3),
+            'created_at' => now(),
         ]);
 
         $this->artisan('owners:send-monthly-site-digest')->assertSuccessful();
