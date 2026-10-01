@@ -96,7 +96,24 @@ class SitePatchTest extends TestCase
         $this->assertArrayNotHasKey('pending_edit', $page->draft_meta ?? []);
     }
 
-    public function test_the_model_schema_offers_four_ops_and_the_applier_five()
+    /**
+     * The op sets are pinned by MEMBERSHIP, not by size.
+     *
+     * This test used to assert `assertCount(4, $ops)` and `assertCount(5, …)` and was named for those two
+     * numbers. It fired correctly when `add_block` was added, which is what a tripwire is for — but a count
+     * cannot tell a deliberate widening from a rename or a swap, and the name went stale the moment the
+     * numbers moved. Exact lists catch all three.
+     *
+     * ⛔ The two assertions that are NOT bookkeeping:
+     *   - `set_image_list` must never appear in MODEL_OPS. The model may not request an image list; the
+     *     server synthesises those in SiteEditProposeAction after generating a picture, so a model that
+     *     could ask for one could point a page at an arbitrary path.
+     *   - ADDABLE_TYPES must stay exactly hero/about/faq. Every other block type needs real reviews,
+     *     photos, people, prices, a phone number or a real link, and the prompt forbids inventing those.
+     *     Widening this list is a product decision about honesty and must cost somebody a deliberate edit
+     *     to this test.
+     */
+    public function test_the_op_sets_and_the_addable_types_are_pinned_by_membership()
     {
         $schema = BlockPatchSchema::schema();
         $ops = $schema['properties']['patches']['items']['properties']['op']['enum'];
@@ -104,8 +121,10 @@ class SitePatchTest extends TestCase
         $this->assertSame(BlockPatchSchema::MODEL_OPS, $ops);
         $this->assertNotContains('set_image_list', $ops);
         $this->assertContains('set_image_list', BlockPatchSchema::APPLIER_OPS);
-        $this->assertCount(4, $ops);
-        $this->assertCount(5, BlockPatchSchema::APPLIER_OPS);
+
+        $this->assertSame(['set_string', 'set_string_list', 'remove', 'move', 'add_block'], BlockPatchSchema::MODEL_OPS);
+        $this->assertSame(['set_string', 'set_string_list', 'set_image_list', 'remove', 'move', 'add_block'], BlockPatchSchema::APPLIER_OPS);
+        $this->assertSame(['hero', 'about', 'faq'], BlockPatchSchema::ADDABLE_TYPES);
     }
 
     public function test_a_requested_picture_becomes_a_synthesised_image_patch()
