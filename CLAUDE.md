@@ -3467,3 +3467,38 @@ that was my own shell escaping. The code was there at `:136`, with siblings at `
 four, N271's composition, N252's invocation. ⛔ The transferable half is not "escape better": it is that **a
 measurement whose failure mode is an accusation needs a control BEFORE it is believed, and the cheapest control
 is three predictions on the artefact you are already holding.**
+
+⛔⛔ **A PIN'S MESSAGE AND THE HISTORY COMMENTS ABOVE IT ARE A REMEDY STRING, AND MINE BLESSED FIVE INVISIBLE
+BUTTONS FOR TWO DAYS (N378, 2026-10-01, wave (b)).** `SchemeTokenTest:29` read, until this wave: *"the claim
+button is `bg-brand text-white`, which is the benign case this assertion's own message names — white on a
+saturated brand colour reads on both surfaces, so a token is not wanted."* Three sibling comments said the
+same of X-102, X-212 and UI-250, and the assertion's own text said *"neither direction is by itself a defect,
+because `text-white` on a saturated button reads in both schemes."*
+⛔ **`bg-brand` is not a saturated button. `--color-brand` is declared NOWHERE** — measured,
+`grep -rn 'color-brand\|--brand' resources/css/app.css` → no hits, and `bg-brand` is absent from the built
+CSS. So `text-white` sat on **no background at all**: the invisible CTA the owner photographed on `/app/site`,
+then found across four more modules.
+⭐ **And N344 above records me reasoning FROM that comment**, calling the X-188 move *"BENIGN here, and the
+pin's own message says so in its own words — `bg-brand` is saturated"*. The pin was working exactly as N242(3)
+asks — *read both directions in the string before reaching for the number* — and **the string was false**.
+Right procedure, corrupt source. N242(3) is unchanged and is not enough on its own.
+**RULED: N209's reading-direction twin — a remedy string is an instrument nobody validates, so ASK WHETHER
+THE PREMISE OF A SANCTION IS TRUE before accepting it.** N209 asks *what happens if the fix is applied*; this
+asks *is the thing this message calls benign actually the case it describes*. One command here: grep the
+declared tokens for the background a `text-white` is called benign on. The corrected clause now carries the
+instruction inside the assertion — *"a `text-white` is benign only on a background that EXISTS … Before
+accepting any `text-white` as benign, grep the built CSS for its background token."*
+⚠️ **Three `text-brand` hits survive and are CARRIED, not fixed:** `X-110/install-verify.blade.php:56`
+(`hover:text-brand`), `studio.blade.php:72` and `:99`. All three are **underlined links**, so they degrade to
+inherited colour rather than vanishing — materially milder than a button with no background. Out of scope by
+the owner's `(b)` ruling (*"Do not define --color-brand … Inventing a brand token to rescue five buttons is a
+design call you do not have"*).
+⭐ **And the review instrument that nearly repeated N338 in the same hour.** My independent derivation of the
+pin returned `neutral=2`, agreeing with the report — from a script that resolved **none** of the five swept
+views, because they are namespaced (`x-188::pool-inventory`) and it only tried `resources/views/<dotted>`. It
+had counted `settings.blade.php` alone and would have printed `2` **before** the sweep too. The control that
+caught it asked *did it actually open those five files* and printed `RESOLVED=NO` five times. Re-run with
+namespace resolution against both trees — expected answers DIFFERING (N254) — it reads `6` then `2`.
+⛔ **An instrument that agrees with the right answer for the wrong reason is still broken**, and a confirming
+derivation is exactly where that goes unnoticed, because nothing downstream asks a second question of
+agreement (N233's sign-flip, in a reviewer's own check).
