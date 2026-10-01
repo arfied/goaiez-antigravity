@@ -469,7 +469,7 @@ class Pages extends Component
                 request: trim((string) ($this->editRequest[$pageId] ?? ''))
             );
             if ($res['status'] === 'refused') {
-                $this->success = $res['reason'];
+                $this->error = $res['message'] ?? $res['reason'];
             } else {
                 $numEdits = $res['edits'];
                 $msg = "Proposed {$numEdits} edits with {$res['model']} — review it below, then Apply or Discard.";

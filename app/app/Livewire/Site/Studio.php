@@ -133,7 +133,7 @@ class Studio extends Component
                 $this->success = $msg;
                 $this->request = '';
             } else {
-                $this->error = $res['reason'];
+                $this->error = $res['message'] ?? $res['reason'];
             }
         } catch (Throwable $e) {
             $this->error = $e->getMessage();

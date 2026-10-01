@@ -1220,7 +1220,8 @@ class PagesScreenTest extends TestCase
             ->test(Pages::class)
             ->set('editRequest.'.$page->id, 'make the headline stronger')
             ->call('askEdit', $page->id)
-            ->assertSet('success', 'no_valid_blocks');
+            ->assertSet('success', null)
+            ->assertSet('error', 'The AI did not propose a change. Name the block and the exact words you want, for example: on the hero, set the headline to …');
 
         $page->refresh();
         $this->assertArrayNotHasKey('pending_edit', $page->draft_meta ?? []);

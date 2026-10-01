@@ -229,3 +229,47 @@ test('ask on an empty page refuses with a sentence and opens no proposal', funct
     $page->refresh();
     expect($page->draft_meta['pending_edit'] ?? null)->toBeNull();
 });
+
+test('ask that sets the headline and the subline on a hero returns a proposal carrying both', function () {
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = \Tests\TestCase::provisionTenant([
+        'owner_user_id' => $user->id,
+        'name' => 'Studio Test Business 2',
+    ]);
+
+    $page = new Page;
+    $page->business_id = $business->id;
+    $page->title = 'Home';
+    $page->slug = 'home';
+    $page->is_published = true;
+    $page->draft_blocks = [['type' => 'hero', 'headline' => 'old', 'subline' => 'old']];
+    $page->save();
+
+    \Illuminate\Support\Facades\Http::fake([
+        'api.openai.com/*' => \Illuminate\Support\Facades\Http::response([
+            'id' => 'msg_edit',
+            'choices' => [
+                ['message' => ['content' => json_encode([
+                    'patches' => [
+                        ['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Asul and Blue'],
+                        ['op' => 'set_string', 'block_index' => 0, 'field' => 'subline', 'value' => 'Soft serve and milk tea, made to order'],
+                    ],
+                    'explanation' => 'Updated hero.',
+                ])]],
+            ],
+            'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+        ], 200, ['Content-Type' => 'application/json']),
+    ]);
+
+    $this->actingAs($user);
+
+    \Livewire\Livewire::test(Studio::class)
+        ->set('pageId', $page->id)
+        ->set('request', 'on the hero, set the headline and the subline')
+        ->call('ask')
+        ->assertSet('error', null);
+
+    $page->refresh();
+    expect($page->draft_meta['pending_edit']['blocks'][0]['headline'])->toBe('Asul and Blue');
+    expect($page->draft_meta['pending_edit']['blocks'][0]['subline'])->toBe('Soft serve and milk tea, made to order');
+});
