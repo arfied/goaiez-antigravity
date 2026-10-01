@@ -3773,3 +3773,48 @@ brief made unobtainable. **RULED: a diff-range proof is ordered AFTER the commit
 both product edits landed byte-exact as briefed (`only-child` = 1 in the renderer, `has(` = 0 in
 `PagePreview`). The coder stopped and quoted three true reasons; all three items are this seat's. That is
 the wave-126 ruling and the fifth consecutive day it has been the thing that held.
+
+⭐ **CAUSE (a) ELIMINATED BY A LABEL, AND THE FIX FOR (b) WOULD HAVE DEFEATED N387 ON THE DAY N387 SHIPPED
+(N390, 2026-10-01, the empty-`patches` Ask).** The owner's Ask on the deployed Studio returned the
+`no_valid_blocks` sentence. Two causes fitted and I could not distinguish them from this seat: (a) a stale
+`sites.edit.system_prompt` **row** overriding the newly-deployed seed — measured mechanism,
+`PlatformSetting::read:96` returns the row and treats the seed as a fallback, so the deploy did NOT change
+the prompt — or (b) the model receiving the correct prompt and declining a request it could not map.
+⭐ **The owner's paste settled it in one word.** The settings screen rendered **"Default"**, and
+`platform-settings.blade.php:62` emits that string only when `$row['current'] === $row['seed']` — the live
+resolved value is byte-identical to the running code's seed. So the live prompt is the patch-contract text
+and **(a) is out**. ⚠️ Strictly, "Default" also renders for a row whose value equals the seed; the
+operational conclusion is identical, and recording that caveat costs one clause.
+⛔ **So the model wrote the owner a reason and the code threw it away.** The seed instructs it: *"if the
+owner asks for a section that is not in the list, say so in `explanation` and return an empty `patches`."*
+`BlockPatchSchema:78` puts `explanation` in `required`, so it is **always** present.
+`SiteEditProposeAction:170` already extracts it — **on the success path only**; the refusal at `:113-114`
+returns `status` and `reason` and nothing else. ⭐ Same family as N351's discarded vendor error body, moved
+from a failure to a **success**: a client that drops the vendor's reasoning turns a one-command diagnosis
+into two rounds of guessing, and it did exactly that here.
+⛔⛔ **AND THE OBVIOUS FIX DEFEATS THIS MORNING'S GUARD.** `SiteEditAskAction:45-51` carries an explicit
+comment — today's N387 fix — saying the reason→message map has **no `default` arm on purpose**, so a reason
+the map does not carry shows its **raw code** rather than a plausible sentence, because *"a `default` arm
+here would silently absorb the next refusal reason added to SiteEditProposeAction — the owner would see
+something plausible and nobody would learn the new code existed."* **Routing the model's `explanation` into
+that field for every reason is that `default` arm wearing a vendor's voice** — and it would be worse,
+because the text would be fluent and specific and therefore completely convincing. *A guard clause written
+for a case is defeated by removing the case*, for the fourth time in this file, and this instance was one
+keystroke away in a brief citing N387 two pages earlier.
+**RULED: the explanation is preferred for `no_valid_blocks` ALONE** — the one reason where the model
+actually ran and wrote something. Every other reason, present or future, keeps the map-or-raw-code
+behaviour exactly. `empty_request` never reached the model; a failed call (`:90`) has no explanation to
+carry. ⭐ The general form: **when a fix widens what may appear in a field, scope it to the cases that can
+legitimately produce it, never to the field** — otherwise a guard about that field is silently repealed.
+⭐ **PRODUCT DECISION, recorded because a decision that lives only in a transcript is not a decision**
+(owner delegation, 2026-09-27): a non-empty explanation renders **followed by** the existing coaching
+sentence, not instead of it. The explanation says what happened ("there is no pricing section on this page")
+and the coaching says what to do about it; the owner needs both, and dropping either was the version I
+first sketched. An empty explanation falls back to the coaching sentence alone — which is also what makes
+the pair **testable**: the fallback test asserts exact equality with the coaching sentence, so the
+explanation half being absent is the discriminator rather than a vacuous "contains" (N389).
+⚠️ **N270 applies and is named in the brief:** `PagesScreenTest:1224` asserts the canned sentence verbatim
+and its own `Http::fake` already returns `'explanation' => 'x'`. That test MUST change deliberately, and
+`'x'` is replaced with a distinctive string — measured absent repo-wide before the brief shipped
+(`no pricing section` → **0** in `tests/` and `app/`), against a control with a known non-zero answer (the
+coaching sentence → exactly **2** sites, the action and that test).
