@@ -10,7 +10,7 @@
                     <span>[{{ $run->status }}]</span>
                     <span>{{ $run->imported_records }} in · {{ $run->rejected_records }} rejected</span>
                     @if($run->status === 'dry_run_ready')
-                        <button wire:click="commitRun({{ $run->id }})" class="rounded bg-brand text-white px-3 py-1 text-sm">Import these</button>
+                        <button wire:click="commitRun({{ $run->id }})" class="rounded bg-ink text-paper px-3 py-1 text-sm">Import these</button>
                     @endif
                 </li>
             @endforeach

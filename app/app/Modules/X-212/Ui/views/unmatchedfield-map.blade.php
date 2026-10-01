@@ -40,13 +40,13 @@
                                                     <option value="first_name">first_name</option>
                                                     <option value="email">email</option>
                                                 </select>
-                                                <button type="button" class="px-2 py-1 bg-brand text-paper text-sm" wire:click="mapField({{ $rd['run']->id }}, '{{ $uf }}')">Map</button>
+                                                <button type="button" class="px-2 py-1 bg-ink text-paper text-sm" wire:click="mapField({{ $rd['run']->id }}, '{{ $uf }}')">Map</button>
                                             </div>
                                         </li>
                                     @endforeach
                                 </ul>
                                 <div class="mt-4">
-                                    <button type="button" class="px-4 py-2 bg-brand text-paper" wire:click="recheck({{ $rd['run']->id }})">Re-check run</button>
+                                    <button type="button" class="px-4 py-2 bg-ink text-paper" wire:click="recheck({{ $rd['run']->id }})">Re-check run</button>
                                 </div>
                             </div>
                         @endif

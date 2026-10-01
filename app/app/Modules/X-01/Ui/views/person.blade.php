@@ -71,7 +71,7 @@
                                             <span class="text-sm font-medium {{ $message->direction === 'outbound' ? 'text-ok' : 'text-attention' }}">
                                                 {{ ucfirst($message->direction->value ?? '') }}
                                             </span>
-                                            <button wire:click="takeOver({{ $message->conversation_id }})" class="bg-brand text-white px-2 py-0.5 text-xs rounded">Take over</button>
+                                            <button wire:click="takeOver({{ $message->conversation_id }})" class="bg-ink text-paper px-2 py-0.5 text-xs rounded">Take over</button>
                                             <button wire:click="handBack({{ $message->conversation_id }})" class="border border-rule text-ink-2 px-2 py-0.5 text-xs rounded">Hand back</button>
                                         </div>
                                         <span class="text-xs text-ink-3">{{ $message->created_at?->diffForHumans() }}</span>

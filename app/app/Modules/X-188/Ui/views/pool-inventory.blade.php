@@ -10,7 +10,7 @@
         @endif
 
         <div class="mb-4">
-            <button wire:click="claimNumber" class="rounded bg-brand text-white px-4 py-2">
+            <button wire:click="claimNumber" class="rounded bg-ink text-paper px-4 py-2">
                 Claim a number from the pool
             </button>
         </div>

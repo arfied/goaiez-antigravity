@@ -13,7 +13,7 @@
                     <li>
                         <span class="font-mono text-sm">{{ $s->session_token }}</span> 
                         <span class="text-ink-2">[{{ $s->status }}] {{ $s->created_at?->format('Y-m-d H:i') }}</span>
-                        <button wire:click="escalate({{ $s->id }})" class="rounded bg-brand text-white px-3 py-1 text-sm">Hand to a person</button>
+                        <button wire:click="escalate({{ $s->id }})" class="rounded bg-ink text-paper px-3 py-1 text-sm">Hand to a person</button>
                     </li>
                 @endforeach
             </ul>
