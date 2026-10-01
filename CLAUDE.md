@@ -3502,3 +3502,32 @@ namespace resolution against both trees — expected answers DIFFERING (N254) �
 ⛔ **An instrument that agrees with the right answer for the wrong reason is still broken**, and a confirming
 derivation is exactly where that goes unnoticed, because nothing downstream asks a second question of
 agreement (N233's sign-flip, in a reviewer's own check).
+
+⭐ **OWNER RULINGS, 2026-10-01 — THE THREE `text-brand` LINKS STAY, AND A CONFIRMING COUNT IS NOT A
+CONFIRMATION (N379).** Wave (b) accepted at `6bef33ba8`. Three parts, binding.
+
+1. ⛔ **Do not swap the three `text-brand` links, and `text-ink` is NOT the in-scope fix — it is a different
+   defect.** `X-110/install-verify.blade.php:56` (`hover:text-brand`), `studio.blade.php:72` and `:99` stay as
+   they are. The owner's reason, which corrects a proposal of mine: **they are underlined links, not
+   background-less buttons.** A link's affordance is the underline; `text-brand` resolving to inherited colour
+   leaves it visible and clickable, while `text-ink` would paint a link in body-text colour and remove the one
+   signal that distinguishes it. ⛔ My report had offered the swap as "the only in-scope fix" — *the two defects
+   share a dead token and nothing else*, and treating them as one class was the error. **No `--color-brand`.**
+   Recorded, parked, not a wave.
+2. ⛔ **`errors 3` is the named floor** — and note that **N370-4's headline reads `errors 4`** (`CLAUDE.md:3442`)
+   while its own body already resolves the conflict: *"the floor is not 3, it is **the set of names**, and the
+   sandbox contributes a variable number of them."* Both headline numbers are therefore wrong as headlines and
+   right as snapshots: today's gate measured **three** names (the two journey-harness transport stubs plus one
+   sandbox journey) and the comparison that governs is `FAILED 0` **plus no name outside that set**. ⭐ This is
+   N343's shape in my own contract — *a rule stated with its reason, applied by its headline* — and it is the
+   second time a number in a heading has outranked the definition underneath it. **Read the set, never either
+   headline.**
+3. ⛔ **NAMESPACE THE INSTRUMENT BEFORE YOU TRUST A `2`** (the owner's wording: *"a confirming count that cannot
+   see namespaced views is not a confirmation"*). This is N378's control promoted to a standing rule, because
+   the failure direction is the quiet one: my derivation of `SchemeTokenTest`'s pin returned the **right number
+   for the wrong reason**, having resolved none of the five swept views — they declare
+   `view('x-188::pool-inventory')`, and the script only tried `resources/views/<dotted>.blade.php`. ⭐ **Any
+   instrument that walks this repo's Livewire views resolves BOTH forms** — `resources/views/<dotted>` and
+   `app/Modules/<MOD>/Ui/views/<name>` for a `<ns>::<name>` literal — and proves it by printing which files it
+   opened, not by agreeing with a report. A confirming measurement is the one place nobody asks a second
+   question (N233), so its control must be the *set of inputs it actually read*.
