@@ -201,3 +201,31 @@ test('the preview is a centered page and the clicked block carries the outline a
         ->assertSet('selectedBlockIndex', 0)
         ->assertSee('data-selected-block=&quot;0&quot;', false);
 });
+
+test('ask on an empty page refuses with a sentence and opens no proposal', function () {
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = \Tests\TestCase::provisionTenant([
+        'owner_user_id' => $user->id,
+        'name' => 'Studio Test Business',
+    ]);
+
+    $page = new Page;
+    $page->business_id = $business->id;
+    $page->title = 'Home';
+    $page->slug = 'home';
+    $page->is_published = true;
+    $page->draft_blocks = [];
+    $page->save();
+
+    $this->actingAs($user);
+
+    \Livewire\Livewire::test(Studio::class)
+        ->set('pageId', $page->id)
+        ->set('request', 'rewrite this page')
+        ->call('ask')
+        ->assertSet('success', null)
+        ->assertSee('This page has no blocks yet. Add a hero first.');
+
+    $page->refresh();
+    expect($page->draft_meta['pending_edit'] ?? null)->toBeNull();
+});
