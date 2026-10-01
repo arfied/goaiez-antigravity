@@ -3574,3 +3574,61 @@ deriving it would have reused `N379`. ⭐ The rule needs its mirror stated: **a 
 is appended to the ledger in the same act**, or the ledger — the thing N153 points every future derivation
 at — silently under-reports the ceiling. Same family as N112: two documents about one record, and the
 authoritative one was the empty one.
+
+⛔⛔ **A `<style>` BLOCK IS AN ELEMENT THAT PUTS AN ATTRIBUTE'S NAME ON THE PAGE — N256/N262 EXTENDED, AND I
+SHIPPED THE DEFECT IN THE BRIEF THAT CITES THEM (N383, 2026-10-01, UI-257 run 267).** The brief ordered the
+preview shell to contain, unconditionally,
+`[data-selected-block]{outline:3px solid var(--color-accent);outline-offset:4px;}` and — four hundred words
+later — ordered the test to assert `assertDontSee('data-selected-block', false)`. **The CSS rule puts that
+literal in every render, so the negative assertion is unsatisfiable by construction.**
+⛔ **And the brief wrote the number down itself:** its own verification step read
+`grep -c 'data-selected-block' PagePreview.php  # expect 2 (the setter and the CSS rule)`. Two statements
+about one quantity in one document, both mine — the drifted-refusal-message family (N114/N126/N164/N348).
+⭐ **N256 says "no placeholder, heading or `x-ui.*` attribute"; N262 generalises to `<select>`, datalist,
+autocomplete, hidden input, `wire:key`, `title=`. Not one of them names a STYLESHEET**, because every prior
+instance was markup. **RULED: the N256 grep covers the document's own CSS and script text, not only its
+markup — any `[attr]` selector, `:has()` argument, or JS string literal naming an attribute puts that
+attribute's name on the page.**
+⭐ The coder stopped and quoted the reason rather than working around it, which is the contract, and it cost
+one wave and nothing else. **The fix was a product improvement, not a test patch:** the outline rule moved
+inside `if ($selectedIndex !== null)`, so a preview with no selection ships no dead rule and the owner's
+"no outline when nothing is selected" became structural. ⭐ And the resulting test is **self-discriminating**
+— `assertDontSee(…)` before the click and `assertSee('data-selected-block=&quot;0&quot;', false)` after
+cannot both pass unless the attribute and the rule are genuinely conditional.
+⚠️ The escaped `&quot;` is not decoration: `srcdoc="{{ $previewHtml }}"` escapes the whole preview document
+into an attribute, so an attribute NAME survives verbatim and a quoted VALUE does not. Measured with `e()`,
+then confirmed on the coder's own rendered dump (`data-selected-block` → 2, `data-selected-block=&quot;`
+→ 1). **The value-bearing form is the only one that proves WHICH block.**
+
+⛔⛔ **I WROTE AN "EXPECTED TREE" FROM `git status --short | head -5` AND IT WAS SHORT BY NINE PATHS, ONE OF
+WHICH WAS A TEST THE GATE WOULD RUN (N384, 2026-10-01, same tick as N383).** The fix brief's expected-tree
+STOP condition listed two untracked files. Measured uncapped —
+`git status --porcelain --untracked-files=all | grep -c '^??'` — there were **eleven**:
+`debug.txt · dump.html · out.html · pest_output.txt · phpstan.json · phpstan_output.json · test_dump.php ·
+test_lw.php · test_model.php · test_str.php · tests/Feature/Site/StudioScreenTestDebug.php`.
+⛔ **That is N334 verbatim** — *a claim about the WHOLE of a set is never made from output that passed
+through `head`, `tail`, `-maxdepth`, `sed -n` or any slice* — committed by its author two hours after
+re-ruling on it, and in the one field whose entire purpose is to be exhaustive. A tree listing short by nine
+paths would have fired its own STOP condition and cost a second wave on top of N383's.
+⛔ **And the eleventh file was not debris but a gate hazard:**
+`app/tests/Feature/Site/StudioScreenTestDebug.php`, 855 bytes, **one `test(...)`**, sitting inside
+`tests/Feature/Site/` — precisely the directory both the coder's narrow run and this seat's closing gate
+execute. Untracked, so it could never commit; **it would still RUN**, making the `FAILED` count
+unattributable. ⭐ **An untracked file under `tests/` is not dirt, it is an unreviewed test inside the
+measurement.** The check is `git status --porcelain --untracked-files=all | grep '^?? app/tests/'` before
+any gate whose result will be believed.
+⭐ The cheap guard N334 already prescribes would have caught it: **print `wc -l` beside any listing you cap**
+— 5 printed against 14 counted is the whole finding.
+
+⚠️ **N153 SAYS "THE LEDGER" AND THERE ARE EIGHT OF THEM; DERIVING THE NEXT NOTE NUMBER FROM MAIN'S ALONE
+WOULD HAVE REUSED N383 TODAY (N385, 2026-10-01).** Measured ceilings this tick: `grs-antig` **N382** ·
+`grs-antig-ui` **N384** · site/sixty/reviews N308 · money/stages N205 · pricebook N201.
+`.agents/supervisor/**` is per-track and never merges, so **the note-number space is global while the
+ledgers are not** — N383 and N384 were written into the ui lane's ledger while main's still read N382.
+⭐ This is N153's own shape one level up: *a cheap local reading that is honest about itself is still the
+wrong instrument when the quantity is owned elsewhere.* There the ceiling was in `REVIEWS.md` rather than
+`CLAUDE.md`; here it is in **eight** `REVIEWS.md` files rather than one.
+**RULED: the ceiling is `cat /home/goaiez/agents/grs-antig*/.agents/supervisor/REVIEWS.md | grep -o
+'N[0-9]\{3\}' | sort -u | tail`, across every checkout — one command, and the only form that cannot
+collide.** It pairs with the N379 gap: a note committed to `CLAUDE.md` must reach a ledger, **and** the
+ledger consulted for the ceiling must be all of them.
