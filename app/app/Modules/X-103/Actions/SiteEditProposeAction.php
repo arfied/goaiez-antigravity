@@ -112,6 +112,7 @@ final class SiteEditProposeAction
             return [
                 'status' => 'refused',
                 'reason' => $styleRefusedReason ?? 'no_valid_blocks',
+                'explanation' => (string) ($response->json['explanation'] ?? ''),
             ];
         }
 

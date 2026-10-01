@@ -19,10 +19,10 @@ use App\Modules\X103\Events\SitePublished;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X103\Ui\Pages;
-use App\Services\Facts\BusinessFacts;
-use App\Services\Facts\BusinessFactKey;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X163\Models\PriceBookItem;
+use App\Services\Facts\BusinessFactKey;
+use App\Services\Facts\BusinessFacts;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -1200,7 +1200,7 @@ class PagesScreenTest extends TestCase
         Http::fake([
             'api.anthropic.com/*' => Http::response(
                 json_encode([
-                    'content' => [['type' => 'text', 'text' => json_encode(['patches' => [], 'explanation' => 'x'])]],
+                    'content' => [['type' => 'text', 'text' => json_encode(['patches' => [], 'explanation' => 'There is no pricing section on this page to change.'])]],
                     'stop_reason' => 'end_turn',
                     'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
                 ]),
@@ -1210,7 +1210,7 @@ class PagesScreenTest extends TestCase
             'api.openai.com/*' => Http::response([
                 'id' => 'msg_edit',
                 'choices' => [
-                    ['message' => ['content' => json_encode(['patches' => [], 'explanation' => 'x'])]],
+                    ['message' => ['content' => json_encode(['patches' => [], 'explanation' => 'There is no pricing section on this page to change.'])]],
                 ],
                 'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
             ]),
@@ -1221,7 +1221,7 @@ class PagesScreenTest extends TestCase
             ->set('editRequest.'.$page->id, 'make the headline stronger')
             ->call('askEdit', $page->id)
             ->assertSet('success', null)
-            ->assertSet('error', 'The AI did not propose a change. Name the block and the exact words you want, for example: on the hero, set the headline to …');
+            ->assertSet('error', 'There is no pricing section on this page to change. The AI did not propose a change. Name the block and the exact words you want, for example: on the hero, set the headline to …');
 
         $page->refresh();
         $this->assertArrayNotHasKey('pending_edit', $page->draft_meta ?? []);
@@ -1784,5 +1784,48 @@ class PagesScreenTest extends TestCase
         $this->assertSame('hero', $page->draft_blocks[0]['type']);
         $this->assertSame('Faq Controls Test', $page->draft_blocks[0]['headline']);
         $this->assertSame('Soft serve and milk tea, made to order', $page->draft_blocks[0]['subline']);
+    }
+
+    public function test_an_empty_explanation_falls_back_to_the_coaching_sentence_alone(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Pages Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old headline'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['patches' => [], 'explanation' => ''])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [
+                    ['message' => ['content' => json_encode(['patches' => [], 'explanation' => ''])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->set('editRequest.'.$page->id, 'make the headline stronger')
+            ->call('askEdit', $page->id)
+            ->assertSet('success', null)
+            ->assertSet('error', 'The AI did not propose a change. Name the block and the exact words you want, for example: on the hero, set the headline to …');
     }
 }
