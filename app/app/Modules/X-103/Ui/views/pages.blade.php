@@ -159,6 +159,16 @@
                             </form>
                         </div>
                     </details>
+                    
+                    <details class="group">
+                        <summary class="cursor-pointer text-sm font-medium text-ink bg-card border border-rule rounded-[--radius-control] px-3 py-2">Add hero</summary>
+                        <div class="p-3 mt-2 bg-card border border-rule rounded-[--radius-card]">
+                            <form wire:submit="addHero({{ $editing->id }})" class="space-y-2">
+                                <p class="text-xs text-ink-2">Adds a hero using your business name and your saved tagline.</p>
+                                <x-ui.button variant="secondary" size="default" type="submit">Add hero</x-ui.button>
+                            </form>
+                        </div>
+                    </details>
                 </div>
 
                 <details class="group">

@@ -89,7 +89,8 @@ class SitePatchTest extends TestCase
         Livewire::test(Pages::class)
             ->set('editRequest', [$page->id => 'Change hero'])
             ->call('askEdit', $page->id)
-            ->assertSet('success', 'patch 0: block_index out of range');
+            ->assertSet('success', null)
+            ->assertSet('error', 'patch 0: block_index out of range');
 
         $page->refresh();
         $this->assertArrayNotHasKey('pending_edit', $page->draft_meta ?? []);

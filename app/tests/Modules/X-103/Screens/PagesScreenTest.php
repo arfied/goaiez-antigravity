@@ -19,6 +19,8 @@ use App\Modules\X103\Events\SitePublished;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X103\Ui\Pages;
+use App\Services\Facts\BusinessFacts;
+use App\Services\Facts\BusinessFactKey;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Support\Tenancy;
@@ -1218,7 +1220,8 @@ class PagesScreenTest extends TestCase
             ->test(Pages::class)
             ->set('editRequest.'.$page->id, 'make the headline stronger')
             ->call('askEdit', $page->id)
-            ->assertSet('success', 'no_valid_blocks');
+            ->assertSet('success', null)
+            ->assertSet('error', 'The AI did not propose a change. Name the block and the exact words you want, for example: on the hero, set the headline to …');
 
         $page->refresh();
         $this->assertArrayNotHasKey('pending_edit', $page->draft_meta ?? []);
@@ -1756,5 +1759,30 @@ class PagesScreenTest extends TestCase
             ->assertOk()
             ->assertSee('Publish changes')
             ->assertSee('Unpublish');
+    }
+
+    public function test_add_hero_writes_one_hero_block_from_the_business_name_and_the_saved_tagline(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['name' => 'Faq Controls Test', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'add-hero-x7q',
+            'title' => 'Blank',
+            'draft_blocks' => [],
+            'is_published' => false,
+        ]);
+
+        app(BusinessFacts::class)->set($biz->id, BusinessFactKey::TAGLINE, 'Soft serve and milk tea, made to order');
+
+        Livewire::test(Pages::class)->call('addHero', $page->id);
+
+        $page->refresh();
+        $this->assertCount(1, $page->draft_blocks);
+        $this->assertSame('hero', $page->draft_blocks[0]['type']);
+        $this->assertSame('Faq Controls Test', $page->draft_blocks[0]['headline']);
+        $this->assertSame('Soft serve and milk tea, made to order', $page->draft_blocks[0]['subline']);
     }
 }

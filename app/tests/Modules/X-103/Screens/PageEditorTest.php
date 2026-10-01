@@ -203,7 +203,7 @@ class PageEditorTest extends TestCase
             'business_id' => $biz->id,
             'slug' => 'home',
             'title' => 'Home',
-            'draft_blocks' => [],
+            'draft_blocks' => [['type' => 'hero', 'headline' => 'Test']],
             'is_published' => false,
         ]);
 

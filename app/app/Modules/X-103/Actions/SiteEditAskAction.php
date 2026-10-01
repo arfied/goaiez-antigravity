@@ -18,6 +18,18 @@ final class SiteEditAskAction
     {
         $page = Page::where('business_id', $businessId)->findOrFail($pageId);
 
+        $hasPending = isset($page->draft_meta['pending_edit']);
+        if (! $hasPending && empty($page->draft_blocks)) {
+            return [
+                'status' => 'refused',
+                'reason' => 'no_blocks',
+                'message' => 'This page has no blocks yet. Add a hero first.',
+                'edits' => 0,
+                'model' => null,
+                'images' => 0,
+            ];
+        }
+
         $res = $this->action->handle(
             businessId: $businessId,
             pageId: $pageId,
@@ -29,6 +41,11 @@ final class SiteEditAskAction
             return [
                 'status' => 'refused',
                 'reason' => $res['reason'],
+                'message' => match ($res['reason']) {
+                    'no_valid_blocks' => 'The AI did not propose a change. Name the block and the exact words you want, for example: on the hero, set the headline to …',
+                    'empty_request' => 'Type what you want changed first.',
+                    default => 'The AI could not make that change.',
+                },
                 'edits' => 0,
                 'model' => null,
                 'images' => 0,
