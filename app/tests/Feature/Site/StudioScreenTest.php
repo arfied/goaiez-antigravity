@@ -175,3 +175,29 @@ test('the primary CTAs render with defined background tokens', function () {
         ->assertSee('bg-ink', false)
         ->assertSee('class="w-full min-h-screen border border-rule bg-canvas"', false);
 });
+
+test('the preview is a centered page and the clicked block carries the outline attribute', function () {
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = $this->provisionTenant([
+        'owner_user_id' => $user->id,
+        'name' => 'Studio Test Business',
+    ]);
+
+    $page = new Page;
+    $page->business_id = $business->id;
+    $page->title = 'Home';
+    $page->slug = 'home';
+    $page->is_published = true;
+    $page->draft_blocks = [['type' => 'hero', 'headline' => 'Asul and Blue'], ['type' => 'about', 'text' => 'x']];
+    $page->save();
+
+    $this->actingAs($user);
+
+    Livewire::test(Studio::class)
+        ->set('pageId', $page->id)
+        ->assertSee('data-preview-page', false)
+        ->assertDontSee('data-selected-block', false)
+        ->call('selectBlock', 0)
+        ->assertSet('selectedBlockIndex', 0)
+        ->assertSee('data-selected-block=&quot;0&quot;', false);
+});

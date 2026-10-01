@@ -229,7 +229,7 @@ class Studio extends Component
         if ($this->pageId !== null) {
             $selectedPage = Page::where('business_id', $this->businessId)->findOrFail($this->pageId);
             $hasProposal = isset($selectedPage->draft_meta['pending_edit']);
-            $previewHtml = app(PagePreview::class)->html($selectedPage, $hasProposal);
+            $previewHtml = app(PagePreview::class)->html($selectedPage, $hasProposal, $this->selectedBlockIndex);
 
             $script = <<<'HTML'
 <script>
