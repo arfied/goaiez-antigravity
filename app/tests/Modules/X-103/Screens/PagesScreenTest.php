@@ -1760,31 +1760,29 @@ class PagesScreenTest extends TestCase
             ->assertSee('Publish changes')
             ->assertSee('Unpublish');
     }
+
+    public function test_add_hero_writes_one_hero_block_from_the_business_name_and_the_saved_tagline(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['name' => 'Faq Controls Test', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'add-hero-x7q',
+            'title' => 'Blank',
+            'draft_blocks' => [],
+            'is_published' => false,
+        ]);
+
+        app(BusinessFacts::class)->set($biz->id, BusinessFactKey::TAGLINE, 'Soft serve and milk tea, made to order');
+
+        Livewire::test(Pages::class)->call('addHero', $page->id);
+
+        $page->refresh();
+        $this->assertCount(1, $page->draft_blocks);
+        $this->assertSame('hero', $page->draft_blocks[0]['type']);
+        $this->assertSame('Faq Controls Test', $page->draft_blocks[0]['headline']);
+        $this->assertSame('Soft serve and milk tea, made to order', $page->draft_blocks[0]['subline']);
+    }
 }
-
-test('add hero writes one hero block on an empty page from the business name and the saved tagline', function () {
-    $owner = User::factory()->create(['role' => UserRole::Owner]);
-    $biz = TestCase::provisionTenant(['name' => 'Faq Controls Test', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
-    Tenancy::set($biz->id);
-
-    $page = Page::create([
-        'business_id' => $biz->id,
-        'slug' => 'faq-controls',
-        'title' => 'FAQ',
-        'draft_blocks' => [],
-        'is_published' => false,
-    ]);
-
-    app(BusinessFacts::class)->set($biz->id, BusinessFactKey::TAGLINE, 'Soft serve and milk tea, made to order');
-
-    $this->actingAs($owner);
-
-    \Livewire\Livewire::test(Pages::class)
-        ->call('addHero', $page->id);
-
-    $page->refresh();
-    expect(count($page->draft_blocks))->toBe(1);
-    expect($page->draft_blocks[0]['type'])->toBe('hero');
-    expect($page->draft_blocks[0]['headline'])->toBe('Faq Controls Test');
-    expect($page->draft_blocks[0]['subline'])->toBe('Soft serve and milk tea, made to order');
-});
