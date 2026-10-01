@@ -3846,3 +3846,32 @@ discriminating check was the symbol count being **2 before and 2 after** rather 
 ⭐ Worth recording as the happy half: `pint --dirty` took the pint debt list **224 → 223** by clearing
 `PagesScreenTest.php`'s `ordered_imports`. The change that looked least ordered was the formatter paying
 down debt, and N255's exemption clause is what made it legible rather than a deviation.
+
+⚠️ **`pint --dirty` CANNOT COVER A FILE AN EARLIER RUN COMMITTED BEFORE ITS OWN PINT STEP, AND THE DEBT IS
+INVISIBLE TO EVERY PER-WAVE CHECK (N392, 2026-10-01, MAIN-1024).** Run 1024 stopped at item 5 — correctly,
+on an error of mine — having already committed `BlockPatchApplier.php` at item 3. Item 6's `pint --dirty`
+never ran. Runs 1025 and 1026 did run it, and it covered nothing, because `--dirty` formats files dirty **in
+that run** and the applier was already committed. Measured across three gates on three shas:
+```
+.gate-md3cf (before add_block)  BlockPatchApplier in pint list: 0   total 223
+.gate-m62b6 (after run 1024)                                   1   total 224
+.gate-m9558 (after 1025+1026)                                  1   total 224
+```
+Five fixers: `single_quote · unary_operator_spaces · braces_position ·
+not_operator_with_successor_space · single_line_empty_body`.
+⭐ **The reason it hides is N255b sharpened.** N255b already says the report's PINT field is near-vacuous by
+construction — the brief orders `--dirty` before the commit, so *"none of my files are in the list"* cannot
+be false unless the step is skipped. **A STOP is precisely the case where the step IS skipped**, and the
+next run's PINT field is then honestly green about files that run never touched. Three consecutive reports
+said pint was clean; all three were true and none of them was about the unformatted file.
+**RULED: a fix run that follows a STOP re-formats the files the STOPPED run committed, by name, with
+`./vendor/bin/pint <those paths>` rather than `--dirty`.** The brief for a fix run already lists the prior
+commit's files — it has to, to say what not to re-edit — so the paths are in hand.
+⭐ And the check that caught it is one this seat only started doing today: comparing the pint **total**
+across consecutive gates rather than only asking whether the wave's own files appear. `223 → 224 → 224`
+names the run that added it without reading a single fixer. Same family as N386's suite total — *the
+aggregate caught what the per-file check was structurally unable to see*, and in both cases the per-file
+check was honest and green.
+⚠️ Not a blocker: pint is standing-red at 224 entries and `supervise.sh` does not gate on it. ⛔ But it is
+debt THIS track introduced one hour after celebrating `224 → 223`, so it is carried as item 0 of the next
+wave rather than pushed and forgotten.
