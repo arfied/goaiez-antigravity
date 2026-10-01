@@ -172,5 +172,6 @@ test('the primary CTAs render with defined background tokens', function () {
         ->assertSee('Apply')
         ->assertSee('Ask')
         ->assertDontSee('bg-brand')
-        ->assertSee('bg-ink', false);
+        ->assertSee('bg-ink', false)
+        ->assertSee('class="w-full min-h-screen border border-rule bg-canvas"', false);
 });
