@@ -305,7 +305,7 @@ class StudioInspectorTest extends TestCase
             ->assertSet('error', 'That AI is already designing this page.');
 
         $meta = $page->draft_meta;
-        $meta['designs']['gemini'] = ['status' => 'ready', 'style' => 'h1{color:red}', 'html' => '<main><h1>Designed by Gemini 7401</h1></main>', 'images' => []];
+        $meta['designs']['gemini'] = ['status' => 'ready', 'theme' => 'warm-local', 'style' => null, 'blocks' => [['type' => 'hero', 'headline' => 'Designed by Gemini 7401']], 'explanation' => 'Warm.', 'model' => 'google-gemini-3.1-pro'];
         $page->update(['draft_meta' => $meta]);
 
         Livewire::test(Studio::class)
@@ -314,7 +314,7 @@ class StudioInspectorTest extends TestCase
             ->set('showDesign', 'grok')
             ->assertViewHas('previewHtml', fn ($html) => ! str_contains($html, 'Designed by Gemini 7401'))
             ->set('showDesign', 'gemini')
-            ->assertViewHas('previewHtml', fn ($html) => str_contains($html, 'Designed by Gemini 7401') && str_contains($html, 'h1{color:red}'));
+            ->assertViewHas('previewHtml', fn ($html) => str_contains($html, 'Designed by Gemini 7401') && str_contains($html, '.site-block.about .site-block__inner { max-width: 44rem; text-align: center; }'));
     }
 
     public function test_a_theme_changes_the_look_offers_publish_and_undo_brings_the_old_look_back(): void
@@ -357,5 +357,41 @@ class StudioInspectorTest extends TestCase
             ->set('pageId', $page->id)
             ->call('applyTheme', 'no-such-theme')
             ->assertSet('error', 'There is no such theme.');
+    }
+
+    public function test_using_an_ai_design_previews_it_with_its_theme_and_apply_keeps_both(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $business = TestCase::provisionTenant(['name' => 'Inspector Owner', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($business->id);
+
+        $page = Page::create([
+            'business_id' => $business->id, 'slug' => 'p'.rand(), 'title' => 'T',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old', 'subline' => 'Old'],
+                ['type' => 'about', 'text' => 'Unchanged'],
+            ],
+            'is_published' => false,
+        ]);
+        $meta = $page->draft_meta ?? [];
+        $meta['designs']['grok'] = ['status' => 'ready', 'theme' => 'warm-local', 'style' => null, 'blocks' => [['type' => 'hero', 'headline' => 'Grok design 7501'], ['type' => 'about', 'text' => 'About 7502']], 'explanation' => 'Warm.', 'model' => 'xai-grok-4.7'];
+        $page->update(['draft_meta' => $meta]);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('useDesign', 'grok')
+            ->assertSet('error', null)
+            ->assertViewHas('previewHtml', fn ($html) => str_contains($html, 'Grok design 7501') && str_contains($html, '.site-block.about .site-block__inner { max-width: 44rem; text-align: center; }'))
+            ->call('useDesign', 'grok')
+            ->assertSet('error', 'Apply or discard the proposal you are previewing first.')
+            ->call('applyProposal')
+            ->assertSet('error', null);
+
+        $page->refresh();
+        $this->assertEquals([['type' => 'hero', 'headline' => 'Grok design 7501'], ['type' => 'about', 'text' => 'About 7502']], $page->draft_blocks);
+        $tokens = Business::find($business->id)->site_tokens;
+        $this->assertSame('warm-local', $tokens['theme']);
+        $this->assertSame('#a23e2a', $tokens['palette']['primary']);
     }
 }

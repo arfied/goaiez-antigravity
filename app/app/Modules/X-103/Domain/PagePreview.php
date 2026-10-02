@@ -21,6 +21,11 @@ final class PagePreview
 
         $tokens = app(IndustryStartingPoints::class)->forBusiness($page->business_id);
 
+        // A proposal can carry a theme (an AI design, SiteDesignUseAction): preview it with that theme.
+        if ($proposed && is_string($page->draft_meta['pending_edit']['theme'] ?? null)) {
+            $tokens['theme'] = $page->draft_meta['pending_edit']['theme'];
+        }
+
         if ($proposed && isset($page->draft_meta['pending_edit']['style'])) {
             $style = $page->draft_meta['pending_edit']['style'];
             if (isset($style['palette'])) {
@@ -31,6 +36,44 @@ final class PagePreview
             }
         }
 
+        return $this->document($blocks, $tokens, $selectedIndex, $editable);
+    }
+
+    /**
+     * One AI's design of the page (draft_meta.designs.<engine>): its sections drawn by our renderer with its theme and
+     * colours — exactly what the page will look like if the owner uses it.
+     */
+    public function designHtml(Page $page, string $engine): string
+    {
+        $design = $page->draft_meta['designs'][$engine] ?? null;
+        if (! is_array($design) || ($design['status'] ?? null) !== 'ready' || ! is_array($design['blocks'] ?? null)) {
+            return '';
+        }
+
+        $tokens = app(IndustryStartingPoints::class)->forBusiness($page->business_id);
+        $theme = is_string($design['theme'] ?? null) ? SiteThemes::get($design['theme']) : null;
+        if ($theme !== null) {
+            $tokens['theme'] = $theme['id'];
+            $tokens['palette'] = array_replace($tokens['palette'], $theme['palette']);
+            $tokens['type_pairing'] = array_replace($tokens['type_pairing'], $theme['type_pairing']);
+        }
+        $style = is_array($design['style'] ?? null) ? $design['style'] : [];
+        if (isset($style['palette']) && is_array($style['palette'])) {
+            $tokens['palette'] = array_replace($tokens['palette'], $style['palette']);
+        }
+        if (isset($style['type_pairing']) && is_array($style['type_pairing'])) {
+            $tokens['type_pairing'] = array_replace($tokens['type_pairing'], $style['type_pairing']);
+        }
+
+        return $this->document($design['blocks'], $tokens, null, false);
+    }
+
+    /**
+     * @param  array<int, mixed>  $blocks
+     * @param  array<string, mixed>  $tokens
+     */
+    private function document(array $blocks, array $tokens, ?int $selectedIndex, bool $editable): string
+    {
         $html = app(SiteBlockRenderer::class)->render($blocks, ['tokens' => $tokens, 'editable' => $editable] + self::CONTEXT);
 
         $disk = Storage::disk('local');
@@ -84,32 +127,5 @@ final class PagePreview
 
         return '<!doctype html><html><head><meta charset="utf-8"><base target="_blank"></head>'
             .'<body data-preview-page="1">'.$html.$previewShell.'</body></html>';
-    }
-
-    /** One AI's design of the page (draft_meta.designs.<engine>) as its own preview document, pictures inlined as html() does. */
-    public function designHtml(Page $page, string $engine): string
-    {
-        $design = $page->draft_meta['designs'][$engine] ?? null;
-        if (! is_array($design) || ($design['status'] ?? null) !== 'ready') {
-            return '';
-        }
-
-        $html = (string) ($design['html'] ?? '');
-        $disk = Storage::disk('local');
-        $finfo = new \finfo(FILEINFO_MIME_TYPE);
-        foreach ((array) ($design['images'] ?? []) as $n => $path) {
-            $src = '';
-            if (is_string($path) && $disk->exists($path)) {
-                $mime = @$finfo->file($disk->path($path));
-                if ($mime === 'image/jpeg' || $mime === 'image/png' || $mime === 'image/webp') {
-                    $src = 'data:'.$mime.';base64,'.base64_encode((string) $disk->get($path));
-                }
-            }
-            $html = str_replace('[[image:'.$n.']]', $src, $html);
-        }
-
-        return '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><base target="_blank">'
-            .'<style>'.(string) ($design['style'] ?? '').'</style></head>'
-            .'<body data-preview-design="1">'.$html.'</body></html>';
     }
 }

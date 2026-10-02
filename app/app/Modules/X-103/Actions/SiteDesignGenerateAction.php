@@ -5,38 +5,49 @@ declare(strict_types=1);
 namespace App\Modules\X103\Actions;
 
 use App\Enums\AiTask;
+use App\Modules\X103\Domain\BlockPatchSchema;
+use App\Modules\X103\Domain\SiteBlockRenderer;
 use App\Modules\X103\Domain\SiteDesignEngines;
-use App\Modules\X103\Domain\SiteHtmlSanitizer;
+use App\Modules\X103\Domain\SiteThemes;
 use App\Modules\X103\Domain\StatedFacts;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Services\Ai\AiRequest;
 use App\Services\Ai\AiRouter;
+use App\Services\Assistant\PriceBook;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Industry\IndustryStartingPoints;
+use App\Services\Industry\SiteStyle;
 use App\Services\Visibility\CompetitorSiteNotes;
+use App\Support\PlanPricing;
 use Throwable;
 
 /**
- * The AI designer (prototype, 2026-10-02 — the boss: "if we ask an AI to build a nice website in chat it can").
+ * The AI designer, JSON in and JSON out (the boss, 2026-10-02, adopting Gemini's advice and the OpenPage architecture).
  *
- * A strong model designs the WHOLE page — layout, styling, typography, icons — from the page's current content, the
- * owner's stated facts, the crawled site and what the top nearby businesses' sites cover (reference only — a business
- * with no website of its own still gets a full page), instead of filling twelve fixed section templates. The designer
- * may ask for up to three new pictures ([[new:description]]), which the image model makes for this business. Its answer is cleaned
- * by SiteHtmlSanitizer (no script, nothing loaded from outside, pictures only as the owner's own [[image:N]]) and kept
- * on the page as draft_meta.designs.<engine> — one per AI (SiteDesignEngines), so the four can be compared. The Studio
- * shows any of them beside the current page; this action never publishes anything.
+ * The AI never writes HTML. It returns one JSON object: a theme id from SiteThemes, optional brand colours and fonts,
+ * and the page as an ordered list of our typed sections (hero, services, reviews, FAQ, stats, call to action, contact…)
+ * with their fields and layout variants. Every section goes through BlockPatchSchema::modelBlock — the same field and
+ * link rules as every AI edit — and the renderer's own validity check, so the page is drawn by our components and every
+ * module that reads sections (contact form, search data, reviews, booking, tracking) keeps working. Each AI's design is
+ * kept separately on the page (draft_meta.designs.<engine>) so the four can be compared; nothing is published here.
  */
 final class SiteDesignGenerateAction
 {
+    /** The section types the designer may use, with the fields each takes — what the AI is told, in its own words. */
+    private const CATALOGUE = 'hero (headline, subline, variant: "split" | "centered" | "cover", cta_label, cta_url) · '
+        .'stats (heading, items: value, label) · services (heading, items: name, description, price_text) · '
+        .'about (heading, text) · reviews_strip (heading, items: author, rating, text, source) · team (heading, items: name, role) · '
+        .'faq (items: question, answer) · cta_band (heading, text, label, url) · booking_button (label, url) · contact (address, phone, email)';
+
     public function __construct(
         private readonly AiRouter $router,
         private readonly DefaultsRegistry $registry,
         private readonly StatedFacts $statedFacts,
-        private readonly SiteHtmlSanitizer $sanitizer,
         private readonly CompetitorSiteNotes $peers,
         private readonly SiteImageGenerateAction $picture,
+        private readonly PriceBook $priceBook,
+        private readonly SiteBlockRenderer $renderer,
     ) {}
 
     /**
@@ -49,40 +60,17 @@ final class SiteDesignGenerateAction
         if ($model === null) {
             return ['status' => 'refused', 'reason' => 'unknown_engine'];
         }
-        $blocks = is_array($page->draft_blocks) ? $page->draft_blocks : [];
+        $current = is_array($page->draft_blocks) ? $page->draft_blocks : [];
 
-        // The owner's own pictures, numbered. The model only ever sees the token, never a file path.
-        $images = [];
-        $imageLines = [];
-        foreach ($blocks as $block) {
-            if (! is_array($block)) {
-                continue;
-            }
-            $found = [];
-            if (($block['type'] ?? '') === 'hero' && is_string($block['image_path'] ?? null) && $block['image_path'] !== '') {
-                $found[] = [$block['image_path'], is_scalar($block['image_alt'] ?? null) ? (string) $block['image_alt'] : 'main picture'];
-            }
-            if (($block['type'] ?? '') === 'gallery' && is_array($block['items'] ?? null)) {
-                foreach ($block['items'] as $item) {
-                    if (is_array($item) && is_string($item['image_path'] ?? null) && $item['image_path'] !== '') {
-                        $found[] = [$item['image_path'], is_scalar($item['alt'] ?? null) ? (string) $item['alt'] : 'photo of the work'];
-                    }
-                }
-            }
-            foreach ($found as [$path, $alt]) {
-                if (count($images) < 12) {
-                    $n = count($images) + 1;
-                    $images[$n] = $path;
-                    $imageLines[] = '[[image:'.$n.']] — '.$alt;
-                }
-            }
-        }
-
-        // Words only: file paths, sizes and bookkeeping are taken out before the model sees the page.
+        // Words only: file paths and bookkeeping are taken out before the model sees the page.
         $content = [];
-        foreach ($blocks as $block) {
+        $oldHero = null;
+        foreach ($current as $block) {
             if (! is_array($block)) {
                 continue;
+            }
+            if (($block['type'] ?? '') === 'hero' && $oldHero === null) {
+                $oldHero = $block;
             }
             unset($block['image_path'], $block['image_width'], $block['image_height'], $block['source'], $block['model'], $block['peers']);
             if (is_array($block['items'] ?? null)) {
@@ -98,6 +86,17 @@ final class SiteDesignGenerateAction
             $content[] = $block;
         }
 
+        $prices = [];
+        foreach ($this->priceBook->list()->entries as $entry) {
+            if ($entry->isConfirmed()) {
+                $priceText = PlanPricing::format($entry->amount());
+                if ($entry->isRange()) {
+                    $priceText .= ' - '.PlanPricing::format($entry->upperAmount());
+                }
+                $prices[] = "Service: {$entry->label} (Price: {$priceText})";
+            }
+        }
+
         $crawled = '';
         foreach (SiteInventoryPage::where('business_id', $businessId)->orderBy('id')->limit(8)->get() as $inventoryPage) {
             $text = trim((string) $inventoryPage->text);
@@ -107,14 +106,22 @@ final class SiteDesignGenerateAction
         }
         $crawled = mb_substr($crawled, 0, 9000);
 
+        $themes = [];
+        foreach (SiteThemes::THEMES as $id => $theme) {
+            $themes[] = $id.' — '.$theme['label'].' (best for: '.$theme['for'].')';
+        }
         $tokens = app(IndustryStartingPoints::class)->forBusiness($businessId);
         $peerNotes = $this->peers->referenceBlock($businessId);
 
         $prompt = $this->statedFacts->section($businessId)
+            ."\n\n".($prices === [] ? 'Prices you may use: none — do not state any price.' : "Prices you may use (never any other price):\n".implode("\n", $prices))
             ."\n\nPage title: ".(string) $page->title
-            ."\n\nThis page's current content (JSON):\n".json_encode($content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)
-            ."\n\nPictures you may use, as the img src exactly as written:\n".($imageLines === [] ? '(none yet — ask for new ones with [[new:description]])' : implode("\n", $imageLines))
-            ."\n\nThe brand's starting colours and fonts (refine them as you like): ".json_encode(['palette' => $tokens['palette'] ?? [], 'type_pairing' => $tokens['type_pairing'] ?? []], JSON_UNESCAPED_SLASHES)
+            ."\n\nThis page's current content (JSON):\n".json_encode($content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+            .($oldHero !== null && ! empty($oldHero['image_path']) ? "\n\nThe business already has a main picture; it is kept on the hero." : '')
+            ."\n\nThemes (use one id):\n".implode("\n", $themes)
+            ."\n\nSection types and their fields: ".self::CATALOGUE
+            ."\n\nFonts you may use: ".implode(' | ', SiteStyle::FONT_STACKS)
+            ."\n\nThe brand's current colours and fonts (JSON): ".json_encode(['palette' => $tokens['palette'] ?? [], 'type_pairing' => $tokens['type_pairing'] ?? []], JSON_UNESCAPED_SLASHES)
             .($crawled === '' ? '' : "\n\nText from the business's current website, for reference only:".$crawled)
             .($peerNotes === '' ? '' : "\n\n".$peerNotes);
 
@@ -129,51 +136,83 @@ final class SiteDesignGenerateAction
             return $this->fail($page, $engine, (string) ($response->failureReason ?? $response->refusalCategory ?? 'unknown'));
         }
 
-        $raw = $response->text;
-        $end = strripos($raw, '</main>');
-        if ($end === false) {
-            // No closing </main>: the answer was cut off, or is not a page. Half a page is never shown.
-            return $this->fail($page, $engine, 'cut_off');
+        $json = self::decode($response->text);
+        if ($json === null) {
+            return $this->fail($page, $engine, 'not_json');
         }
-        $starts = array_values(array_filter([stripos($raw, '<style'), stripos($raw, '<main')], fn ($p) => $p !== false));
-        $start = $starts === [] ? 0 : min($starts);
-        $pageHtml = substr($raw, $start, $end + 7 - $start);
 
-        // New pictures the designer asked for: at most three, made by the image model for this business. A picture
-        // that cannot be made leaves an empty src, and the sanitizer then drops that <img>.
-        $made = 0;
-        $pageHtml = (string) preg_replace_callback('#\[\[new:([^\]]{3,300})\]\]#', function (array $m) use (&$images, &$made, $businessId): string {
-            if ($made >= 3 || count($images) >= 15) {
-                return '';
+        $theme = is_string($json['theme'] ?? null) && SiteThemes::get($json['theme']) !== null ? $json['theme'] : null;
+
+        $style = null;
+        if (is_array($json['style'] ?? null) && $json['style'] !== []) {
+            $base = $theme !== null
+                ? ['palette' => SiteThemes::THEMES[$theme]['palette'], 'type_pairing' => SiteThemes::THEMES[$theme]['type_pairing']]
+                : ['palette' => $tokens['palette'] ?? [], 'type_pairing' => $tokens['type_pairing'] ?? []];
+            $validation = SiteStyle::validate($json['style'], $base);
+            if ($validation['ok']) {
+                $style = $validation['style'];
             }
-            $made++;
-            try {
-                $res = $this->picture->handle($businessId, trim($m[1]));
-            } catch (Throwable) {
-                return '';
+        }
+
+        $blocks = [];
+        foreach (is_array($json['blocks'] ?? null) ? $json['blocks'] : [] as $block) {
+            $type = is_array($block) ? ($block['type'] ?? null) : null;
+            if (! is_string($type) || ! in_array($type, BlockPatchSchema::ADDABLE_TYPES, true)) {
+                continue;
             }
-            if (($res['status'] ?? null) !== 'generated' || ! is_string($res['path'] ?? null)) {
-                return '';
+            $clean = BlockPatchSchema::modelBlock($type, $block, $block['items'] ?? null);
+            if (BlockPatchSchema::hasContent($clean) && $this->renderer->isValidBlock($clean)) {
+                $clean['source'] = 'ai';
+                $clean['model'] = $response->model->value;
+                $blocks[] = $clean;
             }
-            $n = count($images) + 1;
-            $images[$n] = $res['path'];
+        }
+        if ($blocks === []) {
+            return $this->fail($page, $engine, 'no_valid_blocks');
+        }
 
-            return '[[image:'.$n.']]';
-        }, $pageHtml);
-
-        $clean = $this->sanitizer->clean($pageHtml);
-
-        if (trim(strip_tags($clean['html'])) === '') {
-            return $this->fail($page, $engine, 'empty');
+        // The hero keeps the owner's picture; a new one is made only when asked for and there is none.
+        $heroIndex = null;
+        foreach ($blocks as $i => $block) {
+            if ($block['type'] === 'hero') {
+                $heroIndex = $i;
+                break;
+            }
+        }
+        if ($heroIndex !== null && $oldHero !== null && ! empty($oldHero['image_path'])) {
+            $blocks[$heroIndex]['image_path'] = $oldHero['image_path'];
+            foreach (['image_alt', 'image_width', 'image_height'] as $key) {
+                if (isset($oldHero[$key])) {
+                    $blocks[$heroIndex][$key] = $oldHero[$key];
+                }
+            }
+        } elseif ($heroIndex !== null) {
+            foreach (is_array($json['images'] ?? null) ? $json['images'] : [] as $wanted) {
+                $description = is_array($wanted) && is_string($wanted['description'] ?? null) ? trim($wanted['description']) : '';
+                if ($description === '') {
+                    continue;
+                }
+                try {
+                    $made = $this->picture->handle($businessId, $description);
+                } catch (Throwable) {
+                    $made = ['status' => 'failed'];
+                }
+                if (($made['status'] ?? null) === 'generated' && is_string($made['path'] ?? null)) {
+                    $blocks[$heroIndex]['image_path'] = $made['path'];
+                    $blocks[$heroIndex]['image_alt'] = mb_substr($description, 0, 120);
+                }
+                break;
+            }
         }
 
         $page->refresh();
         $meta = $page->draft_meta ?? [];
         $meta['designs'][$engine] = [
             'status' => 'ready',
-            'style' => $clean['style'],
-            'html' => $clean['html'],
-            'images' => $images,
+            'theme' => $theme,
+            'style' => $style,
+            'blocks' => $blocks,
+            'explanation' => is_string($json['explanation'] ?? null) ? mb_substr($json['explanation'], 0, 600) : '',
             'model' => $response->model->value,
             'drafted_at' => now()->toIso8601String(),
         ];
@@ -195,5 +234,22 @@ final class SiteDesignGenerateAction
         $page->save();
 
         return ['status' => 'failed', 'reason' => $reason];
+    }
+
+    /**
+     * The JSON object in an answer, tolerating a ```json fence or a sentence around it.
+     *
+     * @return array<string, mixed>|null
+     */
+    public static function decode(string $text): ?array
+    {
+        $start = strpos($text, '{');
+        $end = strrpos($text, '}');
+        if ($start === false || $end === false || $end < $start) {
+            return null;
+        }
+        $decoded = json_decode(substr($text, $start, $end - $start + 1), true);
+
+        return is_array($decoded) ? $decoded : null;
     }
 }

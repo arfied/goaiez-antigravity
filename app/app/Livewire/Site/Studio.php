@@ -12,6 +12,7 @@ use App\Modules\X103\Actions\SiteBlockAddAction;
 use App\Modules\X103\Actions\SiteBlockArrangeAction;
 use App\Modules\X103\Actions\SiteBlockFieldSetAction;
 use App\Modules\X103\Actions\SiteDesignRequestAction;
+use App\Modules\X103\Actions\SiteDesignUseAction;
 use App\Modules\X103\Actions\SiteEditApplyAction;
 use App\Modules\X103\Actions\SiteEditAskAction;
 use App\Modules\X103\Actions\SiteEditDiscardAction;
@@ -315,6 +316,33 @@ class Studio extends Component
     public function designWithAll(SiteDesignRequestAction $action): void
     {
         $this->startDesign(array_keys(SiteDesignEngines::ENGINES), $action);
+    }
+
+    /** Puts one AI's design up as the page's proposal: preview it, then Apply or Discard. */
+    public function useDesign(string $engine, SiteDesignUseAction $action): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if ($this->pageId === null) {
+            $this->error = 'No page selected.';
+
+            return;
+        }
+
+        $res = $action->handle($this->businessId, $this->pageId, $engine);
+        if ($res['status'] === 'proposed') {
+            $this->showDesign = null;
+            $this->selectedBlockIndex = null;
+            $this->success = 'Previewing the design by '.SiteDesignEngines::label($engine).'. Apply keeps it; Discard puts the page back.';
+
+            return;
+        }
+
+        $this->error = ($res['reason'] ?? '') === 'pending_edit'
+            ? 'Apply or discard the proposal you are previewing first.'
+            : 'That design is not ready yet.';
     }
 
     /**

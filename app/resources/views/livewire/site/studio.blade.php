@@ -92,7 +92,7 @@
                             @php $designs = $selectedPage->draft_meta['designs'] ?? []; @endphp
                             <div class="mt-4 border-t border-rule pt-3">
                                 <p class="text-sm font-bold text-ink mb-1">AI designer (preview)</p>
-                                <p class="text-xs text-ink-2 mb-2">An AI designs this whole page — layout, colours, type and pictures — from your content and what top local businesses cover. Try each AI and compare. Your current page is not changed.</p>
+                                <p class="text-xs text-ink-2 mb-2">An AI designs this whole page — picks a theme, its colours and fonts, the sections and their words, and a picture — from your content and what top local businesses cover. Try each AI and compare; nothing changes until you use a design and press Apply.</p>
                                 <div class="flex flex-wrap gap-2">
                                     @foreach(\App\Modules\X103\Domain\SiteDesignEngines::ENGINES as $engineKey => $engineInfo)
                                         <button wire:click="designWithAi('{{ $engineKey }}')" class="px-3 py-1 text-sm border border-rule rounded text-ink">{{ $engineInfo['label'] }}</button>
@@ -110,6 +110,7 @@
                                                     designing…
                                                 @elseif(($d['status'] ?? null) === 'ready')
                                                     <button wire:click="$set('showDesign', '{{ $engineKey }}')" class="underline text-ink{{ $showDesign === $engineKey ? ' font-bold' : '' }}">show</button>
+                                                    · <button wire:click="useDesign('{{ $engineKey }}')" class="underline text-ink">use this design</button>
                                                 @else
                                                     did not finish ({{ $d['reason'] ?? 'unknown' }})
                                                 @endif

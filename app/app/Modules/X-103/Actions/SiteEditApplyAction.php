@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X103\Actions;
 
 use App\Models\Business;
+use App\Modules\X103\Domain\SiteThemes;
 use App\Modules\X103\Models\Page;
 use Illuminate\Support\Facades\DB;
 
@@ -53,6 +54,10 @@ final class SiteEditApplyAction
                 }
                 if (isset($pending['style']['type_pairing'])) {
                     $tokens['type_pairing'] = array_replace($tokens['type_pairing'] ?? [], $pending['style']['type_pairing']);
+                }
+                // An AI design brings its theme with its colours (SiteDesignUseAction always pairs them).
+                if (is_string($pending['theme'] ?? null) && SiteThemes::get($pending['theme']) !== null) {
+                    $tokens['theme'] = $pending['theme'];
                 }
                 Business::whereKey($businessId)->update(['site_tokens' => $tokens]);
                 $appliedStyle = true;
