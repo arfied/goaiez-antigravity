@@ -277,4 +277,11 @@ class SiteStyleTest extends TestCase
         $this->assertFalse($res['ok']);
         $this->assertEquals('No usable colour or font in that change.', $res['reason']);
     }
+
+    public function test_readable_moves_only_as_far_as_needed_and_leaves_unparseable_colours_alone(): void
+    {
+        $this->assertSame('#666666', SiteStyle::readable('#ffffff', ['#ffffff'], '#000000'));
+        $this->assertSame('red', SiteStyle::readable('red', ['#ffffff'], '#000000'));
+        $this->assertSame('#ffffff', SiteStyle::textOn('blue', ['#ffffff', '#000000']));
+    }
 }

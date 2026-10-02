@@ -7,6 +7,7 @@ use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Models\EdgeZone;
+use App\Services\Industry\SiteStyle;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -381,5 +382,42 @@ class SiteBlockRendererTest extends TestCase
         $this->assertStringNotContainsString('class="hero__media"', $html);
         // And the stylesheet carries the rule that makes that child span both columns at desktop width.
         $this->assertStringContainsString(':only-child', $html);
+    }
+
+    public function test_a_pale_accent_is_painted_as_text_in_a_readable_shade(): void
+    {
+        // The Trades seed: accent #e07a1f on surface #f6f7f9 reads at 2.81:1.
+        $html = (new SiteBlockRenderer)->render([], ['tokens' => ['palette' => [
+            'surface' => '#f6f7f9', 'card' => '#f6f7f9', 'ink' => '#16202b', 'primary' => '#0f5f9c', 'accent' => '#e07a1f',
+        ]]]);
+
+        $this->assertStringContainsString('--color-accent: #e07a1f', $html);
+        $this->assertSame(1, preg_match('/--color-accent-text: (#[0-9a-f]{6});/', $html, $m));
+        $this->assertNotSame('#e07a1f', $m[1]);
+        $this->assertGreaterThanOrEqual(4.5, SiteStyle::contrast($m[1], '#f6f7f9'));
+        $this->assertStringContainsString('a { color: var(--color-accent-text); }', $html);
+        $this->assertStringNotContainsString('color: var(--color-accent)', $html);
+    }
+
+    public function test_a_readable_accent_and_button_text_are_left_as_chosen(): void
+    {
+        $html = (new SiteBlockRenderer)->render([], ['tokens' => ['palette' => [
+            'surface' => '#ffffff', 'card' => '#ffffff', 'ink' => '#111111', 'primary' => '#1d4ed8', 'accent' => '#1d4ed8',
+        ]]]);
+
+        $this->assertStringContainsString('--color-accent-text: #1d4ed8;', $html);
+        $this->assertStringContainsString('--color-on-primary: #ffffff;', $html);
+    }
+
+    public function test_button_text_on_a_pale_primary_switches_to_a_colour_that_reads(): void
+    {
+        // Trades under look C: primary and accent swap, so buttons are #e07a1f and surface-coloured text on them reads at 2.81:1.
+        $html = (new SiteBlockRenderer)->render([], ['tokens' => ['palette' => [
+            'surface' => '#f6f7f9', 'card' => '#f6f7f9', 'ink' => '#16202b', 'primary' => '#e07a1f', 'accent' => '#0f5f9c',
+        ]]]);
+
+        $this->assertStringContainsString('--color-on-primary: #16202b;', $html);
+        $this->assertStringContainsString('.site-cta--primary { background: var(--color-primary); color: var(--color-on-primary); }', $html);
+        $this->assertStringNotContainsString('color: var(--color-canvas)', $html);
     }
 }
