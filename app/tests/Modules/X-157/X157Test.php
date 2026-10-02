@@ -3757,7 +3757,7 @@ class X157Test extends TestCase
         $header = strpos($html, '<header class="site-header">');
         $content = strpos($html, 'Distinctive framed headline 4972');
         $form = strpos($html, 'form-capture-x155');
-        $footer = strpos($html, '<footer class="site-footer">');
+        $footer = strpos($html, '<div class="site-footer"');
 
         $this->assertNotFalse($header);
         $this->assertNotFalse($content);

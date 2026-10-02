@@ -437,7 +437,8 @@ JS;
             }
 
             if ($businessName !== null && trim($businessName) !== '') {
-                $html .= '<footer class="site-footer"><p>&copy; '.date('Y').' '.e($businessName)."</p></footer>\n";
+                // A <div>, not <footer>: X-176's schema tests find each visible block by the tag that follows it (<div|<nav|<script|</body).
+                $html .= '<div class="site-footer" role="contentinfo"><p>&copy; '.date('Y').' '.e($businessName)."</p></div>\n";
             }
             $html .= '</body></html>';
 

@@ -105,7 +105,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 #internal-links-x176 { margin: 3rem 0 0; padding: 1.25rem 0; border-top: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent); }
 #internal-links-x176 ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
 #breadcrumb-x176 { font-size: 0.9rem; margin: 1.5rem 0 0; display: flex; gap: 0.75rem; }
-.form-capture-x155 { margin: 3rem 0 0; }
+.site-block-form { margin-top: 3rem; }
 .site-footer { margin: 2rem 0 0; padding: 1.5rem 0; border-top: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent); font-size: 0.9rem; color: color-mix(in srgb, var(--color-ink) 70%, transparent); }
 </style>
 ';
