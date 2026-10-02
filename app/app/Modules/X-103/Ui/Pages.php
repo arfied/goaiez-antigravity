@@ -15,6 +15,7 @@ use App\Modules\X103\Actions\PageDuplicateAction;
 use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X103\Actions\PageRenameAction;
 use App\Modules\X103\Actions\PageRestoreVersionAction;
+use App\Modules\X103\Actions\PageUndoAction;
 use App\Modules\X103\Actions\PageUnpublishAction;
 use App\Modules\X103\Actions\QuestionAnswerDraftAction;
 use App\Modules\X103\Actions\SeoDraftAction;
@@ -505,34 +506,18 @@ class Pages extends Component
         }
     }
 
-    public function undoEdit(int $pageId): void
+    public function undoEdit(int $pageId, PageUndoAction $action): void
     {
         abort_unless(auth()->user()->hasRole(UserRole::Owner), 403);
         $this->error = null;
         $this->success = null;
 
-        $page = Page::where('business_id', $this->businessId)->findOrFail($pageId);
-        $meta = $page->draft_meta ?? [];
-        $undo = $meta['undo'] ?? [];
-
-        if (empty($undo)) {
-            $this->error = 'Nothing to undo.';
+        $res = $action->handle($this->businessId, $pageId);
+        if ($res['status'] === 'refused') {
+            $this->error = $res['reason'];
 
             return;
         }
-
-        $entry = array_pop($undo);
-
-        if (is_array($entry) && isset($entry['blocks']) && array_key_exists('site_tokens', $entry)) {
-            $page->draft_blocks = $entry['blocks'];
-            Business::whereKey($this->businessId)->update(['site_tokens' => $entry['site_tokens']]);
-        } else {
-            $page->draft_blocks = $entry;
-        }
-
-        $meta['undo'] = $undo;
-        $page->draft_meta = $meta;
-        $page->save();
 
         $this->success = 'Undone. Your draft is back to how it was before the last change.';
     }

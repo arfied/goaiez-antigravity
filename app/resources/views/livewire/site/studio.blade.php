@@ -83,6 +83,11 @@
                             </div>
                             @endif
                             
+                            @if(isset($selectedPage) && !empty($selectedPage->draft_meta['undo']) && !isset($selectedPage->draft_meta['pending_edit']))
+                            <div class="mt-4 text-right">
+                                <button wire:click="undo" class="text-sm text-ink underline">Undo last change</button>
+                            </div>
+                            @endif
                             <div class="text-center mt-4">
                                 <a href="{{ route('x-103.pages', ['edit' => $pageId]) }}" class="text-sm underline text-brand">Open in Pages</a>
                             </div>

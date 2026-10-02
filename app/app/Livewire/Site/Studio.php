@@ -7,6 +7,7 @@ namespace App\Livewire\Site;
 use App\Enums\UserRole;
 use App\Modules\X103\Actions\PageLayoutProposeAction;
 use App\Modules\X103\Actions\PageReadAction;
+use App\Modules\X103\Actions\PageUndoAction;
 use App\Modules\X103\Actions\SiteBlockFieldSetAction;
 use App\Modules\X103\Actions\SiteEditApplyAction;
 use App\Modules\X103\Actions\SiteEditAskAction;
@@ -218,6 +219,29 @@ class Studio extends Component
             'empty_page' => 'This page has no sections to arrange yet.',
             'unknown_layout' => 'There is no layout by that name.',
         ][$reason] ?? $reason;
+    }
+
+    public function undo(PageUndoAction $action): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if ($this->pageId === null) {
+            $this->error = 'No page selected.';
+
+            return;
+        }
+
+        $res = $action->handle($this->businessId, $this->pageId);
+        if ($res['status'] === 'refused') {
+            $this->error = $res['reason'];
+
+            return;
+        }
+
+        $this->selectedBlockIndex = null;
+        $this->success = 'Undone. Your draft is back to how it was before the last change.';
     }
 
     public function mount(PageReadAction $pages): void

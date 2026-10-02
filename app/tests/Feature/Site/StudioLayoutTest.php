@@ -127,4 +127,52 @@ class StudioLayoutTest extends TestCase
             ->call('proposeLayout', 'book')
             ->assertForbidden();
     }
+
+    public function test_the_studio_undoes_an_applied_layout(): void
+    {
+        $page = $this->pageFor(self::BLOCKS);
+
+        $lw = Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->assertDontSee('Undo last change')
+            ->call('proposeLayout', 'book')
+            ->call('applyProposal')
+            ->assertSee('Undo last change');
+
+        $page->refresh();
+        $this->assertSame(['hero', 'booking_button', 'services', 'about'], $this->types($page->draft_blocks));
+
+        $lw->call('undo')
+            ->assertSet('error', null)
+            ->assertSet('success', 'Undone. Your draft is back to how it was before the last change.')
+            ->assertDontSee('Undo last change');
+
+        $page->refresh();
+        $this->assertSame(['hero', 'about', 'services', 'booking_button'], $this->types($page->draft_blocks));
+        $this->assertEmpty($page->draft_meta['undo']);
+    }
+
+    public function test_the_studio_says_when_there_is_nothing_to_undo(): void
+    {
+        $page = $this->pageFor(self::BLOCKS);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('undo')
+            ->assertSet('error', 'Nothing to undo.');
+    }
+
+    public function test_a_manager_cannot_undo_in_the_studio(): void
+    {
+        $page = $this->pageFor(self::BLOCKS, ['undo' => [['blocks' => [self::BLOCKS[0]], 'site_tokens' => null]]]);
+
+        $manager = User::factory()->create(['role' => UserRole::Manager]);
+        Livewire::actingAs($manager)->test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('undo')
+            ->assertForbidden();
+
+        $page->refresh();
+        $this->assertCount(4, $page->draft_blocks);
+    }
 }
