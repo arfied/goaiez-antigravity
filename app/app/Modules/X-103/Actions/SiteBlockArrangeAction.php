@@ -36,13 +36,13 @@ final class SiteBlockArrangeAction
                 return ['status' => 'refused', 'reason' => 'not_a_section', 'index' => null, 'target' => null];
             }
 
-            $patch = match ($move) {
-                'up' => ['op' => 'move', 'block_index' => $blockIndex, 'to_index' => $blockIndex - 1],
-                'down' => ['op' => 'move', 'block_index' => $blockIndex, 'to_index' => $blockIndex + 1],
-                'remove' => ['op' => 'remove', 'block_index' => $blockIndex],
-                default => null,
-            };
-            if ($patch === null) {
+            if ($move === 'up') {
+                $patch = ['op' => 'move', 'block_index' => $blockIndex, 'to_index' => $blockIndex - 1];
+            } elseif ($move === 'down') {
+                $patch = ['op' => 'move', 'block_index' => $blockIndex, 'to_index' => $blockIndex + 1];
+            } elseif ($move === 'remove') {
+                $patch = ['op' => 'remove', 'block_index' => $blockIndex];
+            } else {
                 return ['status' => 'refused', 'reason' => 'unknown_move', 'index' => null, 'target' => null];
             }
 
