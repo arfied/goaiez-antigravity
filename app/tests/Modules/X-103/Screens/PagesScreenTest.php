@@ -1509,6 +1509,51 @@ class PagesScreenTest extends TestCase
         $this->assertStringNotContainsString('Invented service 6615', json_encode($page->draft_blocks));
     }
 
+    public function test_make_me_a_page_is_told_the_business_name_and_only_its_own_stated_facts(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $other = TestCase::provisionTenant(['name' => 'Another business 7740', 'currency' => 'USD']);
+        app(BusinessFacts::class)->set($other->id, BusinessFactKey::TAGLINE, 'Another tenant tagline 7741');
+
+        $biz = TestCase::provisionTenant(['name' => 'Facts business 7730', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+        app(BusinessFacts::class)->set($biz->id, BusinessFactKey::TAGLINE, 'Distinctive tagline 7731');
+        app(BusinessFacts::class)->set($biz->id, BusinessFactKey::SERVICE_AREA, 'Distinctive service area 7732');
+
+        $made = json_encode(['title' => 'Distinctive facts page 7733', 'slug' => 'facts-page', 'blocks' => [
+            ['type' => 'hero', 'headline' => 'Distinctive headline 7734'],
+        ], 'explanation' => 'A page.']);
+
+        Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => $made]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [['message' => ['content' => $made]]],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        Livewire::actingAs($owner)->test(Pages::class)
+            ->set('pageRequest', 'make a page about our area')
+            ->call('makePage')
+            ->assertSet('error', null);
+
+        Http::assertSent(fn ($request) => str_contains($request->body(), 'Business name: Facts business 7730')
+            && str_contains($request->body(), 'Distinctive tagline 7731')
+            && str_contains($request->body(), 'Distinctive service area 7732')
+            && str_contains($request->body(), 'the ONLY facts you may use'));
+        Http::assertNotSent(fn ($request) => str_contains($request->body(), 'Another tenant tagline 7741')
+            || str_contains($request->body(), 'Another business 7740'));
+    }
+
     public function test_polish_renders_the_peer_count_on_the_page_and_restore_removes_it(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);

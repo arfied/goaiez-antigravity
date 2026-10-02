@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace App\Modules\X103\Actions;
 
 use App\Enums\AiTask;
+use App\Models\Business;
 use App\Modules\X103\Domain\BlockPatchSchema;
 use App\Modules\X103\Domain\SiteBlockRenderer;
 use App\Modules\X103\Models\Page;
 use App\Services\Ai\AiRequest;
 use App\Services\Ai\AiRouter;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Facts\BusinessFactKey;
+use App\Services\Facts\BusinessFacts;
 use App\Services\Visibility\CompetitorSiteNotes;
 use Illuminate\Support\Str;
 
@@ -30,7 +33,8 @@ final class SitePageProposeAction
         private readonly AiRouter $router,
         private readonly DefaultsRegistry $registry,
         private readonly SiteBlockRenderer $renderer,
-        private readonly CompetitorSiteNotes $peers
+        private readonly CompetitorSiteNotes $peers,
+        private readonly BusinessFacts $facts
     ) {}
 
     /**
@@ -45,9 +49,17 @@ final class SitePageProposeAction
         $reference = $this->peers->referenceBlock($businessId);
         $peerCount = $reference === '' ? 0 : count($this->peers->notesFor($businessId));
 
+        // The ONLY facts the AI may state: the business's name and what the owner typed on the Facts screen.
+        $labels = BusinessFactKey::forBusiness($businessId);
+        $factLines = ['Business name: '.(string) Business::whereKey($businessId)->value('name')];
+        foreach ($this->facts->all($businessId) as $key => $value) {
+            $factLines[] = ($labels[$key]['label'] ?? $key).': '.$value;
+        }
+        $factsSection = "Facts the owner has stated (the ONLY facts you may use; state nothing else as fact):\n- ".implode("\n- ", $factLines);
+
         $response = $this->router->dispatch(new AiRequest(
             task: AiTask::SiteAuthoring,
-            prompt: "Owner request: {$request}".($reference === '' ? '' : "\n\n".$reference),
+            prompt: "Owner request: {$request}\n\n{$factsSection}".($reference === '' ? '' : "\n\n".$reference),
             system: $this->registry->string('sites.page.system_prompt'),
             jsonSchema: [
                 'type' => 'object',
