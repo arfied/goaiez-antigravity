@@ -8,6 +8,7 @@ use App\Enums\UserRole;
 use App\Modules\X103\Actions\PageLayoutProposeAction;
 use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X103\Actions\PageUndoAction;
+use App\Modules\X103\Actions\SiteBlockArrangeAction;
 use App\Modules\X103\Actions\SiteBlockFieldSetAction;
 use App\Modules\X103\Actions\SiteEditApplyAction;
 use App\Modules\X103\Actions\SiteEditAskAction;
@@ -108,6 +109,39 @@ class Studio extends Component
         $this->success = is_array($pending)
             ? 'Saved to the proposal you are previewing.'
             : 'Saved to your draft. Undo last change takes it back.';
+    }
+
+    public function arrangeSection(string $move, SiteBlockArrangeAction $action): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if ($this->pageId === null || $this->selectedBlockIndex === null) {
+            $this->error = 'Select a section on the canvas first.';
+
+            return;
+        }
+
+        $res = $action->handle($this->businessId, $this->pageId, $this->selectedBlockIndex, $move);
+        if ($res['status'] === 'refused') {
+            $this->error = [
+                'edge' => $move === 'up' ? 'That section is already at the top.' : 'That section is already at the bottom.',
+                'not_a_section' => 'That cannot be moved or removed.',
+                'unknown_move' => 'There is no such change.',
+            ][(string) $res['reason']] ?? (string) $res['reason'];
+
+            return;
+        }
+
+        $this->selectedBlockIndex = $res['index'];
+        if ($res['target'] === 'pending') {
+            $this->success = 'Changed in the proposal you are previewing.';
+        } else {
+            $this->success = $move === 'remove'
+                ? 'Section removed. Undo last change brings it back.'
+                : 'Section moved. Undo last change puts it back.';
+        }
     }
 
     private function draftDiffersFromPublished(Page $page): bool

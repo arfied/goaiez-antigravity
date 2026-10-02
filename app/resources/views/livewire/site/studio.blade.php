@@ -106,6 +106,11 @@
                                 @endif
                             </div>
                             <p class="mt-2 text-xs text-ink-2">Click any heading or text in the selected section to type over it. Enter saves, Esc cancels.</p>
+                            <div class="mt-3 flex flex-wrap gap-2">
+                                <button wire:click="arrangeSection('up')" class="px-3 py-1 text-sm border border-rule rounded text-ink">Move up</button>
+                                <button wire:click="arrangeSection('down')" class="px-3 py-1 text-sm border border-rule rounded text-ink">Move down</button>
+                                <button wire:click="arrangeSection('remove')" wire:confirm="Remove this section? Undo last change brings it back." class="px-3 py-1 text-sm border border-rule rounded text-ink">Remove section</button>
+                            </div>
                             <div class="mt-3">
                                 <p class="text-sm font-bold text-ink mb-1">AI help for this section</p>
                                 <div class="flex flex-wrap gap-2">
