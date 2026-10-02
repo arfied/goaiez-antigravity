@@ -6,7 +6,9 @@ namespace Tests\Feature\Industry;
 
 use App\Enums\IndustryFamily;
 use App\Models\IndustryStartingPoint;
+use App\Services\Industry\IndustryResolver;
 use App\Services\Industry\IndustryStartingPoints;
+use App\Services\Industry\SiteStyle;
 use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
@@ -67,12 +69,13 @@ class IndustryStartingPointsTest extends TestCase
         $result = $service->for(IndustryFamily::Food);
         $this->assertSame(IndustryStartingPoints::DEFAULT['section_order'], $result['section_order']);
     }
+
     public function test_for_and_variants(): void
     {
-        $resolver = app(\App\Services\Industry\IndustryResolver::class);
-        $sp = app(\App\Services\Industry\IndustryStartingPoints::class);
+        $resolver = app(IndustryResolver::class);
+        $sp = app(IndustryStartingPoints::class);
 
-        $base = $sp->for(\App\Enums\IndustryFamily::Trades);
+        $base = $sp->for(IndustryFamily::Trades);
         $this->assertSame($base['palette']['surface'], $base['palette']['card']);
 
         $b = $sp->variant($base, 'b');
@@ -89,11 +92,50 @@ class IndustryStartingPointsTest extends TestCase
         $z = $sp->variant($base, 'z');
         $this->assertSame($base, $z);
 
-        $biz = \Tests\TestCase::provisionTenant(['industry' => \App\Enums\IndustryFamily::Trades->value]);
+        $biz = TestCase::provisionTenant(['industry' => IndustryFamily::Trades->value]);
         $biz->update(['industry' => 'trades', 'site_variant' => 'c']);
 
         $forBiz = $sp->forBusiness($biz->id);
         $this->assertSame($c['palette']['primary'], $forBiz['palette']['primary']);
         $this->assertSame($c['palette']['accent'], $forBiz['palette']['accent']);
+    }
+
+    public function test_authored_looks_are_readable_on_every_pair_the_renderer_paints(): void
+    {
+        $this->assertSame(['d', 'e', 'f'], array_keys(IndustryStartingPoints::LOOKS));
+
+        foreach (IndustryStartingPoints::LOOKS as $id => $look) {
+            $p = $look['palette'];
+            $this->assertSame(SiteStyle::PALETTE_KEYS, array_keys($p), "look {$id}");
+            $this->assertContains($look['type_pairing']['heading'], SiteStyle::FONT_STACKS, "look {$id}");
+            $this->assertContains($look['type_pairing']['body'], SiteStyle::FONT_STACKS, "look {$id}");
+
+            foreach ([['ink', 'surface'], ['ink', 'card'], ['primary', 'surface'], ['accent', 'surface'], ['accent', 'card']] as [$fg, $bg]) {
+                $this->assertGreaterThanOrEqual(4.5, SiteStyle::contrast($p[$fg], $p[$bg]), "look {$id}: {$fg} on {$bg}");
+            }
+        }
+    }
+
+    public function test_an_authored_look_changes_colours_and_fonts_and_keeps_the_running_order(): void
+    {
+        $sp = app(IndustryStartingPoints::class);
+        $base = $sp->for(IndustryFamily::Trades);
+
+        $e = $sp->variant($base, 'e');
+        $this->assertSame(IndustryStartingPoints::LOOKS['e']['palette'], $e['palette']);
+        $this->assertSame(IndustryStartingPoints::LOOKS['e']['type_pairing'], $e['type_pairing']);
+        $this->assertSame($base['section_order'], $e['section_order']);
+        $this->assertSame($base['family'], $e['family']);
+        $this->assertNotSame($base['palette'], $e['palette']);
+
+        $biz = $this->provisionTenant(['industry' => IndustryFamily::Trades->value]);
+        $biz->update(['industry' => 'trades', 'site_variant' => 'e']);
+        $this->assertSame('#11151c', $sp->forBusiness($biz->id)['palette']['surface']);
+    }
+
+    public function test_every_look_has_a_name(): void
+    {
+        $this->assertSame(['a', 'b', 'c', 'd', 'e', 'f'], IndustryStartingPoints::VARIANTS);
+        $this->assertSame(IndustryStartingPoints::VARIANTS, array_keys(IndustryStartingPoints::LABELS));
     }
 }

@@ -28,6 +28,7 @@ use App\Modules\X157\Models\Deployment;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Services\Facts\BusinessFactKey;
 use App\Services\Facts\BusinessFacts;
+use App\Services\Industry\IndustryStartingPoints;
 use App\Support\Tenancy;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Http;
@@ -543,7 +544,8 @@ class SiteBuildScreenTest extends TestCase
         $this->get(route('x-103.site-build'))
             ->assertOk()
             ->assertSee('3. Pick a look')
-            ->assertSee('Draft the site first');
+            ->assertSee('Draft the site first')
+            ->assertDontSee(IndustryStartingPoints::LABELS['f']);
 
         Page::create([
             'business_id' => $biz->id,
@@ -558,12 +560,13 @@ class SiteBuildScreenTest extends TestCase
         ]);
 
         $this->get(route('x-103.site-build'))
-            ->assertSee('Look A')
+            ->assertSee(IndustryStartingPoints::LABELS['a'])
+            ->assertSee(IndustryStartingPoints::LABELS['f'])
             ->assertSee('Pick this');
 
         Livewire::actingAs($owner)->test(SiteBuild::class)
             ->call('chooseLook', 'c')
-            ->assertSet('success', fn ($s) => str_starts_with((string) $s, 'Look C picked'));
+            ->assertSet('success', fn ($s) => str_starts_with((string) $s, IndustryStartingPoints::LABELS['c'].' picked'));
 
         $biz->refresh();
         $this->assertSame('c', $biz->site_variant);
@@ -575,6 +578,22 @@ class SiteBuildScreenTest extends TestCase
         Livewire::actingAs($manager)->test(SiteBuild::class)
             ->call('chooseLook', 'c')
             ->assertForbidden();
+    }
+
+    public function test_pick_an_authored_look(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        Livewire::actingAs($owner)->test(SiteBuild::class)
+            ->call('chooseLook', 'e')
+            ->assertSet('error', null)
+            ->assertSet('success', fn ($s) => str_starts_with((string) $s, IndustryStartingPoints::LABELS['e'].' picked'));
+
+        $biz->refresh();
+        $this->assertSame('e', $biz->site_variant);
     }
 
     public function test_the_build_screen_uses_the_house_button(): void

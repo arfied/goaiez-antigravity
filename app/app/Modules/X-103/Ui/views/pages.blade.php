@@ -289,11 +289,11 @@
                 </form>
             </div>
                     
-                    <!-- Looks A/B/C -->
+                    <!-- Looks -->
                     <div class="bg-card border border-rule rounded-[--radius-card] p-6">
                         <h3 class="font-semibold text-ink mb-4">Pick a look</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            @foreach(['a' => 'Look A', 'b' => 'Look B', 'c' => 'Look C'] as $k => $label)
+                            @foreach(\App\Services\Industry\IndustryStartingPoints::LABELS as $k => $label)
                                 <div class="rounded border {{ $chosenVariant === $k ? 'border-ink' : 'border-line' }} p-2" wire:key="look-{{ $k }}">
                                     @if(!empty($previews) && !empty($previews[$k]))
                                         <iframe title="{{ $label }} preview" srcdoc="{{ $previews[$k] }}" sandbox="" loading="lazy" class="w-full h-48 bg-surface border border-line"></iframe>

@@ -10,7 +10,36 @@ use App\Models\IndustryStartingPoint;
 
 class IndustryStartingPoints
 {
-    public const VARIANTS = ['a', 'b', 'c'];
+    public const VARIANTS = ['a', 'b', 'c', 'd', 'e', 'f'];
+
+    /**
+     * Three designed looks. Unlike b and c, which transform the industry palette, these replace the
+     * palette and the type pair outright and keep the industry's running order. Every pair the renderer
+     * paints clears 4.5:1 — IndustryStartingPointsTest proves it with SiteStyle::contrast().
+     */
+    public const LOOKS = [
+        'd' => [
+            'palette' => ['surface' => '#fbf7f1', 'card' => '#f3ebe0', 'ink' => '#2a211b', 'primary' => '#9a3412', 'accent' => '#7c5e10'],
+            'type_pairing' => ['heading' => 'Georgia, serif', 'body' => 'system-ui, sans-serif'],
+        ],
+        'e' => [
+            'palette' => ['surface' => '#11151c', 'card' => '#1b212b', 'ink' => '#e8ecf2', 'primary' => '#d6b24a', 'accent' => '#7cc4d6'],
+            'type_pairing' => ['heading' => 'Trebuchet MS, sans-serif', 'body' => 'Tahoma, Segoe UI, sans-serif'],
+        ],
+        'f' => [
+            'palette' => ['surface' => '#fdfbf6', 'card' => '#f4efe4', 'ink' => '#1b2436', 'primary' => '#1e3a5f', 'accent' => '#7a5c2e'],
+            'type_pairing' => ['heading' => 'Palatino, Book Antiqua, serif', 'body' => 'Georgia, serif'],
+        ],
+    ];
+
+    public const LABELS = [
+        'a' => 'Your industry colours',
+        'b' => 'Industry colours, toned',
+        'c' => 'Industry colours, reviews first',
+        'd' => 'Warm',
+        'e' => 'Midnight',
+        'f' => 'Classic',
+    ];
 
     /**
      * what every site was before starting points existed
@@ -78,6 +107,13 @@ class IndustryStartingPoints
         }
 
         if ($v === 'a') {
+            return $sp;
+        }
+
+        if (isset(self::LOOKS[$v])) {
+            $sp['palette'] = self::LOOKS[$v]['palette'];
+            $sp['type_pairing'] = self::LOOKS[$v]['type_pairing'];
+
             return $sp;
         }
 

@@ -34,10 +34,10 @@ use App\Modules\X103\Models\PageVersion;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
 use App\Modules\X157\Actions\PlatformSiteAddressAction;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Facts\BusinessFactKey;
+use App\Services\Facts\BusinessFacts;
 use App\Services\Industry\IndustryResolver;
 use App\Services\Industry\IndustryStartingPoints;
-use App\Services\Facts\BusinessFacts;
-use App\Services\Facts\BusinessFactKey;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -801,7 +801,7 @@ class Pages extends Component
             $home->save();
         }
 
-        $this->success = 'Look '.strtoupper($variant).' picked — your pages follow it from the next draft and the next publish.';
+        $this->success = IndustryStartingPoints::LABELS[$variant].' picked — your pages follow it from the next draft and the next publish.';
     }
 
     public function runBuild(SiteBuildRunAction $action)

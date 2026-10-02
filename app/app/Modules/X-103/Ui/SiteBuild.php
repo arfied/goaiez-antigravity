@@ -106,7 +106,7 @@ class SiteBuild extends Component
             $home->save();
         }
 
-        $this->success = 'Look '.strtoupper($variant).' picked — your pages follow it from the next draft and the next publish.';
+        $this->success = IndustryStartingPoints::LABELS[$variant].' picked — your pages follow it from the next draft and the next publish.';
     }
 
     public function runBuild(SiteBuildRunAction $action)
