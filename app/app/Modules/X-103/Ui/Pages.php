@@ -360,6 +360,11 @@ class Pages extends Component
 
         try {
             $result = $action->handle($this->businessId, $pageId, $versionId);
+            if (($result['status'] ?? null) === 'refused') {
+                $this->error = 'Apply or discard the AI proposal first.';
+
+                return;
+            }
             $this->success = "Restored version {$result['restored_commit_id']} as new commit {$result['commit_id']}.";
         } catch (Throwable $e) {
             $this->error = $e->getMessage();
