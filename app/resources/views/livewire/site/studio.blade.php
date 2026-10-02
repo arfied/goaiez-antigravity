@@ -106,6 +106,18 @@
                                 @endif
                             </div>
                             <p class="mt-2 text-xs text-ink-2">Click any heading or text in the selected section to type over it. Enter saves, Esc cancels.</p>
+                            <div class="mt-3">
+                                <p class="text-sm font-bold text-ink mb-1">AI help for this section</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <button wire:click="askSection('shorter')" class="px-3 py-1 text-sm border border-rule rounded text-ink">Shorter</button>
+                                    <button wire:click="askSection('friendlier')" class="px-3 py-1 text-sm border border-rule rounded text-ink">Friendlier</button>
+                                    <button wire:click="askSection('professional')" class="px-3 py-1 text-sm border border-rule rounded text-ink">More professional</button>
+                                    <button wire:click="askSection('spelling')" class="px-3 py-1 text-sm border border-rule rounded text-ink">Fix spelling</button>
+                                </div>
+                                <label for="section-ask" class="block text-xs text-ink-2 mt-2 mb-1">Or say what to change here</label>
+                                <input id="section-ask" type="text" wire:model="sectionRequest" class="w-full border border-rule rounded p-2 text-sm bg-paper text-ink" placeholder="e.g. mention we work weekends">
+                                <button wire:click="askSection('custom')" class="mt-2 w-full px-4 py-2 bg-ink text-paper font-bold rounded">Ask about this section</button>
+                            </div>
                             @if($selectedBlockType === 'hero')
                                 <div class="mt-3">
                                     <label for="block-headline" class="block text-sm font-bold text-ink mb-1">Headline</label>

@@ -14,7 +14,7 @@ final class SiteEditAskAction
         private readonly BlockPatchApplier $applier
     ) {}
 
-    public function handle(int $businessId, int $pageId, string $request): array
+    public function handle(int $businessId, int $pageId, string $request, ?int $onlyBlock = null): array
     {
         $page = Page::where('business_id', $businessId)->findOrFail($pageId);
 
@@ -28,6 +28,10 @@ final class SiteEditAskAction
                 'model' => null,
                 'images' => 0,
             ];
+        }
+
+        if ($onlyBlock !== null) {
+            $request = "Only change block {$onlyBlock}. Change nothing in any other block, and change no colours or fonts. ".$request;
         }
 
         $res = $this->action->handle(
@@ -69,7 +73,35 @@ final class SiteEditAskAction
             ];
         }
 
-        $applyResult = $this->applier->apply($page->draft_blocks ?? [], $res['patches']);
+        if ($onlyBlock !== null) {
+            foreach ($res['patches'] as $patch) {
+                if (! is_array($patch) || ($patch['block_index'] ?? null) !== $onlyBlock || ! in_array($patch['op'] ?? null, ['set_string', 'set_string_list'], true)) {
+                    return [
+                        'status' => 'refused',
+                        'reason' => 'outside_section',
+                        'message' => 'The AI tried to change more than this section, so nothing was proposed. Try again, or use the Ask box for the whole page.',
+                        'edits' => 0,
+                        'model' => null,
+                        'images' => 0,
+                    ];
+                }
+            }
+            if ($res['style'] !== null) {
+                return [
+                    'status' => 'refused',
+                    'reason' => 'outside_section',
+                    'message' => 'The AI tried to change the site\'s colours or fonts, so nothing was proposed. Ask about colours in the Ask box for the whole page.',
+                    'edits' => 0,
+                    'model' => null,
+                    'images' => 0,
+                ];
+            }
+        }
+
+        // A follow-up continues the open proposal: SiteEditProposeAction numbered the PENDING blocks, so the
+        // patches must land on them — applying to draft_blocks dropped every earlier proposed edit.
+        $base = $hasPending ? ($page->draft_meta['pending_edit']['blocks'] ?? []) : ($page->draft_blocks ?? []);
+        $applyResult = $this->applier->apply($base, $res['patches']);
 
         if ($applyResult['status'] === 'refused') {
             return [

@@ -9,6 +9,7 @@ use App\Modules\X103\Actions\PageLayoutProposeAction;
 use App\Modules\X103\Domain\PageLayouts;
 use App\Modules\X103\Models\Page;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -174,5 +175,43 @@ class StudioLayoutTest extends TestCase
 
         $page->refresh();
         $this->assertCount(4, $page->draft_blocks);
+    }
+
+    public function test_a_quick_action_needs_a_selected_section(): void
+    {
+        $page = $this->pageFor(self::BLOCKS);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('askSection', 'shorter')
+            ->assertSet('error', 'Select a section on the canvas first.');
+    }
+
+    public function test_a_quick_action_proposes_a_change_to_the_selected_section_only(): void
+    {
+        $page = $this->pageFor(self::BLOCKS);
+
+        Http::fake(['api.openai.com/*' => Http::response([
+            'id' => 'msg_edit',
+            'choices' => [['message' => ['content' => json_encode([
+                'patches' => [['op' => 'set_string', 'block_index' => 1, 'field' => 'text', 'value' => 'Short.']],
+                'explanation' => 'Shortened.',
+            ])]]],
+            'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+        ], 200, ['Content-Type' => 'application/json'])]);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('selectBlock', 1)
+            ->assertSee('AI help for this section')
+            ->call('askSection', 'shorter')
+            ->assertSet('error', null)
+            ->assertSee('Previewing AI proposal');
+
+        $page->refresh();
+        $this->assertSame('Short.', $page->draft_meta['pending_edit']['blocks'][1]['text']);
+        $this->assertSame('A', $page->draft_blocks[1]['text']);
+
+        Http::assertSent(fn ($request) => str_contains($request->body(), 'Make the text in this section shorter.'));
     }
 }

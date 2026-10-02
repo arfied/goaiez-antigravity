@@ -43,7 +43,16 @@ class Studio extends Component
 
     public string $request = '';
 
+    public string $sectionRequest = '';
+
     public string $blockHeadline = '';
+
+    private const SECTION_ASKS = [
+        'shorter' => 'Make the text in this section shorter. Keep the meaning and every fact.',
+        'friendlier' => 'Make the text in this section warmer and friendlier. Keep every fact.',
+        'professional' => 'Make the text in this section sound more professional. Keep every fact.',
+        'spelling' => 'Fix spelling and grammar in this section. Change nothing else.',
+    ];
 
     public function setBlockField(SiteBlockFieldSetAction $action): void
     {
@@ -170,6 +179,43 @@ class Studio extends Component
                 }
                 $this->success = $msg;
                 $this->request = '';
+            } else {
+                $this->error = $res['message'] ?? $res['reason'];
+            }
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
+    public function askSection(string $preset, SiteEditAskAction $action): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if ($this->pageId === null || $this->selectedBlockIndex === null) {
+            $this->error = 'Select a section on the canvas first.';
+
+            return;
+        }
+
+        $instruction = $preset === 'custom' ? trim($this->sectionRequest) : (self::SECTION_ASKS[$preset] ?? '');
+        if ($instruction === '') {
+            $this->error = $preset === 'custom' ? 'Type what you want changed in this section first.' : 'There is no such quick action.';
+
+            return;
+        }
+
+        try {
+            $res = $action->handle(
+                businessId: $this->businessId,
+                pageId: $this->pageId,
+                request: $instruction,
+                onlyBlock: $this->selectedBlockIndex
+            );
+            if ($res['status'] === 'proposed') {
+                $this->success = "Proposed {$res['edits']} edits to this section with {$res['model']} — review it on the page, then Apply or Discard.";
+                $this->sectionRequest = '';
             } else {
                 $this->error = $res['message'] ?? $res['reason'];
             }

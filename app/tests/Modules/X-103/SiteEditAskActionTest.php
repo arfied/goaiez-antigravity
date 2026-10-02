@@ -157,4 +157,86 @@ class SiteEditAskActionTest extends TestCase
 
         $this->assertEquals('New request', $pending['thread'][1]['request']);
     }
+
+    private function fakeAiPatches(array ...$responses): void
+    {
+        $sequence = Http::sequence();
+        foreach ($responses as $patches) {
+            $sequence->push([
+                'id' => 'msg_edit',
+                'choices' => [['message' => ['content' => json_encode(['patches' => $patches, 'explanation' => 'Done.'])]]],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ], 200, ['Content-Type' => 'application/json']);
+        }
+        Http::fake(['api.openai.com/*' => $sequence]);
+    }
+
+    public function test_a_follow_up_ask_keeps_the_edits_already_proposed(): void
+    {
+        $biz = $this->provision('Ask Test FollowUp');
+        $page = Page::create([
+            'business_id' => $biz->id, 'slug' => 'home', 'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Hero headline'],
+                ['type' => 'about', 'text' => 'About text'],
+            ],
+            'is_published' => false,
+        ]);
+
+        $this->fakeAiPatches(
+            [['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'First change']],
+            [['op' => 'set_string', 'block_index' => 1, 'field' => 'text', 'value' => 'Second change']],
+        );
+        $action = app(SiteEditAskAction::class);
+        $action->handle($biz->id, $page->id, 'Change the headline');
+        $action->handle($biz->id, $page->id, 'Now the about text');
+
+        $page->refresh();
+        $pending = $page->draft_meta['pending_edit']['blocks'];
+        $this->assertSame('First change', $pending[0]['headline']);
+        $this->assertSame('Second change', $pending[1]['text']);
+        $this->assertSame('Hero headline', $page->draft_blocks[0]['headline']);
+    }
+
+    public function test_a_section_ask_refuses_a_change_to_another_section(): void
+    {
+        $biz = $this->provision('Ask Test Scope');
+        $page = Page::create([
+            'business_id' => $biz->id, 'slug' => 'home', 'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Hero headline'],
+                ['type' => 'about', 'text' => 'About text'],
+            ],
+            'is_published' => false,
+        ]);
+
+        $this->fakeAiPatches([['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Out of scope']]);
+        $res = app(SiteEditAskAction::class)->handle($biz->id, $page->id, 'Shorter', onlyBlock: 1);
+
+        $this->assertSame('refused', $res['status']);
+        $this->assertSame('outside_section', $res['reason']);
+        $page->refresh();
+        $this->assertNull($page->draft_meta['pending_edit'] ?? null);
+    }
+
+    public function test_a_section_ask_inside_its_section_is_proposed_and_names_the_section_to_the_ai(): void
+    {
+        $biz = $this->provision('Ask Test Scope Ok');
+        $page = Page::create([
+            'business_id' => $biz->id, 'slug' => 'home', 'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Hero headline'],
+                ['type' => 'about', 'text' => 'About text'],
+            ],
+            'is_published' => false,
+        ]);
+
+        $this->fakeAiPatches([['op' => 'set_string', 'block_index' => 1, 'field' => 'text', 'value' => 'Short.']]);
+        $res = app(SiteEditAskAction::class)->handle($biz->id, $page->id, 'Shorter', onlyBlock: 1);
+
+        $this->assertSame('proposed', $res['status']);
+        Http::assertSent(fn ($request) => str_contains($request->body(), 'Only change block 1.'));
+        $page->refresh();
+        $this->assertSame('Short.', $page->draft_meta['pending_edit']['blocks'][1]['text']);
+    }
 }
