@@ -98,7 +98,9 @@ class Studio extends Component
 
         $res = $action->handle($this->businessId, $this->pageId, $index, $field, trim($value));
         if ($res['status'] === 'refused') {
-            $this->error = $res['reason'];
+            $this->error = trim($value) === ''
+                ? 'That text cannot be empty — type something, or press Esc to cancel.'
+                : 'That change could not be saved — reload the page and try again.';
 
             return;
         }

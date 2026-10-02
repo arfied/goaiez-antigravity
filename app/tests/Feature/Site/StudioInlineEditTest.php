@@ -99,4 +99,32 @@ class StudioInlineEditTest extends TestCase
             ->call('editInline', 0, 'headline', 'Manager')
             ->assertForbidden();
     }
+
+    public function test_a_list_faq_item_is_typed_over_in_place(): void
+    {
+        $page = $this->pageFor(self::BLOCKS);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->assertSee('data-field=&quot;items.0.answer&quot;', false)
+            ->call('editInline', 3, 'items.0.answer', 'Yes, every day.')
+            ->assertSet('error', null);
+
+        $page->refresh();
+        $this->assertSame('Yes, every day.', $page->draft_blocks[3]['items'][0]['answer']);
+        $this->assertSame('Q?', $page->draft_blocks[3]['items'][0]['question']);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('editInline', 3, 'items.5.question', 'x')
+            ->assertSet('error', 'That cannot be edited on the page.');
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('editInline', 3, 'items.0.question', '   ')
+            ->assertSet('error', 'That text cannot be empty — type something, or press Esc to cancel.');
+
+        $page->refresh();
+        $this->assertSame('Q?', $page->draft_blocks[3]['items'][0]['question']);
+    }
 }

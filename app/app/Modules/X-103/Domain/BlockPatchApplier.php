@@ -55,6 +55,10 @@ final class BlockPatchApplier
                 if (! isset($patch['field']) || ! array_key_exists('value', $patch)) {
                     return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: set_string requires field and value"];
                 }
+            } elseif ($op === 'set_item_string') {
+                if (! is_int($patch['item_index'] ?? null) || ! isset($patch['field']) || ! array_key_exists('value', $patch)) {
+                    return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: set_item_string requires item_index, field and value"];
+                }
             } elseif ($op === 'set_image') {
                 if (($patch['field'] ?? null) !== 'image_path' || ! isset($patch['path']) || ! is_scalar($patch['path']) || trim((string) $patch['path']) === '') {
                     return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: set_image requires field image_path and a path"];
@@ -99,6 +103,13 @@ final class BlockPatchApplier
                     return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: the {$patch['field']} of a {$type} section is not text that may be written here"];
                 }
                 $appliedBlocks[$blockIndex][$patch['field']] = (string) $patch['value'];
+            } elseif ($op === 'set_item_string') {
+                $type = (string) ($appliedBlocks[$blockIndex]['type'] ?? '');
+                $itemIndex = $patch['item_index'];
+                if (! in_array($patch['field'], BlockPatchSchema::ITEM_TEXT_FIELDS[$type] ?? [], true) || ! is_array($appliedBlocks[$blockIndex]['items'][$itemIndex] ?? null)) {
+                    return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: the {$patch['field']} of item {$itemIndex} in a {$type} section is not text that may be written here"];
+                }
+                $appliedBlocks[$blockIndex]['items'][$itemIndex][$patch['field']] = (string) $patch['value'];
             } elseif ($op === 'set_image') {
                 $appliedBlocks[$blockIndex]['image_path'] = (string) $patch['path'];
             } elseif ($op === 'set_image_list') {

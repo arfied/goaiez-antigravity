@@ -326,4 +326,23 @@ final class BlockPatchTest extends TestCase
         $bad = $applier->apply($blocks, [['op' => 'set_image', 'block_index' => 0, 'field' => 'url', 'path' => 'x']]);
         $this->assertSame('refused', $bad['status']);
     }
+
+    public function test_set_item_string_writes_only_a_list_faq_items_text(): void
+    {
+        $applier = app(BlockPatchApplier::class);
+        $blocks = [
+            ['type' => 'faq', 'items' => [['question' => 'Q?', 'answer' => 'A.']]],
+            ['type' => 'services', 'items' => [['name' => 'Roof repair']]],
+        ];
+
+        $ok = $applier->apply($blocks, [['op' => 'set_item_string', 'block_index' => 0, 'item_index' => 0, 'field' => 'answer', 'value' => 'New.']]);
+        $this->assertSame('applied', $ok['status']);
+        $this->assertSame('New.', $ok['blocks'][0]['items'][0]['answer']);
+
+        foreach ([[1, 0, 'name'], [0, 3, 'answer'], [0, 0, 'url']] as [$block, $item, $field]) {
+            $res = $applier->apply($blocks, [['op' => 'set_item_string', 'block_index' => $block, 'item_index' => $item, 'field' => $field, 'value' => 'x']]);
+            $this->assertSame('refused', $res['status'], "$block/$item/$field");
+            $this->assertSame($blocks, $res['blocks']);
+        }
+    }
 }

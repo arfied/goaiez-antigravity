@@ -13,8 +13,8 @@ final class BlockPatchSchema
      */
     public const MODEL_OPS = ['set_string', 'remove', 'move', 'add_block'];
 
-    /** What the APPLIER can execute, including the two image ops the server synthesises after generating a picture. */
-    public const APPLIER_OPS = ['set_string', 'set_image', 'set_image_list', 'remove', 'move', 'add_block'];
+    /** What the APPLIER can execute: the model's ops, the owner's set_item_string, and the two image ops the server synthesises. */
+    public const APPLIER_OPS = ['set_string', 'set_item_string', 'set_image', 'set_image_list', 'remove', 'move', 'add_block'];
 
     /**
      * The plain-text fields set_string may write, per block type — read off the block templates. Never a
@@ -31,6 +31,11 @@ final class BlockPatchSchema
         'services' => ['heading'],
         'team' => ['heading'],
         'video_embed' => ['name'],
+    ];
+
+    /** The plain-text fields of a LIST item the owner may type over in the Studio (set_item_string). Never sent by the model. */
+    public const ITEM_TEXT_FIELDS = [
+        'faq' => ['question', 'answer'],
     ];
 
     /**

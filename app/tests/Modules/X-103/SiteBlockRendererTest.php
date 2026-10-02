@@ -438,8 +438,11 @@ class SiteBlockRendererTest extends TestCase
         foreach (['headline', 'subline', 'text', 'question', 'answer', 'label'] as $field) {
             $this->assertStringContainsString('data-field="'.$field.'"', $editor, $field);
         }
-        // The list-shaped FAQ's item is rendered but not marked: exactly one question marker, from the scalar FAQ.
+        // The scalar FAQ carries the plain question marker; the list FAQ's item carries its own path.
         $this->assertSame(1, substr_count($editor, 'data-field="question"'));
-        $this->assertSame(str_replace([' data-field="headline"', ' data-field="subline"', ' data-field="text"', ' data-field="question"', ' data-field="answer"', ' data-field="label"'], '', $editor), $published);
+        $this->assertSame(1, substr_count($editor, 'data-field="items.0.question"'));
+        $this->assertSame(1, substr_count($editor, 'data-field="items.0.answer"'));
+        // Strip EVERY marker and the editor's HTML is the published HTML, byte for byte.
+        $this->assertSame(preg_replace('/ data-field="[^"]*"/', '', $editor), $published);
     }
 }

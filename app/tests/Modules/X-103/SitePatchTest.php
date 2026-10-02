@@ -90,7 +90,7 @@ class SitePatchTest extends TestCase
             ->set('editRequest', [$page->id => 'Change hero'])
             ->call('askEdit', $page->id)
             ->assertSet('success', null)
-            ->assertSet('error', 'patch 0: block_index out of range');
+            ->assertSet('error', 'The AI proposed a change that could not be applied, so nothing was proposed. Try asking again in different words.');
 
         $page->refresh();
         $this->assertArrayNotHasKey('pending_edit', $page->draft_meta ?? []);
@@ -123,10 +123,11 @@ class SitePatchTest extends TestCase
         $this->assertNotContains('set_image_list', $ops);
         $this->assertNotContains('set_image', $ops);
         $this->assertNotContains('set_string_list', $ops);
+        $this->assertNotContains('set_item_string', $ops);
         $this->assertContains('set_image_list', BlockPatchSchema::APPLIER_OPS);
 
         $this->assertSame(['set_string', 'remove', 'move', 'add_block'], BlockPatchSchema::MODEL_OPS);
-        $this->assertSame(['set_string', 'set_image', 'set_image_list', 'remove', 'move', 'add_block'], BlockPatchSchema::APPLIER_OPS);
+        $this->assertSame(['set_string', 'set_item_string', 'set_image', 'set_image_list', 'remove', 'move', 'add_block'], BlockPatchSchema::APPLIER_OPS);
         $this->assertSame(['hero', 'about', 'faq'], BlockPatchSchema::ADDABLE_TYPES);
     }
 

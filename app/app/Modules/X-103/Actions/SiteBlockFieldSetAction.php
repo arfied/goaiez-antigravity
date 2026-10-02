@@ -24,12 +24,12 @@ final class SiteBlockFieldSetAction
             $targetIsPending = is_array($pending);
             $blocks = $targetIsPending ? $pending : ($page->draft_blocks ?? []);
 
-            $result = $this->applier->apply($blocks, [[
-                'op' => 'set_string',
-                'block_index' => $blockIndex,
-                'field' => $field,
-                'value' => $value,
-            ]]);
+            // A list item's text arrives as items.N.question / items.N.answer (the Studio canvas marker).
+            $patch = preg_match('/^items\.(\d+)\.(question|answer)$/', $field, $m) === 1
+                ? ['op' => 'set_item_string', 'block_index' => $blockIndex, 'item_index' => (int) $m[1], 'field' => $m[2], 'value' => $value]
+                : ['op' => 'set_string', 'block_index' => $blockIndex, 'field' => $field, 'value' => $value];
+
+            $result = $this->applier->apply($blocks, [$patch]);
 
             if ($result['status'] === 'refused') {
                 return ['status' => 'refused', 'reason' => $result['reason']];

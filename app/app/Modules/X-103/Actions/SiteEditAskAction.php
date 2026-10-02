@@ -108,6 +108,7 @@ final class SiteEditAskAction
             return [
                 'status' => 'refused',
                 'reason' => $applyResult['reason'],
+                'message' => 'The AI proposed a change that could not be applied, so nothing was proposed. Try asking again in different words.',
                 'edits' => 0,
                 'model' => null,
                 'images' => 0,
