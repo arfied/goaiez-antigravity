@@ -103,4 +103,23 @@ class OpenAiClientTest extends TestCase
         Log::shouldHaveReceived('warning')
             ->with('vendor call failed', Mockery::on(fn ($context) => str_contains($context['reason'], 'Distinctive schema fault 4944')));
     }
+
+    public function test_a_401_logs_its_code_and_never_the_providers_message(): void
+    {
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'error' => ['message' => 'Incorrect API key provided: sk-ab****4957. Distinctive auth text 4958'],
+            ], 401),
+        ]);
+
+        Log::spy();
+
+        $request = new AiRequest(AiTask::SiteCopy, 'Test prompt', null, []);
+        $response = (new OpenAiClient(AiModel::Gpt4oMini))->complete($request);
+
+        $this->assertSame('http_401', $response->failureReason);
+        Log::shouldHaveReceived('warning')
+            ->with('vendor call failed', Mockery::on(fn ($context) => $context['reason'] === 'http_401'));
+        Log::shouldNotHaveReceived('warning', [Mockery::any(), Mockery::on(fn ($context) => str_contains((string) ($context['reason'] ?? ''), 'Distinctive auth text 4958'))]);
+    }
 }

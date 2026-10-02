@@ -63,6 +63,21 @@ final class VendorLog
     }
 
     /**
+     * The failure reason for an HTTP error response. The vendor's own message is appended ONLY for a
+     * request-shape error (400, 422): there it names the fault — a schema the provider rejects — and carries
+     * no credential. Every other status logs its code alone: an auth error's message can quote part of the
+     * key (OpenAI's 401 does), which `failure()` below must never receive.
+     */
+    public static function httpReason(int $status, string $vendorMessage): string
+    {
+        if (in_array($status, [400, 422], true) && $vendorMessage !== '') {
+            return 'http_'.$status.': '.mb_substr($vendorMessage, 0, 300);
+        }
+
+        return 'http_'.$status;
+    }
+
+    /**
      * Record a call that produced no usable answer.
      *
      * Not only a call that never returned: callers also use this for a response

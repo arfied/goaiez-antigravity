@@ -87,7 +87,7 @@ final class AnthropicClient implements AiClient
 
         if ($response->failed()) {
             $detail = (string) data_get($response->json(), 'error.message', '');
-            VendorLog::failure('anthropic', 'POST', self::ENDPOINT, 'http_'.$response->status().($detail !== '' ? ': '.mb_substr($detail, 0, 300) : ''), Tenancy::id());
+            VendorLog::failure('anthropic', 'POST', self::ENDPOINT, VendorLog::httpReason($response->status(), $detail), Tenancy::id());
 
             return AiResponse::failed($this->model, 'http_'.$response->status());
         }
