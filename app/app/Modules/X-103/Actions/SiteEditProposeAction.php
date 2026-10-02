@@ -106,6 +106,18 @@ final class SiteEditProposeAction
         }
 
         $patches = $response->json['patches'] ?? [];
+
+        // MODEL_OPS was enforced only by the schema handed to the provider. Enforce it here too: an image op
+        // or a list op from the model is never applied, whatever the provider let through.
+        foreach ($patches as $patch) {
+            if (! is_array($patch) || ! in_array($patch['op'] ?? null, BlockPatchSchema::MODEL_OPS, true)) {
+                return [
+                    'status' => 'refused',
+                    'reason' => 'unsafe_patch',
+                    'explanation' => (string) ($response->json['explanation'] ?? ''),
+                ];
+            }
+        }
         $requestedImages = $response->json['images'] ?? [];
 
         if (count($patches) === 0 && count($requestedImages) === 0 && $validStyle === null) {
@@ -140,15 +152,15 @@ final class SiteEditProposeAction
                 if ($res['status'] === 'generated') {
                     if ($blockType === 'hero') {
                         $patches[] = [
-                            'op' => 'set_string',
+                            'op' => 'set_image',
                             'block_index' => $idx,
                             'field' => 'image_path',
-                            'value' => $res['path'],
+                            'path' => $res['path'],
                         ];
                     } else {
                         $currentItems = $currentBlocks[$idx]['items'] ?? [];
                         foreach ($patches as $p) {
-                            if ($p['block_index'] === $idx && $p['field'] === 'items' && $p['op'] === 'set_image_list') {
+                            if ($p['block_index'] === $idx && ($p['field'] ?? null) === 'items' && $p['op'] === 'set_image_list') {
                                 $currentItems = $p['images'];
                             }
                         }

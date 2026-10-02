@@ -108,6 +108,7 @@ class SitePatchTest extends TestCase
      *   - `set_image_list` must never appear in MODEL_OPS. The model may not request an image list; the
      *     server synthesises those in SiteEditProposeAction after generating a picture, so a model that
      *     could ask for one could point a page at an arbitrary path.
+     *   - Neither `set_image` nor `set_string_list` may appear in MODEL_OPS: the first is the server's hero-picture op, the second would let the AI write a list of services, reviews, photos or people.
      *   - ADDABLE_TYPES must stay exactly hero/about/faq. Every other block type needs real reviews,
      *     photos, people, prices, a phone number or a real link, and the prompt forbids inventing those.
      *     Widening this list is a product decision about honesty and must cost somebody a deliberate edit
@@ -120,10 +121,12 @@ class SitePatchTest extends TestCase
 
         $this->assertSame(BlockPatchSchema::MODEL_OPS, $ops);
         $this->assertNotContains('set_image_list', $ops);
+        $this->assertNotContains('set_image', $ops);
+        $this->assertNotContains('set_string_list', $ops);
         $this->assertContains('set_image_list', BlockPatchSchema::APPLIER_OPS);
 
-        $this->assertSame(['set_string', 'set_string_list', 'remove', 'move', 'add_block'], BlockPatchSchema::MODEL_OPS);
-        $this->assertSame(['set_string', 'set_string_list', 'set_image_list', 'remove', 'move', 'add_block'], BlockPatchSchema::APPLIER_OPS);
+        $this->assertSame(['set_string', 'remove', 'move', 'add_block'], BlockPatchSchema::MODEL_OPS);
+        $this->assertSame(['set_string', 'set_image', 'set_image_list', 'remove', 'move', 'add_block'], BlockPatchSchema::APPLIER_OPS);
         $this->assertSame(['hero', 'about', 'faq'], BlockPatchSchema::ADDABLE_TYPES);
     }
 
@@ -168,5 +171,76 @@ class SitePatchTest extends TestCase
         $page->refresh();
         $blocks = $page->draft_meta['pending_edit']['blocks'];
         $this->assertCount(1, $blocks[0]['items']);
+    }
+
+    public function test_a_requested_hero_picture_lands_through_the_server_only_op()
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $business = TestCase::provisionTenant(['name' => 'SitePatchHero', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($business->id);
+
+        $page = Page::create([
+            'business_id' => $business->id, 'slug' => 'p'.rand(), 'title' => 'T',
+            'draft_blocks' => [['type' => 'hero', 'headline' => 'H']],
+        ]);
+
+        Http::fake([
+            'api.openai.com/v1/chat/completions' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [['message' => ['content' => json_encode([
+                    'patches' => [],
+                    'images' => [['block_index' => 0, 'description' => 'A photo of a roof.']],
+                    'explanation' => 'Generated a photo.',
+                ])]]],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ], 200, ['Content-Type' => 'application/json']),
+            'api.openai.com/v1/images/generations' => Http::response([
+                'data' => [['b64_json' => '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=']],
+            ], 200, ['Content-Type' => 'application/json']),
+        ]);
+
+        Livewire::test(Pages::class)
+            ->set('editRequest', [$page->id => 'Add a photo'])
+            ->call('askEdit', $page->id)
+            ->assertSet('error', null);
+
+        $page->refresh();
+        $hero = $page->draft_meta['pending_edit']['blocks'][0];
+        $this->assertIsString($hero['image_path']);
+        $this->assertNotSame('', $hero['image_path']);
+    }
+
+    public function test_a_model_patch_outside_the_model_ops_is_never_applied()
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $business = TestCase::provisionTenant(['name' => 'SitePatchUnsafe', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($business->id);
+
+        $page = Page::create([
+            'business_id' => $business->id, 'slug' => 'p'.rand(), 'title' => 'T',
+            'draft_blocks' => [['type' => 'gallery', 'items' => []]],
+        ]);
+
+        Http::fake([
+            'api.openai.com/v1/chat/completions' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [['message' => ['content' => json_encode([
+                    'patches' => [['op' => 'set_image_list', 'block_index' => 0, 'field' => 'items', 'images' => [['image_path' => 'some/other/file.jpg']]]],
+                    'explanation' => 'x',
+                ])]]],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ], 200, ['Content-Type' => 'application/json']),
+        ]);
+
+        Livewire::test(Pages::class)
+            ->set('editRequest', [$page->id => 'Use that picture'])
+            ->call('askEdit', $page->id)
+            ->assertSet('error', 'The AI proposed a change it is not allowed to make, so nothing was proposed. Try asking again.');
+
+        $page->refresh();
+        $this->assertNull($page->draft_meta['pending_edit'] ?? null);
+        $this->assertSame([], $page->draft_blocks[0]['items']);
     }
 }

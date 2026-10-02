@@ -121,7 +121,7 @@ final class BlockPatchTest extends TestCase
         $this->assertSame($blocks, $result['blocks']);
     }
 
-    public function test_the_sample_fixture_applies(): void
+    public function test_the_sample_fixture_is_refused_because_it_writes_a_services_list(): void
     {
         $applier = $applier = app(BlockPatchApplier::class);
         $fixturePath = __DIR__.'/fixtures/patch-sample.json';
@@ -136,16 +136,10 @@ final class BlockPatchTest extends TestCase
 
         $result = $applier->apply($blocks, $payload['patches']);
 
-        $this->assertSame('applied', $result['status']);
-        $this->assertSame(4, $result['applied']);
-
-        $expectedBlocks = [
-            ['type' => 'hero', 'headline' => 'Welcome to our updated platform'],
-            ['type' => 'booking_button', 'label' => '#'],
-            ['type' => 'services', 'items' => ['Faster', 'More secure', 'Easy to use']],
-        ];
-
-        $this->assertSame($expectedBlocks, $result['blocks']);
+        $this->assertSame('refused', $result['status']);
+        $this->assertSame('patch 1: unknown op', $result['reason']);
+        $this->assertSame(0, $result['applied']);
+        $this->assertSame($blocks, $result['blocks']);
     }
 
     public function test_patches_apply_in_the_order_given(): void
@@ -295,5 +289,41 @@ final class BlockPatchTest extends TestCase
 
         $this->assertSame('refused', $result['status']);
         $this->assertStringContainsString('requires fields', $result['reason']);
+    }
+
+    public function test_set_string_writes_only_plain_text_fields(): void
+    {
+        $applier = app(BlockPatchApplier::class);
+        $blocks = [
+            ['type' => 'hero', 'headline' => 'H'],
+            ['type' => 'booking_button', 'label' => 'Book', 'url' => 'https://example.com/book'],
+            ['type' => 'services', 'heading' => 'Services', 'items' => [['name' => 'Roof repair']]],
+        ];
+
+        $ok = $applier->apply($blocks, [
+            ['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'New'],
+            ['op' => 'set_string', 'block_index' => 2, 'field' => 'heading', 'value' => 'What we do'],
+        ]);
+        $this->assertSame('applied', $ok['status']);
+        $this->assertSame('What we do', $ok['blocks'][2]['heading']);
+
+        foreach ([[1, 'url'], [0, 'image_path'], [2, 'items'], [0, 'phone']] as [$index, $field]) {
+            $res = $applier->apply($blocks, [['op' => 'set_string', 'block_index' => $index, 'field' => $field, 'value' => 'x']]);
+            $this->assertSame('refused', $res['status'], $field);
+            $this->assertSame($blocks, $res['blocks'], $field);
+        }
+    }
+
+    public function test_set_image_writes_only_a_hero_picture_path(): void
+    {
+        $applier = app(BlockPatchApplier::class);
+        $blocks = [['type' => 'hero', 'headline' => 'H']];
+
+        $ok = $applier->apply($blocks, [['op' => 'set_image', 'block_index' => 0, 'field' => 'image_path', 'path' => 'images/hero.jpg']]);
+        $this->assertSame('applied', $ok['status']);
+        $this->assertSame('images/hero.jpg', $ok['blocks'][0]['image_path']);
+
+        $bad = $applier->apply($blocks, [['op' => 'set_image', 'block_index' => 0, 'field' => 'url', 'path' => 'x']]);
+        $this->assertSame('refused', $bad['status']);
     }
 }

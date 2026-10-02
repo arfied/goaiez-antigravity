@@ -6,11 +6,32 @@ namespace App\Modules\X103\Domain;
 
 final class BlockPatchSchema
 {
-    /** What the MODEL may propose. It never emits set_image_list: an image path is server output. */
-    public const MODEL_OPS = ['set_string', 'set_string_list', 'remove', 'move', 'add_block'];
+    /**
+     * What the MODEL may propose, enforced by SiteEditProposeAction as well as by the schema. Never an image
+     * op — an image path is server output — and never set_string_list: every list on a page holds real
+     * services, reviews, photos or people, which the AI may not write.
+     */
+    public const MODEL_OPS = ['set_string', 'remove', 'move', 'add_block'];
 
-    /** What the APPLIER can execute, including the ops the action synthesises after generating a picture. */
-    public const APPLIER_OPS = ['set_string', 'set_string_list', 'set_image_list', 'remove', 'move', 'add_block'];
+    /** What the APPLIER can execute, including the two image ops the server synthesises after generating a picture. */
+    public const APPLIER_OPS = ['set_string', 'set_image', 'set_image_list', 'remove', 'move', 'add_block'];
+
+    /**
+     * The plain-text fields set_string may write, per block type — read off the block templates. Never a
+     * url, phone, email, address, hours, facts, form definition, image path or size, video url, or a list.
+     */
+    public const TEXT_FIELDS = [
+        'about' => ['heading', 'text'],
+        'booking_button' => ['label'],
+        'booking_form' => ['heading', 'label'],
+        'faq' => ['question', 'answer'],
+        'gallery' => ['heading'],
+        'hero' => ['headline', 'subline', 'image_alt'],
+        'reviews_strip' => ['heading'],
+        'services' => ['heading'],
+        'team' => ['heading'],
+        'video_embed' => ['name'],
+    ];
 
     /**
      * The block types the model may ADD, and the list is short on an honesty argument rather than an

@@ -45,6 +45,7 @@ final class SiteEditAskAction
             $coaching = [
                 'no_valid_blocks' => 'The AI did not propose a change. Name the block and the exact words you want, for example: on the hero, set the headline to …',
                 'empty_request' => 'Type what you want changed first.',
+                'unsafe_patch' => 'The AI proposed a change it is not allowed to make, so nothing was proposed. Try asking again.',
             ][$res['reason']] ?? null;
 
             // ⛔ NO fallback value, deliberately. Both Ask screens read
