@@ -281,9 +281,11 @@ JS;
                         $html .= "<div class=\"chat-widget-container\" data-chat-mount></div>\n";
                         $html .= "<script id=\"x102-chat\" src=\"{$chatSrc}\" data-chat data-key=\"".e($pixelKey)."\"></script>\n";
                     }
+                    // The page's own content already carries the form: render only the marker, not a second form.
+                    $contentHasForm = in_array('form', $blockTypes, true);
                     if ($hasForm) {
                         $definition = app(FormReadAction::class)->firstDefinitionForBusiness($businessId);
-                        if ($definition === null) {
+                        if ($definition === null || $contentHasForm) {
                             // No form defined yet: the marker stays so the site law can see the slot, but nothing pretends to be a form.
                             $formHtml .= "<div class=\"form-capture-x155\"></div>\n";
                         } else {

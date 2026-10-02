@@ -1368,6 +1368,18 @@ class X103Test extends TestCase
         $this->assertNull($formBlock);
     }
 
+    public function test_the_draft_leaves_out_an_empty_contact_section(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'No Form Draft Tenant']);
+        $location = Location::factory()->create(['business_id' => $biz->id]);
+
+        $draftAction = app(SiteDraftAction::class);
+        $res = $draftAction->handle($biz->id, $location->id);
+
+        $home = Page::where('business_id', $biz->id)->where('slug', 'home')->first();
+        $this->assertNotContains('contact', array_map(fn ($b) => $b['type'], $home->draft_blocks ?? []));
+    }
+
     public function test_the_rendered_form_posts_to_the_live_capture_route(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Render Form Tenant']);
@@ -1444,7 +1456,8 @@ class X103Test extends TestCase
 
         $home = Page::where('slug', 'home')->first();
         $contactBlock = collect($home->draft_blocks)->firstWhere('type', 'contact');
-        $this->assertArrayNotHasKey('hours', $contactBlock);
+        // With no hours and no address, phone or email, the contact section is left out entirely (MAIN-1052).
+        $this->assertNull($contactBlock);
     }
 
     public function test_a_review_the_owner_ticked_but_moderation_has_not_approved_does_not_reach_the_draft(): void

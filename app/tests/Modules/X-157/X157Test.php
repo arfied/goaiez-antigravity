@@ -3767,4 +3767,40 @@ class X157Test extends TestCase
         $this->assertSame(1, substr_count($html, 'form-capture-x155'));
         $this->assertStringContainsString('<p class="site-header__name">Framed Tenant 4971</p>', $html);
     }
+
+    public function test_a_page_whose_content_has_a_form_shows_one_form_not_two(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'One Form Tenant 4991', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)->handle($biz->id, $page->id, [
+            ['type' => 'hero', 'headline' => 'Distinctive one-form headline 4992'],
+            ['type' => 'form', 'definition_id' => 1, 'fields' => [['name' => 'name', 'label' => 'Your name', 'type' => 'text']], 'required' => ['name'], 'honeypot' => 'website_url'],
+            ['type' => 'form_capture'],
+        ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $html = (string) $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}")->assertStatus(200)->getContent();
+
+        $this->assertSame(1, substr_count($html, 'form-capture-x155'));
+        $this->assertSame(1, substr_count($html, '<form '));
+    }
 }

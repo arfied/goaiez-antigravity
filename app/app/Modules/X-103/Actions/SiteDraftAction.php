@@ -187,6 +187,22 @@ final class SiteDraftAction
             return null;
         };
 
+        // A contact section with no address, phone, email, hours or facts renders as an empty heading. Leave it out.
+        $contactHasDetail = function (array $block): bool {
+            foreach (['address', 'phone', 'email'] as $key) {
+                if (isset($block[$key]) && is_scalar($block[$key]) && trim((string) $block[$key]) !== '') {
+                    return true;
+                }
+            }
+            foreach (['hours', 'facts', 'industry_facts'] as $key) {
+                if (! empty($block[$key])) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+
         $buildServicesBlock = function () use (&$blocksGenerated, &$sourcesUsed) {
             $priceList = $this->priceBook->list();
             if (! $priceList->isEmpty()) {
@@ -371,7 +387,10 @@ final class SiteDraftAction
                 $sourcesUsed[] = 'inventory'; // already set in block but whatever
             }
 
-            $homeBlocks[] = $buildContactBlock();
+            $contactBlock = $buildContactBlock();
+            if ($contactHasDetail($contactBlock)) {
+                $homeBlocks[] = $contactBlock;
+            }
             $formBlock = $buildFormBlock();
             if ($formBlock) {
                 $homeBlocks[] = $formBlock;
@@ -445,7 +464,8 @@ final class SiteDraftAction
         if (Page::where('business_id', $businessId)->where('slug', 'contact')->exists()) {
             $skipped[] = 'contact';
         } else {
-            $contactBlocks = [$buildContactBlock()];
+            $contactBlock = $buildContactBlock();
+            $contactBlocks = $contactHasDetail($contactBlock) ? [$contactBlock] : [];
             $formBlock = $buildFormBlock();
             if ($formBlock) {
                 $contactBlocks[] = $formBlock;
