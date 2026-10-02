@@ -27,6 +27,7 @@ use App\Modules\X103\Actions\PageCreateAction;
 use App\Modules\X103\Actions\QuestionAnswerDraftAction;
 use App\Modules\X103\Actions\SeoDraftAction;
 use App\Modules\X103\Actions\SiteBuildAction;
+use App\Modules\X103\Actions\SiteBuildRunAction;
 use App\Modules\X103\Actions\SiteCopyPolishAction;
 use App\Modules\X103\Actions\SiteDraftAction;
 use App\Modules\X103\Actions\SiteMissingFactsAction;
@@ -928,6 +929,88 @@ class X103Test extends TestCase
 
         Http::assertSent(fn ($r) => str_contains($r->body(), 'Distinctive subline 4981') && str_contains($r->body(), 'at most 160 characters') && str_contains($r->body(), 'one sentence'));
         Http::assertSent(fn ($r) => str_contains($r->body(), 'Distinctive about 4982') && str_contains($r->body(), 'at most 600 characters'));
+    }
+
+    public function test_an_automatic_polish_rewrites_crawled_text_and_never_the_owners_words(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Polish Crawled Only', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'H', 'subline' => 'Owner tagline 5011', 'source' => 'inventory, tagline: facts'],
+                ['type' => 'about', 'text' => 'Crawled words 5012', 'source' => 'inventory'],
+                ['type' => 'about', 'text' => 'Owner description 5013', 'source' => 'facts'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => 'Rewritten 5014']],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'choices' => [['message' => ['content' => 'Rewritten 5014']]],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        $res = app(SiteCopyPolishAction::class)->handle($biz->id, $page->id, crawledOnly: true);
+
+        $this->assertSame(1, $res['blocks']);
+        $page->refresh();
+        $this->assertSame('Owner tagline 5011', $page->draft_blocks[0]['subline']);
+        $this->assertSame('Rewritten 5014', $page->draft_blocks[1]['text']);
+        $this->assertSame('Owner description 5013', $page->draft_blocks[2]['text']);
+        Http::assertSentCount(1);
+    }
+
+    public function test_a_build_polishes_the_fresh_home_page_and_a_failed_polish_does_not_fail_the_build(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Build Polish Tenant', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+        $location = Location::factory()->create([
+            'business_id' => $biz->id,
+            'website_url' => 'https://example.com',
+            'website_confirmed_at' => now(),
+        ]);
+
+        Http::fake([
+            '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
+            'https://example.com' => Http::response('<html><head><title>Home</title></head><body><h1>Welcome</h1><p>Crawled home words 5015</p></body></html>', 200, ['Content-Type' => 'text/html']),
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'choices' => [['message' => ['content' => 'Polished build line 5016']]],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => 'Polished build line 5016']],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
+            '*' => Http::response('', 404),
+        ]);
+
+        $result = app(SiteBuildRunAction::class)->handle($biz->id, $location->id);
+
+        $this->assertSame('completed', $result['status']);
+        $this->assertSame('polished', $result['polish']['status'] ?? null);
+        $home = Page::where('business_id', $biz->id)->where('slug', 'home')->first();
+        $this->assertSame('Polished build line 5016', $home->draft_blocks[0]['subline']);
     }
 
     public function test_polish_refuses_when_the_budget_is_out(): void

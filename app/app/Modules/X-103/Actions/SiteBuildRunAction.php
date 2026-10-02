@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Modules\X103\Actions;
 
 use App\Models\Location;
+use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Services\Config\DefaultsRegistry;
+use Throwable;
 
 final class SiteBuildRunAction
 {
@@ -14,11 +16,12 @@ final class SiteBuildRunAction
         private readonly SiteCrawlAction $crawl,
         private readonly SiteImagesCopyAction $images,
         private readonly SiteDraftAction $draft,
-        private readonly DefaultsRegistry $registry
+        private readonly DefaultsRegistry $registry,
+        private readonly SiteCopyPolishAction $polish
     ) {}
 
     /**
-     * @return array{status: string, reason?: string, crawl?: array, images?: array, draft?: array}
+     * @return array{status: string, reason?: string, crawl?: array, images?: array, draft?: array, polish?: array|null}
      */
     public function handle(int $businessId, int $locationId): array
     {
@@ -58,11 +61,26 @@ final class SiteBuildRunAction
         $imagesResult = $this->images->handle($businessId, $locationId);
         $draftResult = $this->draft->handle($businessId, $locationId);
 
+        // A freshly drafted home page's crawled words are rewritten once by the AI (plain text, the owner's facts only).
+        // Words the owner typed are never touched, and a polish that cannot run never fails the build.
+        $polishResult = null;
+        if (! in_array('home', $draftResult['skipped'] ?? [], true)) {
+            $home = Page::where('business_id', $businessId)->where('slug', 'home')->first();
+            if ($home !== null) {
+                try {
+                    $polishResult = $this->polish->handle($businessId, (int) $home->id, crawledOnly: true);
+                } catch (Throwable) {
+                    $polishResult = ['status' => 'refused', 'reason' => 'polish_failed'];
+                }
+            }
+        }
+
         $result = [
             'status' => 'completed',
             'crawl' => $crawlResult,
             'images' => $imagesResult,
             'draft' => $draftResult,
+            'polish' => $polishResult,
         ];
         if ($draftedWithoutCrawl) {
             $result['drafted_without_crawl'] = true;

@@ -24,7 +24,7 @@ final class SiteCopyPolishAction
         private readonly IndustryQuestions $questions
     ) {}
 
-    public function handle(int $businessId, int $pageId): array
+    public function handle(int $businessId, int $pageId, bool $crawledOnly = false): array
     {
         $page = Page::where('business_id', $businessId)->findOrFail($pageId);
 
@@ -53,6 +53,11 @@ final class SiteCopyPolishAction
 
         foreach ($blocks as $i => $block) {
             if (! in_array($block['type'] ?? '', ['hero', 'about'])) {
+                continue;
+            }
+
+            // An automatic polish after a build rewrites only crawled text, never words the owner typed.
+            if ($crawledOnly && ($block['source'] ?? '') !== 'inventory') {
                 continue;
             }
 
