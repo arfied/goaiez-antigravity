@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X103\Actions;
 
 use App\Enums\AiTask;
+use App\Modules\X103\Domain\BlockPatchSchema;
 use App\Modules\X103\Domain\SiteBlockRenderer;
 use App\Modules\X103\Models\Page;
 use App\Services\Ai\AiRequest;
@@ -22,6 +23,9 @@ use Illuminate\Support\Str;
  */
 final class SitePageProposeAction
 {
+    /** Real block types the page maker may NOT write: each needs a real price, person, photo, phone, address or link. */
+    private const NEEDS_REAL_DETAILS = ['services', 'reviews_strip', 'gallery', 'team', 'video_embed', 'booking_button', 'booking_form', 'contact', 'form'];
+
     public function __construct(
         private readonly AiRouter $router,
         private readonly DefaultsRegistry $registry,
@@ -30,7 +34,7 @@ final class SitePageProposeAction
     ) {}
 
     /**
-     * @return array{status: string, reason?: string, page_id?: int, slug?: string, title?: string, blocks?: int, model?: string}
+     * @return array{status: string, reason?: string, page_id?: int, slug?: string, title?: string, blocks?: int, model?: string, left_out?: list<string>}
      */
     public function handle(int $businessId, string $request): array
     {
@@ -78,10 +82,11 @@ final class SitePageProposeAction
             return ['status' => 'refused', 'reason' => 'no_title'];
         }
 
-        $whitelist = ['hero', 'about', 'services', 'faq', 'booking_button', 'contact'];
+        $whitelist = BlockPatchSchema::ADDABLE_TYPES;
         $validBlocks = [];
+        $leftOut = [];
         foreach ($response->json['blocks'] ?? [] as $block) {
-            $type = $block['type'] ?? '';
+            $type = is_array($block) ? ($block['type'] ?? '') : '';
             if (is_array($block) && in_array($type, $whitelist, true) && $this->renderer->isValidBlock($block)) {
                 $block['source'] = 'ai';
                 $block['model'] = $response->model->value;
@@ -89,6 +94,8 @@ final class SitePageProposeAction
                     $block['peers'] = $peerCount;
                 }
                 $validBlocks[] = $block;
+            } elseif (is_string($type) && in_array($type, self::NEEDS_REAL_DETAILS, true) && ! in_array($type, $leftOut, true)) {
+                $leftOut[] = $type;
             }
         }
         if (count($validBlocks) === 0) {
@@ -132,6 +139,7 @@ final class SitePageProposeAction
             'title' => $title,
             'blocks' => count($validBlocks),
             'model' => $response->model->value,
+            'left_out' => $leftOut,
         ];
     }
 }

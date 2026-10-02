@@ -1465,6 +1465,50 @@ class PagesScreenTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_make_me_a_page_never_writes_contact_details_services_or_links_and_says_so(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Pages Test Edit', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $made = json_encode(['title' => 'Distinctive call-out page 6613', 'slug' => 'call-out', 'blocks' => [
+            ['type' => 'hero', 'headline' => 'Distinctive headline 6614'],
+            ['type' => 'contact', 'phone' => '+1 202 867 0147', 'email' => 'made-up@example.com'],
+            ['type' => 'services', 'items' => [['name' => 'Invented service 6615']]],
+            ['type' => 'booking_button', 'label' => 'Book', 'url' => 'https://example.com/made-up'],
+            ['type' => 'contact'],
+        ], 'explanation' => 'A call-out page.']);
+
+        Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => $made]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [['message' => ['content' => $made]]],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        Livewire::actingAs($owner)->test(Pages::class)
+            ->set('pageRequest', 'make a call-out page with our number')
+            ->call('makePage')
+            ->assertSet('success', fn ($s) => str_contains((string) $s, 'with 1 blocks')
+                && str_contains((string) $s, 'Left out: contact, services, booking_button — those need your real details'));
+
+        $page = Page::where('business_id', $biz->id)->where('slug', 'call-out')->first();
+        $this->assertNotNull($page);
+        $this->assertSame(['hero'], array_map(fn ($b) => $b['type'], $page->draft_blocks));
+        $this->assertStringNotContainsString('867 0147', json_encode($page->draft_blocks));
+        $this->assertStringNotContainsString('Invented service 6615', json_encode($page->draft_blocks));
+    }
+
     public function test_polish_renders_the_peer_count_on_the_page_and_restore_removes_it(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
