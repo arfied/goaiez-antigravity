@@ -19,15 +19,18 @@ final class BlockPatchSchema
      * Every block field the AI may write (owner ruling 2026-10-02: the AI may write anything on a page). Never a file
      * path or image size, the section type, a form's internals, or a list — lists go through set_items.
      */
-    public const MODEL_FIELDS = ['headline', 'subline', 'heading', 'text', 'question', 'answer', 'label', 'url', 'phone', 'email', 'address', 'name', 'service', 'contentUrl', 'uploadDate', 'image_alt'];
+    public const MODEL_FIELDS = ['headline', 'subline', 'heading', 'text', 'question', 'answer', 'label', 'url', 'phone', 'email', 'address', 'name', 'service', 'contentUrl', 'uploadDate', 'image_alt', 'variant', 'cta_label', 'cta_url'];
 
     /** Link fields: each must start with https://, http://, tel: or mailto: — a javascript: URL in an href is script injection. */
-    public const URL_FIELDS = ['url', 'contentUrl'];
+    public const URL_FIELDS = ['url', 'contentUrl', 'cta_url'];
 
     /** Section types whose `items` list the AI may write, and the item fields it may write. Never a gallery: its items are image files. */
-    public const ITEM_TYPES = ['services', 'faq', 'reviews_strip', 'team'];
+    public const ITEM_TYPES = ['services', 'faq', 'reviews_strip', 'team', 'stats'];
 
-    public const ITEM_FIELDS = ['name', 'description', 'price_text', 'author', 'rating', 'source', 'text', 'role', 'question', 'answer'];
+    public const ITEM_FIELDS = ['name', 'description', 'price_text', 'author', 'rating', 'source', 'text', 'role', 'question', 'answer', 'value', 'label'];
+
+    /** The top banner's layouts: words beside the picture, large centred words, or words over a full-width picture. */
+    public const HERO_VARIANTS = ['split', 'centered', 'cover'];
 
     /** The plain-text fields of a LIST item the owner may type over in the Studio (set_item_string). Never sent by the model. */
     public const ITEM_TEXT_FIELDS = [
@@ -38,7 +41,7 @@ final class BlockPatchSchema
      * The section types the AI may add (owner ruling 2026-10-02). Never a gallery — its items are image files — and never
      * a form, which needs a form definition the AI cannot create.
      */
-    public const ADDABLE_TYPES = ['hero', 'about', 'faq', 'services', 'reviews_strip', 'team', 'booking_button', 'booking_form', 'contact', 'video_embed'];
+    public const ADDABLE_TYPES = ['hero', 'about', 'faq', 'services', 'reviews_strip', 'team', 'booking_button', 'booking_form', 'contact', 'video_embed', 'cta_band', 'stats'];
 
     public static function schema(): array
     {
@@ -130,6 +133,10 @@ final class BlockPatchSchema
     public static function modelMayWrite(string $field, mixed $value): bool
     {
         if (! in_array($field, self::MODEL_FIELDS, true) || ! is_scalar($value)) {
+            return false;
+        }
+
+        if ($field === 'variant' && ! in_array((string) $value, self::HERO_VARIANTS, true)) {
             return false;
         }
 

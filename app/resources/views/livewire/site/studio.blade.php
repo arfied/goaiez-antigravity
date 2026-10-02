@@ -73,6 +73,7 @@
                                 <label for="ask-input" class="block text-sm font-bold text-ink mb-1">Ask AI to edit</label>
                                 <textarea id="ask-input" wire:model="request" class="w-full border border-rule rounded p-2 text-sm bg-paper text-ink" placeholder="E.g. Make it sound more professional..."></textarea>
                                 <button wire:click="ask" class="block w-full text-center px-4 py-2 bg-ink text-paper font-bold rounded mt-2">Ask</button>
+                                <button wire:click="askDesign" class="block w-full text-center px-4 py-2 border border-rule text-ink font-bold rounded mt-2">Make it look great</button>
                             </div>
                             @endif
                             @if(isset($selectedPage) && !empty($selectedPage->draft_blocks) && !isset($selectedPage->draft_meta['pending_edit']))

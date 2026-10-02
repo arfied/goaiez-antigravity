@@ -219,4 +219,52 @@ class StudioInspectorTest extends TestCase
             ->assertSet('success', null)
             ->assertNotSet('error', null);
     }
+
+    public function test_make_it_look_great_asks_the_ai_for_a_design_and_proposes_it(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $business = TestCase::provisionTenant(['name' => 'Inspector Owner', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($business->id);
+
+        $page = Page::create([
+            'business_id' => $business->id, 'slug' => 'p'.rand(), 'title' => 'T',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old', 'subline' => 'Old'],
+                ['type' => 'about', 'text' => 'Unchanged'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [
+                    ['message' => ['content' => json_encode([
+                        'patches' => [
+                            ['op' => 'set_string', 'block_index' => 0, 'field' => 'variant', 'value' => 'centered'],
+                            ['op' => 'set_string', 'block_index' => 0, 'field' => 'cta_label', 'value' => 'Call us 7201'],
+                            ['op' => 'set_string', 'block_index' => 0, 'field' => 'cta_url', 'value' => 'tel:+15550107201'],
+                            ['op' => 'add_block', 'block_index' => 2, 'type' => 'cta_band', 'fields' => ['heading' => 'Ready when you are 7202', 'label' => 'Book now', 'url' => 'https://example.com/book']],
+                        ],
+                        'explanation' => 'A bolder banner and a call to action.',
+                    ])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ], 200, ['Content-Type' => 'application/json']),
+        ]);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('askDesign')
+            ->assertSet('error', null);
+
+        $page->refresh();
+        $proposed = $page->draft_meta['pending_edit']['blocks'];
+        $this->assertSame('centered', $proposed[0]['variant']);
+        $this->assertSame('tel:+15550107201', $proposed[0]['cta_url']);
+        $this->assertSame('cta_band', $proposed[2]['type']);
+        $this->assertSame('Old', $page->draft_blocks[0]['headline']);
+        Http::assertSent(fn ($r) => str_contains($r->body(), 'look modern and professional'));
+    }
 }

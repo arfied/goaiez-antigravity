@@ -361,4 +361,26 @@ final class BlockPatchTest extends TestCase
         $this->assertSame('refused', $gallery['status']);
         $this->assertSame($blocks, $gallery['blocks']);
     }
+
+    public function test_the_ai_may_pick_a_hero_layout_and_button_but_never_an_unknown_layout_or_an_unsafe_button(): void
+    {
+        $applier = app(BlockPatchApplier::class);
+        $blocks = [['type' => 'hero', 'headline' => 'H']];
+
+        $ok = $applier->apply($blocks, [
+            ['op' => 'set_string', 'block_index' => 0, 'field' => 'variant', 'value' => 'cover'],
+            ['op' => 'set_string', 'block_index' => 0, 'field' => 'cta_url', 'value' => 'tel:+15550100'],
+            ['op' => 'add_block', 'block_index' => 1, 'type' => 'stats', 'fields' => [], 'items' => [['value' => '15+', 'label' => 'years']]],
+        ]);
+        $this->assertSame('applied', $ok['status']);
+        $this->assertSame('cover', $ok['blocks'][0]['variant']);
+        $this->assertSame('tel:+15550100', $ok['blocks'][0]['cta_url']);
+        $this->assertSame([['value' => '15+', 'label' => 'years']], $ok['blocks'][1]['items']);
+
+        foreach ([['variant', 'fancy'], ['cta_url', 'javascript:alert(1)']] as [$field, $value]) {
+            $res = $applier->apply($blocks, [['op' => 'set_string', 'block_index' => 0, 'field' => $field, 'value' => $value]]);
+            $this->assertSame('refused', $res['status'], $field);
+            $this->assertSame($blocks, $res['blocks'], $field);
+        }
+    }
 }

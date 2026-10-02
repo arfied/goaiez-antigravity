@@ -17,10 +17,12 @@ final class InlineFields
         'booking_button' => ['label'],
         'booking_form' => ['heading'],
         'faq' => ['question', 'answer'],
+        'cta_band' => ['heading', 'text', 'label'],
         'gallery' => ['heading'],
-        'hero' => ['headline', 'subline'],
+        'hero' => ['headline', 'subline', 'cta_label'],
         'reviews_strip' => ['heading'],
         'services' => ['heading'],
+        'stats' => ['heading'],
         'team' => ['heading'],
     ];
 

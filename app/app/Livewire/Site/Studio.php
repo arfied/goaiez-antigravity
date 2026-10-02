@@ -62,6 +62,9 @@ class Studio extends Component
         'spelling' => 'Fix spelling and grammar in this section. Change nothing else.',
     ];
 
+    /** The one-click design request: the same Ask, with a request that asks for design and not only words. */
+    public const DESIGN_ASK = 'Make this page look modern and professional, not only its words: give the top banner a stand-out layout and a button, make a picture for it if it has none, add a row of key numbers and a call-to-action band, and choose fresh colours and fonts. Use the facts I have given wherever they apply.';
+
     public function setBlockField(SiteBlockFieldSetAction $action): void
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
@@ -274,6 +277,12 @@ class Studio extends Component
         } catch (Throwable $e) {
             $this->error = $e->getMessage();
         }
+    }
+
+    public function askDesign(SiteEditAskAction $action): void
+    {
+        $this->request = self::DESIGN_ASK;
+        $this->ask($action);
     }
 
     public function askSection(string $preset, SiteEditAskAction $action): void

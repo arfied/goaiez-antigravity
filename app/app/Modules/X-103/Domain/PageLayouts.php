@@ -15,22 +15,22 @@ final class PageLayouts
         'book' => [
             'label' => 'Book first',
             'explanation' => 'Puts your booking button and booking form straight under the headline, then your services and reviews.',
-            'order' => ['hero', 'booking_button', 'booking_form', 'services', 'reviews_strip', 'gallery', 'about', 'team', 'faq', 'contact', 'form'],
+            'order' => ['hero', 'stats', 'booking_button', 'booking_form', 'services', 'reviews_strip', 'gallery', 'about', 'team', 'faq', 'cta_band', 'contact', 'form'],
         ],
         'proof' => [
             'label' => 'Reviews first',
             'explanation' => 'Leads with what your customers say and your photos, then your services and how to book.',
-            'order' => ['hero', 'reviews_strip', 'gallery', 'services', 'booking_button', 'booking_form', 'about', 'team', 'faq', 'contact', 'form'],
+            'order' => ['hero', 'stats', 'reviews_strip', 'gallery', 'services', 'booking_button', 'booking_form', 'about', 'team', 'faq', 'cta_band', 'contact', 'form'],
         ],
         'story' => [
             'label' => 'Story first',
             'explanation' => 'Leads with who you are and your team, then your work, your services and your reviews.',
-            'order' => ['hero', 'about', 'team', 'gallery', 'services', 'reviews_strip', 'booking_button', 'booking_form', 'faq', 'contact', 'form'],
+            'order' => ['hero', 'stats', 'about', 'team', 'gallery', 'services', 'reviews_strip', 'booking_button', 'booking_form', 'faq', 'cta_band', 'contact', 'form'],
         ],
         'services' => [
             'label' => 'Services first',
             'explanation' => 'Leads with what you offer and how to book, then your reviews and your story.',
-            'order' => ['hero', 'services', 'booking_button', 'booking_form', 'reviews_strip', 'about', 'gallery', 'team', 'faq', 'contact', 'form'],
+            'order' => ['hero', 'stats', 'services', 'booking_button', 'booking_form', 'reviews_strip', 'about', 'gallery', 'team', 'faq', 'cta_band', 'contact', 'form'],
         ],
         'industry' => [
             'label' => 'Industry order',

@@ -125,7 +125,7 @@ class SitePatchTest extends TestCase
 
         $this->assertSame(['set_string', 'set_items', 'remove', 'move', 'add_block'], BlockPatchSchema::MODEL_OPS);
         $this->assertSame(['set_string', 'set_items', 'set_item_string', 'set_image', 'set_image_list', 'remove', 'move', 'add_block'], BlockPatchSchema::APPLIER_OPS);
-        $this->assertSame(['hero', 'about', 'faq', 'services', 'reviews_strip', 'team', 'booking_button', 'booking_form', 'contact', 'video_embed'], BlockPatchSchema::ADDABLE_TYPES);
+        $this->assertSame(['hero', 'about', 'faq', 'services', 'reviews_strip', 'team', 'booking_button', 'booking_form', 'contact', 'video_embed', 'cta_band', 'stats'], BlockPatchSchema::ADDABLE_TYPES);
         $this->assertNotContains('gallery', BlockPatchSchema::ADDABLE_TYPES);
         $this->assertNotContains('image_path', BlockPatchSchema::MODEL_FIELDS);
     }

@@ -333,4 +333,62 @@ class BlockMarkupTest extends TestCase
         preg_match_all('/class="site-block ([a-z_]+(?: site-block--band)?)[^"]*"/', $html, $matches);
         $this->assertEquals(['hero', 'about', 'services site-block--band', 'team'], $matches[1]);
     }
+
+    public function test_a_centered_hero_with_a_button(): void
+    {
+        $html = $this->renderBlock([
+            'type' => 'hero',
+            'headline' => 'CENTRED_HEADLINE_7100',
+            'variant' => 'centered',
+            'cta_label' => 'BOOK_NOW_7101',
+            'cta_url' => 'tel:+15550107101',
+        ]);
+
+        $this->assertStringContainsString('class="hero-center"', $html);
+        $this->assertStringContainsString('BOOK_NOW_7101', $html);
+        $this->assertStringContainsString('href="tel:+15550107101"', $html);
+        $this->assertStringNotContainsString('class="hero__grid"', $html);
+    }
+
+    public function test_a_hero_button_with_an_unsafe_link_is_not_rendered(): void
+    {
+        $html = $this->renderBlock([
+            'type' => 'hero',
+            'headline' => 'H',
+            'cta_label' => 'BAD_LINK_7102',
+            'cta_url' => 'javascript:alert(1)',
+        ]);
+
+        $this->assertStringNotContainsString('javascript:', $html);
+        $this->assertStringNotContainsString('BAD_LINK_7102', $html);
+    }
+
+    public function test_a_cover_hero_needs_a_picture(): void
+    {
+        $cover = $this->renderBlock(['type' => 'hero', 'headline' => 'H', 'variant' => 'cover', 'image_path' => 'COVER_PATH_7103.jpg']);
+        $this->assertStringContainsString('class="hero-cover"', $cover);
+        $this->assertStringContainsString('COVER_PATH_7103.jpg', $cover);
+        $this->assertStringNotContainsString('class="hero__grid"', $cover);
+
+        $noPicture = $this->renderBlock(['type' => 'hero', 'headline' => 'H', 'variant' => 'cover']);
+        $this->assertStringContainsString('class="hero__grid"', $noPicture);
+        $this->assertStringNotContainsString('class="hero-cover"', $noPicture);
+    }
+
+    public function test_a_call_to_action_band_and_a_numbers_row(): void
+    {
+        $band = $this->renderBlock(['type' => 'cta_band', 'heading' => 'CTA_HEADING_7104', 'text' => 'CTA_TEXT_7105', 'label' => 'CTA_LABEL_7106', 'url' => 'https://example.com/book7106']);
+        $this->assertStringContainsString('class="site-block cta site-block--primary"', $band);
+        $this->assertStringContainsString('CTA_HEADING_7104', $band);
+        $this->assertStringContainsString('CTA_TEXT_7105', $band);
+        $this->assertStringContainsString('href="https://example.com/book7106"', $band);
+
+        $stats = $this->renderBlock(['type' => 'stats', 'heading' => 'STATS_HEADING_7107', 'items' => [['value' => 'STAT_VALUE_7108', 'label' => 'STAT_LABEL_7109']]]);
+        $this->assertStringContainsString('class="stat-list"', $stats);
+        $this->assertStringContainsString('STAT_VALUE_7108', $stats);
+        $this->assertStringContainsString('STAT_LABEL_7109', $stats);
+
+        $empty = $this->renderBlock(['type' => 'stats', 'heading' => 'H', 'items' => []]);
+        $this->assertStringNotContainsString('data-block-type="stats"', $empty);
+    }
 }

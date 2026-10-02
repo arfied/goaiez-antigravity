@@ -107,6 +107,21 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 #breadcrumb-x176 { font-size: 0.9rem; margin: 1.5rem 0 0; display: flex; gap: 0.75rem; }
 .site-block-form { margin-top: 3rem; }
 .site-footer { margin: 2rem 0 0; padding: 1.5rem 0; border-top: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent); font-size: 0.9rem; color: color-mix(in srgb, var(--color-ink) 70%, transparent); }
+.hero-center { display: grid; justify-items: center; gap: 1.25rem; text-align: center; }
+.hero-center p { margin-inline: auto; }
+.hero-center img { width: 100%; height: 100%; object-fit: cover; }
+.hero-cover { position: relative; overflow: hidden; border-radius: 18px; min-height: clamp(22rem, 60vh, 36rem); display: grid; align-items: end; padding: clamp(1.5rem, 5vw, 3.5rem); color: #fff; }
+.hero-cover > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hero-cover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0.1)); }
+.hero-cover > div { position: relative; z-index: 1; display: grid; gap: 1rem; max-width: 42rem; }
+.hero-cover p { color: #fff; }
+.site-block--primary { background: var(--color-primary); color: var(--color-on-primary); margin-inline: calc(50% - 50vw); padding-inline: calc(50vw - 50%); }
+.cta-band { display: grid; justify-items: center; gap: 1rem; text-align: center; }
+.cta-band p { margin-inline: auto; opacity: 0.9; }
+.cta-band a { display: inline-block; padding: 0.9rem 1.75rem; border-radius: 999px; font-weight: 700; text-decoration: none; background: var(--color-on-primary); color: var(--color-primary); }
+.stat-list { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); text-align: center; }
+.stat-list strong { display: block; font-family: var(--font-heading); font-size: clamp(2.25rem, 4.5vw, 3.25rem); line-height: 1; color: var(--color-accent-text); }
+.stat-list span { display: block; margin-top: 0.5rem; opacity: 0.8; }
 </style>
 ';
 
@@ -116,7 +131,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
             if (! in_array($type, [
                 'hero', 'about', 'services', 'reviews_strip',
                 'booking_button', 'booking_form', 'contact', 'faq', 'video_embed',
-                'gallery', 'team', 'form',
+                'gallery', 'team', 'form', 'cta_band', 'stats',
             ], true)) {
                 continue;
             }
@@ -212,6 +227,21 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
         }
         if ($type === 'form') {
             return isset($block['fields']) && is_array($block['fields']);
+        }
+        if ($type === 'cta_band') {
+            return $this->hasScalar($block, 'heading');
+        }
+        if ($type === 'stats') {
+            if (! isset($block['items']) || ! is_array($block['items']) || $block['items'] === []) {
+                return false;
+            }
+            foreach ($block['items'] as $item) {
+                if (! is_array($item) || ! $this->hasScalar($item, 'value')) {
+                    return false;
+                }
+            }
+
+            return true;
         }
         if ($type === 'booking_form') {
             return $this->hasScalar($block, 'heading');
