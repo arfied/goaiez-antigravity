@@ -39,7 +39,11 @@
                         <div class="mb-4">
                             @if(isset($selectedPage) && isset($selectedPage->draft_meta['pending_edit']))
                                 <div class="mb-2 p-2 bg-attention-bg text-attention text-sm font-bold rounded" id="proposal-marker">
-                                    Previewing AI proposal
+                                    @if(isset($selectedPage->draft_meta['pending_edit']['layout']))
+                                        Previewing layout: {{ \App\Modules\X103\Domain\PageLayouts::LAYOUTS[$selectedPage->draft_meta['pending_edit']['layout']]['label'] ?? $selectedPage->draft_meta['pending_edit']['layout'] }}
+                                    @else
+                                        Previewing AI proposal
+                                    @endif
                                 </div>
                             @endif
                             @if($error)
@@ -65,6 +69,17 @@
                                 <label for="ask-input" class="block text-sm font-bold text-ink mb-1">Ask AI to edit</label>
                                 <textarea id="ask-input" wire:model="request" class="w-full border border-rule rounded p-2 text-sm bg-paper text-ink" placeholder="E.g. Make it sound more professional..."></textarea>
                                 <button wire:click="ask" class="block w-full text-center px-4 py-2 bg-ink text-paper font-bold rounded mt-2">Ask</button>
+                            </div>
+                            @endif
+                            @if(isset($selectedPage) && !empty($selectedPage->draft_blocks) && !isset($selectedPage->draft_meta['pending_edit']))
+                            <div class="mt-4">
+                                <p class="text-sm font-bold text-ink mb-1">Try a layout</p>
+                                <p class="text-xs text-ink-2 mb-2">Rearranges the sections this page already has. Nothing is added or rewritten.</p>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach(\App\Modules\X103\Domain\PageLayouts::LAYOUTS as $layoutId => $layout)
+                                        <button wire:click="proposeLayout('{{ $layoutId }}')" title="{{ $layout['explanation'] }}" class="px-3 py-1 text-sm border border-rule rounded text-ink">{{ $layout['label'] }}</button>
+                                    @endforeach
+                                </div>
                             </div>
                             @endif
                             

@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Livewire\Site;
 
 use App\Enums\UserRole;
+use App\Modules\X103\Actions\PageLayoutProposeAction;
 use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X103\Actions\SiteBlockFieldSetAction;
 use App\Modules\X103\Actions\SiteEditApplyAction;
 use App\Modules\X103\Actions\SiteEditAskAction;
 use App\Modules\X103\Actions\SiteEditDiscardAction;
 use App\Modules\X103\Actions\SitePublishAction;
+use App\Modules\X103\Domain\PageLayouts;
 use App\Modules\X103\Domain\PagePreview;
 use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Models\Page;
@@ -181,6 +183,41 @@ class Studio extends Component
 
         $action->handle($this->businessId, $this->pageId);
         $this->success = 'Discarded.';
+    }
+
+    public function proposeLayout(string $layout, PageLayoutProposeAction $action): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if ($this->pageId === null) {
+            $this->error = 'No page selected.';
+
+            return;
+        }
+
+        $res = $action->handle($this->businessId, $this->pageId, $layout);
+
+        if ($res['status'] === 'proposed') {
+            $this->selectedBlockIndex = null;
+            $this->success = 'Previewing the '.PageLayouts::LAYOUTS[$layout]['label'].' layout. Apply keeps it; Discard puts the page back.';
+
+            return;
+        }
+
+        if ($res['status'] === 'unchanged') {
+            $this->success = 'Your page is already in that order.';
+
+            return;
+        }
+
+        $reason = (string) $res['reason'];
+        $this->error = [
+            'pending_edit' => 'Apply or discard the proposal you are previewing first.',
+            'empty_page' => 'This page has no sections to arrange yet.',
+            'unknown_layout' => 'There is no layout by that name.',
+        ][$reason] ?? $reason;
     }
 
     public function mount(PageReadAction $pages): void
