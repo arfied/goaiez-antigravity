@@ -87,12 +87,19 @@ enum AiModel: string
     case Grok47 = 'xai-grok-4.7';
     case Grok43 = 'xai-grok-4.3';
 
+    /** OpenAI's mid-price flagship (checked 2026-10-02 on developers.openai.com: $2 in / $10 out per 1M, Chat Completions supported). */
+    case Gpt61Sol = 'openai-gpt-6.1-sol';
+
+    /** Google's Pro model (checked 2026-10-02 on ai.google.dev: $2 in / $12 out per 1M for prompts up to 200k). */
+    case Gemini31Pro = 'google-gemini-3.1-pro';
+
     public function provider(): AiProvider
     {
         return match ($this) {
             self::ClaudeOpus5, self::ClaudeSonnet5, self::ClaudeHaiku45 => AiProvider::Anthropic,
-            self::Gpt4oMini, self::TextEmbedding3Small, self::GptImage25Flare => AiProvider::OpenAi,
+            self::Gpt4oMini, self::TextEmbedding3Small, self::GptImage25Flare, self::Gpt61Sol => AiProvider::OpenAi,
             self::Grok47, self::Grok43 => AiProvider::Xai,
+            self::Gemini31Pro => AiProvider::Gemini,
         };
     }
 
@@ -107,6 +114,8 @@ enum AiModel: string
             self::GptImage25Flare => 'gp'.'t-image-2.5-flare',
             self::Grok47 => 'gr'.'ok-4.7',
             self::Grok43 => 'gr'.'ok-4.3',
+            self::Gpt61Sol => 'gp'.'t-6.1-sol',
+            self::Gemini31Pro => 'gem'.'ini-3.1-pro-preview',
         };
     }
 
@@ -150,7 +159,7 @@ enum AiModel: string
     {
         return match ($this) {
             self::TextEmbedding3Small => 1536,
-            self::ClaudeOpus5, self::ClaudeSonnet5, self::ClaudeHaiku45, self::Gpt4oMini, self::GptImage25Flare, self::Grok47, self::Grok43 => null,
+            self::ClaudeOpus5, self::ClaudeSonnet5, self::ClaudeHaiku45, self::Gpt4oMini, self::GptImage25Flare, self::Grok47, self::Grok43, self::Gpt61Sol, self::Gemini31Pro => null,
         };
     }
 
@@ -173,6 +182,8 @@ enum AiModel: string
             self::GptImage25Flare => 50_000,  // $5.00
             self::Grok47 => 50_000,
             self::Grok43 => 1_500,
+            self::Gpt61Sol => 20_000,     // $2.00
+            self::Gemini31Pro => 20_000,  // $2.00
         };
     }
 
@@ -195,6 +206,8 @@ enum AiModel: string
             self::GptImage25Flare => 300_000, // $30.00
             self::Grok47 => 250_000,
             self::Grok43 => 6_000,
+            self::Gpt61Sol => 100_000,    // $10.00
+            self::Gemini31Pro => 120_000, // $12.00
         };
     }
 
@@ -225,7 +238,7 @@ enum AiModel: string
         return match ($this) {
             // The embeddings endpoint takes no sampling parameters of any kind,
             // so "rejects them" is literally true for it as well.
-            self::ClaudeOpus5, self::ClaudeSonnet5, self::TextEmbedding3Small, self::GptImage25Flare => true,
+            self::ClaudeOpus5, self::ClaudeSonnet5, self::TextEmbedding3Small, self::GptImage25Flare, self::Gpt61Sol, self::Gemini31Pro => true,
             self::ClaudeHaiku45, self::Gpt4oMini, self::Grok47, self::Grok43 => false,
         };
     }
@@ -245,7 +258,7 @@ enum AiModel: string
     {
         return match ($this) {
             self::ClaudeOpus5, self::ClaudeSonnet5 => true,
-            self::ClaudeHaiku45, self::Gpt4oMini, self::TextEmbedding3Small, self::GptImage25Flare, self::Grok47, self::Grok43 => false,
+            self::ClaudeHaiku45, self::Gpt4oMini, self::TextEmbedding3Small, self::GptImage25Flare, self::Grok47, self::Grok43, self::Gpt61Sol, self::Gemini31Pro => false,
         };
     }
 

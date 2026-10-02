@@ -653,6 +653,9 @@ function outboundHttpPermittedFiles(): array
         'Services/Ai/AnthropicClient.php',
         'Services/Ai/OpenAiClient.php',
         'Services/Ai/XaiClient.php',
+        // Google Gemini (2026-10-02, the boss: compare ChatGPT, Gemini, Claude and Grok on site design) — a fourth
+        // documented vendor JSON API with its own credential, on the same footing as the three above.
+        'Services/Ai/GeminiClient.php',
 
         // The embeddings client (lane L5 phase 1). A third file rather than a
         // widened second one, because Anthropic publishes no embeddings API and

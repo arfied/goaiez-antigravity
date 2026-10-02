@@ -20,6 +20,7 @@ use App\Modules\X103\Actions\SiteThemeApplyAction;
 use App\Modules\X103\Domain\InlineFields;
 use App\Modules\X103\Domain\PageLayouts;
 use App\Modules\X103\Domain\PagePreview;
+use App\Modules\X103\Domain\SiteDesignEngines;
 use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
@@ -58,7 +59,8 @@ class Studio extends Component
 
     public string $blockHeadline = '';
 
-    public bool $showDesign = false;
+    /** Which AI's design the preview shows (a SiteDesignEngines key), or null for the page itself. */
+    public ?string $showDesign = null;
 
     private const SECTION_ASKS = [
         'shorter' => 'Make the text in this section shorter. Keep the meaning and every fact.',
@@ -303,7 +305,22 @@ class Studio extends Component
         $this->ask($action);
     }
 
-    public function designWithAi(SiteDesignRequestAction $action): void
+    /** One AI designs this page (claude, chatgpt, gemini or grok — SiteDesignEngines). */
+    public function designWithAi(string $engine, SiteDesignRequestAction $action): void
+    {
+        $this->startDesign([$engine], $action);
+    }
+
+    /** All four AIs design this page at once, so their work can be compared. */
+    public function designWithAll(SiteDesignRequestAction $action): void
+    {
+        $this->startDesign(array_keys(SiteDesignEngines::ENGINES), $action);
+    }
+
+    /**
+     * @param  list<string>  $engines
+     */
+    private function startDesign(array $engines, SiteDesignRequestAction $action): void
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
         $this->error = null;
@@ -315,12 +332,12 @@ class Studio extends Component
             return;
         }
 
-        $res = $action->handle($this->businessId, $this->pageId);
+        $res = $action->handle($this->businessId, $this->pageId, $engines);
         if ($res['status'] === 'queued') {
-            $this->showDesign = true;
-            $this->success = 'The AI is designing this page. It takes a minute or two; the preview switches to it when it is ready.';
+            $names = implode(', ', array_map(fn (string $e): string => SiteDesignEngines::label($e), $res['engines'] ?? []));
+            $this->success = 'Designing with '.$names.'. Each takes a minute or two; pick one below to see it when it is ready.';
         } else {
-            $this->error = 'The AI is already designing this page.';
+            $this->error = 'That AI is already designing this page.';
         }
     }
 
@@ -453,7 +470,7 @@ class Studio extends Component
 
         $res = $action->handle($this->businessId, $this->pageId, $themeId);
         if ($res['status'] === 'applied') {
-            $this->showDesign = false;
+            $this->showDesign = null;
             $this->success = 'Theme applied to your draft. Publish to put it on your live site; Undo brings the old look back.';
         } else {
             $this->error = 'There is no such theme.';
@@ -517,7 +534,7 @@ class Studio extends Component
     public function updatedPageId(): void
     {
         $this->selectedBlockIndex = null;
-        $this->showDesign = false;
+        $this->showDesign = null;
     }
 
     public function render()
@@ -530,9 +547,9 @@ class Studio extends Component
         if ($this->pageId !== null) {
             $selectedPage = Page::where('business_id', $this->businessId)->findOrFail($this->pageId);
             $hasProposal = isset($selectedPage->draft_meta['pending_edit']);
-            $designReady = ($selectedPage->draft_meta['design']['status'] ?? null) === 'ready';
-            $previewHtml = $this->showDesign && $designReady
-                ? app(PagePreview::class)->designHtml($selectedPage)
+            $designReady = $this->showDesign !== null && ($selectedPage->draft_meta['designs'][$this->showDesign]['status'] ?? null) === 'ready';
+            $previewHtml = $designReady
+                ? app(PagePreview::class)->designHtml($selectedPage, (string) $this->showDesign)
                 : app(PagePreview::class)->html($selectedPage, $hasProposal, $this->selectedBlockIndex, true);
 
             $script = <<<'HTML'

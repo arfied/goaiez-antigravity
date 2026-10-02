@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Ai;
 
+use App\Enums\AiModel;
 use App\Enums\AiTask;
 
 /**
@@ -38,6 +39,9 @@ final readonly class AiRequest
         public ?string $system = null,
         public ?array $jsonSchema = null,
         public ?string $promptKey = null,
+        // The one exception to "derived, not passed": the site designer names the model so four AIs can be compared
+        // on the same page. Null means the task's setting decides, as for every other caller.
+        public ?AiModel $model = null,
     ) {}
 
     public function wantsJson(): bool

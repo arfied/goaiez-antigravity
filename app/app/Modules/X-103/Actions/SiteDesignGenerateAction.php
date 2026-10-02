@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X103\Actions;
 
 use App\Enums\AiTask;
+use App\Modules\X103\Domain\SiteDesignEngines;
 use App\Modules\X103\Domain\SiteHtmlSanitizer;
 use App\Modules\X103\Domain\StatedFacts;
 use App\Modules\X103\Models\Page;
@@ -24,7 +25,8 @@ use Throwable;
  * with no website of its own still gets a full page), instead of filling twelve fixed section templates. The designer
  * may ask for up to three new pictures ([[new:description]]), which the image model makes for this business. Its answer is cleaned
  * by SiteHtmlSanitizer (no script, nothing loaded from outside, pictures only as the owner's own [[image:N]]) and kept
- * on the page as draft_meta.design. The Studio shows it beside the current page; this action never publishes anything.
+ * on the page as draft_meta.designs.<engine> — one per AI (SiteDesignEngines), so the four can be compared. The Studio
+ * shows any of them beside the current page; this action never publishes anything.
  */
 final class SiteDesignGenerateAction
 {
@@ -40,9 +42,13 @@ final class SiteDesignGenerateAction
     /**
      * @return array{status: string, reason?: string, model?: string}
      */
-    public function handle(int $businessId, int $pageId): array
+    public function handle(int $businessId, int $pageId, string $engine = 'claude'): array
     {
         $page = Page::where('business_id', $businessId)->findOrFail($pageId);
+        $model = SiteDesignEngines::model($engine);
+        if ($model === null) {
+            return ['status' => 'refused', 'reason' => 'unknown_engine'];
+        }
         $blocks = is_array($page->draft_blocks) ? $page->draft_blocks : [];
 
         // The owner's own pictures, numbered. The model only ever sees the token, never a file path.
@@ -116,17 +122,18 @@ final class SiteDesignGenerateAction
             task: AiTask::SiteDesign,
             prompt: $prompt,
             system: $this->registry->string('sites.design.system_prompt'),
+            model: $model,
         ));
 
         if (! $response->isUsable() || ! is_string($response->text)) {
-            return $this->fail($page, (string) ($response->failureReason ?? $response->refusalCategory ?? 'unknown'));
+            return $this->fail($page, $engine, (string) ($response->failureReason ?? $response->refusalCategory ?? 'unknown'));
         }
 
         $raw = $response->text;
         $end = strripos($raw, '</main>');
         if ($end === false) {
             // No closing </main>: the answer was cut off, or is not a page. Half a page is never shown.
-            return $this->fail($page, 'cut_off');
+            return $this->fail($page, $engine, 'cut_off');
         }
         $starts = array_values(array_filter([stripos($raw, '<style'), stripos($raw, '<main')], fn ($p) => $p !== false));
         $start = $starts === [] ? 0 : min($starts);
@@ -157,12 +164,12 @@ final class SiteDesignGenerateAction
         $clean = $this->sanitizer->clean($pageHtml);
 
         if (trim(strip_tags($clean['html'])) === '') {
-            return $this->fail($page, 'empty');
+            return $this->fail($page, $engine, 'empty');
         }
 
         $page->refresh();
         $meta = $page->draft_meta ?? [];
-        $meta['design'] = [
+        $meta['designs'][$engine] = [
             'status' => 'ready',
             'style' => $clean['style'],
             'html' => $clean['html'],
@@ -179,11 +186,11 @@ final class SiteDesignGenerateAction
     /**
      * @return array{status: string, reason: string}
      */
-    public function fail(Page $page, string $reason): array
+    public function fail(Page $page, string $engine, string $reason): array
     {
         $page->refresh();
         $meta = $page->draft_meta ?? [];
-        $meta['design'] = ['status' => 'failed', 'reason' => $reason, 'failed_at' => now()->toIso8601String()];
+        $meta['designs'][$engine] = ['status' => 'failed', 'reason' => $reason, 'failed_at' => now()->toIso8601String()];
         $page->draft_meta = $meta;
         $page->save();
 

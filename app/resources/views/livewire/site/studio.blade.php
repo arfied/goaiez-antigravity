@@ -89,17 +89,36 @@
                             @endif
 
                             @if(isset($selectedPage))
-                            @php $design = $selectedPage->draft_meta['design'] ?? null; @endphp
+                            @php $designs = $selectedPage->draft_meta['designs'] ?? []; @endphp
                             <div class="mt-4 border-t border-rule pt-3">
                                 <p class="text-sm font-bold text-ink mb-1">AI designer (preview)</p>
-                                <p class="text-xs text-ink-2 mb-2">The AI designs this whole page — layout, colours, type and pictures — from your content and what top local businesses cover. Your current page is not changed.</p>
-                                <button wire:click="designWithAi" class="block w-full text-center px-4 py-2 border border-rule text-ink font-bold rounded">Design this page with AI</button>
-                                @if(($design['status'] ?? null) === 'running')
-                                    <p wire:poll.5s class="text-xs text-ink-2 mt-2">Designing… this takes a minute or two.</p>
-                                @elseif(($design['status'] ?? null) === 'ready')
-                                    <button wire:click="$toggle('showDesign')" class="mt-2 px-3 py-1 text-sm border border-rule rounded text-ink">{{ $showDesign ? 'Show my current page' : 'Show the AI design' }}</button>
-                                @elseif(($design['status'] ?? null) === 'failed')
-                                    <p class="text-xs text-ink-2 mt-2">The last AI design did not finish ({{ $design['reason'] ?? 'unknown' }}). Try again.</p>
+                                <p class="text-xs text-ink-2 mb-2">An AI designs this whole page — layout, colours, type and pictures — from your content and what top local businesses cover. Try each AI and compare. Your current page is not changed.</p>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach(\App\Modules\X103\Domain\SiteDesignEngines::ENGINES as $engineKey => $engineInfo)
+                                        <button wire:click="designWithAi('{{ $engineKey }}')" class="px-3 py-1 text-sm border border-rule rounded text-ink">{{ $engineInfo['label'] }}</button>
+                                    @endforeach
+                                    <button wire:click="designWithAll" class="px-3 py-1 text-sm border border-rule rounded text-ink font-bold">All four</button>
+                                </div>
+                                @php $anyRunning = collect($designs)->contains(fn ($d) => ($d['status'] ?? null) === 'running'); @endphp
+                                <ul class="mt-2 text-xs text-ink-2"@if($anyRunning) wire:poll.5s @endif>
+                                    @foreach(\App\Modules\X103\Domain\SiteDesignEngines::ENGINES as $engineKey => $engineInfo)
+                                        @php $d = $designs[$engineKey] ?? null; @endphp
+                                        @if(is_array($d))
+                                            <li class="mt-1">
+                                                {{ $engineInfo['label'] }}:
+                                                @if(($d['status'] ?? null) === 'running')
+                                                    designing…
+                                                @elseif(($d['status'] ?? null) === 'ready')
+                                                    <button wire:click="$set('showDesign', '{{ $engineKey }}')" class="underline text-ink{{ $showDesign === $engineKey ? ' font-bold' : '' }}">show</button>
+                                                @else
+                                                    did not finish ({{ $d['reason'] ?? 'unknown' }})
+                                                @endif
+                                            </li>
+                                        @endif
+                                    @endforeach
+                                </ul>
+                                @if($showDesign !== null)
+                                    <button wire:click="$set('showDesign', null)" class="mt-2 px-3 py-1 text-sm border border-rule rounded text-ink">Show my current page</button>
                                 @endif
                             </div>
                             @endif

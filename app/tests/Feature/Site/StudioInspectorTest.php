@@ -271,7 +271,7 @@ class StudioInspectorTest extends TestCase
         Http::assertSent(fn ($r) => str_contains($r->body(), 'look modern and professional'));
     }
 
-    public function test_design_with_ai_queues_the_designer_and_shows_its_page_when_ready(): void
+    public function test_design_with_all_four_ais_queues_each_and_shows_the_chosen_design_when_ready(): void
     {
         Queue::fake();
         $owner = User::factory()->create(['role' => UserRole::Owner]);
@@ -290,23 +290,31 @@ class StudioInspectorTest extends TestCase
 
         Livewire::test(Studio::class)
             ->set('pageId', $page->id)
-            ->call('designWithAi')
-            ->assertSet('error', null)
-            ->assertSet('showDesign', true);
+            ->call('designWithAll')
+            ->assertSet('error', null);
 
-        Queue::assertPushed(SiteDesignJob::class, fn (SiteDesignJob $job) => $job->pageId === $page->id && $job->businessId === $business->id);
+        Queue::assertPushed(SiteDesignJob::class, 4);
+        Queue::assertPushed(SiteDesignJob::class, fn (SiteDesignJob $job) => $job->engine === 'gemini' && $job->pageId === $page->id && $job->businessId === $business->id);
         $page->refresh();
-        $this->assertSame('running', $page->draft_meta['design']['status']);
+        $this->assertEqualsCanonicalizing(['claude', 'chatgpt', 'gemini', 'grok'], array_keys($page->draft_meta['designs']));
+        $this->assertSame('running', $page->draft_meta['designs']['grok']['status']);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('designWithAi', 'grok')
+            ->assertSet('error', 'That AI is already designing this page.');
 
         $meta = $page->draft_meta;
-        $meta['design'] = ['status' => 'ready', 'style' => 'h1{color:red}', 'html' => '<main><h1>Designed by AI 7401</h1></main>', 'images' => []];
+        $meta['designs']['gemini'] = ['status' => 'ready', 'style' => 'h1{color:red}', 'html' => '<main><h1>Designed by Gemini 7401</h1></main>', 'images' => []];
         $page->update(['draft_meta' => $meta]);
 
         Livewire::test(Studio::class)
             ->set('pageId', $page->id)
-            ->assertViewHas('previewHtml', fn ($html) => ! str_contains($html, 'Designed by AI 7401'))
-            ->set('showDesign', true)
-            ->assertViewHas('previewHtml', fn ($html) => str_contains($html, 'Designed by AI 7401') && str_contains($html, 'h1{color:red}'));
+            ->assertViewHas('previewHtml', fn ($html) => ! str_contains($html, 'Designed by Gemini 7401'))
+            ->set('showDesign', 'grok')
+            ->assertViewHas('previewHtml', fn ($html) => ! str_contains($html, 'Designed by Gemini 7401'))
+            ->set('showDesign', 'gemini')
+            ->assertViewHas('previewHtml', fn ($html) => str_contains($html, 'Designed by Gemini 7401') && str_contains($html, 'h1{color:red}'));
     }
 
     public function test_a_theme_changes_the_look_offers_publish_and_undo_brings_the_old_look_back(): void

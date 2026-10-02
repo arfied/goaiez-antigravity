@@ -31,6 +31,8 @@ enum AiProvider: string
 
     case Xai = 'xai';
 
+    case Gemini = 'gemini';
+
     /**
      * The PlatformCredentials key holding this provider's API key.
      */
@@ -40,6 +42,7 @@ enum AiProvider: string
             self::Anthropic => 'anthropic_api_key',
             self::OpenAi => 'openai_api_key',
             self::Xai => 'xai_api_key',
+            self::Gemini => 'gemini_api_key',
         };
     }
 
@@ -49,6 +52,7 @@ enum AiProvider: string
             self::Anthropic => 'Anthropic',
             self::OpenAi => 'OpenAI',
             self::Xai => 'xAI (Grok)',
+            self::Gemini => 'Google (Gemini)',
         };
     }
 }

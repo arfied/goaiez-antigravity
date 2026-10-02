@@ -14,7 +14,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-/** Designs one page with the AI in the background: a whole page takes one to three minutes, past a web request's limit. */
+/** Designs one page with one AI in the background: a whole page takes one to three minutes, past a web request's limit. */
 final class SiteDesignJob implements ShouldQueue
 {
     use Dispatchable;
@@ -25,7 +25,7 @@ final class SiteDesignJob implements ShouldQueue
 
     public int $timeout = 420;
 
-    public function __construct(public readonly int $businessId, public readonly int $pageId) {}
+    public function __construct(public readonly int $businessId, public readonly int $pageId, public readonly string $engine = 'claude') {}
 
     public function handle(SiteDesignGenerateAction $action): void
     {
@@ -34,16 +34,17 @@ final class SiteDesignJob implements ShouldQueue
 
         Tenancy::actingAs($this->businessId, function () use ($action): void {
             try {
-                $action->handle($this->businessId, $this->pageId);
+                $action->handle($this->businessId, $this->pageId, $this->engine);
             } catch (Throwable $e) {
                 Log::warning('an AI page design failed', [
                     'business_id' => $this->businessId,
                     'page_id' => $this->pageId,
+                    'engine' => $this->engine,
                     'error' => $e->getMessage(),
                 ]);
                 $page = Page::where('business_id', $this->businessId)->find($this->pageId);
                 if ($page !== null) {
-                    $action->fail($page, 'error');
+                    $action->fail($page, $this->engine, 'error');
                 }
             }
         });

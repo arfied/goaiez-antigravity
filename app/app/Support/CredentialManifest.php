@@ -118,6 +118,13 @@ final class CredentialManifest
                 'degradation' => 'Tasks routed to xAI fail as a recorded AI call and the queued job moves on. Same held-for-a-human outcome on the moderation path.',
             ],
 
+            'gemini_api_key' => [
+                'vendor' => 'AI providers',
+                'label' => 'Google Gemini API key',
+                'description' => 'The fourth provider behind AiRouter, through Google\'s OpenAI-compatible endpoint. Used by the site designer\'s Gemini option.',
+                'degradation' => 'The Gemini site design fails as a recorded AI call with credential_not_configured; the other designers are unaffected.',
+            ],
+
             'fetch_proxy_url' => [
                 'vendor' => 'Outbound proxy',
                 'label' => 'Tenant-site fetch proxy URL',

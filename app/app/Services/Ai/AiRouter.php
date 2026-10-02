@@ -86,7 +86,12 @@ final class AiRouter
      */
     public function dispatch(AiRequest $request): AiResponse
     {
-        $model = $this->spend->modelFor($request->task);
+        // A caller may name the model (the site designer compares four AIs); otherwise the task's setting decides.
+        $model = $request->model ?? $this->spend->modelFor($request->task);
+
+        if ($request->model !== null && ($request->model->isEmbedding() || $request->model->isImage())) {
+            return AiResponse::failed($request->model, 'not_a_completion_model');
+        }
 
         // ⚠️ THE WRONG-DOOR GUARD, AND IT IS WHAT MAKES AiTask::maxOutputTokens()'
         // ZERO ARM UNREACHABLE RATHER THAN MERELY UNUSED. An embedding tier sent
@@ -363,7 +368,7 @@ final class AiRouter
                 .'publishes no embeddings API; if that changes, add the client here rather '
                 .'than letting this model reach the OpenAI one.',
             ),
-            AiProvider::Xai => throw new LogicException(
+            AiProvider::Xai, AiProvider::Gemini => throw new LogicException(
                 'No embedding client exists for '.$model->provider()->label().'.'
             ),
         };
@@ -385,6 +390,7 @@ final class AiRouter
             AiProvider::Anthropic => new AnthropicClient($model),
             AiProvider::OpenAi => new OpenAiClient($model),
             AiProvider::Xai => new XaiClient($model),
+            AiProvider::Gemini => new GeminiClient($model),
         };
     }
 }

@@ -86,10 +86,10 @@ final class PagePreview
             .'<body data-preview-page="1">'.$html.$previewShell.'</body></html>';
     }
 
-    /** The AI-designed page (draft_meta.design) as its own preview document, the owner's pictures inlined as html() does. */
-    public function designHtml(Page $page): string
+    /** One AI's design of the page (draft_meta.designs.<engine>) as its own preview document, pictures inlined as html() does. */
+    public function designHtml(Page $page, string $engine): string
     {
-        $design = $page->draft_meta['design'] ?? null;
+        $design = $page->draft_meta['designs'][$engine] ?? null;
         if (! is_array($design) || ($design['status'] ?? null) !== 'ready') {
             return '';
         }
