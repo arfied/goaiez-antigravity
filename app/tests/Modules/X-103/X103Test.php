@@ -65,6 +65,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -1011,6 +1012,44 @@ class X103Test extends TestCase
         $this->assertSame('polished', $result['polish']['status'] ?? null);
         $home = Page::where('business_id', $biz->id)->where('slug', 'home')->first();
         $this->assertSame('Polished build line 5016', $home->draft_blocks[0]['subline']);
+    }
+
+    public function test_a_build_gives_a_pictureless_hero_a_picture_from_the_owners_tagline(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Build Picture Tenant', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+        app(BusinessFacts::class)->set($biz->id, BusinessFactKey::TAGLINE, 'Painting and decorating 5021');
+        $location = Location::factory()->create([
+            'business_id' => $biz->id,
+            'website_url' => 'https://example.com',
+            'website_confirmed_at' => now(),
+        ]);
+
+        Http::fake([
+            '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
+            'https://example.com' => Http::response('<html><head><title>Home</title></head><body><h1>Welcome</h1><p>Crawled home words 5022</p></body></html>', 200, ['Content-Type' => 'text/html']),
+            'api.openai.com/v1/images/generations' => Http::response([
+                'data' => [['b64_json' => '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=']],
+            ], 200, ['Content-Type' => 'application/json']),
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'choices' => [['message' => ['content' => 'Polished line 5023']]],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+            '*' => Http::response('', 404),
+        ]);
+
+        $result = app(SiteBuildRunAction::class)->handle($biz->id, $location->id);
+
+        $this->assertSame('completed', $result['status']);
+        $this->assertSame('generated', $result['picture']['status'] ?? null);
+        $hero = Page::where('business_id', $biz->id)->where('slug', 'home')->first()->draft_blocks[0];
+        $this->assertSame('hero', $hero['type']);
+        $this->assertNotEmpty($hero['image_path']);
+        $this->assertSame('Painting and decorating 5021', $hero['image_alt']);
+        Storage::disk('local')->assertExists($hero['image_path']);
+        Http::assertSent(fn ($r) => str_contains($r->url(), 'images/generations') && str_contains($r->body(), 'Painting and decorating 5021'));
     }
 
     public function test_polish_refuses_when_the_budget_is_out(): void
