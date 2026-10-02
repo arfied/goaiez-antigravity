@@ -185,4 +185,19 @@ class StudioArrangeTest extends TestCase
         $this->assertSame('applied', $result['status']);
         $this->assertSame(['type' => 'hero', 'headline' => 'H'], $result['blocks'][0]);
     }
+
+    public function test_the_inspector_names_the_selected_section_in_plain_words(): void
+    {
+        $page = $this->pageFor(self::BLOCKS);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->assertDontSee('Top banner')
+            ->call('selectBlock', 0)
+            ->assertSee('Selected:')
+            ->assertSee('Top banner')
+            ->assertDontSee('Block Index')
+            ->call('selectBlock', 3)
+            ->assertSee('Booking button');
+    }
 }

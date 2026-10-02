@@ -112,12 +112,7 @@
                         
                         <h2 class="font-bold mb-2">Inspector</h2>
                         @if($selectedBlockIndex !== null)
-                            <div class="text-sm">
-                                <p><span class="font-semibold">Block Index:</span> {{ $selectedBlockIndex }}</p>
-                                @if($selectedBlockType)
-                                    <p><span class="font-semibold">Type:</span> {{ $selectedBlockType }}</p>
-                                @endif
-                            </div>
+                            <p class="text-sm"><span class="font-semibold">Selected:</span> {{ \App\Modules\X103\Domain\SectionNames::label($selectedBlockType) }}</p>
                             <p class="mt-2 text-xs text-ink-2">Click any heading or text in the selected section to type over it. Enter saves, Esc cancels.</p>
                             <div class="mt-3 flex flex-wrap gap-2">
                                 <button wire:click="arrangeSection('up')" class="px-3 py-1 text-sm border border-rule rounded text-ink">Move up</button>
