@@ -80,7 +80,23 @@ final class SiteCrawlAction
             }
 
             $bodyNode = $dom->getElementsByTagName('body')->item(0);
-            $text = $bodyNode ? preg_replace('/\s+/', ' ', trim($bodyNode->textContent)) : null;
+            // The page's own words: <main> if it has one, and never its menu, header, footer, form or code.
+            // textContent includes <script>/<style> contents, which is how menus and JS reached site copy.
+            $textRoot = $dom->getElementsByTagName('main')->item(0) ?? $bodyNode;
+            $text = null;
+            $clone = $textRoot?->cloneNode(true);
+            if ($clone instanceof \DOMElement) {
+                foreach (['script', 'style', 'noscript', 'template', 'svg', 'nav', 'header', 'footer', 'form'] as $tag) {
+                    $found = [];
+                    foreach ($clone->getElementsByTagName($tag) as $node) {
+                        $found[] = $node;
+                    }
+                    foreach ($found as $node) {
+                        $node->parentNode?->removeChild($node);
+                    }
+                }
+                $text = preg_replace('/\s+/', ' ', trim($clone->textContent));
+            }
 
             $imageUrls = [];
             $imageAlts = [];

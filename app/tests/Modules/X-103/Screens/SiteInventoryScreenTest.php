@@ -108,6 +108,47 @@ it('crawls a two-page fake site', function () {
         ->and($services->image_alts)->toBe([]);
 });
 
+it('stores a page\'s own words and not its menu, footer or scripts', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+    Location::where('business_id', $biz->id)->update([
+        'website_url' => 'https://example.com',
+        'website_confirmed_at' => now(),
+    ]);
+
+    $this->actingAs($owner);
+    Tenancy::set($biz->id);
+
+    Http::fake([
+        '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
+        'https://example.com' => Http::response(
+            '<html><head><title>Home</title><style>.x{color:red}</style></head><body>'
+            .'<nav>Menu home menu about 5001</nav><header>Header strap 5002</header>'
+            .'<main><h1>Welcome</h1><p>Distinctive main words 5003</p></main>'
+            .'<footer>Footer copyright 5004</footer><script>var tracker = "Distinctive script 5005";</script>'
+            .'</body></html>',
+            200,
+            ['Content-Type' => 'text/html']
+        ),
+        'https://example.com/plain' => Http::response(
+            '<html><body><nav>Menu plain 5006</nav><p>Distinctive body words 5007</p><script>var y = "Script plain 5008";</script></body></html>',
+            200,
+            ['Content-Type' => 'text/html']
+        ),
+    ]);
+
+    app(SiteCrawlAction::class)->handle($biz->id, Location::where('business_id', $biz->id)->first()->id);
+
+    $home = SiteInventoryPage::where('business_id', $biz->id)->where('url', 'https://example.com')->first();
+    expect($home->text)->toContain('Distinctive main words 5003')
+        ->and($home->text)->not->toContain('Menu home menu about 5001')
+        ->and($home->text)->not->toContain('Header strap 5002')
+        ->and($home->text)->not->toContain('Footer copyright 5004')
+        ->and($home->text)->not->toContain('Distinctive script 5005')
+        ->and($home->headings)->toBe(['Welcome']);
+});
+
 it('refuses when website is missing or unconfirmed', function () {
     $owner = User::factory()->create(['role' => UserRole::Owner]);
     $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
