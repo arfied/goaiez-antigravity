@@ -237,7 +237,7 @@ final class BlockPatchTest extends TestCase
         $this->assertSame('applied', $result['status']);
     }
 
-    public function test_add_block_refuses_a_reviews_strip_because_it_would_invent_reviews(): void
+    public function test_add_block_adds_a_reviews_strip_with_its_items(): void
     {
         $applier = app(BlockPatchApplier::class);
         $blocks = [
@@ -245,14 +245,12 @@ final class BlockPatchTest extends TestCase
             ['type' => 'about', 'text' => 'Hello'],
         ];
 
-        $patches = [
-            ['op' => 'add_block', 'block_index' => 1, 'type' => 'reviews_strip', 'fields' => ['text' => 'reviews']],
-        ];
+        $result = $applier->apply($blocks, [
+            ['op' => 'add_block', 'block_index' => 1, 'type' => 'reviews_strip', 'fields' => ['heading' => 'What customers say'], 'items' => [['author' => 'Ann', 'text' => 'Great job', 'rating' => '5', 'image_path' => 'x.jpg']]],
+        ]);
 
-        $result = $applier->apply($blocks, $patches);
-
-        $this->assertSame('refused', $result['status']);
-        $this->assertStringContainsString('reviews', $result['reason']);
+        $this->assertSame('applied', $result['status']);
+        $this->assertSame(['type' => 'reviews_strip', 'heading' => 'What customers say', 'items' => [['author' => 'Ann', 'text' => 'Great job', 'rating' => '5']]], $result['blocks'][1]);
     }
 
     public function test_add_block_refuses_a_hero_with_an_empty_headline(): void
@@ -291,24 +289,25 @@ final class BlockPatchTest extends TestCase
         $this->assertStringContainsString('requires fields', $result['reason']);
     }
 
-    public function test_set_string_writes_only_plain_text_fields(): void
+    public function test_set_string_writes_any_page_field_but_never_a_file_path_or_an_unsafe_link(): void
     {
         $applier = app(BlockPatchApplier::class);
         $blocks = [
             ['type' => 'hero', 'headline' => 'H'],
             ['type' => 'booking_button', 'label' => 'Book', 'url' => 'https://example.com/book'],
-            ['type' => 'services', 'heading' => 'Services', 'items' => [['name' => 'Roof repair']]],
+            ['type' => 'contact', 'phone' => '0100'],
         ];
 
         $ok = $applier->apply($blocks, [
-            ['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'New'],
-            ['op' => 'set_string', 'block_index' => 2, 'field' => 'heading', 'value' => 'What we do'],
+            ['op' => 'set_string', 'block_index' => 1, 'field' => 'url', 'value' => 'https://example.com/new'],
+            ['op' => 'set_string', 'block_index' => 2, 'field' => 'phone', 'value' => '020 7946 0000'],
         ]);
         $this->assertSame('applied', $ok['status']);
-        $this->assertSame('What we do', $ok['blocks'][2]['heading']);
+        $this->assertSame('https://example.com/new', $ok['blocks'][1]['url']);
+        $this->assertSame('020 7946 0000', $ok['blocks'][2]['phone']);
 
-        foreach ([[1, 'url'], [0, 'image_path'], [2, 'items'], [0, 'phone']] as [$index, $field]) {
-            $res = $applier->apply($blocks, [['op' => 'set_string', 'block_index' => $index, 'field' => $field, 'value' => 'x']]);
+        foreach ([[1, 'url', 'javascript:alert(1)'], [0, 'image_path', 'some/other/file.jpg'], [0, 'items', 'x'], [0, 'image_width', '9']] as [$index, $field, $value]) {
+            $res = $applier->apply($blocks, [['op' => 'set_string', 'block_index' => $index, 'field' => $field, 'value' => $value]]);
             $this->assertSame('refused', $res['status'], $field);
             $this->assertSame($blocks, $res['blocks'], $field);
         }
@@ -344,5 +343,22 @@ final class BlockPatchTest extends TestCase
             $this->assertSame('refused', $res['status'], "$block/$item/$field");
             $this->assertSame($blocks, $res['blocks']);
         }
+    }
+
+    public function test_set_items_writes_a_list_but_never_a_gallery_or_a_file_path(): void
+    {
+        $applier = app(BlockPatchApplier::class);
+        $blocks = [
+            ['type' => 'services', 'heading' => 'Services', 'items' => [['name' => 'Old']]],
+            ['type' => 'gallery', 'items' => [['image_path' => 'a.jpg']]],
+        ];
+
+        $ok = $applier->apply($blocks, [['op' => 'set_items', 'block_index' => 0, 'items' => [['name' => 'Roof repair', 'price_text' => 'from £120', 'image_path' => 'x.jpg']]]]);
+        $this->assertSame('applied', $ok['status']);
+        $this->assertSame([['name' => 'Roof repair', 'price_text' => 'from £120']], $ok['blocks'][0]['items']);
+
+        $gallery = $applier->apply($blocks, [['op' => 'set_items', 'block_index' => 1, 'items' => [['name' => 'x']]]]);
+        $this->assertSame('refused', $gallery['status']);
+        $this->assertSame($blocks, $gallery['blocks']);
     }
 }

@@ -551,7 +551,7 @@ class Pages extends Component
                 $this->editingPageId = (int) $res['page_id'];
                 $this->success = "Made a draft page \"{$res['title']}\" at /{$res['slug']} with {$res['blocks']} blocks using {$res['model']}. It is open in the editor — change it by asking, then publish when you are happy.";
                 if (! empty($res['left_out'])) {
-                    $this->success .= ' Left out: '.implode(', ', $res['left_out']).' — those need your real details (prices, phone numbers, addresses, links), which the AI is not allowed to make up.';
+                    $this->success .= ' Left out: '.implode(', ', $res['left_out']).' — the AI cannot make those: photos and forms come from your own uploads and form settings.';
                 }
                 $this->pageRequest = '';
             }

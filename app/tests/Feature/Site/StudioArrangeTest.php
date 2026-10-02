@@ -175,15 +175,15 @@ class StudioArrangeTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_add_block_keeps_only_the_types_text_fields(): void
+    public function test_add_block_never_keeps_a_file_path_or_an_unsafe_link(): void
     {
         $result = app(BlockPatchApplier::class)->apply(
             [['type' => 'about', 'text' => 'A']],
-            [['op' => 'add_block', 'block_index' => 0, 'type' => 'hero', 'fields' => ['headline' => 'H', 'image_path' => 'some/other/file.jpg', 'url' => 'https://x.test']]],
+            [['op' => 'add_block', 'block_index' => 0, 'type' => 'booking_button', 'fields' => ['label' => 'Book', 'image_path' => 'some/other/file.jpg', 'url' => 'javascript:alert(1)']]],
         );
 
         $this->assertSame('applied', $result['status']);
-        $this->assertSame(['type' => 'hero', 'headline' => 'H'], $result['blocks'][0]);
+        $this->assertSame(['type' => 'booking_button', 'label' => 'Book'], $result['blocks'][0]);
     }
 
     public function test_the_inspector_names_the_selected_section_in_plain_words(): void

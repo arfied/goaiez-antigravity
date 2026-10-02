@@ -6,6 +6,7 @@ namespace App\Modules\X103\Actions;
 
 use App\Modules\X103\Domain\BlockPatchApplier;
 use App\Modules\X103\Models\Page;
+use Illuminate\Support\Facades\Log;
 
 final class SiteEditAskAction
 {
@@ -76,7 +77,7 @@ final class SiteEditAskAction
 
         if ($onlyBlock !== null) {
             foreach ($res['patches'] as $patch) {
-                if (! is_array($patch) || ($patch['block_index'] ?? null) !== $onlyBlock || ! in_array($patch['op'] ?? null, ['set_string', 'set_string_list'], true)) {
+                if (! is_array($patch) || ($patch['block_index'] ?? null) !== $onlyBlock || ! in_array($patch['op'] ?? null, ['set_string', 'set_items'], true)) {
                     return [
                         'status' => 'refused',
                         'reason' => 'outside_section',
@@ -105,6 +106,13 @@ final class SiteEditAskAction
         $applyResult = $this->applier->apply($base, $res['patches']);
 
         if ($applyResult['status'] === 'refused') {
+            // The owner sees one plain sentence; the applier's exact reason is kept here so a report can be diagnosed.
+            Log::warning('an AI page edit could not be applied', [
+                'business_id' => $businessId,
+                'page_id' => $pageId,
+                'reason' => $applyResult['reason'],
+            ]);
+
             return [
                 'status' => 'refused',
                 'reason' => $applyResult['reason'],

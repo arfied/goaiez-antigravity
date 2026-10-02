@@ -108,11 +108,8 @@ class SitePatchTest extends TestCase
      *   - `set_image_list` must never appear in MODEL_OPS. The model may not request an image list; the
      *     server synthesises those in SiteEditProposeAction after generating a picture, so a model that
      *     could ask for one could point a page at an arbitrary path.
-     *   - Neither `set_image` nor `set_string_list` may appear in MODEL_OPS: the first is the server's hero-picture op, the second would let the AI write a list of services, reviews, photos or people.
-     *   - ADDABLE_TYPES must stay exactly hero/about/faq. Every other block type needs real reviews,
-     *     photos, people, prices, a phone number or a real link, and the prompt forbids inventing those.
-     *     Widening this list is a product decision about honesty and must cost somebody a deliberate edit
-     *     to this test.
+     *   - Neither `set_image` nor `set_string_list` may appear in MODEL_OPS: the first is the server's hero-picture op, the second could write a list without set_items' guard against file paths.
+     *   - ADDABLE_TYPES is every section type except gallery (image files) and form (needs a form definition) — owner ruling 2026-10-02 "AI may write anything". Changing it still costs a deliberate edit to this test.
      */
     public function test_the_op_sets_and_the_addable_types_are_pinned_by_membership()
     {
@@ -126,9 +123,11 @@ class SitePatchTest extends TestCase
         $this->assertNotContains('set_item_string', $ops);
         $this->assertContains('set_image_list', BlockPatchSchema::APPLIER_OPS);
 
-        $this->assertSame(['set_string', 'remove', 'move', 'add_block'], BlockPatchSchema::MODEL_OPS);
-        $this->assertSame(['set_string', 'set_item_string', 'set_image', 'set_image_list', 'remove', 'move', 'add_block'], BlockPatchSchema::APPLIER_OPS);
-        $this->assertSame(['hero', 'about', 'faq'], BlockPatchSchema::ADDABLE_TYPES);
+        $this->assertSame(['set_string', 'set_items', 'remove', 'move', 'add_block'], BlockPatchSchema::MODEL_OPS);
+        $this->assertSame(['set_string', 'set_items', 'set_item_string', 'set_image', 'set_image_list', 'remove', 'move', 'add_block'], BlockPatchSchema::APPLIER_OPS);
+        $this->assertSame(['hero', 'about', 'faq', 'services', 'reviews_strip', 'team', 'booking_button', 'booking_form', 'contact', 'video_embed'], BlockPatchSchema::ADDABLE_TYPES);
+        $this->assertNotContains('gallery', BlockPatchSchema::ADDABLE_TYPES);
+        $this->assertNotContains('image_path', BlockPatchSchema::MODEL_FIELDS);
     }
 
     public function test_a_requested_picture_becomes_a_synthesised_image_patch()

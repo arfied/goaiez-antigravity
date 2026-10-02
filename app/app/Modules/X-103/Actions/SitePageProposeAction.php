@@ -24,8 +24,8 @@ use Illuminate\Support\Str;
  */
 final class SitePageProposeAction
 {
-    /** Real block types the page maker may NOT write: each needs a real price, person, photo, phone, address or link. */
-    private const NEEDS_REAL_DETAILS = ['services', 'reviews_strip', 'gallery', 'team', 'video_embed', 'booking_button', 'booking_form', 'contact', 'form'];
+    /** Section types the AI cannot make: a gallery needs your photos, a form needs your form settings. */
+    private const NOT_WRITABLE = ['gallery', 'form'];
 
     public function __construct(
         private readonly AiRouter $router,
@@ -86,19 +86,22 @@ final class SitePageProposeAction
             return ['status' => 'refused', 'reason' => 'no_title'];
         }
 
-        $whitelist = BlockPatchSchema::ADDABLE_TYPES;
         $validBlocks = [];
         $leftOut = [];
         foreach ($response->json['blocks'] ?? [] as $block) {
             $type = is_array($block) ? ($block['type'] ?? '') : '';
-            if (is_array($block) && in_array($type, $whitelist, true) && $this->renderer->isValidBlock($block)) {
-                $block['source'] = 'ai';
-                $block['model'] = $response->model->value;
-                if ($peerCount > 0) {
-                    $block['peers'] = $peerCount;
+            if (is_array($block) && is_string($type) && in_array($type, BlockPatchSchema::ADDABLE_TYPES, true)) {
+                // Only the fields the AI may write; a file path, the type or a javascript: link is dropped here.
+                $clean = BlockPatchSchema::modelBlock($type, $block, $block['items'] ?? null);
+                if (BlockPatchSchema::hasContent($clean) && $this->renderer->isValidBlock($clean)) {
+                    $clean['source'] = 'ai';
+                    $clean['model'] = $response->model->value;
+                    if ($peerCount > 0) {
+                        $clean['peers'] = $peerCount;
+                    }
+                    $validBlocks[] = $clean;
                 }
-                $validBlocks[] = $block;
-            } elseif (is_string($type) && in_array($type, self::NEEDS_REAL_DETAILS, true) && ! in_array($type, $leftOut, true)) {
+            } elseif (is_string($type) && in_array($type, self::NOT_WRITABLE, true) && ! in_array($type, $leftOut, true)) {
                 $leftOut[] = $type;
             }
         }

@@ -1465,17 +1465,18 @@ class PagesScreenTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_make_me_a_page_never_writes_contact_details_services_or_links_and_says_so(): void
+    public function test_make_me_a_page_writes_any_section_but_never_a_file_path_or_an_unsafe_link(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Pages Test Edit', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         Tenancy::set($biz->id);
 
         $made = json_encode(['title' => 'Distinctive call-out page 6613', 'slug' => 'call-out', 'blocks' => [
-            ['type' => 'hero', 'headline' => 'Distinctive headline 6614'],
-            ['type' => 'contact', 'phone' => '+1 202 867 0147', 'email' => 'made-up@example.com'],
-            ['type' => 'services', 'items' => [['name' => 'Invented service 6615']]],
-            ['type' => 'booking_button', 'label' => 'Book', 'url' => 'https://example.com/made-up'],
+            ['type' => 'hero', 'headline' => 'Distinctive headline 6614', 'image_path' => 'some/other/file.jpg'],
+            ['type' => 'contact', 'phone' => '+1 202 867 0147', 'email' => 'hello@example.com'],
+            ['type' => 'services', 'items' => [['name' => 'Roof repair 6615', 'image_path' => 'x.jpg']]],
+            ['type' => 'booking_button', 'label' => 'Book', 'url' => 'javascript:alert(1)'],
+            ['type' => 'gallery', 'items' => [['image_path' => 'y.jpg']]],
             ['type' => 'contact'],
         ], 'explanation' => 'A call-out page.']);
 
@@ -1499,14 +1500,17 @@ class PagesScreenTest extends TestCase
         Livewire::actingAs($owner)->test(Pages::class)
             ->set('pageRequest', 'make a call-out page with our number')
             ->call('makePage')
-            ->assertSet('success', fn ($s) => str_contains((string) $s, 'with 1 blocks')
-                && str_contains((string) $s, 'Left out: contact, services, booking_button — those need your real details'));
+            ->assertSet('success', fn ($s) => str_contains((string) $s, 'with 4 blocks') && str_contains((string) $s, 'Left out: gallery'));
 
         $page = Page::where('business_id', $biz->id)->where('slug', 'call-out')->first();
         $this->assertNotNull($page);
-        $this->assertSame(['hero'], array_map(fn ($b) => $b['type'], $page->draft_blocks));
-        $this->assertStringNotContainsString('867 0147', json_encode($page->draft_blocks));
-        $this->assertStringNotContainsString('Invented service 6615', json_encode($page->draft_blocks));
+        $this->assertSame(['hero', 'contact', 'services', 'booking_button'], array_map(fn ($b) => $b['type'], $page->draft_blocks));
+        $json = json_encode($page->draft_blocks);
+        $this->assertStringContainsString('867 0147', $json);
+        $this->assertStringContainsString('Roof repair 6615', $json);
+        $this->assertStringNotContainsString('some/other/file.jpg', $json);
+        $this->assertStringNotContainsString('x.jpg', $json);
+        $this->assertStringNotContainsString('javascript:', $json);
     }
 
     public function test_make_me_a_page_is_told_the_business_name_and_only_its_own_stated_facts(): void

@@ -44,7 +44,7 @@ final class BlockPatchApplier
             if ($op === 'add_block') {
                 $addType = $patch['type'] ?? null;
                 if (! is_string($addType) || ! in_array($addType, BlockPatchSchema::ADDABLE_TYPES, true)) {
-                    return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: add_block cannot add a '".(is_string($addType) ? $addType : 'missing')."' section — only ".implode(', ', BlockPatchSchema::ADDABLE_TYPES).' can be written without inventing reviews, people, images, prices or a real link'];
+                    return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: add_block cannot add a '".(is_string($addType) ? $addType : 'missing')."' section — only ".implode(', ', BlockPatchSchema::ADDABLE_TYPES).' can be added by the AI — a gallery needs your photos and a form needs your form settings'];
                 }
                 if (! isset($patch['fields']) || ! is_array($patch['fields'])) {
                     return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: add_block requires fields"];
@@ -54,6 +54,10 @@ final class BlockPatchApplier
             if ($op === 'set_string') {
                 if (! isset($patch['field']) || ! array_key_exists('value', $patch)) {
                     return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: set_string requires field and value"];
+                }
+            } elseif ($op === 'set_items') {
+                if (! isset($patch['items']) || ! is_array($patch['items'])) {
+                    return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: set_items requires items"];
                 }
             } elseif ($op === 'set_item_string') {
                 if (! is_int($patch['item_index'] ?? null) || ! isset($patch['field']) || ! array_key_exists('value', $patch)) {
@@ -87,24 +91,26 @@ final class BlockPatchApplier
             $blockIndex = $patch['block_index'];
 
             if ($op === 'add_block') {
-                $newBlock = ['type' => $patch['type']];
-                // Only the type's plain-text fields: the schema enumerates them for the model, but the server is
-                // what enforces it — an added hero must never arrive carrying its own image_path.
-                foreach ($patch['fields'] as $k => $v) {
-                    if (is_string($k) && is_scalar($v) && in_array($k, BlockPatchSchema::TEXT_FIELDS[$patch['type']] ?? [], true)) {
-                        $newBlock[$k] = (string) $v;
-                    }
+                $newBlock = BlockPatchSchema::modelBlock((string) $patch['type'], $patch['fields'], $patch['items'] ?? null);
+                if (! BlockPatchSchema::hasContent($newBlock)) {
+                    return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: add_block has nothing to show"];
                 }
                 // array_splice clamps an index past the end, which is what makes the append case safe even
                 // though the range was validated against the ORIGINAL block count while this pass is
                 // sequential and an earlier patch may already have changed the length.
                 array_splice($appliedBlocks, $blockIndex, 0, [$newBlock]);
             } elseif ($op === 'set_string') {
-                $type = (string) ($appliedBlocks[$blockIndex]['type'] ?? '');
-                if (! in_array($patch['field'], BlockPatchSchema::TEXT_FIELDS[$type] ?? [], true)) {
-                    return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: the {$patch['field']} of a {$type} section is not text that may be written here"];
+                if (! BlockPatchSchema::modelMayWrite((string) $patch['field'], $patch['value'])) {
+                    return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: {$patch['field']} cannot be written — never a file path, the section type or a list, and a link must start with https://, http://, tel: or mailto:"];
                 }
                 $appliedBlocks[$blockIndex][$patch['field']] = (string) $patch['value'];
+            } elseif ($op === 'set_items') {
+                $type = (string) ($appliedBlocks[$blockIndex]['type'] ?? '');
+                $items = BlockPatchSchema::modelItems($patch['items']);
+                if (! in_array($type, BlockPatchSchema::ITEM_TYPES, true) || $items === []) {
+                    return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: a {$type} section has no list the AI may write, or the list was empty"];
+                }
+                $appliedBlocks[$blockIndex]['items'] = $items;
             } elseif ($op === 'set_item_string') {
                 $type = (string) ($appliedBlocks[$blockIndex]['type'] ?? '');
                 $itemIndex = $patch['item_index'];

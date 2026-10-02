@@ -8,30 +8,26 @@ final class BlockPatchSchema
 {
     /**
      * What the MODEL may propose, enforced by SiteEditProposeAction as well as by the schema. Never an image
-     * op — an image path is server output — and never set_string_list: every list on a page holds real
-     * services, reviews, photos or people, which the AI may not write.
+     * op — an image path is server output — and never set_string_list — lists go through set_items, which never accepts a file path.
      */
-    public const MODEL_OPS = ['set_string', 'remove', 'move', 'add_block'];
+    public const MODEL_OPS = ['set_string', 'set_items', 'remove', 'move', 'add_block'];
 
     /** What the APPLIER can execute: the model's ops, the owner's set_item_string, and the two image ops the server synthesises. */
-    public const APPLIER_OPS = ['set_string', 'set_item_string', 'set_image', 'set_image_list', 'remove', 'move', 'add_block'];
+    public const APPLIER_OPS = ['set_string', 'set_items', 'set_item_string', 'set_image', 'set_image_list', 'remove', 'move', 'add_block'];
 
     /**
-     * The plain-text fields set_string may write, per block type — read off the block templates. Never a
-     * url, phone, email, address, hours, facts, form definition, image path or size, video url, or a list.
+     * Every block field the AI may write (owner ruling 2026-10-02: the AI may write anything on a page). Never a file
+     * path or image size, the section type, a form's internals, or a list — lists go through set_items.
      */
-    public const TEXT_FIELDS = [
-        'about' => ['heading', 'text'],
-        'booking_button' => ['label'],
-        'booking_form' => ['heading', 'label'],
-        'faq' => ['question', 'answer'],
-        'gallery' => ['heading'],
-        'hero' => ['headline', 'subline', 'image_alt'],
-        'reviews_strip' => ['heading'],
-        'services' => ['heading'],
-        'team' => ['heading'],
-        'video_embed' => ['name'],
-    ];
+    public const MODEL_FIELDS = ['headline', 'subline', 'heading', 'text', 'question', 'answer', 'label', 'url', 'phone', 'email', 'address', 'name', 'service', 'contentUrl', 'uploadDate', 'image_alt'];
+
+    /** Link fields: each must start with https://, http://, tel: or mailto: — a javascript: URL in an href is script injection. */
+    public const URL_FIELDS = ['url', 'contentUrl'];
+
+    /** Section types whose `items` list the AI may write, and the item fields it may write. Never a gallery: its items are image files. */
+    public const ITEM_TYPES = ['services', 'faq', 'reviews_strip', 'team'];
+
+    public const ITEM_FIELDS = ['name', 'description', 'price_text', 'author', 'rating', 'source', 'text', 'role', 'question', 'answer'];
 
     /** The plain-text fields of a LIST item the owner may type over in the Studio (set_item_string). Never sent by the model. */
     public const ITEM_TEXT_FIELDS = [
@@ -39,20 +35,10 @@ final class BlockPatchSchema
     ];
 
     /**
-     * The block types the model may ADD, and the list is short on an honesty argument rather than an
-     * arbitrary one.
-     *
-     * `SiteBlockRenderer::validateBlock()` already refuses an EMPTY block for exactly these three — a
-     * `hero` needs a non-empty `headline`, an `about` a non-empty `text`, a `faq` a `question` and an
-     * `answer`. For every other type it checks only that `items` IS AN ARRAY, so `items => []` passes and
-     * the added section renders nothing: the placeholder illusion. And the types it would let through are
-     * precisely the ones whose content cannot be written without inventing something — reviews, people,
-     * images, prices, a phone number, a real URL — which the prompt forbids in the same breath.
-     *
-     * So: these three are addable because the existing validator is already a content guard for them, and
-     * no new guard had to be invented to make that true.
+     * The section types the AI may add (owner ruling 2026-10-02). Never a gallery — its items are image files — and never
+     * a form, which needs a form definition the AI cannot create.
      */
-    public const ADDABLE_TYPES = ['hero', 'about', 'faq'];
+    public const ADDABLE_TYPES = ['hero', 'about', 'faq', 'services', 'reviews_strip', 'team', 'booking_button', 'booking_form', 'contact', 'video_embed'];
 
     public static function schema(): array
     {
@@ -77,12 +63,14 @@ final class BlockPatchSchema
                             'fields' => [
                                 'type' => 'object',
                                 'additionalProperties' => false,
-                                'properties' => [
-                                    'headline' => ['type' => 'string'],
-                                    'subline' => ['type' => 'string'],
-                                    'text' => ['type' => 'string'],
-                                    'question' => ['type' => 'string'],
-                                    'answer' => ['type' => 'string'],
+                                'properties' => array_fill_keys(self::MODEL_FIELDS, ['type' => 'string']),
+                            ],
+                            'items' => [
+                                'type' => 'array',
+                                'items' => [
+                                    'type' => 'object',
+                                    'additionalProperties' => false,
+                                    'properties' => array_fill_keys(self::ITEM_FIELDS, ['type' => 'string']),
                                 ],
                             ],
                         ],
@@ -131,5 +119,77 @@ final class BlockPatchSchema
             ],
             'required' => ['explanation', 'patches'],
         ];
+    }
+
+    public static function isSafeLink(string $value): bool
+    {
+        return preg_match('#^(https?://|tel:|mailto:)#i', trim($value)) === 1;
+    }
+
+    /** A field the AI may write, with a value it may write there. */
+    public static function modelMayWrite(string $field, mixed $value): bool
+    {
+        if (! in_array($field, self::MODEL_FIELDS, true) || ! is_scalar($value)) {
+            return false;
+        }
+
+        return ! in_array($field, self::URL_FIELDS, true) || self::isSafeLink((string) $value);
+    }
+
+    /**
+     * @return list<array<string, string>>
+     */
+    public static function modelItems(mixed $items): array
+    {
+        $clean = [];
+        foreach (is_array($items) ? $items : [] as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+            $row = [];
+            foreach ($item as $k => $v) {
+                if (is_string($k) && in_array($k, self::ITEM_FIELDS, true) && is_scalar($v) && trim((string) $v) !== '') {
+                    $row[$k] = (string) $v;
+                }
+            }
+            if ($row !== []) {
+                $clean[] = $row;
+            }
+        }
+
+        return $clean;
+    }
+
+    /**
+     * A section built from what the AI wrote: its type, only the fields it may write, and its items when the type has a
+     * list. Anything else the AI sent — a file path, the type, a form's internals — is dropped here.
+     *
+     * @return array<string, mixed>
+     */
+    public static function modelBlock(string $type, array $fields, mixed $items = null): array
+    {
+        $block = ['type' => $type];
+        foreach ($fields as $k => $v) {
+            if (is_string($k) && self::modelMayWrite($k, $v) && trim((string) $v) !== '') {
+                $block[$k] = (string) $v;
+            }
+        }
+        if (in_array($type, self::ITEM_TYPES, true) && $items !== null) {
+            $block['items'] = self::modelItems($items);
+        }
+
+        return $block;
+    }
+
+    /** Whether a section carries anything besides its type — an AI-built section with nothing in it is not added. */
+    public static function hasContent(array $block): bool
+    {
+        foreach ($block as $k => $v) {
+            if ($k !== 'type' && $v !== '' && $v !== []) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
