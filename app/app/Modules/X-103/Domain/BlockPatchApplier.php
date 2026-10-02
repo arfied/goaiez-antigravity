@@ -44,7 +44,7 @@ final class BlockPatchApplier
             if ($op === 'add_block') {
                 $addType = $patch['type'] ?? null;
                 if (! is_string($addType) || ! in_array($addType, BlockPatchSchema::ADDABLE_TYPES, true)) {
-                    return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: add_block cannot add a '".(is_string($addType) ? $addType : 'missing')."' section — only ".implode(', ', BlockPatchSchema::ADDABLE_TYPES)." can be written without inventing reviews, people, images, prices or a real link"];
+                    return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: add_block cannot add a '".(is_string($addType) ? $addType : 'missing')."' section — only ".implode(', ', BlockPatchSchema::ADDABLE_TYPES).' can be written without inventing reviews, people, images, prices or a real link'];
                 }
                 if (! isset($patch['fields']) || ! is_array($patch['fields'])) {
                     return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: add_block requires fields"];
