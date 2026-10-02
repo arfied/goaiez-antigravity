@@ -29,8 +29,10 @@ final class SiteCopyPolishAction
         $page = Page::where('business_id', $businessId)->findOrFail($pageId);
 
         $maxChars = $this->registry->int('sites.copy.max_chars');
-        $systemPrompt = $this->registry->string('sites.copy.system_prompt');
-        $systemPrompt = str_replace('{max_chars}', (string) $maxChars, $systemPrompt);
+        $promptTemplate = $this->registry->string('sites.copy.system_prompt');
+        $systemPrompt = str_replace('{max_chars}', (string) $maxChars, $promptTemplate);
+        // A subline is one line under the headline, not a paragraph: its own budget, and one sentence.
+        $sublinePrompt = str_replace('{max_chars}', (string) min($maxChars, 160), $promptTemplate).' Write exactly one sentence.';
 
         $blocks = $page->draft_blocks ?? [];
         $polishedCount = 0;
@@ -62,7 +64,7 @@ final class SiteCopyPolishAction
                 }
 
                 $blocks[$i]['original_text'] = $text;
-                $blocks[$i]['text'] = $response->text;
+                $blocks[$i]['text'] = self::plain($response->text);
                 $blocks[$i]['source'] = 'ai';
                 $blocks[$i]['model'] = $response->model->value;
                 if ($peerCount > 0) {
@@ -77,13 +79,13 @@ final class SiteCopyPolishAction
             if (($block['type'] ?? '') === 'hero') {
                 $subline = (string) ($block['subline'] ?? '');
                 if (trim($subline) !== '') {
-                    $response = $this->polishOne($subline, $reference, $ownerFacts, $systemPrompt);
+                    $response = $this->polishOne($subline, $reference, $ownerFacts, $sublinePrompt);
                     if (is_array($response)) {
                         return $response;
                     }
 
                     $blocks[$i]['original_subline'] = $subline;
-                    $blocks[$i]['subline'] = $response->text;
+                    $blocks[$i]['subline'] = self::plain($response->text);
                     $blocks[$i]['source'] = 'ai';
                     $blocks[$i]['model'] = $response->model->value;
                     if ($peerCount > 0) {
@@ -133,5 +135,17 @@ final class SiteCopyPolishAction
         }
 
         return $response;
+    }
+
+    /**
+     * The templates print these fields as plain text, so markup from the model would show literally ("**Painting**").
+     * Strip emphasis, headings and list markers, and fold every line break into a space.
+     */
+    private static function plain(string $text): string
+    {
+        $text = str_replace(['**', '__', '`'], '', $text);
+        $text = (string) preg_replace('/^\s*(#{1,6}\s+|[-*•]\s+|\d+[.)]\s+)/mu', '', $text);
+
+        return trim((string) preg_replace('/\s+/u', ' ', $text));
     }
 }

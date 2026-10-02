@@ -319,7 +319,7 @@ final class DefaultsManifest
                 'description' => 'Whether Facebook Page and Instagram posts go out through Zernio. Off until the owner connects an account. The first connection for a business creates its Zernio profile through the Google Business integration, so gbp.zernio_enabled must be on for that step.',
             ],
             'sites.copy.system_prompt' => [
-                'seed' => 'Rewrite this text for a small local service business. Keep every fact and number, use plain words, and output at most {max_chars} characters. If notes about nearby businesses are included, they are reference only: cover what they cover if it fits, in this business\'s own words; never reuse a name, sentence or phrase from them.',
+                'seed' => 'Rewrite this text for a small local service business. Keep every fact and number, use plain words, and output at most {max_chars} characters of plain text — no markdown, asterisks, headings, lists or line breaks. If notes about nearby businesses are included, they are reference only: cover what they cover if it fits, in this business\'s own words; never reuse a name, sentence or phrase from them.',
                 'group' => 'Content',
                 'description' => 'The system prompt used to polish drafted site copy.',
             ],

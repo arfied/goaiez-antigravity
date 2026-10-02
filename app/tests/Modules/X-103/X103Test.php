@@ -885,6 +885,51 @@ class X103Test extends TestCase
         Http::assertSent(fn ($r) => str_contains($r->body(), 'Distinctive subline 4602') && ! str_contains($r->body(), 'Distinctive headline 4601'));
     }
 
+    public function test_polish_stores_plain_text_and_asks_for_a_short_subline(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Polish Plain Text', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'H', 'subline' => 'Distinctive subline 4981', 'source' => 'crawl'],
+                ['type' => 'about', 'text' => 'Distinctive about 4982'],
+            ],
+            'is_published' => false,
+        ]);
+
+        $marked = "**Painting & Decorating in North London**\n\n- Free quotes\n# No deposit";
+
+        Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => $marked]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'choices' => [['message' => ['content' => $marked]]],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        app(SiteCopyPolishAction::class)->handle($biz->id, $page->id);
+
+        $page->refresh();
+        $this->assertSame('Painting & Decorating in North London Free quotes No deposit', $page->draft_blocks[0]['subline']);
+        $this->assertSame('Painting & Decorating in North London Free quotes No deposit', $page->draft_blocks[1]['text']);
+
+        Http::assertSent(fn ($r) => str_contains($r->body(), 'Distinctive subline 4981') && str_contains($r->body(), 'at most 160 characters') && str_contains($r->body(), 'one sentence'));
+        Http::assertSent(fn ($r) => str_contains($r->body(), 'Distinctive about 4982') && str_contains($r->body(), 'at most 600 characters'));
+    }
+
     public function test_polish_refuses_when_the_budget_is_out(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Budget Test', 'currency' => 'USD']);
