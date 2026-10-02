@@ -76,6 +76,22 @@
                                 <button wire:click="askDesign" class="block w-full text-center px-4 py-2 border border-rule text-ink font-bold rounded mt-2">Make it look great</button>
                             </div>
                             @endif
+                            @if(isset($selectedPage))
+                            @php $design = $selectedPage->draft_meta['design'] ?? null; @endphp
+                            <div class="mt-4 border-t border-rule pt-3">
+                                <p class="text-sm font-bold text-ink mb-1">AI designer (preview)</p>
+                                <p class="text-xs text-ink-2 mb-2">The AI designs this whole page — layout, colours, type and pictures — from your content and what top local businesses cover. Your current page is not changed.</p>
+                                <button wire:click="designWithAi" class="block w-full text-center px-4 py-2 border border-rule text-ink font-bold rounded">Design this page with AI</button>
+                                @if(($design['status'] ?? null) === 'running')
+                                    <p wire:poll.5s class="text-xs text-ink-2 mt-2">Designing… this takes a minute or two.</p>
+                                @elseif(($design['status'] ?? null) === 'ready')
+                                    <button wire:click="$toggle('showDesign')" class="mt-2 px-3 py-1 text-sm border border-rule rounded text-ink">{{ $showDesign ? 'Show my current page' : 'Show the AI design' }}</button>
+                                @elseif(($design['status'] ?? null) === 'failed')
+                                    <p class="text-xs text-ink-2 mt-2">The last AI design did not finish ({{ $design['reason'] ?? 'unknown' }}). Try again.</p>
+                                @endif
+                            </div>
+                            @endif
+
                             @if(isset($selectedPage) && !empty($selectedPage->draft_blocks) && !isset($selectedPage->draft_meta['pending_edit']))
                             <div class="mt-4">
                                 <p class="text-sm font-bold text-ink mb-1">Try a layout</p>

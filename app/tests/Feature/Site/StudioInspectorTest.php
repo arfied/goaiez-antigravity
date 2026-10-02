@@ -5,9 +5,11 @@ namespace Tests\Feature\Site;
 use App\Enums\UserRole;
 use App\Livewire\Site\Studio;
 use App\Models\User;
+use App\Modules\X103\Jobs\SiteDesignJob;
 use App\Modules\X103\Models\Page;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -266,5 +268,43 @@ class StudioInspectorTest extends TestCase
         $this->assertSame('cta_band', $proposed[2]['type']);
         $this->assertSame('Old', $page->draft_blocks[0]['headline']);
         Http::assertSent(fn ($r) => str_contains($r->body(), 'look modern and professional'));
+    }
+
+    public function test_design_with_ai_queues_the_designer_and_shows_its_page_when_ready(): void
+    {
+        Queue::fake();
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $business = TestCase::provisionTenant(['name' => 'Inspector Owner', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($business->id);
+
+        $page = Page::create([
+            'business_id' => $business->id, 'slug' => 'p'.rand(), 'title' => 'T',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old', 'subline' => 'Old'],
+                ['type' => 'about', 'text' => 'Unchanged'],
+            ],
+            'is_published' => false,
+        ]);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('designWithAi')
+            ->assertSet('error', null)
+            ->assertSet('showDesign', true);
+
+        Queue::assertPushed(SiteDesignJob::class, fn (SiteDesignJob $job) => $job->pageId === $page->id && $job->businessId === $business->id);
+        $page->refresh();
+        $this->assertSame('running', $page->draft_meta['design']['status']);
+
+        $meta = $page->draft_meta;
+        $meta['design'] = ['status' => 'ready', 'style' => 'h1{color:red}', 'html' => '<main><h1>Designed by AI 7401</h1></main>', 'images' => []];
+        $page->update(['draft_meta' => $meta]);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->assertViewHas('previewHtml', fn ($html) => ! str_contains($html, 'Designed by AI 7401'))
+            ->set('showDesign', true)
+            ->assertViewHas('previewHtml', fn ($html) => str_contains($html, 'Designed by AI 7401') && str_contains($html, 'h1{color:red}'));
     }
 }

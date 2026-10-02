@@ -86,7 +86,7 @@ class SettingsScreenTest extends TestCase
 
         $googleB = AiProvider::create(['business_id' => $bizB->id, 'provider_name' => 'google', 'status' => 'healthy']);
         $anthropicB = AiProvider::create(['business_id' => $bizB->id, 'provider_name' => 'anthropic', 'status' => 'healthy']);
-        $primaryB = AiModel::create(['business_id' => $bizB->id, 'provider_id' => $googleB->id, 'model_name' => AiModelEnum::ClaudeSonnet5->value]);
+        $primaryB = AiModel::create(['business_id' => $bizB->id, 'provider_id' => $googleB->id, 'model_name' => AiModelEnum::Grok47->value]);
         $backupB = AiModel::create(['business_id' => $bizB->id, 'provider_id' => $anthropicB->id, 'model_name' => AiModelEnum::ClaudeOpus5->value]);
 
         $assigner->handle($bizB->id, AiTask::ReviewAnalysis->value, $primaryB->id, $backupB->id);
@@ -97,7 +97,7 @@ class SettingsScreenTest extends TestCase
         DB::statement("SET app.business_id = '{$bizA->id}'");
 
         $response = $this->actingAs($userA)->get(route('advanced.settings'));
-        $response->assertDontSee(AiModelEnum::ClaudeSonnet5->value);
+        $response->assertDontSee(AiModelEnum::Grok47->value);
     }
 
     public function test_the_links_point_at_the_real_screens(): void

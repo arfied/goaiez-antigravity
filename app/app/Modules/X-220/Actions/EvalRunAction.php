@@ -80,6 +80,7 @@ final class EvalRunAction
                 AiTask::SiteCopy => AiTask::SiteCopy,
                 AiTask::SiteImage => AiTask::SiteImage,
                 AiTask::SiteAuthoring => AiTask::SiteAuthoring,
+                AiTask::SiteDesign => AiTask::SiteDesign,
             };
         }
 

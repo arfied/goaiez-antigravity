@@ -103,6 +103,12 @@ enum AiTask: string
     case SiteImage = 'site_image';
 
     /**
+     * The AI designer: a whole page — layout, styling and words — written as HTML from the page's content, the owner's
+     * facts and nearby businesses' sites (prototype, 2026-10-02). The largest output of any tier.
+     */
+    case SiteDesign = 'site_design';
+
+    /**
      * The `platform_settings` key an operator overrides to move this tier.
      */
     public function settingKey(): string
@@ -134,6 +140,7 @@ enum AiTask: string
             self::SiteAuthoring => AiModel::Gpt4oMini,
             self::KnowledgeEmbedding => AiModel::TextEmbedding3Small,
             self::SiteImage => AiModel::GptImage25Flare,
+            self::SiteDesign => AiModel::ClaudeSonnet5,
         };
     }
 
@@ -195,6 +202,8 @@ enum AiTask: string
             // unreachable rather than merely unused.
             self::KnowledgeEmbedding => 0,
             self::SiteImage => 0,
+            // A whole designed page, CSS included; on Sonnet 5 max_tokens bounds thinking and text together.
+            self::SiteDesign => 16000,
         };
     }
 

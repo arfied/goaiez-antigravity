@@ -85,4 +85,31 @@ final class PagePreview
         return '<!doctype html><html><head><meta charset="utf-8"><base target="_blank"></head>'
             .'<body data-preview-page="1">'.$html.$previewShell.'</body></html>';
     }
+
+    /** The AI-designed page (draft_meta.design) as its own preview document, the owner's pictures inlined as html() does. */
+    public function designHtml(Page $page): string
+    {
+        $design = $page->draft_meta['design'] ?? null;
+        if (! is_array($design) || ($design['status'] ?? null) !== 'ready') {
+            return '';
+        }
+
+        $html = (string) ($design['html'] ?? '');
+        $disk = Storage::disk('local');
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        foreach ((array) ($design['images'] ?? []) as $n => $path) {
+            $src = '';
+            if (is_string($path) && $disk->exists($path)) {
+                $mime = @$finfo->file($disk->path($path));
+                if ($mime === 'image/jpeg' || $mime === 'image/png' || $mime === 'image/webp') {
+                    $src = 'data:'.$mime.';base64,'.base64_encode((string) $disk->get($path));
+                }
+            }
+            $html = str_replace('[[image:'.$n.']]', $src, $html);
+        }
+
+        return '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><base target="_blank">'
+            .'<style>'.(string) ($design['style'] ?? '').'</style></head>'
+            .'<body data-preview-design="1">'.$html.'</body></html>';
+    }
 }

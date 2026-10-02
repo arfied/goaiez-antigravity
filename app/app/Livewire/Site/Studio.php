@@ -11,6 +11,7 @@ use App\Modules\X103\Actions\PageUndoAction;
 use App\Modules\X103\Actions\SiteBlockAddAction;
 use App\Modules\X103\Actions\SiteBlockArrangeAction;
 use App\Modules\X103\Actions\SiteBlockFieldSetAction;
+use App\Modules\X103\Actions\SiteDesignRequestAction;
 use App\Modules\X103\Actions\SiteEditApplyAction;
 use App\Modules\X103\Actions\SiteEditAskAction;
 use App\Modules\X103\Actions\SiteEditDiscardAction;
@@ -54,6 +55,8 @@ class Studio extends Component
     public string $newFaqAnswer = '';
 
     public string $blockHeadline = '';
+
+    public bool $showDesign = false;
 
     private const SECTION_ASKS = [
         'shorter' => 'Make the text in this section shorter. Keep the meaning and every fact.',
@@ -285,6 +288,27 @@ class Studio extends Component
         $this->ask($action);
     }
 
+    public function designWithAi(SiteDesignRequestAction $action): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if ($this->pageId === null) {
+            $this->error = 'No page selected.';
+
+            return;
+        }
+
+        $res = $action->handle($this->businessId, $this->pageId);
+        if ($res['status'] === 'queued') {
+            $this->showDesign = true;
+            $this->success = 'The AI is designing this page. It takes a minute or two; the preview switches to it when it is ready.';
+        } else {
+            $this->error = 'The AI is already designing this page.';
+        }
+    }
+
     public function askSection(string $preset, SiteEditAskAction $action): void
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
@@ -457,6 +481,7 @@ class Studio extends Component
     public function updatedPageId(): void
     {
         $this->selectedBlockIndex = null;
+        $this->showDesign = false;
     }
 
     public function render()
@@ -469,7 +494,10 @@ class Studio extends Component
         if ($this->pageId !== null) {
             $selectedPage = Page::where('business_id', $this->businessId)->findOrFail($this->pageId);
             $hasProposal = isset($selectedPage->draft_meta['pending_edit']);
-            $previewHtml = app(PagePreview::class)->html($selectedPage, $hasProposal, $this->selectedBlockIndex, true);
+            $designReady = ($selectedPage->draft_meta['design']['status'] ?? null) === 'ready';
+            $previewHtml = $this->showDesign && $designReady
+                ? app(PagePreview::class)->designHtml($selectedPage)
+                : app(PagePreview::class)->html($selectedPage, $hasProposal, $this->selectedBlockIndex, true);
 
             $script = <<<'HTML'
 <script>
