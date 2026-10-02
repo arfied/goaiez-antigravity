@@ -16,6 +16,7 @@ use App\Modules\X103\Actions\SiteEditApplyAction;
 use App\Modules\X103\Actions\SiteEditAskAction;
 use App\Modules\X103\Actions\SiteEditDiscardAction;
 use App\Modules\X103\Actions\SitePublishAction;
+use App\Modules\X103\Actions\SiteThemeApplyAction;
 use App\Modules\X103\Domain\InlineFields;
 use App\Modules\X103\Domain\PageLayouts;
 use App\Modules\X103\Domain\PagePreview;
@@ -24,6 +25,7 @@ use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
 use App\Modules\X157\Actions\PlatformSiteAddressAction;
+use App\Services\Industry\IndustryStartingPoints;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -205,6 +207,10 @@ class Studio extends Component
 
     private function draftDiffersFromPublished(Page $page): bool
     {
+        if (! empty($page->draft_meta['look_changed'])) {
+            return true;
+        }
+
         $version = $page->current_version_id ? PageVersion::where('business_id', $this->businessId)->find($page->current_version_id) : null;
         if ($version === null) {
             return true;
@@ -233,6 +239,15 @@ class Studio extends Component
 
             $result = $action->handle($this->businessId, $page->id, $page->draft_blocks ?? []);
             if ($result['status'] === 'published') {
+                // The new look is now live: clear the mark that made Publish appear for a look-only change.
+                $fresh = Page::where('business_id', $this->businessId)->find($page->id);
+                if ($fresh !== null && isset($fresh->draft_meta['look_changed'])) {
+                    $meta = $fresh->draft_meta;
+                    unset($meta['look_changed']);
+                    $fresh->draft_meta = $meta;
+                    $fresh->save();
+                }
+
                 $deployment = app(LatestDeploymentForPageAction::class)->handle($this->businessId, $page->id);
 
                 if ($deployment && $deployment->status === 'deployed') {
@@ -424,6 +439,27 @@ class Studio extends Component
         ][$reason] ?? $reason;
     }
 
+    public function applyTheme(string $themeId, SiteThemeApplyAction $action): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if ($this->pageId === null) {
+            $this->error = 'Select a page first.';
+
+            return;
+        }
+
+        $res = $action->handle($this->businessId, $this->pageId, $themeId);
+        if ($res['status'] === 'applied') {
+            $this->showDesign = false;
+            $this->success = 'Theme applied to your draft. Publish to put it on your live site; Undo brings the old look back.';
+        } else {
+            $this->error = 'There is no such theme.';
+        }
+    }
+
     public function undo(PageUndoAction $action): void
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
@@ -581,6 +617,7 @@ HTML;
             'selectedPage' => $selectedPage,
             'previewHtml' => $previewHtml,
             'selectedBlockType' => $selectedBlockType,
+            'currentTheme' => app(IndustryStartingPoints::class)->forBusiness($this->businessId)['theme'] ?? null,
         ]);
     }
 }

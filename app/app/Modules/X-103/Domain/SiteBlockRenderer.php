@@ -125,6 +125,13 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 </style>
 ';
 
+        // A prebuilt theme (SiteThemes) styles the same markup: its stylesheet follows the base one.
+        $themeId = $context['tokens']['theme'] ?? null;
+        $theme = SiteThemes::get(is_string($themeId) ? $themeId : null);
+        if ($theme !== null) {
+            $html .= '<style>'.SiteThemes::css($theme['id']).'</style>'."\n";
+        }
+
         $renderedCount = 0;
         foreach ($contentBlocks as $blockIndex => $block) {
             $type = $block['type'] ?? '';
@@ -134,6 +141,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
                 'gallery', 'team', 'form', 'cta_band', 'stats',
             ], true)) {
                 continue;
+            }
+
+            // The theme picks the top banner's layout unless the owner (or the AI) chose one for this page.
+            if ($type === 'hero' && $theme !== null && ! isset($block['variant'])) {
+                $block['variant'] = $theme['hero'];
             }
 
             if (! $this->validateBlock($block)) {

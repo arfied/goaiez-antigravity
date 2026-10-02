@@ -4,6 +4,7 @@ namespace Tests\Feature\Site;
 
 use App\Enums\UserRole;
 use App\Livewire\Site\Studio;
+use App\Models\Business;
 use App\Models\User;
 use App\Modules\X103\Jobs\SiteDesignJob;
 use App\Modules\X103\Models\Page;
@@ -306,5 +307,47 @@ class StudioInspectorTest extends TestCase
             ->assertViewHas('previewHtml', fn ($html) => ! str_contains($html, 'Designed by AI 7401'))
             ->set('showDesign', true)
             ->assertViewHas('previewHtml', fn ($html) => str_contains($html, 'Designed by AI 7401') && str_contains($html, 'h1{color:red}'));
+    }
+
+    public function test_a_theme_changes_the_look_offers_publish_and_undo_brings_the_old_look_back(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $business = TestCase::provisionTenant(['name' => 'Inspector Owner', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($business->id);
+
+        $page = Page::create([
+            'business_id' => $business->id, 'slug' => 'p'.rand(), 'title' => 'T',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old', 'subline' => 'Old'],
+                ['type' => 'about', 'text' => 'Unchanged'],
+            ],
+            'is_published' => false,
+        ]);
+        $before = Business::find($business->id)->site_tokens;
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('applyTheme', 'bold-trade')
+            ->assertSet('error', null)
+            ->assertViewHas('previewHtml', fn ($html) => str_contains($html, 'border-top: 8px solid var(--color-primary)'));
+
+        $tokens = Business::find($business->id)->site_tokens;
+        $this->assertSame('bold-trade', $tokens['theme']);
+        $this->assertSame('#f5b800', $tokens['palette']['primary']);
+        $page->refresh();
+        $this->assertTrue($page->draft_meta['look_changed']);
+        $this->assertEquals([['type' => 'hero', 'headline' => 'Old', 'subline' => 'Old'], ['type' => 'about', 'text' => 'Unchanged']], $page->draft_blocks);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('undo')
+            ->assertSet('error', null);
+        $this->assertEquals($before, Business::find($business->id)->site_tokens);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('applyTheme', 'no-such-theme')
+            ->assertSet('error', 'There is no such theme.');
     }
 }

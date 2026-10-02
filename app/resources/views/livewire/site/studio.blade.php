@@ -77,6 +77,18 @@
                             </div>
                             @endif
                             @if(isset($selectedPage))
+                            <div class="mt-4 border-t border-rule pt-3">
+                                <p class="text-sm font-bold text-ink mb-1">Theme</p>
+                                <p class="text-xs text-ink-2 mb-2">A complete look for your whole site. Your words and sections stay the same; Undo brings the old look back.</p>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach(\App\Modules\X103\Domain\SiteThemes::THEMES as $themeKey => $themeInfo)
+                                        <button wire:click="applyTheme('{{ $themeKey }}')" title="Best for: {{ $themeInfo['for'] }}" class="px-3 py-1 text-sm border border-rule rounded text-ink{{ $currentTheme === $themeKey ? ' font-bold' : '' }}">{{ $themeInfo['label'] }}</button>
+                                    @endforeach
+                                </div>
+                            </div>
+                            @endif
+
+                            @if(isset($selectedPage))
                             @php $design = $selectedPage->draft_meta['design'] ?? null; @endphp
                             <div class="mt-4 border-t border-rule pt-3">
                                 <p class="text-sm font-bold text-ink mb-1">AI designer (preview)</p>

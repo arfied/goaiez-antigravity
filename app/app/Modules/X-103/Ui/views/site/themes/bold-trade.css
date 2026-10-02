@@ -1,0 +1,26 @@
+body { font-size: 1.05rem; }
+.site-header { border-bottom: 0; padding: 1.1rem 0; }
+.site-header__name { text-transform: uppercase; letter-spacing: 0.04em; font-weight: 800; }
+h1, h2 { font-weight: 800; letter-spacing: -0.02em; text-transform: uppercase; }
+h1 { font-size: clamp(2.4rem, 6vw, 4.25rem); line-height: 0.98; }
+h2 { font-size: clamp(1.6rem, 3.6vw, 2.6rem); margin-bottom: 1.5rem; }
+h2::after { content: ""; display: block; width: 3.5rem; height: 6px; background: var(--color-primary); margin-top: 0.75rem; }
+.site-block.hero { background: var(--color-ink); color: var(--color-canvas); margin-inline: calc(50% - 50vw); padding-inline: calc(50vw - 50%); padding-block: clamp(3.5rem, 9vw, 7rem); }
+.site-block.hero h1 { border-left: 8px solid var(--color-primary); padding-left: 1.25rem; }
+.site-block.hero .lede { opacity: 0.85; }
+.site-cta { border-radius: 0; padding: 1rem 1.75rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 800; }
+.site-block.stats { background: var(--color-primary); color: var(--color-on-primary); margin-inline: calc(50% - 50vw); padding-inline: calc(50vw - 50%); padding-block: 2.25rem; }
+.site-block.stats .stat-list strong { color: var(--color-on-primary); font-weight: 900; }
+.card { border-radius: 0; box-shadow: none; border: 2px solid var(--color-ink); }
+.site-block.services li { background: var(--color-card); border-top: 8px solid var(--color-primary); }
+.site-block.services li strong { font-size: 1.15rem; text-transform: uppercase; letter-spacing: 0.02em; }
+.review-list blockquote { border-left: 8px solid var(--color-primary); }
+.review-list blockquote p { font-size: 1.1rem; font-weight: 600; }
+.faq-item { border-top: 2px solid var(--color-ink); }
+.site-block--primary { background: var(--color-ink); color: var(--color-canvas); }
+.cta-band h2::after { margin-inline: auto; }
+.cta-band a { border-radius: 0; background: var(--color-primary); color: var(--color-on-primary); text-transform: uppercase; letter-spacing: 0.06em; }
+.site-footer { border-top: 6px solid var(--color-primary); }
+@media (min-width: 40rem) { .site-block.contact .site-block__inner { display: grid; grid-template-rows: auto auto; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); column-gap: 2rem; } }
+.site-block.contact h3 { font-family: var(--font-body); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--color-accent-text); margin: 0 0 0.35rem; }
+.site-block.contact p { margin: 0 0 1rem; font-size: 1.1rem; }

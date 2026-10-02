@@ -1,0 +1,18 @@
+body { background: radial-gradient(60rem 30rem at 50% -10%, color-mix(in srgb, var(--color-primary) 22%, transparent), transparent 70%), var(--color-canvas); }
+h1 { font-size: clamp(2.6rem, 6.5vw, 4.6rem); font-weight: 700; letter-spacing: -0.035em; background: linear-gradient(180deg, var(--color-ink), color-mix(in srgb, var(--color-ink) 55%, var(--color-primary))); -webkit-background-clip: text; background-clip: text; color: transparent; }
+h2 { font-weight: 700; letter-spacing: -0.03em; margin-bottom: 1.5rem; }
+.site-header { border-bottom-color: color-mix(in srgb, var(--color-ink) 10%, transparent); }
+.site-block.hero { padding-block: clamp(4rem, 10vw, 8rem); }
+.hero-center { max-width: 50rem; margin-inline: auto; }
+.site-cta { border-radius: 10px; }
+.site-cta--primary { box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary) 60%, transparent), 0 10px 30px color-mix(in srgb, var(--color-primary) 35%, transparent); }
+.site-block--band { background: transparent; }
+.card { background: color-mix(in srgb, var(--color-card) 85%, transparent); border: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent); border-radius: 16px; box-shadow: none; }
+.stat-list li { border: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent); border-radius: 16px; padding: 1.5rem 1rem; }
+.stat-list strong { background: linear-gradient(90deg, var(--color-primary), var(--color-accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.faq-item { border-top-color: color-mix(in srgb, var(--color-ink) 12%, transparent); }
+.site-block--primary { background: linear-gradient(135deg, var(--color-primary), color-mix(in srgb, var(--color-primary) 55%, var(--color-accent))); border-radius: 24px; margin-inline: 0; padding-inline: clamp(1.5rem, 5vw, 4rem); }
+.site-footer { border-top-color: color-mix(in srgb, var(--color-ink) 10%, transparent); }
+@media (min-width: 40rem) { .site-block.contact .site-block__inner { display: grid; grid-template-rows: auto auto; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); column-gap: 2rem; } }
+.site-block.contact h3 { font-family: var(--font-body); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--color-accent-text); margin: 0 0 0.35rem; }
+.site-block.contact p { margin: 0 0 1rem; font-size: 1.1rem; }

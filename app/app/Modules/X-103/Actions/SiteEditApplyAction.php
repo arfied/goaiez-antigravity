@@ -56,6 +56,7 @@ final class SiteEditApplyAction
                 }
                 Business::whereKey($businessId)->update(['site_tokens' => $tokens]);
                 $appliedStyle = true;
+                $meta['look_changed'] = true;
             }
 
             unset($meta['pending_edit']);
