@@ -88,8 +88,10 @@ final class BlockPatchApplier
 
             if ($op === 'add_block') {
                 $newBlock = ['type' => $patch['type']];
+                // Only the type's plain-text fields: the schema enumerates them for the model, but the server is
+                // what enforces it — an added hero must never arrive carrying its own image_path.
                 foreach ($patch['fields'] as $k => $v) {
-                    if (is_string($k) && is_scalar($v)) {
+                    if (is_string($k) && is_scalar($v) && in_array($k, BlockPatchSchema::TEXT_FIELDS[$patch['type']] ?? [], true)) {
                         $newBlock[$k] = (string) $v;
                     }
                 }

@@ -5,6 +5,7 @@ namespace Tests\Feature\Site;
 use App\Enums\UserRole;
 use App\Livewire\Site\Studio;
 use App\Models\User;
+use App\Modules\X103\Domain\BlockPatchApplier;
 use App\Modules\X103\Models\Page;
 use App\Support\Tenancy;
 use Livewire\Livewire;
@@ -122,5 +123,66 @@ class StudioArrangeTest extends TestCase
 
         $page->refresh();
         $this->assertSame($this->types(self::BLOCKS), $this->types($page->draft_blocks));
+    }
+
+    public function test_an_owner_adds_an_faq_below_the_selected_section_and_can_undo_it(): void
+    {
+        $page = $this->pageFor(self::BLOCKS);
+
+        $lw = Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('selectBlock', 1)
+            ->set('newFaqQuestion', 'Do you work weekends?')
+            ->set('newFaqAnswer', 'Yes, Saturdays.')
+            ->call('addSection', 'faq')
+            ->assertSet('error', null)
+            ->assertSet('selectedBlockIndex', 2)
+            ->assertSet('newFaqQuestion', '');
+
+        $page->refresh();
+        $this->assertSame(['hero', 'about', 'faq', 'services', 'booking_button'], $this->types($page->draft_blocks));
+        $this->assertSame('Do you work weekends?', $page->draft_blocks[2]['question']);
+
+        $lw->call('undo');
+        $page->refresh();
+        $this->assertSame($this->types(self::BLOCKS), $this->types($page->draft_blocks));
+    }
+
+    public function test_an_about_with_no_selection_goes_at_the_end_and_empty_text_is_refused(): void
+    {
+        $page = $this->pageFor(self::BLOCKS);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('addSection', 'about')
+            ->assertSet('error', 'Fill in the text first — a new section starts with your words, not placeholder text.');
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->set('newAboutText', 'We have fixed roofs here since 1998.')
+            ->call('addSection', 'about')
+            ->assertSet('error', null);
+
+        $page->refresh();
+        $this->assertSame('about', $page->draft_blocks[4]['type']);
+        $this->assertSame('We have fixed roofs here since 1998.', $page->draft_blocks[4]['text']);
+
+        $manager = User::factory()->create(['role' => UserRole::Manager]);
+        Livewire::actingAs($manager)->test(Studio::class)
+            ->set('pageId', $page->id)
+            ->set('newAboutText', 'x')
+            ->call('addSection', 'about')
+            ->assertForbidden();
+    }
+
+    public function test_add_block_keeps_only_the_types_text_fields(): void
+    {
+        $result = app(BlockPatchApplier::class)->apply(
+            [['type' => 'about', 'text' => 'A']],
+            [['op' => 'add_block', 'block_index' => 0, 'type' => 'hero', 'fields' => ['headline' => 'H', 'image_path' => 'some/other/file.jpg', 'url' => 'https://x.test']]],
+        );
+
+        $this->assertSame('applied', $result['status']);
+        $this->assertSame(['type' => 'hero', 'headline' => 'H'], $result['blocks'][0]);
     }
 }

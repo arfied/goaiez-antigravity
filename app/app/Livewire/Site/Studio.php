@@ -8,6 +8,7 @@ use App\Enums\UserRole;
 use App\Modules\X103\Actions\PageLayoutProposeAction;
 use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X103\Actions\PageUndoAction;
+use App\Modules\X103\Actions\SiteBlockAddAction;
 use App\Modules\X103\Actions\SiteBlockArrangeAction;
 use App\Modules\X103\Actions\SiteBlockFieldSetAction;
 use App\Modules\X103\Actions\SiteEditApplyAction;
@@ -45,6 +46,12 @@ class Studio extends Component
     public string $request = '';
 
     public string $sectionRequest = '';
+
+    public string $newAboutText = '';
+
+    public string $newFaqQuestion = '';
+
+    public string $newFaqAnswer = '';
 
     public string $blockHeadline = '';
 
@@ -142,6 +149,52 @@ class Studio extends Component
                 ? 'Section removed. Undo last change brings it back.'
                 : 'Section moved. Undo last change puts it back.';
         }
+    }
+
+    public function addSection(string $type, SiteBlockAddAction $action): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if ($this->pageId === null) {
+            $this->error = 'No page selected.';
+
+            return;
+        }
+
+        if ($type === 'about') {
+            $fields = ['text' => $this->newAboutText];
+        } elseif ($type === 'faq') {
+            $fields = ['question' => $this->newFaqQuestion, 'answer' => $this->newFaqAnswer];
+        } else {
+            $this->error = 'There is no such section.';
+
+            return;
+        }
+
+        foreach ($fields as $value) {
+            if (trim($value) === '') {
+                $this->error = 'Fill in the text first — a new section starts with your words, not placeholder text.';
+
+                return;
+            }
+        }
+
+        $res = $action->handle($this->businessId, $this->pageId, $this->selectedBlockIndex, $type, $fields);
+        if ($res['status'] === 'refused') {
+            $this->error = 'That section could not be added — reload the page and try again.';
+
+            return;
+        }
+
+        $this->selectedBlockIndex = $res['index'];
+        $this->newAboutText = '';
+        $this->newFaqQuestion = '';
+        $this->newFaqAnswer = '';
+        $this->success = $res['target'] === 'pending'
+            ? 'Added to the proposal you are previewing.'
+            : 'Section added. Undo last change removes it.';
     }
 
     private function draftDiffersFromPublished(Page $page): bool

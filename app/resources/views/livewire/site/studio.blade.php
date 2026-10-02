@@ -86,7 +86,20 @@
                                 </div>
                             </div>
                             @endif
-                            
+
+                            @if(isset($selectedPage))
+                            <div class="mt-4">
+                                <p class="text-sm font-bold text-ink mb-1">Add a section {{ $selectedBlockIndex !== null ? 'below the selected one' : 'at the end' }}</p>
+                                <label for="new-about" class="block text-xs text-ink-2 mb-1">About — a paragraph in your words</label>
+                                <textarea id="new-about" wire:model="newAboutText" class="w-full border border-rule rounded p-2 text-sm bg-paper text-ink"></textarea>
+                                <button wire:click="addSection('about')" class="mt-1 px-3 py-1 text-sm border border-rule rounded text-ink">Add About</button>
+                                <label for="new-faq-q" class="block text-xs text-ink-2 mt-3 mb-1">FAQ — a question and its answer</label>
+                                <input id="new-faq-q" type="text" wire:model="newFaqQuestion" class="w-full border border-rule rounded p-2 text-sm bg-paper text-ink">
+                                <textarea wire:model="newFaqAnswer" aria-label="FAQ answer" class="mt-1 w-full border border-rule rounded p-2 text-sm bg-paper text-ink"></textarea>
+                                <button wire:click="addSection('faq')" class="mt-1 px-3 py-1 text-sm border border-rule rounded text-ink">Add FAQ</button>
+                            </div>
+                            @endif
+
                             @if(isset($selectedPage) && !empty($selectedPage->draft_meta['undo']) && !isset($selectedPage->draft_meta['pending_edit']))
                             <div class="mt-4 text-right">
                                 <button wire:click="undo" class="text-sm text-ink underline">Undo last change</button>
