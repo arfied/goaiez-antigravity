@@ -6,6 +6,7 @@ namespace App\Modules\X103\Actions;
 
 use App\Enums\AiTask;
 use App\Modules\X103\Domain\BlockPatchSchema;
+use App\Modules\X103\Domain\StatedFacts;
 use App\Modules\X103\Models\Page;
 use App\Services\Ai\AiRequest;
 use App\Services\Ai\AiRouter;
@@ -21,7 +22,8 @@ final class SiteEditProposeAction
         private readonly PriceBook $priceBook,
         private readonly AiRouter $router,
         private readonly DefaultsRegistry $registry,
-        private readonly IndustryStartingPoints $startingPoints
+        private readonly IndustryStartingPoints $startingPoints,
+        private readonly StatedFacts $statedFacts
     ) {}
 
     public function handle(int $businessId, int $pageId, string $request, bool $continue = false): array
@@ -72,7 +74,7 @@ final class SiteEditProposeAction
         ], JSON_UNESCAPED_SLASHES);
         $fontStacks = implode(' | ', SiteStyle::FONT_STACKS);
 
-        $prompt = "Owner request: {$request}\n\n{$pricesSection}\n\nCurrent blocks (JSON):\n".json_encode($numberedBlocks, JSON_UNESCAPED_SLASHES);
+        $prompt = "Owner request: {$request}\n\n".$this->statedFacts->section($businessId)."\n\n{$pricesSection}\n\nCurrent blocks (JSON):\n".json_encode($numberedBlocks, JSON_UNESCAPED_SLASHES);
         $maxImages = $this->registry->int('sites.edit.max_images');
         $prompt .= "\n\nCurrent style (JSON): {$currentStyleJson}\nIf the request is about colours, fonts or mood, you may also return \"style\": {\"palette\": {…}, \"type_pairing\": {\"heading\": …, \"body\": …}} using hex colours and only these fonts: {$fontStacks}. Otherwise omit \"style\".";
         $prompt .= "\n\nIf the owner asks for a picture, you may also return \"images\": [{\"block_index\": <index in your blocks>, \"description\": \"<what the picture shows>\"}], at most {$maxImages} items, only for hero or gallery blocks.";

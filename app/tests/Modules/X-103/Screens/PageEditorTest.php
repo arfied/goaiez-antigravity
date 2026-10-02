@@ -9,6 +9,8 @@ use App\Models\User;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Ui\Pages;
 use App\Modules\X163\Models\PriceBookItem;
+use App\Services\Facts\BusinessFactKey;
+use App\Services\Facts\BusinessFacts;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
@@ -266,6 +268,56 @@ class PageEditorTest extends TestCase
             ->call('askEdit', $page->id);
 
         Http::assertSent(fn ($r) => str_contains(json_encode($r->data(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 'Prices you may use (never any other price):') && str_contains(json_encode($r->data(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 'Service 1'));
+    }
+
+    public function test_the_ai_editor_is_told_the_business_name_and_only_its_own_stated_facts(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $other = TestCase::provisionTenant(['name' => 'Another business 7750', 'currency' => 'USD']);
+        app(BusinessFacts::class)->set($other->id, BusinessFactKey::TAGLINE, 'Another tenant tagline 7751');
+
+        $biz = TestCase::provisionTenant(['name' => 'Editor facts 7752', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+        app(BusinessFacts::class)->set($biz->id, BusinessFactKey::SERVICE_AREA, 'Distinctive service area 7753');
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'slug' => 'home',
+            'title' => 'Home',
+            'draft_blocks' => [['type' => 'hero', 'headline' => 'Test']],
+            'is_published' => false,
+        ]);
+
+        Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => json_encode(['blocks' => [], 'explanation' => ''])]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [
+                    ['message' => ['content' => json_encode(['blocks' => [], 'explanation' => ''])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pages::class)
+            ->set('editRequest.'.$page->id, 'mention where we work')
+            ->call('askEdit', $page->id);
+
+        $sent = fn ($r) => json_encode($r->data(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        Http::assertSent(fn ($r) => str_contains($sent($r), 'Business name: Editor facts 7752')
+            && str_contains($sent($r), 'Distinctive service area 7753')
+            && str_contains($sent($r), 'the ONLY facts you may use'));
+        Http::assertNotSent(fn ($r) => str_contains($sent($r), 'Another tenant tagline 7751')
+            || str_contains($sent($r), 'Another business 7750'));
     }
 
     public function test_make_page_opens_in_editor(): void
