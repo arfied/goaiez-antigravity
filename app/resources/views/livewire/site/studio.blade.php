@@ -2,8 +2,12 @@
     <div class="flex min-h-screen"
          x-data
          x-on:message.window="
-            if ($event.data.source === 'studio-canvas') {
-                $wire.selectBlock($event.data.index);
+            if ($event.source === document.getElementById('studio-canvas')?.contentWindow && $event.data && $event.data.source === 'studio-canvas') {
+                if ($event.data.kind === 'edit') {
+                    $wire.editInline($event.data.index, $event.data.field, $event.data.value);
+                } else {
+                    $wire.selectBlock($event.data.index);
+                }
             }
          ">
         <!-- Left Rail: Pages -->
@@ -101,6 +105,7 @@
                                     <p><span class="font-semibold">Type:</span> {{ $selectedBlockType }}</p>
                                 @endif
                             </div>
+                            <p class="mt-2 text-xs text-ink-2">Click any heading or text in the selected section to type over it. Enter saves, Esc cancels.</p>
                             @if($selectedBlockType === 'hero')
                                 <div class="mt-3">
                                     <label for="block-headline" class="block text-sm font-bold text-ink mb-1">Headline</label>

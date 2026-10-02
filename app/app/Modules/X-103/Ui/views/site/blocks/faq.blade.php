@@ -20,8 +20,8 @@
       @endphp
       @if ($q !== '' && $a !== '')
         <div class="faq-item" data-question="{{ $q }}">
-          <h3>{{ $q }}</h3>
-          <p>{{ $a }}</p>
+          <h3{!! empty($context['editable']) ? '' : ' data-field="question"' !!}>{{ $q }}</h3>
+          <p{!! empty($context['editable']) ? '' : ' data-field="answer"' !!}>{{ $a }}</p>
         </div>
       @endif
     @endif

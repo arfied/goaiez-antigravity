@@ -2,9 +2,9 @@
     <div class="site-block__inner">
         <div class="hero__grid">
             <div class="stack">
-                <h1>{{ $block['headline'] }}</h1>
+                <h1{!! empty($context['editable']) ? '' : ' data-field="headline"' !!}>{{ $block['headline'] }}</h1>
                 @if(isset($block['subline']) && is_scalar($block['subline']) && trim((string)$block['subline']) !== '')
-                    <p class="lede">{{ $block['subline'] }}</p>
+                    <p class="lede"{!! empty($context['editable']) ? '' : ' data-field="subline"' !!}>{{ $block['subline'] }}</p>
                 @endif
             </div>
             @if(isset($block['image_path']) && is_scalar($block['image_path']) && trim((string)$block['image_path']) !== '')

@@ -13,6 +13,7 @@ use App\Modules\X103\Actions\SiteEditApplyAction;
 use App\Modules\X103\Actions\SiteEditAskAction;
 use App\Modules\X103\Actions\SiteEditDiscardAction;
 use App\Modules\X103\Actions\SitePublishAction;
+use App\Modules\X103\Domain\InlineFields;
 use App\Modules\X103\Domain\PageLayouts;
 use App\Modules\X103\Domain\PagePreview;
 use App\Modules\X103\Domain\SiteEngine;
@@ -62,6 +63,40 @@ class Studio extends Component
         } else {
             $this->success = 'Headline saved.';
         }
+    }
+
+    public function editInline(int $index, string $field, string $value, SiteBlockFieldSetAction $action): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if ($this->pageId === null) {
+            $this->error = 'No page selected.';
+
+            return;
+        }
+
+        $page = Page::where('business_id', $this->businessId)->findOrFail($this->pageId);
+        $pending = $page->draft_meta['pending_edit']['blocks'] ?? null;
+        $blocks = is_array($pending) ? $pending : ($page->draft_blocks ?? []);
+
+        if (! InlineFields::allows($blocks[$index] ?? null, $field)) {
+            $this->error = 'That cannot be edited on the page.';
+
+            return;
+        }
+
+        $res = $action->handle($this->businessId, $this->pageId, $index, $field, trim($value));
+        if ($res['status'] === 'refused') {
+            $this->error = $res['reason'];
+
+            return;
+        }
+
+        $this->success = is_array($pending)
+            ? 'Saved to the proposal you are previewing.'
+            : 'Saved to your draft. Undo last change takes it back.';
     }
 
     private function draftDiffersFromPublished(Page $page): bool
@@ -290,23 +325,61 @@ class Studio extends Component
         if ($this->pageId !== null) {
             $selectedPage = Page::where('business_id', $this->businessId)->findOrFail($this->pageId);
             $hasProposal = isset($selectedPage->draft_meta['pending_edit']);
-            $previewHtml = app(PagePreview::class)->html($selectedPage, $hasProposal, $this->selectedBlockIndex);
+            $previewHtml = app(PagePreview::class)->html($selectedPage, $hasProposal, $this->selectedBlockIndex, true);
 
             $script = <<<'HTML'
 <script>
+    // The iframe is opaque-origin due to sandbox="allow-scripts" without that origin flag.
+    // It has no origin to name, so targetOrigin '*' is required. The editor checks event.source.
     document.addEventListener('click', function(event) {
+        const field = event.target.closest('[data-field]');
+        const selected = field ? field.closest('[data-se' + 'lected-block]') : null;
+        if (field && selected) {
+            event.preventDefault();
+            if (field.isContentEditable) {
+                return;
+            }
+            const before = field.innerText;
+            let done = false;
+            const finish = function(save) {
+                if (done) {
+                    return;
+                }
+                done = true;
+                field.contentEditable = 'false';
+                if (!save) {
+                    field.innerText = before;
+                    return;
+                }
+                const value = field.innerText.trim();
+                if (value === before.trim()) {
+                    return;
+                }
+                parent.postMessage({
+                    source: 'studio-canvas',
+                    kind: 'edit',
+                    index: parseInt(selected.getAttribute('data-block-index'), 10),
+                    field: field.getAttribute('data-field'),
+                    value: value
+                }, '*');
+            };
+            field.contentEditable = 'true';
+            field.focus();
+            field.addEventListener('blur', function() { finish(true); }, { once: true });
+            field.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); finish(true); field.blur(); }
+                if (e.key === 'Escape') { e.preventDefault(); finish(false); field.blur(); }
+            });
+            return;
+        }
         event.preventDefault();
         const block = event.target.closest('[data-block-index]');
         if (block) {
-            const index = parseInt(block.getAttribute('data-block-index'), 10);
-            const type = block.getAttribute('data-block-type');
-            // The iframe is opaque-origin due to sandbox="allow-scripts" without that origin flag.
-            // It has no origin to name, so targetOrigin '*' is required.
-            // The parent window will check event.data.source === 'studio-canvas' to ensure safety.
             parent.postMessage({
                 source: 'studio-canvas',
-                index: index,
-                type: type
+                kind: 'select',
+                index: parseInt(block.getAttribute('data-block-index'), 10),
+                type: block.getAttribute('data-block-type')
             }, '*');
         }
     });

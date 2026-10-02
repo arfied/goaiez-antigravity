@@ -420,4 +420,26 @@ class SiteBlockRendererTest extends TestCase
         $this->assertStringContainsString('.site-cta--primary { background: var(--color-primary); color: var(--color-on-primary); }', $html);
         $this->assertStringNotContainsString('color: var(--color-canvas)', $html);
     }
+
+    public function test_inline_edit_markers_appear_only_in_the_editor(): void
+    {
+        $blocks = [
+            ['type' => 'hero', 'headline' => 'H', 'subline' => 'S'],
+            ['type' => 'about', 'text' => 'A'],
+            ['type' => 'faq', 'question' => 'Q?', 'answer' => 'Yes.'],
+            ['type' => 'faq', 'items' => [['question' => 'Q2?', 'answer' => 'No.']]],
+            ['type' => 'booking_button', 'label' => 'Book'],
+        ];
+
+        $published = (new SiteBlockRenderer)->render($blocks, []);
+        $this->assertStringNotContainsString('data-field', $published);
+
+        $editor = (new SiteBlockRenderer)->render($blocks, ['editable' => true]);
+        foreach (['headline', 'subline', 'text', 'question', 'answer', 'label'] as $field) {
+            $this->assertStringContainsString('data-field="'.$field.'"', $editor, $field);
+        }
+        // The list-shaped FAQ's item is rendered but not marked: exactly one question marker, from the scalar FAQ.
+        $this->assertSame(1, substr_count($editor, 'data-field="question"'));
+        $this->assertSame(str_replace([' data-field="headline"', ' data-field="subline"', ' data-field="text"', ' data-field="question"', ' data-field="answer"', ' data-field="label"'], '', $editor), $published);
+    }
 }

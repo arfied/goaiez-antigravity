@@ -2,9 +2,9 @@
     <div class="site-block__inner">
         <div class="actions">
             @if(isset($block['url']) && is_scalar($block['url']) && trim((string) $block['url']) !== '')
-                <a href="{{ $block['url'] }}" class="site-cta site-cta--primary">{{ $block['label'] }}</a>
+                <a href="{{ $block['url'] }}" class="site-cta site-cta--primary"{!! empty($context['editable']) ? '' : ' data-field="label"' !!}>{{ $block['label'] }}</a>
             @else
-                <span class="site-cta site-cta--primary site-cta--off" aria-disabled="true">{{ $block['label'] }}</span>
+                <span class="site-cta site-cta--primary site-cta--off" aria-disabled="true"{!! empty($context['editable']) ? '' : ' data-field="label"' !!}>{{ $block['label'] }}</span>
             @endif
         </div>
     </div>

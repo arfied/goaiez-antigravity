@@ -12,7 +12,7 @@ final class PagePreview
 {
     private const CONTEXT = ['businessName' => '', 'deployHash' => 'weight', 'tenant_storage_url_prefix' => '/m/', 'form_action_base' => '/f'];
 
-    public function html(Page $page, bool $proposed, ?int $selectedIndex = null): string
+    public function html(Page $page, bool $proposed, ?int $selectedIndex = null, bool $editable = false): string
     {
         $blocks = $page->draft_blocks ?? [];
         if ($proposed && isset($page->draft_meta['pending_edit']['blocks'])) {
@@ -31,7 +31,7 @@ final class PagePreview
             }
         }
 
-        $html = app(SiteBlockRenderer::class)->render($blocks, ['tokens' => $tokens] + self::CONTEXT);
+        $html = app(SiteBlockRenderer::class)->render($blocks, ['tokens' => $tokens, 'editable' => $editable] + self::CONTEXT);
 
         $disk = Storage::disk('local');
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
