@@ -3722,4 +3722,49 @@ class X157Test extends TestCase
         $this->assertStringContainsString('<link rel="canonical" href="https://acme-roofing.test/home">', $html);
         $this->assertStringNotContainsString('href="/sites/'.$biz->id.'/p/distinctive-4934"', $html);
     }
+
+    public function test_a_published_page_reads_header_then_content_then_form_then_footer(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Framed Tenant 4971', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)->handle($biz->id, $page->id, [
+            ['type' => 'hero', 'headline' => 'Distinctive framed headline 4972'],
+            ['type' => 'form_capture'],
+        ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $html = (string) $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}")->assertStatus(200)->getContent();
+
+        $header = strpos($html, '<header class="site-header">');
+        $content = strpos($html, 'Distinctive framed headline 4972');
+        $form = strpos($html, 'form-capture-x155');
+        $footer = strpos($html, '<footer class="site-footer">');
+
+        $this->assertNotFalse($header);
+        $this->assertNotFalse($content);
+        $this->assertNotFalse($form);
+        $this->assertNotFalse($footer);
+        $this->assertTrue($header < $content && $content < $form && $form < $footer, "order: header {$header}, content {$content}, form {$form}, footer {$footer}");
+        $this->assertSame(1, substr_count($html, 'form-capture-x155'));
+        $this->assertStringContainsString('<p class="site-header__name">Framed Tenant 4971</p>', $html);
+    }
 }

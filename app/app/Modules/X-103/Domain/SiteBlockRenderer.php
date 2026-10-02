@@ -100,6 +100,13 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .site-block form { display: grid; gap: 0.75rem; max-width: 32rem; }
 .site-block input, .site-block textarea, .site-block select { font: inherit; padding: 0.65rem 0.8rem; border-radius: 8px; border: 1px solid color-mix(in srgb, var(--color-ink) 25%, transparent); background: var(--color-card); color: var(--color-ink); }
 .site-block button { font: inherit; font-weight: 600; padding: 0.75rem 1.25rem; border: 0; border-radius: 999px; background: var(--color-primary); color: var(--color-on-primary); cursor: pointer; }
+.site-header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 0; border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent); margin-bottom: 1rem; }
+.site-header__name { margin: 0; font-family: var(--font-heading); font-weight: 700; font-size: 1.35rem; color: var(--color-ink); }
+#internal-links-x176 { margin: 3rem 0 0; padding: 1.25rem 0; border-top: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent); }
+#internal-links-x176 ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+#breadcrumb-x176 { font-size: 0.9rem; margin: 1.5rem 0 0; display: flex; gap: 0.75rem; }
+.form-capture-x155 { margin: 3rem 0 0; }
+.site-footer { margin: 2rem 0 0; padding: 1.5rem 0; border-top: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent); font-size: 0.9rem; color: color-mix(in srgb, var(--color-ink) 70%, transparent); }
 </style>
 ';
 

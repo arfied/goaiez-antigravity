@@ -229,6 +229,9 @@ JS;
 
             $html .= "</head><body>\n";
 
+            // The system contact form is collected here and written AFTER the page's content (MAIN-1047): visitors
+            // should meet the business before a form. Every case that emitted it before still emits it.
+            $formHtml = '';
             if ($commitId) {
                 $version = app(PageVersionAction::class)->forCommit($commitId);
                 if ($version) {
@@ -282,11 +285,11 @@ JS;
                         $definition = app(FormReadAction::class)->firstDefinitionForBusiness($businessId);
                         if ($definition === null) {
                             // No form defined yet: the marker stays so the site law can see the slot, but nothing pretends to be a form.
-                            $html .= "<div class=\"form-capture-x155\"></div>\n";
+                            $formHtml .= "<div class=\"form-capture-x155\"></div>\n";
                         } else {
                             $formActionBase = route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false);
-                            $html .= "<div class=\"form-capture-x155\">\n";
-                            $html .= View::make('x-103::site.blocks.form', [
+                            $formHtml .= "<div class=\"form-capture-x155\">\n";
+                            $formHtml .= View::make('x-103::site.blocks.form', [
                                 'block' => [
                                     'definition_id' => (int) $definition['id'],
                                     'fields' => $definition['fields'],
@@ -295,7 +298,7 @@ JS;
                                 ],
                                 'context' => ['form_action_base' => $formActionBase],
                             ])->render();
-                            $html .= "</div>\n";
+                            $formHtml .= "</div>\n";
                         }
                     }
                     if ($hasDni) {
@@ -376,9 +379,12 @@ JS;
                         'form_action_base' => route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false),
                         'tokens' => app(IndustryStartingPoints::class)->forBusiness($businessId),
                     ];
+                    $html .= '<header class="site-header"><p class="site-header__name">'.e($businessName)."</p></header>\n";
                     $html .= app(SiteBlockRenderer::class)->render($contentBlocks, $context);
                 }
             }
+
+            $html .= $formHtml;
 
             if (! empty($breadcrumbs)) {
                 $html .= "<nav id=\"breadcrumb-x176\">\n";
@@ -430,6 +436,9 @@ JS;
                 $html .= $internalLinksHtml;
             }
 
+            if ($businessName !== null && trim($businessName) !== '') {
+                $html .= '<footer class="site-footer"><p>&copy; '.date('Y').' '.e($businessName)."</p></footer>\n";
+            }
             $html .= '</body></html>';
 
             // The local disk is configured 'throw' => false (config/filesystems.php:37), so a
