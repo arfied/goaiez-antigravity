@@ -1,7 +1,7 @@
 <div class="site-block reviews {{ $band ?? '' }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="reviews_strip">
     <div class="site-block__inner">
         @if(isset($block['heading']) && is_scalar($block['heading']) && trim((string)$block['heading']) !== '')
-            <h2>{{ $block['heading'] }}</h2>
+            <h2{!! empty($context['editable']) ? '' : ' data-field="heading"' !!}>{{ $block['heading'] }}</h2>
         @endif
         <div class="review-list">
             @foreach($block['items'] ?? [] as $item)

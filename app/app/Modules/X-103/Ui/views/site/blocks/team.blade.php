@@ -1,7 +1,7 @@
 <div class="site-block team {{ $band ?? '' }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="team">
     <div class="site-block__inner">
         @if(isset($block['heading']) && is_scalar($block['heading']) && trim((string)$block['heading']) !== '')
-            <h2>{{ $block['heading'] }}</h2>
+            <h2{!! empty($context['editable']) ? '' : ' data-field="heading"' !!}>{{ $block['heading'] }}</h2>
         @endif
         <ul>
             @foreach($block['items'] ?? [] as $item)

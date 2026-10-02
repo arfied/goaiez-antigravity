@@ -445,4 +445,23 @@ class SiteBlockRendererTest extends TestCase
         // Strip EVERY marker and the editor's HTML is the published HTML, byte for byte.
         $this->assertSame(preg_replace('/ data-field="[^"]*"/', '', $editor), $published);
     }
+
+    public function test_section_headings_are_marked_only_in_the_editor(): void
+    {
+        $blocks = [
+            ['type' => 'services', 'heading' => 'Services', 'items' => [['name' => 'Roof repair']]],
+            ['type' => 'gallery', 'heading' => 'Our work', 'items' => []],
+            ['type' => 'team', 'heading' => 'Our team', 'items' => []],
+            ['type' => 'reviews_strip', 'heading' => 'Reviews', 'items' => []],
+            ['type' => 'booking_form', 'heading' => 'Book a time'],
+        ];
+
+        $published = (new SiteBlockRenderer)->render($blocks, []);
+        $editor = (new SiteBlockRenderer)->render($blocks, ['editable' => true]);
+
+        $this->assertStringNotContainsString('data-field', $published);
+        $this->assertSame(substr_count($published, '<h2>'), substr_count($editor, ' data-field="heading"'));
+        $this->assertGreaterThan(0, substr_count($editor, ' data-field="heading"'));
+        $this->assertSame(preg_replace('/ data-field="[^"]*"/', '', $editor), $published);
+    }
 }

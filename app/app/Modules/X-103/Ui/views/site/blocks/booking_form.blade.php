@@ -1,6 +1,6 @@
 <div class="site-block site-block-booking {{ $band ?? '' }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="booking_form">
     <div class="site-block__inner">
-        <h2>{{ $block['heading'] }}</h2>
+        <h2{!! empty($context['editable']) ? '' : ' data-field="heading"' !!}>{{ $block['heading'] }}</h2>
         <form method="post" action="{{ rtrim($context['form_action_base'], '/') }}/book" class="card">
             <div style="margin-bottom: 1rem;">
                 <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;" for="booking-name">Name</label>

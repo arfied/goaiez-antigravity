@@ -1,6 +1,6 @@
 <div class="site-block gallery {{ $band ?? '' }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="gallery">
     @if(isset($block['heading']) && is_scalar($block['heading']) && trim((string)$block['heading']) !== '')
-        <h2>{{ $block['heading'] }}</h2>
+        <h2{!! empty($context['editable']) ? '' : ' data-field="heading"' !!}>{{ $block['heading'] }}</h2>
     @endif
     @foreach($block['items'] ?? [] as $item)
         @if(isset($item['image_path']) && is_scalar($item['image_path']) && trim((string)$item['image_path']) !== '')

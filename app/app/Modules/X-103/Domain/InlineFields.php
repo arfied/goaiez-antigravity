@@ -13,10 +13,15 @@ namespace App\Modules\X103\Domain;
 final class InlineFields
 {
     public const FIELDS = [
-        'hero' => ['headline', 'subline'],
         'about' => ['heading', 'text'],
-        'faq' => ['question', 'answer'],
         'booking_button' => ['label'],
+        'booking_form' => ['heading'],
+        'faq' => ['question', 'answer'],
+        'gallery' => ['heading'],
+        'hero' => ['headline', 'subline'],
+        'reviews_strip' => ['heading'],
+        'services' => ['heading'],
+        'team' => ['heading'],
     ];
 
     public static function allows(mixed $block, string $field): bool

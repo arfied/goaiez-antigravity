@@ -127,4 +127,26 @@ class StudioInlineEditTest extends TestCase
         $page->refresh();
         $this->assertSame('Q?', $page->draft_blocks[3]['items'][0]['question']);
     }
+
+    public function test_a_section_heading_is_typed_over_in_place(): void
+    {
+        $page = $this->pageFor([
+            ['type' => 'hero', 'headline' => 'H'],
+            ['type' => 'services', 'heading' => 'Services', 'items' => [['name' => 'Roof repair']]],
+        ]);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('editInline', 1, 'heading', 'What we do')
+            ->assertSet('error', null);
+
+        $page->refresh();
+        $this->assertSame('What we do', $page->draft_blocks[1]['heading']);
+        $this->assertSame([['name' => 'Roof repair']], $page->draft_blocks[1]['items']);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('editInline', 1, 'items', 'x')
+            ->assertSet('error', 'That cannot be edited on the page.');
+    }
 }
