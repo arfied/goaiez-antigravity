@@ -95,7 +95,8 @@ class StudioLayoutTest extends TestCase
             ->assertSet('error', 'Apply or discard the proposal you are previewing first.');
 
         $page->refresh();
-        $this->assertSame($pending, $page->draft_meta['pending_edit']);
+        // draft_meta is jsonb, which reorders object keys on write: equal, never identical (assertEquals ignores key order).
+        $this->assertEquals($pending, $page->draft_meta['pending_edit']);
     }
 
     public function test_a_page_already_in_that_order_is_left_alone(): void
