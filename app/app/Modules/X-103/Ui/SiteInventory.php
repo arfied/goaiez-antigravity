@@ -132,7 +132,9 @@ final class SiteInventory extends Component
                 return;
             }
 
-            $this->dispatch('toast', message: "Crawled {$result['pages']} pages, {$result['refused']} refused");
+            $queued = (int) ($result['queued'] ?? 0);
+            $this->dispatch('toast', message: "Crawled {$result['pages']} pages, {$result['refused']} refused"
+                .($queued > 0 ? ", {$queued} more queued — they are read over the next few minutes" : ''));
         } catch (\Throwable $e) {
             report($e);
             throw $e;

@@ -43,6 +43,8 @@
                             <td class="px-3 py-4 text-sm text-ink-2">
                                 @if($page->status === 'fetched')
                                     Fetched
+                                @elseif($page->status === 'queued')
+                                    Waiting to be read — the next few minutes, a few pages a minute.
                                 @else
                                     @php
                                         $pageReason = $page->refusal_reason ? \App\Enums\FetchRefusalReason::tryFrom($page->refusal_reason) : null;

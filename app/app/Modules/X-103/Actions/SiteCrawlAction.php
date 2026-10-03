@@ -6,8 +6,10 @@ namespace App\Modules\X103\Actions;
 
 use App\Contracts\FetchGateway;
 use App\Enums\FetchOutcome;
+use App\Enums\FetchRefusalReason;
 use App\Models\Location;
 use App\Modules\X103\Domain\SiteBrandSignals;
+use App\Modules\X103\Jobs\SiteCrawlContinueJob;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Services\Config\DefaultsRegistry;
 use DOMDocument;
@@ -20,13 +22,23 @@ final class SiteCrawlAction
     /** A stylesheet whose address looks like the site's own theme is read before any plugin's. */
     private const THEME_STYLESHEET = '#/themes?/|style|main|site|app#i';
 
+    /**
+     * The shared website-reading budget (tenant_site) is four reads a minute for the whole platform, and a crawl that
+     * marked every page past it as refused read about four pages of any site, every time (the owner's build, 2026-10-03:
+     * "pages 3, refused 13"). A page the budget turns away is QUEUED instead, and SiteCrawlContinueJob reads the queue a
+     * minute later, round after round, until it is empty — at most this many rounds.
+     */
+    public const MAX_ROUNDS = 20;
+
+    public const RESUME_AFTER_SECONDS = 65;
+
     public function __construct(
         private readonly FetchGateway $fetcher,
         private readonly DefaultsRegistry $registry
     ) {}
 
     /**
-     * @return array{status: string, pages?: int, refused?: int, reason?: string}
+     * @return array{status: string, pages?: int, refused?: int, queued?: int, reason?: string}
      */
     public function handle(int $businessId, int $locationId): array
     {
@@ -34,20 +46,58 @@ final class SiteCrawlAction
         if (! $location || ! $location->website_url || ! $location->website_confirmed_at) {
             return ['status' => 'refused', 'reason' => 'no_website'];
         }
-
-        $maxPages = $this->registry->int('sites.crawl.max_pages');
         $startUrl = $location->website_url;
-        $host = parse_url($startUrl, PHP_URL_HOST);
 
-        $queue = [$startUrl];
-        $seen = [$startUrl => true];
+        return $this->crawl($businessId, $locationId, $startUrl, [$startUrl], [$startUrl => true], $this->registry->int('sites.crawl.max_pages'), 1);
+    }
+
+    /**
+     * Reads the pages an earlier round left queued, and every new page they link to, within what is left of
+     * sites.crawl.max_pages.
+     *
+     * @return array{status: string, pages?: int, refused?: int, queued?: int, reason?: string}
+     */
+    public function continue(int $businessId, int $locationId, int $round): array
+    {
+        $location = Location::find($locationId);
+        if (! $location || ! $location->website_url || ! $location->website_confirmed_at) {
+            return ['status' => 'refused', 'reason' => 'no_website'];
+        }
+
+        $rows = SiteInventoryPage::where('business_id', $businessId)->where('location_id', $locationId);
+        $queue = array_values(array_map('strval', (clone $rows)->where('status', 'queued')->orderBy('id')->pluck('url')->all()));
+        if ($queue === []) {
+            return ['status' => 'fetched', 'pages' => 0, 'refused' => 0, 'queued' => 0];
+        }
+        $seen = array_fill_keys(array_map('strval', (clone $rows)->pluck('url')->all()), true);
+        $done = (clone $rows)->where('status', '!=', 'queued')->count();
+
+        return $this->crawl($businessId, $locationId, $location->website_url, $queue, $seen, max(0, $this->registry->int('sites.crawl.max_pages') - $done), $round);
+    }
+
+    /**
+     * @param  list<string>  $queue
+     * @param  array<string, bool>  $seen
+     * @return array{status: string, pages: int, refused: int, queued: int}
+     */
+    private function crawl(int $businessId, int $locationId, string $startUrl, array $queue, array $seen, int $maxPages, int $round): array
+    {
+        $host = parse_url($startUrl, PHP_URL_HOST);
         $pagesCount = 0;
         $refusedCount = 0;
+        $paused = false;
 
         while (! empty($queue) && ($pagesCount + $refusedCount) < $maxPages) {
             $url = array_shift($queue);
 
             $result = $this->fetcher->fetch('tenant_site', $url);
+
+            // The budget turning a page away says nothing about the page: keep it, and the rest, for the next round.
+            if ($result->refusalReason === FetchRefusalReason::RateBudget) {
+                array_unshift($queue, $url);
+                $paused = true;
+                break;
+            }
 
             if (! $result->successful()) {
                 SiteInventoryPage::updateOrCreate(
@@ -201,10 +251,25 @@ final class SiteCrawlAction
             $pagesCount++;
         }
 
+        $queuedCount = 0;
+        if ($paused) {
+            foreach (array_slice($queue, 0, max(0, $maxPages - $pagesCount - $refusedCount)) as $queuedUrl) {
+                SiteInventoryPage::updateOrCreate(
+                    ['business_id' => $businessId, 'url' => $queuedUrl],
+                    ['location_id' => $locationId, 'status' => 'queued', 'refusal_reason' => null]
+                );
+                $queuedCount++;
+            }
+            if ($queuedCount > 0 && $round < self::MAX_ROUNDS) {
+                SiteCrawlContinueJob::dispatch($businessId, $locationId, $round + 1)->delay(now()->addSeconds(self::RESUME_AFTER_SECONDS));
+            }
+        }
+
         return [
             'status' => 'fetched',
             'pages' => $pagesCount,
             'refused' => $refusedCount,
+            'queued' => $queuedCount,
         ];
     }
 

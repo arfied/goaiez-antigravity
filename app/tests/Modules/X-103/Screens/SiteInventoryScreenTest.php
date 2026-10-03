@@ -8,13 +8,16 @@ use App\Exceptions\TenantNotResolved;
 use App\Models\Location;
 use App\Models\User;
 use App\Modules\X103\Actions\SiteCrawlAction;
+use App\Modules\X103\Jobs\SiteCrawlContinueJob;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\SiteInventoryImage;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Modules\X103\Ui\SiteInventory;
 use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -88,7 +91,7 @@ it('crawls a two-page fake site', function () {
 
     $action = app(SiteCrawlAction::class);
     $result = $action->handle($biz->id, Location::where('business_id', $biz->id)->first()->id);
-    expect($result)->toBe(['status' => 'fetched', 'pages' => 2, 'refused' => 0]);
+    expect($result)->toBe(['status' => 'fetched', 'pages' => 2, 'refused' => 0, 'queued' => 0]);
 
     $pages = SiteInventoryPage::where('business_id', $biz->id)->get();
     expect($pages)->toHaveCount(2);
@@ -797,4 +800,73 @@ it('reads the brand colours and fonts from the home page and its own theme style
     Livewire::test(SiteInventory::class)
         ->assertSee('#e4572e')
         ->assertSee('Merriweather');
+});
+
+it('queues the pages the per-minute budget turns away and reads them a minute later', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+    Location::where('business_id', $biz->id)->update([
+        'website_url' => 'https://example.com',
+        'website_confirmed_at' => now(),
+    ]);
+
+    $this->actingAs($owner);
+    Tenancy::set($biz->id);
+
+    DB::table('fetch_sources')->where('key', 'tenant_site')->update(['rate_budget' => json_encode(['per_minute' => 2, 'per_day' => 2000])]);
+    Queue::fake();
+    Http::fake([
+        '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
+        'https://example.com' => Http::response('<html><head><title>Home</title></head><body><a href="/a">A</a><a href="/b">B</a><a href="/c">C</a></body></html>', 200, ['Content-Type' => 'text/html']),
+        'https://example.com/a' => Http::response('<html><head><title>A</title></head><body><p>Page A 8601</p></body></html>', 200, ['Content-Type' => 'text/html']),
+        'https://example.com/b' => Http::response('<html><head><title>B</title></head><body><p>Page B 8602</p></body></html>', 200, ['Content-Type' => 'text/html']),
+        'https://example.com/c' => Http::response('<html><head><title>C</title></head><body><p>Page C 8603</p></body></html>', 200, ['Content-Type' => 'text/html']),
+    ]);
+    $locationId = Location::where('business_id', $biz->id)->first()->id;
+
+    $first = app(SiteCrawlAction::class)->handle($biz->id, $locationId);
+
+    expect($first)->toBe(['status' => 'fetched', 'pages' => 2, 'refused' => 0, 'queued' => 2])
+        ->and(SiteInventoryPage::where('business_id', $biz->id)->where('status', 'queued')->orderBy('url')->pluck('url')->all())
+        ->toBe(['https://example.com/b', 'https://example.com/c'])
+        ->and(SiteInventoryPage::where('business_id', $biz->id)->where('status', 'refused')->count())->toBe(0);
+    Queue::assertPushed(SiteCrawlContinueJob::class, fn (SiteCrawlContinueJob $job) => $job->round === 2 && $job->businessId === $biz->id && $job->locationId === $locationId);
+    Livewire::test(SiteInventory::class)->assertSee('a few pages a minute');
+
+    $this->travel(2)->minutes();
+    $second = app(SiteCrawlAction::class)->continue($biz->id, $locationId, 2);
+
+    expect($second)->toBe(['status' => 'fetched', 'pages' => 2, 'refused' => 0, 'queued' => 0])
+        ->and(SiteInventoryPage::where('business_id', $biz->id)->where('status', 'fetched')->count())->toBe(4)
+        ->and(SiteInventoryPage::where('business_id', $biz->id)->where('url', 'https://example.com/c')->value('text'))->toContain('Page C 8603');
+    Queue::assertPushed(SiteCrawlContinueJob::class, 1);
+});
+
+it('stops resuming a paused crawl after its last round', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+    Location::where('business_id', $biz->id)->update([
+        'website_url' => 'https://example.com',
+        'website_confirmed_at' => now(),
+    ]);
+
+    $this->actingAs($owner);
+    Tenancy::set($biz->id);
+
+    DB::table('fetch_sources')->where('key', 'tenant_site')->update(['rate_budget' => json_encode(['per_minute' => 0, 'per_day' => 2000])]);
+    Queue::fake();
+    Http::fake();
+    $locationId = Location::where('business_id', $biz->id)->first()->id;
+    SiteInventoryPage::create(['business_id' => $biz->id, 'location_id' => $locationId, 'url' => 'https://example.com/x', 'status' => 'queued']);
+
+    $last = app(SiteCrawlAction::class)->continue($biz->id, $locationId, SiteCrawlAction::MAX_ROUNDS);
+
+    expect($last)->toBe(['status' => 'fetched', 'pages' => 0, 'refused' => 0, 'queued' => 1]);
+    Queue::assertNothingPushed();
+    Http::assertNothingSent();
+
+    app(SiteCrawlAction::class)->continue($biz->id, $locationId, 1);
+    Queue::assertPushed(SiteCrawlContinueJob::class, fn (SiteCrawlContinueJob $job) => $job->round === 2);
 });
