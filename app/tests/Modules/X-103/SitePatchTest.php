@@ -243,4 +243,47 @@ class SitePatchTest extends TestCase
         $this->assertNull($page->draft_meta['pending_edit'] ?? null);
         $this->assertSame([], $page->draft_blocks[0]['items']);
     }
+
+    public function test_one_forbidden_edit_is_dropped_and_the_valid_edits_beside_it_are_still_proposed()
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $business = TestCase::provisionTenant(['name' => 'SitePatchDrop', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($business->id);
+
+        $page = Page::create([
+            'business_id' => $business->id, 'slug' => 'p'.rand(), 'title' => 'T',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old', 'subline' => 'Old'],
+                ['type' => 'about', 'text' => 'Unchanged'],
+            ],
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [
+                    ['message' => ['content' => json_encode([
+                        'patches' => [
+                            ['op' => 'set_image', 'block_index' => 0, 'field' => 'image_path', 'path' => 'some/other/file-9102.jpg'],
+                            ['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Kept headline 9101'],
+                        ],
+                        'explanation' => 'A bolder banner.',
+                    ])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ], 200, ['Content-Type' => 'application/json']),
+        ]);
+
+        Livewire::test(Pages::class)
+            ->set('editRequest', [$page->id => 'Make it look great'])
+            ->call('askEdit', $page->id)
+            ->assertSet('error', null);
+
+        $page->refresh();
+        $blocks = $page->draft_meta['pending_edit']['blocks'];
+        $this->assertSame('Kept headline 9101', $blocks[0]['headline']);
+        $this->assertArrayNotHasKey('image_path', $blocks[0]);
+        $this->assertEquals(['type' => 'about', 'text' => 'Unchanged'], $blocks[1]);
+    }
 }

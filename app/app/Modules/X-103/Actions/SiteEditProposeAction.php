@@ -15,6 +15,7 @@ use App\Services\Config\DefaultsRegistry;
 use App\Services\Industry\IndustryStartingPoints;
 use App\Services\Industry\SiteStyle;
 use App\Support\PlanPricing;
+use Illuminate\Support\Facades\Log;
 
 final class SiteEditProposeAction
 {
@@ -107,12 +108,32 @@ final class SiteEditProposeAction
             }
         }
 
-        $patches = $response->json['patches'] ?? [];
+        $patches = is_array($response->json['patches'] ?? null) ? $response->json['patches'] : [];
+        $requestedImages = $response->json['images'] ?? [];
 
-        // MODEL_OPS was enforced only by the schema handed to the provider. Enforce it here too: an image op
-        // or a list op from the model is never applied, whatever the provider let through.
+        // MODEL_OPS was enforced only by the schema handed to the provider. Enforce it here too: an image op or a list op
+        // from the model is never applied, whatever the provider let through. It is DROPPED, not allowed to sink the rest:
+        // the patch schema is not strict-eligible, so a model on a non-strict provider (gpt-4o-mini, production 2026-10-03)
+        // asked to "make a picture" can invent an op, and refusing the whole answer threw away every valid edit beside it
+        // ("Make it look great" → "The AI proposed a change it is not allowed to make"). The dropped ops are logged by name —
+        // ai_calls keeps no response text, so the log is the only record of what was invented.
+        $dropped = [];
+        $kept = [];
         foreach ($patches as $patch) {
-            if (! is_array($patch) || ! in_array($patch['op'] ?? null, BlockPatchSchema::MODEL_OPS, true)) {
+            if (is_array($patch) && in_array($patch['op'] ?? null, BlockPatchSchema::MODEL_OPS, true)) {
+                $kept[] = $patch;
+            } else {
+                $dropped[] = is_array($patch) && is_string($patch['op'] ?? null) ? $patch['op'] : '(not a patch)';
+            }
+        }
+        $patches = $kept;
+        if ($dropped !== []) {
+            Log::warning('site edit: the AI proposed edits it may not make; they were dropped', [
+                'business_id' => $businessId,
+                'ops' => $dropped,
+                'model' => $response->model->value,
+            ]);
+            if ($patches === [] && $requestedImages === [] && $validStyle === null) {
                 return [
                     'status' => 'refused',
                     'reason' => 'unsafe_patch',
@@ -120,7 +141,6 @@ final class SiteEditProposeAction
                 ];
             }
         }
-        $requestedImages = $response->json['images'] ?? [];
 
         if (count($patches) === 0 && count($requestedImages) === 0 && $validStyle === null) {
             return [
