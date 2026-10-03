@@ -93,13 +93,19 @@ enum AiModel: string
     /** Google's Pro model (checked 2026-10-02 on ai.google.dev: $2 in / $12 out per 1M for prompts up to 200k). */
     case Gemini31Pro = 'google-gemini-3.1-pro';
 
+    /** OpenAI's budget tier (checked 2026-10-02 on developers.openai.com: $0.10 in / $0.50 out per 1M, Chat Completions supported). */
+    case Gpt6Luna = 'openai-gpt-6-luna';
+
+    /** Google's newest Flash model (checked 2026-10-02 on ai.google.dev: $0.75 in / $3.75 out per 1M through 2026-12-31; $1.50 / $7.50 from 2027-01-01). */
+    case Gemini38Flash = 'google-gemini-3.8-flash';
+
     public function provider(): AiProvider
     {
         return match ($this) {
             self::ClaudeOpus5, self::ClaudeSonnet5, self::ClaudeHaiku45 => AiProvider::Anthropic,
-            self::Gpt4oMini, self::TextEmbedding3Small, self::GptImage25Flare, self::Gpt61Sol => AiProvider::OpenAi,
+            self::Gpt4oMini, self::TextEmbedding3Small, self::GptImage25Flare, self::Gpt61Sol, self::Gpt6Luna => AiProvider::OpenAi,
             self::Grok47, self::Grok43 => AiProvider::Xai,
-            self::Gemini31Pro => AiProvider::Gemini,
+            self::Gemini31Pro, self::Gemini38Flash => AiProvider::Gemini,
         };
     }
 
@@ -116,6 +122,8 @@ enum AiModel: string
             self::Grok43 => 'gr'.'ok-4.3',
             self::Gpt61Sol => 'gp'.'t-6.1-sol',
             self::Gemini31Pro => 'gem'.'ini-3.1-pro-preview',
+            self::Gpt6Luna => 'gp'.'t-6-luna',
+            self::Gemini38Flash => 'gem'.'ini-3.8-flash',
         };
     }
 
@@ -159,7 +167,7 @@ enum AiModel: string
     {
         return match ($this) {
             self::TextEmbedding3Small => 1536,
-            self::ClaudeOpus5, self::ClaudeSonnet5, self::ClaudeHaiku45, self::Gpt4oMini, self::GptImage25Flare, self::Grok47, self::Grok43, self::Gpt61Sol, self::Gemini31Pro => null,
+            self::ClaudeOpus5, self::ClaudeSonnet5, self::ClaudeHaiku45, self::Gpt4oMini, self::GptImage25Flare, self::Grok47, self::Grok43, self::Gpt61Sol, self::Gemini31Pro, self::Gpt6Luna, self::Gemini38Flash => null,
         };
     }
 
@@ -180,10 +188,13 @@ enum AiModel: string
             self::Gpt4oMini => 1_500,         // $0.15
             self::TextEmbedding3Small => 200, // $0.02
             self::GptImage25Flare => 50_000,  // $5.00
-            self::Grok47 => 50_000,
-            self::Grok43 => 1_500,
+            // xAI's list prices checked 2026-10-02 on docs.x.ai (prompts under 200k): the recorded figures were wrong.
+            self::Grok47 => 20_000,       // $2.00
+            self::Grok43 => 12_500,       // $1.25
             self::Gpt61Sol => 20_000,     // $2.00
             self::Gemini31Pro => 20_000,  // $2.00
+            self::Gpt6Luna => 1_000,      // $0.10
+            self::Gemini38Flash => 7_500, // $0.75
         };
     }
 
@@ -204,10 +215,12 @@ enum AiModel: string
             // than the input price copied across.
             self::TextEmbedding3Small => 0,
             self::GptImage25Flare => 300_000, // $30.00
-            self::Grok47 => 250_000,
-            self::Grok43 => 6_000,
+            self::Grok47 => 60_000,       // $6.00
+            self::Grok43 => 25_000,       // $2.50
             self::Gpt61Sol => 100_000,    // $10.00
             self::Gemini31Pro => 120_000, // $12.00
+            self::Gpt6Luna => 5_000,      // $0.50
+            self::Gemini38Flash => 37_500, // $3.75
         };
     }
 
@@ -238,7 +251,7 @@ enum AiModel: string
         return match ($this) {
             // The embeddings endpoint takes no sampling parameters of any kind,
             // so "rejects them" is literally true for it as well.
-            self::ClaudeOpus5, self::ClaudeSonnet5, self::TextEmbedding3Small, self::GptImage25Flare, self::Gpt61Sol, self::Gemini31Pro => true,
+            self::ClaudeOpus5, self::ClaudeSonnet5, self::TextEmbedding3Small, self::GptImage25Flare, self::Gpt61Sol, self::Gemini31Pro, self::Gpt6Luna, self::Gemini38Flash => true,
             self::ClaudeHaiku45, self::Gpt4oMini, self::Grok47, self::Grok43 => false,
         };
     }
@@ -258,7 +271,7 @@ enum AiModel: string
     {
         return match ($this) {
             self::ClaudeOpus5, self::ClaudeSonnet5 => true,
-            self::ClaudeHaiku45, self::Gpt4oMini, self::TextEmbedding3Small, self::GptImage25Flare, self::Grok47, self::Grok43, self::Gpt61Sol, self::Gemini31Pro => false,
+            self::ClaudeHaiku45, self::Gpt4oMini, self::TextEmbedding3Small, self::GptImage25Flare, self::Grok47, self::Grok43, self::Gpt61Sol, self::Gemini31Pro, self::Gpt6Luna, self::Gemini38Flash => false,
         };
     }
 

@@ -190,15 +190,16 @@ class SiteDesignGenerateActionTest extends TestCase
         $this->assertSame('By Gemini 7702', $designs['gemini']['blocks'][0]['headline']);
         $this->assertSame('By Grok 7703', $designs['grok']['blocks'][0]['headline']);
         $this->assertSame('By Claude 7704', $designs['claude']['blocks'][0]['headline']);
-        $this->assertSame('google-gemini-3.1-pro', $designs['gemini']['model']);
+        $this->assertSame('google-gemini-3.8-flash', $designs['gemini']['model']);
+        $this->assertSame('anthropic-haiku-4-5', $designs['claude']['model']);
         $this->assertSame('classic-pro', $designs['claude']['theme']);
 
         Http::assertSent(fn ($r) => str_contains($r->url(), 'generativelanguage.googleapis.com/v1beta/openai/chat/completions')
-            && $r['model'] === 'gemini-3.1-pro-preview'
+            && $r['model'] === 'gemini-3.8-flash'
             && isset($r['max_tokens'])
             && $r->hasHeader('Authorization', 'Bearer fake-key'));
-        Http::assertSent(fn ($r) => str_contains($r->url(), 'api.openai.com/v1/chat/completions') && $r['model'] === 'gpt-6.1-sol');
-        Http::assertSent(fn ($r) => str_contains($r->url(), 'api.x.ai') && $r['model'] === 'grok-4.7');
+        Http::assertSent(fn ($r) => str_contains($r->url(), 'api.openai.com/v1/chat/completions') && $r['model'] === 'gpt-6-luna');
+        Http::assertSent(fn ($r) => str_contains($r->url(), 'api.x.ai') && $r['model'] === 'grok-4.3');
 
         $this->assertSame('unknown_engine', app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id, 'nope')['reason']);
     }

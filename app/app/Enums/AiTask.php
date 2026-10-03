@@ -140,7 +140,8 @@ enum AiTask: string
             self::SiteAuthoring => AiModel::Gpt4oMini,
             self::KnowledgeEmbedding => AiModel::TextEmbedding3Small,
             self::SiteImage => AiModel::GptImage25Flare,
-            self::SiteDesign => AiModel::ClaudeSonnet5,
+            // The boss, 2026-10-02: "the default designer & copywriter: claude-haiku-4-5" — low cost, good taste.
+            self::SiteDesign => AiModel::ClaudeHaiku45,
         };
     }
 
