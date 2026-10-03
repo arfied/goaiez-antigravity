@@ -190,6 +190,7 @@ final class SiteInventory extends Component
         $missing = $tenantId ? app(SiteMissingFactsAction::class)->handle((int) $tenantId, $location) : [];
         $readability = $tenantId ? app(SiteReadabilityAction::class)->handle((int) $tenantId) : [];
         $pageWeight = $tenantId ? app(SitePageWeightAction::class)->handle((int) $tenantId) : [];
+        $brand = $tenantId ? SiteInventoryPage::whereNotNull('brand')->orderBy('id')->first()?->brand : null;
 
         return view('x-103::site-inventory', [
             'pages' => $pages,
@@ -198,6 +199,7 @@ final class SiteInventory extends Component
             'missing' => $missing,
             'readability' => $readability,
             'pageWeight' => $pageWeight,
+            'brand' => is_array($brand) ? $brand : [],
         ]);
     }
 }

@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace Tests\Modules\X103;
 
 use App\Enums\AiModel;
+use App\Models\Business;
+use App\Models\Location;
 use App\Models\User;
 use App\Modules\X103\Actions\SiteDesignGenerateAction;
 use App\Modules\X103\Domain\SiteDesignEngines;
 use App\Modules\X103\Jobs\SiteDesignJob;
 use App\Modules\X103\Models\Page;
+use App\Modules\X103\Models\SiteInventoryPage;
 use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Http;
@@ -298,5 +301,43 @@ class SiteDesignGenerateActionTest extends TestCase
         $this->assertSame(AiModel::ClaudeHaiku45, SiteDesignEngines::model('claude'));
         $this->assertSame(AiModel::Gpt6Luna, SiteDesignEngines::fallbackFor(AiModel::ClaudeHaiku45));
         $this->assertSame(AiModel::ClaudeHaiku45, SiteDesignEngines::fallbackFor(AiModel::Gpt6Luna));
+    }
+
+    private function oldSiteBrand(Page $page): void
+    {
+        SiteInventoryPage::create([
+            'business_id' => $page->business_id,
+            'location_id' => Location::where('business_id', $page->business_id)->value('id'),
+            'url' => 'https://example.com',
+            'status' => 'fetched',
+            'fetched_at' => now(),
+            'brand' => ['theme_color' => '#1e5aa8', 'colours' => ['#1e5aa8', '#e4572e'], 'fonts' => ['Merriweather 8301']],
+        ]);
+    }
+
+    public function test_the_designer_is_given_the_brand_found_on_the_current_website(): void
+    {
+        $page = $this->page([['type' => 'hero', 'headline' => 'H']]);
+        $this->oldSiteBrand($page);
+        $this->fakeAnswer(json_encode(['theme' => 'warm-local', 'blocks' => [['type' => 'hero', 'headline' => 'New 8302']]]));
+
+        app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id);
+
+        Http::assertSent(fn ($r) => str_contains($r->body(), "Colours and fonts on the business's current website")
+            && str_contains($r->body(), 'Merriweather 8301')
+            && str_contains($r->body(), '#e4572e'));
+    }
+
+    public function test_a_page_that_keeps_the_sites_theme_is_not_given_the_old_brand(): void
+    {
+        $page = $this->page([['type' => 'hero', 'headline' => 'H']]);
+        $this->oldSiteBrand($page);
+        Business::whereKey($page->business_id)->update(['site_tokens' => json_encode(['theme' => 'warm-local'])]);
+        $this->fakeAnswer(json_encode(['theme' => 'warm-local', 'blocks' => [['type' => 'hero', 'headline' => 'New 8303']]]));
+
+        app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id, 'claude', true);
+
+        Http::assertSent(fn ($r) => str_contains($r->body(), 'This site already uses the theme')
+            && ! str_contains($r->body(), 'Merriweather 8301'));
     }
 }

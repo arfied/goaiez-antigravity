@@ -341,4 +341,23 @@
             </table>
         @endif
     </div>
+
+    <div class="mt-8 mb-4">
+        <h2>Your brand, as found on your site</h2>
+        @if (empty($brand['colours']) && empty($brand['fonts']))
+            <p class="text-sm text-ink-2 mt-2">No brand colours or fonts found yet. Press Crawl Website; the AI designer then keeps them so your new site still looks like you.</p>
+        @else
+            <p class="text-sm text-ink-2 mt-2">The AI designer keeps these so your new site still looks like you.</p>
+            @if (! empty($brand['colours']))
+                <ul class="flex flex-wrap gap-3 mt-3">
+                    @foreach ($brand['colours'] as $colour)
+                        <li class="flex items-center gap-2 text-sm text-ink"><span class="inline-block w-6 h-6 rounded border border-rule" style="background: {{ $colour }}"></span>{{ $colour }}</li>
+                    @endforeach
+                </ul>
+            @endif
+            @if (! empty($brand['fonts']))
+                <p class="text-sm text-ink mt-3">Fonts: {{ implode(', ', $brand['fonts']) }}</p>
+            @endif
+        @endif
+    </div>
 </div>

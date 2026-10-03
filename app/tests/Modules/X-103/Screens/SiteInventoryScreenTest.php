@@ -760,3 +760,41 @@ test('a platform admin with no tenant sees an empty site inventory not a 500', f
         ->get(route('x-103.site-inventory.admin'))
         ->assertForbidden();
 });
+
+it('reads the brand colours and fonts from the home page and its own theme stylesheet, and shows them', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+    Location::where('business_id', $biz->id)->update([
+        'website_url' => 'https://example.com',
+        'website_confirmed_at' => now(),
+    ]);
+
+    $this->actingAs($owner);
+    Tenancy::set($biz->id);
+
+    Http::fake([
+        '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
+        'https://example.com' => Http::response(
+            '<html><head><title>Home</title><meta name="theme-color" content="#1e5aa8">'
+            .'<link rel="stylesheet" href="/wp-content/plugins/forms/forms.css">'
+            .'<link rel="stylesheet" href="/wp-content/themes/bob/style.css">'
+            .'<link rel="stylesheet" href="https://cdn.elsewhere.test/brand.css">'
+            .'</head><body><main><h1>Welcome</h1></main></body></html>',
+            200,
+            ['Content-Type' => 'text/html']
+        ),
+        'https://example.com/wp-content/themes/bob/style.css' => Http::response('.btn{background:#e4572e;font-family:"Merriweather", serif}', 200, ['Content-Type' => 'text/css']),
+        'https://example.com/wp-content/plugins/forms/forms.css' => Http::response('.f{color:#0000ff}', 200, ['Content-Type' => 'text/css']),
+    ]);
+
+    app(SiteCrawlAction::class)->handle($biz->id, Location::where('business_id', $biz->id)->first()->id);
+
+    $home = SiteInventoryPage::where('business_id', $biz->id)->where('url', 'https://example.com')->first();
+    expect($home->brand)->toEqual(['theme_color' => '#1e5aa8', 'colours' => ['#1e5aa8', '#e4572e'], 'fonts' => ['Merriweather']]);
+    Http::assertNotSent(fn ($r) => str_contains($r->url(), 'forms.css') || str_contains($r->url(), 'cdn.elsewhere.test'));
+
+    Livewire::test(SiteInventory::class)
+        ->assertSee('#e4572e')
+        ->assertSee('Merriweather');
+});

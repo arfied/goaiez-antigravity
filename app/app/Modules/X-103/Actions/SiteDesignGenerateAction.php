@@ -114,6 +114,8 @@ final class SiteDesignGenerateAction
             }
         }
         $crawled = mb_substr($crawled, 0, 9000);
+        // The colours and fonts found on the current website (SiteBrandSignals), so the new site still looks like this business.
+        $oldBrand = SiteInventoryPage::where('business_id', $businessId)->whereNotNull('brand')->orderBy('id')->first()?->brand;
 
         $themes = [];
         foreach (SiteThemes::THEMES as $id => $theme) {
@@ -136,6 +138,7 @@ final class SiteDesignGenerateAction
             ."\n\nSection types and their fields: ".self::CATALOGUE
             ."\n\nFonts you may use: ".implode(' | ', SiteStyle::FONT_STACKS)
             ."\n\nThe brand's current colours and fonts (JSON): ".json_encode(['palette' => $tokens['palette'] ?? [], 'type_pairing' => $tokens['type_pairing'] ?? []], JSON_UNESCAPED_SLASHES)
+            .($siteTheme !== null || ! is_array($oldBrand) || $oldBrand === [] ? '' : "\n\nColours and fonts on the business's current website — keep the brand recognisable: use these colours for primary and accent where text stays easy to read, and choose the listed font closest to theirs (JSON): ".json_encode($oldBrand, JSON_UNESCAPED_SLASHES))
             .($crawled === '' ? '' : "\n\nText from the business's current website, for reference only:".$crawled)
             .($peerNotes === '' ? '' : "\n\n".$peerNotes);
 

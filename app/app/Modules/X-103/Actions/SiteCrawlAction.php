@@ -7,12 +7,19 @@ namespace App\Modules\X103\Actions;
 use App\Contracts\FetchGateway;
 use App\Enums\FetchOutcome;
 use App\Models\Location;
+use App\Modules\X103\Domain\SiteBrandSignals;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Services\Config\DefaultsRegistry;
 use DOMDocument;
 
 final class SiteCrawlAction
 {
+    /** Stylesheets read for the brand, from the home page only and only from the site's own host. */
+    private const MAX_STYLESHEETS = 1;
+
+    /** A stylesheet whose address looks like the site's own theme is read before any plugin's. */
+    private const THEME_STYLESHEET = '#/themes?/|style|main|site|app#i';
+
     public function __construct(
         private readonly FetchGateway $fetcher,
         private readonly DefaultsRegistry $registry
@@ -146,9 +153,36 @@ final class SiteCrawlAction
             $emails = array_values(array_unique($emails));
             $linksOut = array_values(array_unique($linksOut));
 
+            // The brand (colours and fonts) comes from the home page and ONE of the site's own stylesheets — the one most likely
+            // to be the theme's. One, not more: tenant_site's budget is four fetches a minute, and pages come first.
+            $brand = [];
+            if ($url === $startUrl) {
+                $candidates = [];
+                foreach ($dom->getElementsByTagName('link') as $node) {
+                    if (! str_contains(strtolower($node->getAttribute('rel')), 'stylesheet')) {
+                        continue;
+                    }
+                    $cssUrl = $this->resolveUrl($url, $node->getAttribute('href'));
+                    if ($cssUrl !== null && parse_url($cssUrl, PHP_URL_HOST) === $host) {
+                        $candidates[] = $cssUrl;
+                    }
+                }
+                $isTheme = fn (string $cssUrl): int => preg_match(self::THEME_STYLESHEET, (string) parse_url($cssUrl, PHP_URL_PATH)) ? 0 : 1;
+                usort($candidates, fn (string $a, string $b) => $isTheme($a) <=> $isTheme($b));
+                $stylesheets = [];
+                foreach (array_slice($candidates, 0, self::MAX_STYLESHEETS) as $cssUrl) {
+                    $cssResult = $this->fetcher->fetch('tenant_site', $cssUrl);
+                    if ($cssResult->successful()) {
+                        $stylesheets[] = mb_substr((string) $cssResult->body, 0, 200_000);
+                    }
+                }
+                $brand = SiteBrandSignals::read((string) $result->body, $stylesheets);
+            }
+
             SiteInventoryPage::updateOrCreate(
                 ['business_id' => $businessId, 'url' => $url],
                 [
+                    'brand' => $brand === [] ? null : $brand,
                     'location_id' => $locationId,
                     'title' => $title ? trim($title) : null,
                     'headings' => $headings,

@@ -1,5 +1,6 @@
 <?php
 
+use App\Exceptions\TenantNotResolved;
 use App\Http\Middleware\EnforcesStaffSessionLifetime;
 use App\Http\Middleware\Impersonating;
 use App\Http\Middleware\RequiresTwoFactor;
@@ -366,6 +367,22 @@ return Application::configure(basePath: dirname(__DIR__))
         // `post_max_size` still renders its `413` as HTML — which is what the
         // JavaScript wants anyway, because any non-2xx reaches
         // `_uploadErrored`.
+        // ⛔ A SIGNED-IN ACCOUNT WITH NO BUSINESS THAT OPENS A TENANT SCREEN GETS THE 403 PAGE, NOT A 500 (owner,
+        // 2026-10-02: "tenantless screens 500"). The convention is SetupController's: "every other tenant-only surface
+        // in this application answers a tenantless request the same way" — a 403 — and there is no business picker to
+        // redirect to, because membership is one business per person (ResolveTenant). ~72 screens reached the tenant
+        // first in mount() or render() and threw TenantNotResolved instead, which rendered as "Something went wrong on
+        // our end". Only a browser request from a signed-in user is answered here: a JSON or api/* caller, a job and a
+        // console command keep the exception exactly as before, and it is still reported, because reaching tenant data
+        // with no tenant is worth knowing about.
+        $exceptions->render(function (TenantNotResolved $e, Request $request) {
+            if ($request->user() === null || $request->expectsJson() || $request->is('api/*')) {
+                return null;
+            }
+
+            return response()->view('errors.403', [], 403);
+        });
+
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*')
                 || $request->routeIs('livewire.upload-file'),
