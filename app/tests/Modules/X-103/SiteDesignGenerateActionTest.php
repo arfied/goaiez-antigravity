@@ -12,6 +12,7 @@ use App\Modules\X103\Actions\SiteDesignGenerateAction;
 use App\Modules\X103\Domain\SiteDesignEngines;
 use App\Modules\X103\Jobs\SiteDesignJob;
 use App\Modules\X103\Models\Page;
+use App\Modules\X103\Models\SiteInventoryImage;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
@@ -339,5 +340,73 @@ class SiteDesignGenerateActionTest extends TestCase
 
         Http::assertSent(fn ($r) => str_contains($r->body(), 'This site already uses the theme')
             && ! str_contains($r->body(), 'Merriweather 8301'));
+    }
+
+    public function test_the_hero_always_gets_a_picture_even_when_the_ai_asks_for_none(): void
+    {
+        Storage::fake('local');
+        $page = $this->page([['type' => 'hero', 'headline' => 'H']]);
+        Http::fake([
+            'api.openai.com/v1/images/generations' => Http::response([
+                'data' => [['b64_json' => '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=']],
+            ], 200, ['Content-Type' => 'application/json']),
+        ]);
+        $this->fakeAnswer(json_encode([
+            'theme' => 'warm-local',
+            'blocks' => [
+                ['type' => 'hero', 'headline' => 'Fallback headline 9201', 'variant' => 'centered'],
+                ['type' => 'about', 'text' => 'A'],
+            ],
+        ]));
+
+        app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id);
+
+        $page->refresh();
+        $hero = $page->draft_meta['designs']['claude']['blocks'][0];
+        $this->assertNotEmpty($hero['image_path']);
+        Storage::disk('local')->assertExists($hero['image_path']);
+        $this->assertSame('split', $hero['variant']);
+        $made = collect(Http::recorded())->filter(fn ($pair) => str_contains($pair[0]->url(), 'images/generations'))->count();
+        $this->assertSame(1, $made);
+        Http::assertSent(fn ($r) => str_contains($r->url(), 'images/generations') && str_contains($r->body(), 'Fallback headline 9201'));
+    }
+
+    public function test_the_ai_can_place_the_businesss_own_photo_and_logos_are_never_offered(): void
+    {
+        $page = $this->page([['type' => 'hero', 'headline' => 'H']]);
+        $locationId = Location::where('business_id', $page->business_id)->value('id');
+        $inventoryPage = SiteInventoryPage::create(['business_id' => $page->business_id, 'location_id' => $locationId, 'url' => 'https://example.com', 'status' => 'fetched', 'fetched_at' => now()]);
+        foreach ([
+            ['path' => 'inventory/logo-9203.png', 'alt' => 'Company logo 9203'],
+            ['path' => 'inventory/shop-9202.jpg', 'alt' => 'Our shop front 9202'],
+        ] as $photo) {
+            SiteInventoryImage::create([
+                'business_id' => $page->business_id,
+                'page_id' => $inventoryPage->id,
+                'source_url' => 'https://example.com/'.basename($photo['path']),
+                'attribution' => 'example.com',
+                'status' => 'stored',
+                'path' => $photo['path'],
+                'alt' => $photo['alt'],
+                'width' => 1200,
+                'height' => 800,
+            ]);
+        }
+        $this->fakeAnswer(json_encode([
+            'theme' => 'warm-local',
+            'blocks' => [['type' => 'hero', 'headline' => 'Own photo 9204']],
+            'images' => [['block_index' => 0, 'owner_photo' => 1]],
+        ]));
+
+        app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id);
+
+        $page->refresh();
+        $hero = $page->draft_meta['designs']['claude']['blocks'][0];
+        $this->assertSame('inventory/shop-9202.jpg', $hero['image_path']);
+        $this->assertSame('Our shop front 9202', $hero['image_alt']);
+        $this->assertSame('split', $hero['variant']);
+        Http::assertSent(fn ($r) => str_contains($r->url(), 'api.anthropic.com') && str_contains($r->body(), 'Our shop front 9202')
+            && ! str_contains($r->body(), 'Company logo 9203'));
+        Http::assertNotSent(fn ($r) => str_contains($r->url(), 'images/generations'));
     }
 }

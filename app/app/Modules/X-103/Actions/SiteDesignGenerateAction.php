@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X103\Actions;
 
 use App\Enums\AiTask;
+use App\Models\Business;
 use App\Modules\X103\Domain\BlockPatchSchema;
 use App\Modules\X103\Domain\CompetitorDigest;
 use App\Modules\X103\Domain\SiteBlockRenderer;
@@ -12,6 +13,7 @@ use App\Modules\X103\Domain\SiteDesignEngines;
 use App\Modules\X103\Domain\SiteThemes;
 use App\Modules\X103\Domain\StatedFacts;
 use App\Modules\X103\Models\Page;
+use App\Modules\X103\Models\SiteInventoryImage;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Services\Ai\AiRequest;
 use App\Services\Ai\AiRouter;
@@ -114,6 +116,19 @@ final class SiteDesignGenerateAction
             }
         }
         $crawled = mb_substr($crawled, 0, 9000);
+        // The business's own photos from its old website, offered by number: the AI places one only when it truly shows this
+        // business (the boss, 2026-10-03: "why does this still look horrible" — no page had a single picture). Logos, icons and
+        // small or extreme-shaped images are left out.
+        $ownerPhotos = SiteInventoryImage::where('business_id', $businessId)->where('status', 'stored')
+            ->where('width', '>=', 600)->where('height', '>=', 300)
+            ->orderByRaw('width * height desc')->limit(12)->get(['path', 'alt', 'width', 'height'])
+            ->filter(fn ($i) => ! preg_match('/logo|icon|badge|favicon|sprite/i', ((string) $i->alt).' '.((string) $i->path))
+                && $i->width / max(1, $i->height) >= 0.6 && $i->width / max(1, $i->height) <= 2.5)
+            ->take(6)->values()->all();
+        $photoLines = [];
+        foreach ($ownerPhotos as $n => $photo) {
+            $photoLines[] = ($n + 1).'. "'.mb_substr(trim((string) $photo->alt) !== '' ? (string) $photo->alt : 'no description', 0, 120).'" ('.$photo->width.'×'.$photo->height.')';
+        }
         // The colours and fonts found on the current website (SiteBrandSignals), so the new site still looks like this business.
         $oldBrand = SiteInventoryPage::where('business_id', $businessId)->whereNotNull('brand')->orderBy('id')->first()?->brand;
 
@@ -135,6 +150,7 @@ final class SiteDesignGenerateAction
             .($siteTheme === null ? '' : "\nThis site already uses the theme \"".$siteTheme.'". Use it: return "theme": "'.$siteTheme.'" and no "style", so every page looks the same.')
             ."\n\nThis page's current content (JSON):\n".json_encode($content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
             .($oldHero !== null && ! empty($oldHero['image_path']) ? "\n\nThe business already has a main picture; it is kept on the hero." : '')
+            .($photoLines === [] ? '' : "\n\nPhotos from the business's own website — place one with \"owner_photo\": <its number> ONLY if it truly shows this business; otherwise describe a new one:\n".implode("\n", $photoLines))
             ."\n\nThemes (use one id):\n".implode("\n", $themes)
             ."\n\nSection types and their fields: ".self::CATALOGUE
             ."\n\nFonts you may use: ".implode(' | ', SiteStyle::FONT_STACKS)
@@ -220,14 +236,32 @@ final class SiteDesignGenerateAction
             }
         }
         $made = 0;
+        $usedPhotos = [];
         foreach (is_array($json['images'] ?? null) ? $json['images'] : [] as $wanted) {
-            if ($made >= 3) {
-                break;
-            }
             $index = is_array($wanted) && is_int($wanted['block_index'] ?? null) ? $wanted['block_index'] : null;
-            $description = is_array($wanted) && is_string($wanted['description'] ?? null) ? trim($wanted['description']) : '';
-            if ($index === null || $description === '' || ! isset($blocks[$index])
+            if ($index === null || ! isset($blocks[$index])
                 || ! in_array($blocks[$index]['type'], ['hero', 'about', 'cta_band'], true) || ! empty($blocks[$index]['image_path'])) {
+                continue;
+            }
+            // One of the business's own photos, by its number in the list the AI was given; each is used once.
+            $photoNumber = is_int($wanted['owner_photo'] ?? null) ? $wanted['owner_photo'] : null;
+            if ($photoNumber !== null) {
+                $photo = $ownerPhotos[$photoNumber - 1] ?? null;
+                if ($photo !== null && ! isset($usedPhotos[$photoNumber])) {
+                    $usedPhotos[$photoNumber] = true;
+                    $blocks[$index]['image_path'] = (string) $photo->path;
+                    $blocks[$index]['image_alt'] = mb_substr(trim((string) $photo->alt) !== '' ? (string) $photo->alt : (string) ($blocks[$index]['headline'] ?? $blocks[$index]['heading'] ?? ''), 0, 120);
+                    $blocks[$index]['image_width'] = (int) $photo->width;
+                    $blocks[$index]['image_height'] = (int) $photo->height;
+                }
+
+                continue;
+            }
+            if ($made >= 3) {
+                continue;
+            }
+            $description = is_array($wanted) && is_string($wanted['description'] ?? null) ? trim($wanted['description']) : '';
+            if ($description === '') {
                 continue;
             }
             $made++;
@@ -240,6 +274,27 @@ final class SiteDesignGenerateAction
                 $blocks[$index]['image_path'] = $picture['path'];
                 $blocks[$index]['image_alt'] = mb_substr($description, 0, 120);
             }
+        }
+
+        // The top banner is never left without a picture: when neither the AI nor the business supplied one, one is made from
+        // the banner's own words. A banner with a picture sits beside its words ("split") rather than a centred column of text.
+        if ($heroIndex !== null && empty($blocks[$heroIndex]['image_path']) && $made < 3) {
+            $heroWords = trim(((string) ($blocks[$heroIndex]['headline'] ?? '')).'. '.((string) ($blocks[$heroIndex]['subline'] ?? '')), ' .');
+            $description = 'A realistic, bright, professional photo for the website of '.((string) Business::whereKey($businessId)->value('name'))
+                .($heroWords !== '' ? ': '.$heroWords : '').'. Real people, products or place, natural light, no text, no logos.';
+            try {
+                $picture = $this->picture->handle($businessId, $description);
+            } catch (Throwable) {
+                $picture = ['status' => 'failed'];
+            }
+            if (($picture['status'] ?? null) === 'generated' && is_string($picture['path'] ?? null)) {
+                $blocks[$heroIndex]['image_path'] = $picture['path'];
+                $blocks[$heroIndex]['image_alt'] = mb_substr($heroWords !== '' ? $heroWords : $description, 0, 120);
+            }
+        }
+        if ($heroIndex !== null && ! empty($blocks[$heroIndex]['image_path'])
+            && ! in_array($blocks[$heroIndex]['variant'] ?? null, ['split', 'cover'], true)) {
+            $blocks[$heroIndex]['variant'] = 'split';
         }
 
         $page->refresh();
