@@ -31,12 +31,13 @@ final class SiteCrawlContinueJob implements ShouldQueue
         public readonly int $businessId,
         public readonly int $locationId,
         public readonly int $round = 1,
+        public readonly int $remaining = 25,
     ) {}
 
     public function handle(SiteCrawlAction $action): void
     {
         Tenancy::actingAs($this->businessId, function () use ($action): void {
-            $action->continue($this->businessId, $this->locationId, $this->round);
+            $action->continue($this->businessId, $this->locationId, $this->round, $this->remaining);
         });
     }
 }

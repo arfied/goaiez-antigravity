@@ -831,11 +831,11 @@ it('queues the pages the per-minute budget turns away and reads them a minute la
         ->and(SiteInventoryPage::where('business_id', $biz->id)->where('status', 'queued')->orderBy('url')->pluck('url')->all())
         ->toBe(['https://example.com/b', 'https://example.com/c'])
         ->and(SiteInventoryPage::where('business_id', $biz->id)->where('status', 'refused')->count())->toBe(0);
-    Queue::assertPushed(SiteCrawlContinueJob::class, fn (SiteCrawlContinueJob $job) => $job->round === 2 && $job->businessId === $biz->id && $job->locationId === $locationId);
+    Queue::assertPushed(SiteCrawlContinueJob::class, fn (SiteCrawlContinueJob $job) => $job->round === 2 && $job->businessId === $biz->id && $job->locationId === $locationId && $job->remaining === 23);
     Livewire::test(SiteInventory::class)->assertSee('a few pages a minute');
 
     $this->travel(2)->minutes();
-    $second = app(SiteCrawlAction::class)->continue($biz->id, $locationId, 2);
+    $second = app(SiteCrawlAction::class)->continue($biz->id, $locationId, 2, 23);
 
     expect($second)->toBe(['status' => 'fetched', 'pages' => 2, 'refused' => 0, 'queued' => 0])
         ->and(SiteInventoryPage::where('business_id', $biz->id)->where('status', 'fetched')->count())->toBe(4)
@@ -861,12 +861,78 @@ it('stops resuming a paused crawl after its last round', function () {
     $locationId = Location::where('business_id', $biz->id)->first()->id;
     SiteInventoryPage::create(['business_id' => $biz->id, 'location_id' => $locationId, 'url' => 'https://example.com/x', 'status' => 'queued']);
 
-    $last = app(SiteCrawlAction::class)->continue($biz->id, $locationId, SiteCrawlAction::MAX_ROUNDS);
+    $last = app(SiteCrawlAction::class)->continue($biz->id, $locationId, SiteCrawlAction::MAX_ROUNDS, 25);
 
     expect($last)->toBe(['status' => 'fetched', 'pages' => 0, 'refused' => 0, 'queued' => 1]);
     Queue::assertNothingPushed();
     Http::assertNothingSent();
 
-    app(SiteCrawlAction::class)->continue($biz->id, $locationId, 1);
+    app(SiteCrawlAction::class)->continue($biz->id, $locationId, 1, 25);
     Queue::assertPushed(SiteCrawlContinueJob::class, fn (SiteCrawlContinueJob $job) => $job->round === 2);
+});
+
+it('reads a resumed crawl whatever rows earlier crawls left behind', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+    Location::where('business_id', $biz->id)->update([
+        'website_url' => 'https://example.com',
+        'website_confirmed_at' => now(),
+    ]);
+
+    $this->actingAs($owner);
+    Tenancy::set($biz->id);
+
+    Queue::fake();
+    Http::fake([
+        '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
+        'https://example.com/b' => Http::response('<html><head><title>B</title></head><body><p>Queued page 8801</p></body></html>', 200, ['Content-Type' => 'text/html']),
+        'https://example.com/c' => Http::response('<html><head><title>C</title></head><body><p>Old refused page 8802</p></body></html>', 200, ['Content-Type' => 'text/html']),
+    ]);
+    $locationId = Location::where('business_id', $biz->id)->first()->id;
+    foreach (range(1, 30) as $i) {
+        SiteInventoryPage::create(['business_id' => $biz->id, 'location_id' => $locationId, 'url' => "https://example.com/earlier-{$i}", 'status' => 'fetched', 'fetched_at' => now()->subDays(3)]);
+    }
+    SiteInventoryPage::create(['business_id' => $biz->id, 'location_id' => $locationId, 'url' => 'https://example.com/b', 'status' => 'queued']);
+    SiteInventoryPage::create(['business_id' => $biz->id, 'location_id' => $locationId, 'url' => 'https://example.com/c', 'status' => 'refused', 'refusal_reason' => 'rate_budget', 'fetched_at' => now()]);
+
+    $result = app(SiteCrawlAction::class)->continue($biz->id, $locationId, 2, 5);
+
+    expect($result)->toBe(['status' => 'fetched', 'pages' => 2, 'refused' => 0, 'queued' => 0])
+        ->and(SiteInventoryPage::where('business_id', $biz->id)->where('url', 'https://example.com/c')->value('text'))->toContain('Old refused page 8802')
+        ->and(SiteCrawlAction::cutShort($biz->id, $locationId)->count())->toBe(0);
+});
+
+it('stops counting a page past the page limit as cut short', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+    Location::where('business_id', $biz->id)->update([
+        'website_url' => 'https://example.com',
+        'website_confirmed_at' => now(),
+    ]);
+
+    $this->actingAs($owner);
+    Tenancy::set($biz->id);
+
+    app(DefaultsRegistry::class)->set('sites.crawl.max_pages', 2, 'test');
+    Queue::fake();
+    Http::fake([
+        '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
+        'https://example.com' => Http::response('<html><head><title>Home</title></head><body><p>Home</p></body></html>', 200, ['Content-Type' => 'text/html']),
+        'https://example.com/p1' => Http::response('<html><head><title>P1</title></head><body><p>P1</p></body></html>', 200, ['Content-Type' => 'text/html']),
+    ]);
+    $locationId = Location::where('business_id', $biz->id)->first()->id;
+    foreach (['p1', 'p2', 'p3'] as $slug) {
+        SiteInventoryPage::create(['business_id' => $biz->id, 'location_id' => $locationId, 'url' => "https://example.com/{$slug}", 'status' => 'refused', 'refusal_reason' => 'rate_budget', 'fetched_at' => now()]);
+    }
+
+    $result = app(SiteCrawlAction::class)->handle($biz->id, $locationId);
+
+    expect($result)->toBe(['status' => 'fetched', 'pages' => 2, 'refused' => 0, 'queued' => 0])
+        ->and(SiteCrawlAction::cutShort($biz->id, $locationId)->count())->toBe(0)
+        ->and(SiteInventoryPage::where('business_id', $biz->id)->where('url', 'https://example.com/p3')->value('refusal_reason'))->toBe(SiteCrawlAction::PAST_LIMIT);
+    Queue::assertNothingPushed();
+    Http::assertNotSent(fn ($r) => str_contains($r->url(), '/p2') || str_contains($r->url(), '/p3'));
+    Livewire::test(SiteInventory::class)->assertSee('past the page limit');
 });

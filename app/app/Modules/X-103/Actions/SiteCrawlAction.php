@@ -33,6 +33,12 @@ final class SiteCrawlAction
 
     public const RESUME_AFTER_SECONDS = 65;
 
+    /**
+     * A page the crawl's page limit (sites.crawl.max_pages) leaves unread. It is no longer "cut short": without this, a site
+     * larger than the limit would count as unfinished for ever and every build would crawl it again.
+     */
+    public const PAST_LIMIT = 'max_pages';
+
     public function __construct(
         private readonly FetchGateway $fetcher,
         private readonly DefaultsRegistry $registry
@@ -72,27 +78,27 @@ final class SiteCrawlAction
     }
 
     /**
-     * Reads the pages an earlier round left queued, and every new page they link to, within what is left of
-     * sites.crawl.max_pages.
+     * Reads the pages an earlier round could not (cutShort()), and every new page they link to, within the $remaining pages
+     * the crawl that queued them had left. The allowance travels with the job: counting it from every row the location has
+     * ever had — rows from crawls days ago included — starved the very first resumed round on production (2026-10-03: one
+     * read, then nothing).
      *
      * @return array{status: string, pages?: int, refused?: int, queued?: int, reason?: string}
      */
-    public function continue(int $businessId, int $locationId, int $round): array
+    public function continue(int $businessId, int $locationId, int $round, int $remaining): array
     {
         $location = Location::find($locationId);
         if (! $location || ! $location->website_url || ! $location->website_confirmed_at) {
             return ['status' => 'refused', 'reason' => 'no_website'];
         }
 
-        $rows = SiteInventoryPage::where('business_id', $businessId)->where('location_id', $locationId);
-        $queue = array_values(array_map('strval', (clone $rows)->where('status', 'queued')->orderBy('id')->pluck('url')->all()));
+        $queue = array_values(array_map('strval', self::cutShort($businessId, $locationId)->orderBy('id')->pluck('url')->all()));
         if ($queue === []) {
             return ['status' => 'fetched', 'pages' => 0, 'refused' => 0, 'queued' => 0];
         }
-        $seen = array_fill_keys(array_map('strval', (clone $rows)->pluck('url')->all()), true);
-        $done = (clone $rows)->where('status', '!=', 'queued')->count();
+        $seen = array_fill_keys(array_map('strval', SiteInventoryPage::where('business_id', $businessId)->where('location_id', $locationId)->pluck('url')->all()), true);
 
-        return $this->crawl($businessId, $locationId, $location->website_url, $queue, $seen, max(0, $this->registry->int('sites.crawl.max_pages') - $done), $round);
+        return $this->crawl($businessId, $locationId, $location->website_url, $queue, $seen, max(0, $remaining), $round);
     }
 
     /**
@@ -271,9 +277,10 @@ final class SiteCrawlAction
             $pagesCount++;
         }
 
+        $remaining = max(0, $maxPages - $pagesCount - $refusedCount);
         $queuedCount = 0;
         if ($paused) {
-            foreach (array_slice($queue, 0, max(0, $maxPages - $pagesCount - $refusedCount)) as $queuedUrl) {
+            foreach (array_slice($queue, 0, $remaining) as $queuedUrl) {
                 SiteInventoryPage::updateOrCreate(
                     ['business_id' => $businessId, 'url' => $queuedUrl],
                     ['location_id' => $locationId, 'status' => 'queued', 'refusal_reason' => null]
@@ -281,8 +288,14 @@ final class SiteCrawlAction
                 $queuedCount++;
             }
             if ($queuedCount > 0 && $round < self::MAX_ROUNDS) {
-                SiteCrawlContinueJob::dispatch($businessId, $locationId, $round + 1)->delay(now()->addSeconds(self::RESUME_AFTER_SECONDS));
+                SiteCrawlContinueJob::dispatch($businessId, $locationId, $round + 1, $remaining)->delay(now()->addSeconds(self::RESUME_AFTER_SECONDS));
             }
+        }
+
+        // What the page limit leaves unread is past the limit, not cut short (PAST_LIMIT).
+        $pastLimit = array_slice($queue, $paused ? $remaining : 0);
+        if ($pastLimit !== []) {
+            self::cutShort($businessId, $locationId)->whereIn('url', $pastLimit)->update(['status' => 'refused', 'refusal_reason' => self::PAST_LIMIT]);
         }
 
         return [
