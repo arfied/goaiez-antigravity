@@ -38,9 +38,13 @@ final class SiteBuildRunAction
             ->where('fetched_at', '>=', $cutoff)
             ->exists();
 
+        // A crawl the shared budget cut short is not a reusable inventory (the owner's build, 2026-10-03: "crawl: reused,
+        // pages 3" after a crawl that read 3 of 16 pages): the build reads the site again.
+        $cutShort = SiteCrawlAction::cutShort($businessId, $locationId)->exists();
+
         $crawlResult = null;
         $draftedWithoutCrawl = false;
-        if (! $hasRecentInventory) {
+        if (! $hasRecentInventory || $cutShort) {
             $crawlResult = $this->crawl->handle($businessId, $locationId);
             if (isset($crawlResult['status']) && $crawlResult['status'] === 'refused') {
                 $reason = $crawlResult['reason'] ?? 'refused';

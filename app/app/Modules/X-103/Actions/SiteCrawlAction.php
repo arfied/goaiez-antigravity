@@ -13,6 +13,7 @@ use App\Modules\X103\Jobs\SiteCrawlContinueJob;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Services\Config\DefaultsRegistry;
 use DOMDocument;
+use Illuminate\Database\Eloquent\Builder;
 
 final class SiteCrawlAction
 {
@@ -48,7 +49,26 @@ final class SiteCrawlAction
         }
         $startUrl = $location->website_url;
 
-        return $this->crawl($businessId, $locationId, $startUrl, [$startUrl], [$startUrl => true], $this->registry->int('sites.crawl.max_pages'), 1);
+        // Pages an earlier crawl could not read because the budget ran out are read again now, linked or not — otherwise
+        // a page the site no longer links to would stay "cut short" for ever and every build would re-crawl.
+        $pending = array_map('strval', self::cutShort($businessId, $locationId)->orderBy('id')->pluck('url')->all());
+        $queue = array_values(array_unique([$startUrl, ...$pending]));
+
+        return $this->crawl($businessId, $locationId, $startUrl, $queue, array_fill_keys($queue, true), $this->registry->int('sites.crawl.max_pages'), 1);
+    }
+
+    /**
+     * The pages a crawl did not finish because the shared budget ran out: queued for a later round, or — before
+     * 2026-10-03 — recorded as refused for the budget. While any exist the inventory is not complete.
+     *
+     * @return Builder<SiteInventoryPage>
+     */
+    public static function cutShort(int $businessId, int $locationId): Builder
+    {
+        return SiteInventoryPage::where('business_id', $businessId)
+            ->where('location_id', $locationId)
+            ->where(fn ($q) => $q->where('status', 'queued')
+                ->orWhere(fn ($q) => $q->where('status', 'refused')->where('refusal_reason', FetchRefusalReason::RateBudget->value)));
     }
 
     /**

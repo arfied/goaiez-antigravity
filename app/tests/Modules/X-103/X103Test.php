@@ -29,6 +29,7 @@ use App\Modules\X103\Actions\SeoDraftAction;
 use App\Modules\X103\Actions\SiteBuildAction;
 use App\Modules\X103\Actions\SiteBuildRunAction;
 use App\Modules\X103\Actions\SiteCopyPolishAction;
+use App\Modules\X103\Actions\SiteCrawlAction;
 use App\Modules\X103\Actions\SiteDraftAction;
 use App\Modules\X103\Actions\SiteMissingFactsAction;
 use App\Modules\X103\Actions\SitePageWeightAction;
@@ -2612,5 +2613,69 @@ class X103Test extends TestCase
 
         // Second call should return false and change nothing
         $this->assertFalse($action->handle($biz->id, $page->id));
+    }
+
+    /**
+     * @return array{0: Business, 1: Location}
+     */
+    private function buildTenantWithARecentCrawl(bool $cutShort): array
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Cut Short Tenant', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+        $location = Location::factory()->create([
+            'business_id' => $biz->id,
+            'website_url' => 'https://example.com',
+            'website_confirmed_at' => now(),
+        ]);
+        SiteInventoryPage::create(['business_id' => $biz->id, 'location_id' => $location->id, 'url' => 'https://example.com', 'status' => 'fetched', 'fetched_at' => now()]);
+        if ($cutShort) {
+            SiteInventoryPage::create(['business_id' => $biz->id, 'location_id' => $location->id, 'url' => 'https://example.com/old-8701', 'status' => 'refused', 'refusal_reason' => 'rate_budget', 'fetched_at' => now()]);
+        }
+
+        Http::fake([
+            '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
+            'https://example.com' => Http::response('<html><head><title>Home</title></head><body><h1>Welcome</h1><p>Home words 8702</p></body></html>', 200, ['Content-Type' => 'text/html']),
+            'https://example.com/old-8701' => Http::response('<html><head><title>Old</title></head><body><p>Old page words 8703</p></body></html>', 200, ['Content-Type' => 'text/html']),
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'choices' => [['message' => ['content' => 'Polished build line 8704']]],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => 'Polished build line 8704']],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
+            '*' => Http::response('', 404),
+        ]);
+
+        return [$biz, $location];
+    }
+
+    public function test_a_build_re_reads_a_site_whose_last_crawl_the_budget_cut_short(): void
+    {
+        [$biz, $location] = $this->buildTenantWithARecentCrawl(true);
+
+        $result = app(SiteBuildRunAction::class)->handle($biz->id, $location->id);
+
+        $this->assertSame('fetched', $result['crawl']['status']);
+        $old = SiteInventoryPage::where('business_id', $biz->id)->where('url', 'https://example.com/old-8701')->first();
+        $this->assertSame('fetched', $old->status);
+        $this->assertStringContainsString('Old page words 8703', (string) $old->text);
+        $this->assertSame(0, SiteCrawlAction::cutShort($biz->id, $location->id)->count());
+    }
+
+    public function test_a_build_reuses_a_recent_crawl_that_finished(): void
+    {
+        [$biz, $location] = $this->buildTenantWithARecentCrawl(false);
+
+        $result = app(SiteBuildRunAction::class)->handle($biz->id, $location->id);
+
+        $this->assertSame('reused', $result['crawl']['status']);
+        Http::assertNotSent(fn ($r) => $r->url() === 'https://example.com');
     }
 }
