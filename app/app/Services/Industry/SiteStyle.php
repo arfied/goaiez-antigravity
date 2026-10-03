@@ -10,6 +10,9 @@ final class SiteStyle
 
     public const PALETTE_KEYS = ['surface', 'card', 'ink', 'primary', 'accent'];
 
+    /** Corner styles a site may use (the stylesheet for each lives with the themes, in X-103's SiteThemes::CORNERS). */
+    public const CORNERS = ['square', 'soft', 'round'];
+
     public static function contrast(string $a, string $b): float
     {
         $lum1 = self::luminance($a);
@@ -126,6 +129,10 @@ final class SiteStyle
                     $clean['type_pairing'][$key] = $style['type_pairing'][$key];
                 }
             }
+        }
+
+        if (isset($style['corners']) && is_string($style['corners']) && in_array($style['corners'], self::CORNERS, true)) {
+            $clean['corners'] = $style['corners'];
         }
 
         if (empty($clean)) {

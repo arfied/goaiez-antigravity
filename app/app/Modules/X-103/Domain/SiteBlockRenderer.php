@@ -147,6 +147,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .site-block.booking.booking--banner { text-align: center; }
 .site-block.booking.booking--banner > div > div { justify-content: center; }
 .site-block.stats.stats--cards li { background: var(--color-card); border-radius: 16px; padding: 1.5rem 1rem; box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+@media (min-width: 40rem) { .site-block.stats.stats--bar .stat-list { gap: 0; } .site-block.stats.stats--bar li + li { border-left: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent); } }
+.site-block.booking.booking--card > div { max-width: 30rem; margin-inline: auto; background: var(--color-card); border: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent); border-radius: 18px; padding: clamp(1.5rem, 4vw, 2.25rem); text-align: center; box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+.site-block.booking.booking--card > div > div { justify-content: center; }
 .site-block.cta.cta--photo { position: relative; overflow: hidden; }
 .cta-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.3; }
 .site-block.cta.cta--photo > div { position: relative; }
@@ -158,6 +161,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
         $theme = SiteThemes::get(is_string($themeId) ? $themeId : null);
         if ($theme !== null) {
             $html .= '<style>'.SiteThemes::css($theme['id']).'</style>'."\n";
+        }
+        // The owner's (or the AI's) corner style, on top of the theme.
+        $corners = $context['tokens']['corners'] ?? null;
+        $cornersCss = SiteThemes::cornersCss(is_string($corners) ? $corners : null);
+        if ($cornersCss !== '') {
+            $html .= '<style>'.$cornersCss.'</style>'."\n";
         }
 
         $renderedCount = 0;

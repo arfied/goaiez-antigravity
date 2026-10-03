@@ -55,6 +55,9 @@ final class SiteEditApplyAction
                 if (isset($pending['style']['type_pairing'])) {
                     $tokens['type_pairing'] = array_replace($tokens['type_pairing'] ?? [], $pending['style']['type_pairing']);
                 }
+                if (is_string($pending['style']['corners'] ?? null)) {
+                    $tokens['corners'] = $pending['style']['corners'];
+                }
                 // An AI design brings its theme with its colours (SiteDesignUseAction always pairs them).
                 if (is_string($pending['theme'] ?? null) && SiteThemes::get($pending['theme']) !== null) {
                     $tokens['theme'] = $pending['theme'];

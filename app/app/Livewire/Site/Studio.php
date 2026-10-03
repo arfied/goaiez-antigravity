@@ -12,6 +12,7 @@ use App\Modules\X103\Actions\SiteBlockAddAction;
 use App\Modules\X103\Actions\SiteBlockArrangeAction;
 use App\Modules\X103\Actions\SiteBlockFieldSetAction;
 use App\Modules\X103\Actions\SiteBuildWholeAction;
+use App\Modules\X103\Actions\SiteCornersSetAction;
 use App\Modules\X103\Actions\SiteDesignRequestAction;
 use App\Modules\X103\Actions\SiteDesignUseAction;
 use App\Modules\X103\Actions\SiteEditApplyAction;
@@ -526,6 +527,27 @@ class Studio extends Component
         }
     }
 
+    public function setCorners(string $corners, SiteCornersSetAction $action): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if ($this->pageId === null) {
+            $this->error = 'Select a page first.';
+
+            return;
+        }
+
+        $res = $action->handle($this->businessId, $this->pageId, $corners);
+        if ($res['status'] === 'applied') {
+            $this->showDesign = null;
+            $this->success = 'Corners changed on your draft. Publish to put them on your live site; Undo brings the old look back.';
+        } else {
+            $this->error = 'There is no such corner style.';
+        }
+    }
+
     public function undo(PageUndoAction $action): void
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
@@ -684,6 +706,7 @@ HTML;
             'previewHtml' => $previewHtml,
             'selectedBlockType' => $selectedBlockType,
             'currentTheme' => app(IndustryStartingPoints::class)->forBusiness($this->businessId)['theme'] ?? null,
+            'currentCorners' => app(IndustryStartingPoints::class)->forBusiness($this->businessId)['corners'] ?? null,
         ]);
     }
 }

@@ -91,4 +91,37 @@ class SiteThemesTest extends TestCase
         $own = $this->render([['type' => 'services', 'variant' => 'columns', 'items' => [['name' => 'S1']]]], 'warm-local');
         $this->assertStringContainsString('class="site-block services services--columns"', $own);
     }
+
+    public function test_a_corner_style_adds_its_stylesheet_only_when_it_is_set(): void
+    {
+        $hero = [['type' => 'hero', 'headline' => 'CORNERS_8203']];
+        $tokens = app(IndustryStartingPoints::class)->for(null);
+
+        $round = app(SiteBlockRenderer::class)->render($hero, ['tokens' => ['corners' => 'round'] + $tokens] + self::CONTEXT);
+        $this->assertStringContainsString('/* corners: round */', $round);
+        $this->assertSame(2, substr_count($round, '<style>'));
+        $this->assertStringContainsString('CORNERS_8203', $round);
+
+        $plain = app(SiteBlockRenderer::class)->render($hero, ['tokens' => $tokens] + self::CONTEXT);
+        $this->assertStringNotContainsString('/* corners:', $plain);
+        $this->assertSame(1, substr_count($plain, '<style>'));
+
+        $unknown = app(SiteBlockRenderer::class)->render($hero, ['tokens' => ['corners' => '../x'] + $tokens] + self::CONTEXT);
+        $this->assertStringNotContainsString('/* corners:', $unknown);
+        $this->assertSame('', SiteThemes::cornersCss('blob'));
+        $this->assertSame('', SiteThemes::cornersCss(null));
+    }
+
+    public function test_the_corner_styles_agree_and_are_validated_like_colours(): void
+    {
+        $this->assertSame(SiteStyle::CORNERS, array_keys(SiteThemes::CORNERS));
+
+        $base = ['palette' => SiteThemes::THEMES['bold-trade']['palette'], 'type_pairing' => SiteThemes::THEMES['bold-trade']['type_pairing']];
+        $ok = SiteStyle::validate(['corners' => 'soft'], $base);
+        $this->assertTrue($ok['ok']);
+        $this->assertSame('soft', $ok['style']['corners']);
+
+        $bad = SiteStyle::validate(['corners' => 'blob', 'palette' => ['primary' => '#123456']], $base);
+        $this->assertArrayNotHasKey('corners', $bad['style'] ?? []);
+    }
 }

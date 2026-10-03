@@ -67,6 +67,32 @@ final class SiteThemes
     ];
 
     /**
+     * Corner styles an owner (or the AI) can set on top of any theme — the card radius and the button radius. Kept in step
+     * with SiteStyle::CORNERS, which validates them where colours and fonts are validated.
+     */
+    public const CORNERS = [
+        'square' => ['card' => '0', 'button' => '0'],
+        'soft' => ['card' => '10px', 'button' => '8px'],
+        'round' => ['card' => '22px', 'button' => '999px'],
+    ];
+
+    /**
+     * The corner stylesheet, or '' when no corner style is set. Doubled class selectors so it wins over any theme's own
+     * radii; it styles only our section markup and loads nothing.
+     */
+    public static function cornersCss(?string $corners): string
+    {
+        $c = self::CORNERS[$corners ?? ''] ?? null;
+        if ($c === null) {
+            return '';
+        }
+
+        return '/* corners: '.$corners.' */'."\n"
+            .'.site-block.site-block li, .site-block.site-block blockquote, .site-block.site-block .faq-item, .site-block.site-block img, .site-block.site-block .hero-cover, .site-block.site-block .about-media, .site-block.site-block.contact--card > div { border-radius: '.$c['card'].'; }'."\n"
+            .'.site-block.site-block a[class~="site-cta"], .site-block.site-block .cta-band a, .site-block.site-block.booking a, .site-block.site-block button { border-radius: '.$c['button'].'; }';
+    }
+
+    /**
      * @return array<string, mixed>|null
      */
     public static function get(?string $id): ?array

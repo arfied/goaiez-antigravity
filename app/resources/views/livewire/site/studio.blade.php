@@ -85,6 +85,12 @@
                                         <button wire:click="applyTheme('{{ $themeKey }}')" title="Best for: {{ $themeInfo['for'] }}" class="px-3 py-1 text-sm border border-rule rounded text-ink{{ $currentTheme === $themeKey ? ' font-bold' : '' }}">{{ $themeInfo['label'] }}</button>
                                     @endforeach
                                 </div>
+                                <p class="text-xs text-ink-2 mt-3 mb-1">Corners</p>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach(['square' => 'Square', 'soft' => 'Soft', 'round' => 'Round'] as $cornerKey => $cornerLabel)
+                                        <button wire:click="setCorners('{{ $cornerKey }}')" class="px-3 py-1 text-sm border border-rule rounded text-ink{{ $currentCorners === $cornerKey ? ' font-bold' : '' }}">{{ $cornerLabel }}</button>
+                                    @endforeach
+                                </div>
                             </div>
                             @endif
 

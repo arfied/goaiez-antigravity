@@ -414,4 +414,77 @@ class StudioInspectorTest extends TestCase
         $this->assertSame(4, Page::where('business_id', $business->id)->count());
         Bus::assertChained([SiteDesignJob::class, SiteDesignJob::class, SiteDesignJob::class, SiteDesignJob::class]);
     }
+
+    public function test_corners_change_the_look_and_undo_brings_the_old_corners_back(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $business = TestCase::provisionTenant(['name' => 'Inspector Owner', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($business->id);
+
+        $page = Page::create([
+            'business_id' => $business->id, 'slug' => 'p'.rand(), 'title' => 'T',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old', 'subline' => 'Old'],
+                ['type' => 'about', 'text' => 'Unchanged'],
+            ],
+            'is_published' => false,
+        ]);
+        $before = Business::find($business->id)->site_tokens;
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('setCorners', 'round')
+            ->assertSet('error', null)
+            ->assertViewHas('previewHtml', fn ($html) => str_contains($html, '/* corners: round */'));
+
+        $this->assertSame('round', Business::find($business->id)->site_tokens['corners']);
+        $page->refresh();
+        $this->assertTrue($page->draft_meta['look_changed']);
+        $this->assertEquals([['type' => 'hero', 'headline' => 'Old', 'subline' => 'Old'], ['type' => 'about', 'text' => 'Unchanged']], $page->draft_blocks);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('undo')
+            ->assertSet('error', null);
+        $this->assertEquals($before, Business::find($business->id)->site_tokens);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('setCorners', 'blob')
+            ->assertSet('error', 'There is no such corner style.');
+        $this->assertEquals($before, Business::find($business->id)->site_tokens);
+    }
+
+    public function test_an_ai_design_can_bring_its_corner_style(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $business = TestCase::provisionTenant(['name' => 'Inspector Owner', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($business->id);
+
+        $page = Page::create([
+            'business_id' => $business->id, 'slug' => 'p'.rand(), 'title' => 'T',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old', 'subline' => 'Old'],
+                ['type' => 'about', 'text' => 'Unchanged'],
+            ],
+            'is_published' => false,
+        ]);
+        $meta = $page->draft_meta ?? [];
+        $meta['designs']['grok'] = ['status' => 'ready', 'theme' => 'warm-local', 'style' => ['corners' => 'soft'], 'blocks' => [['type' => 'hero', 'headline' => 'Soft design 8204']], 'explanation' => 'Soft.', 'model' => 'xai-grok-4.3'];
+        $page->update(['draft_meta' => $meta]);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('useDesign', 'grok')
+            ->assertSet('error', null)
+            ->assertViewHas('previewHtml', fn ($html) => str_contains($html, 'Soft design 8204') && str_contains($html, '/* corners: soft */'))
+            ->call('applyProposal')
+            ->assertSet('error', null);
+
+        $tokens = Business::find($business->id)->site_tokens;
+        $this->assertSame('soft', $tokens['corners']);
+        $this->assertSame('warm-local', $tokens['theme']);
+    }
 }

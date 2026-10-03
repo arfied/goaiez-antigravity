@@ -34,6 +34,9 @@ final class PagePreview
             if (isset($style['type_pairing'])) {
                 $tokens['type_pairing'] = array_replace($tokens['type_pairing'], $style['type_pairing']);
             }
+            if (is_string($style['corners'] ?? null)) {
+                $tokens['corners'] = $style['corners'];
+            }
         }
 
         return $this->document($blocks, $tokens, $selectedIndex, $editable);
@@ -63,6 +66,9 @@ final class PagePreview
         }
         if (isset($style['type_pairing']) && is_array($style['type_pairing'])) {
             $tokens['type_pairing'] = array_replace($tokens['type_pairing'], $style['type_pairing']);
+        }
+        if (is_string($style['corners'] ?? null)) {
+            $tokens['corners'] = $style['corners'];
         }
 
         return $this->document($design['blocks'], $tokens, null, false);

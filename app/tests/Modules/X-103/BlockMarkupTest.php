@@ -430,4 +430,18 @@ class BlockMarkupTest extends TestCase
         $this->assertStringContainsString('class="cta-photo"', $cta);
         $this->assertStringContainsString('CTA_7902.jpg', $cta);
     }
+
+    public function test_a_booking_card_and_a_numbers_bar(): void
+    {
+        $card = $this->renderBlock(['type' => 'booking_button', 'variant' => 'card', 'label' => 'BOOK_CARD_8201', 'url' => 'https://example.com/book8201']);
+        $this->assertStringContainsString('class="site-block booking booking--card"', $card);
+        $this->assertStringContainsString('BOOK_CARD_8201', $card);
+
+        $inline = $this->renderBlock(['type' => 'booking_button', 'label' => 'B', 'url' => 'https://example.com/b']);
+        $this->assertStringNotContainsString('class="site-block booking booking--', $inline);
+
+        $bar = $this->renderBlock(['type' => 'stats', 'variant' => 'bar', 'items' => [['value' => 'STAT_BAR_8202', 'label' => 'L']]]);
+        $this->assertStringContainsString('class="site-block stats stats--bar"', $bar);
+        $this->assertStringContainsString('STAT_BAR_8202', $bar);
+    }
 }

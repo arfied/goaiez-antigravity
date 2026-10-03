@@ -182,6 +182,9 @@ class IndustryStartingPoints
             if (isset($tokens['theme']) && is_string($tokens['theme'])) {
                 $result['theme'] = $tokens['theme'];
             }
+            if (isset($tokens['corners']) && is_string($tokens['corners'])) {
+                $result['corners'] = $tokens['corners'];
+            }
             if (isset($tokens['palette']) && is_array($tokens['palette'])) {
                 $result['palette'] = array_replace($result['palette'], $tokens['palette']);
             }

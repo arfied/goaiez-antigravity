@@ -45,8 +45,8 @@ final class BlockPatchSchema
         'faq' => ['list', 'cards', 'columns'],
         'about' => ['plain', 'centered', 'split'],
         'contact' => ['stack', 'columns', 'card'],
-        'booking_button' => ['inline', 'banner'],
-        'stats' => ['row', 'cards'],
+        'booking_button' => ['inline', 'banner', 'card'],
+        'stats' => ['row', 'cards', 'bar'],
     ];
 
     /** The plain-text fields of a LIST item the owner may type over in the Studio (set_item_string). Never sent by the model. */
