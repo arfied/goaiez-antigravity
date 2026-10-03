@@ -656,6 +656,9 @@ function outboundHttpPermittedFiles(): array
         // Google Gemini (2026-10-02, the boss: compare ChatGPT, Gemini, Claude and Grok on site design) — a fourth
         // documented vendor JSON API with its own credential, on the same footing as the three above.
         'Services/Ai/GeminiClient.php',
+        // fal.ai (2026-10-02, the boss: low-cost FLUX pictures) — pictures only, returned inline (sync_mode), so the one
+        // host is fal.run and no picture is fetched from anywhere else.
+        'Services/Ai/FalImageClient.php',
 
         // The embeddings client (lane L5 phase 1). A third file rather than a
         // widened second one, because Anthropic publishes no embeddings API and

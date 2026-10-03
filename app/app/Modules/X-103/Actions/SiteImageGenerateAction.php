@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\X103\Actions;
 
+use App\Enums\AiModel;
+use App\Enums\AiProvider;
 use App\Enums\AiTask;
 use App\Models\Business;
 use App\Services\Ai\AiRouter;
 use App\Services\Ai\ImageRequest;
+use App\Support\PlatformCredentials;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -20,7 +23,9 @@ final readonly class SiteImageGenerateAction
         $prompt = "Photograph for a small business website ({$business->name}). {$description}. Realistic, natural light, no text, no logos, no watermarks.";
 
         $router = app(AiRouter::class);
-        $response = $router->image(new ImageRequest(AiTask::SiteImage, $prompt));
+        // Low-cost FLUX pictures once a fal.ai key is set (the boss, 2026-10-02); OpenAI images until then, so pictures never stop.
+        $model = PlatformCredentials::has(AiProvider::Fal->credentialKey()) ? AiModel::FluxSchnell : null;
+        $response = $router->image(new ImageRequest(AiTask::SiteImage, $prompt, model: $model));
 
         if (! $response->isUsable()) {
             return [

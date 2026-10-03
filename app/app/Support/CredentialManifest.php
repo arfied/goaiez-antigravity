@@ -125,6 +125,13 @@ final class CredentialManifest
                 'degradation' => 'The Gemini site design fails as a recorded AI call with credential_not_configured; the other designers are unaffected.',
             ],
 
+            'fal_api_key' => [
+                'vendor' => 'AI providers',
+                'label' => 'fal.ai API key (FLUX pictures)',
+                'description' => 'Low-cost site pictures with FLUX.1 [schnell] (about $0.003 each). Once this key is set, site pictures use FLUX instead of OpenAI images.',
+                'degradation' => 'Site pictures keep using OpenAI images, which cost roughly ten times more per picture.',
+            ],
+
             'fetch_proxy_url' => [
                 'vendor' => 'Outbound proxy',
                 'label' => 'Tenant-site fetch proxy URL',

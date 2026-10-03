@@ -89,10 +89,6 @@ final class AiRouter
         // A caller may name the model (the site designer compares four AIs); otherwise the task's setting decides.
         $model = $request->model ?? $this->spend->modelFor($request->task);
 
-        if ($request->model !== null && ($request->model->isEmbedding() || $request->model->isImage())) {
-            return AiResponse::failed($request->model, 'not_a_completion_model');
-        }
-
         // ⚠️ THE WRONG-DOOR GUARD, AND IT IS WHAT MAKES AiTask::maxOutputTokens()'
         // ZERO ARM UNREACHABLE RATHER THAN MERELY UNUSED. An embedding tier sent
         // through here would build a chat-completions body around a model that
@@ -107,6 +103,12 @@ final class AiRouter
             ]);
 
             return AiResponse::failed($model, 'not_a_completion_task');
+        }
+
+        // A picture or embedding model named for a text task (by a caller, or by an admin setting) has no text client;
+        // refused here so this method keeps its promise never to throw.
+        if ($model->isImage() || $model->isEmbedding()) {
+            return AiResponse::failed($model, 'not_a_completion_model');
         }
 
         // Resolved before the cap is checked, because the cap is a sum over a
@@ -256,9 +258,10 @@ final class AiRouter
 
     public function image(ImageRequest $request): ImageResponse
     {
-        $model = $this->spend->modelFor($request->task);
+        // A caller may name the picture model (FLUX once a fal.ai key exists); otherwise the task's setting decides.
+        $model = $request->model ?? $this->spend->modelFor($request->task);
 
-        if (! $request->task->producesImage()) {
+        if (! $request->task->producesImage() || ! $model->isImage()) {
             Log::warning('non-image task sent to the image path', [
                 'task' => $request->task->value,
                 'model' => $model->value,
@@ -299,8 +302,11 @@ final class AiRouter
             $request->prompt
         );
 
-        $client = new OpenAiImageClient($model);
-        $response = $client->generate($request);
+        $response = match ($model->provider()) {
+            AiProvider::Fal => (new FalImageClient($model))->generate($request),
+            AiProvider::OpenAi => (new OpenAiImageClient($model))->generate($request),
+            AiProvider::Anthropic, AiProvider::Xai, AiProvider::Gemini => ImageResponse::failed($model, 'no_image_client'),
+        };
 
         $this->spend->recordImage($request->task, $response, $registered->id, $registered->version);
 
@@ -368,7 +374,7 @@ final class AiRouter
                 .'publishes no embeddings API; if that changes, add the client here rather '
                 .'than letting this model reach the OpenAI one.',
             ),
-            AiProvider::Xai, AiProvider::Gemini => throw new LogicException(
+            AiProvider::Xai, AiProvider::Gemini, AiProvider::Fal => throw new LogicException(
                 'No embedding client exists for '.$model->provider()->label().'.'
             ),
         };
@@ -391,6 +397,7 @@ final class AiRouter
             AiProvider::OpenAi => new OpenAiClient($model),
             AiProvider::Xai => new XaiClient($model),
             AiProvider::Gemini => new GeminiClient($model),
+            AiProvider::Fal => throw new LogicException('fal.ai serves pictures only; no completion client exists for it.'),
         };
     }
 }

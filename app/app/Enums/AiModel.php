@@ -99,6 +99,9 @@ enum AiModel: string
     /** Google's newest Flash model (checked 2026-10-02 on ai.google.dev: $0.75 in / $3.75 out per 1M through 2026-12-31; $1.50 / $7.50 from 2027-01-01). */
     case Gemini38Flash = 'google-gemini-3.8-flash';
 
+    /** FLUX.1 [schnell] on fal.ai (checked 2026-10-02 on fal.ai: $0.003 per megapixel, rounded up). Image only. */
+    case FluxSchnell = 'fal-flux-schnell';
+
     public function provider(): AiProvider
     {
         return match ($this) {
@@ -106,6 +109,7 @@ enum AiModel: string
             self::Gpt4oMini, self::TextEmbedding3Small, self::GptImage25Flare, self::Gpt61Sol, self::Gpt6Luna => AiProvider::OpenAi,
             self::Grok47, self::Grok43 => AiProvider::Xai,
             self::Gemini31Pro, self::Gemini38Flash => AiProvider::Gemini,
+            self::FluxSchnell => AiProvider::Fal,
         };
     }
 
@@ -124,12 +128,13 @@ enum AiModel: string
             self::Gemini31Pro => 'gem'.'ini-3.1-pro-preview',
             self::Gpt6Luna => 'gp'.'t-6-luna',
             self::Gemini38Flash => 'gem'.'ini-3.8-flash',
+            self::FluxSchnell => 'fal-ai/flux/schnell',
         };
     }
 
     public function isImage(): bool
     {
-        return $this === self::GptImage25Flare;
+        return $this === self::GptImage25Flare || $this === self::FluxSchnell;
     }
 
     /**
@@ -167,7 +172,7 @@ enum AiModel: string
     {
         return match ($this) {
             self::TextEmbedding3Small => 1536,
-            self::ClaudeOpus5, self::ClaudeSonnet5, self::ClaudeHaiku45, self::Gpt4oMini, self::GptImage25Flare, self::Grok47, self::Grok43, self::Gpt61Sol, self::Gemini31Pro, self::Gpt6Luna, self::Gemini38Flash => null,
+            self::ClaudeOpus5, self::ClaudeSonnet5, self::ClaudeHaiku45, self::Gpt4oMini, self::GptImage25Flare, self::Grok47, self::Grok43, self::Gpt61Sol, self::Gemini31Pro, self::Gpt6Luna, self::Gemini38Flash, self::FluxSchnell => null,
         };
     }
 
@@ -195,6 +200,7 @@ enum AiModel: string
             self::Gemini31Pro => 20_000,  // $2.00
             self::Gpt6Luna => 1_000,      // $0.10
             self::Gemini38Flash => 7_500, // $0.75
+            self::FluxSchnell => 0,       // billed per megapixel only — see FalImageClient
         };
     }
 
@@ -221,6 +227,7 @@ enum AiModel: string
             self::Gemini31Pro => 120_000, // $12.00
             self::Gpt6Luna => 5_000,      // $0.50
             self::Gemini38Flash => 37_500, // $3.75
+            self::FluxSchnell => 30,      // $0.003 per megapixel: one "token" is a millionth of a megapixel (FalImageClient)
         };
     }
 
@@ -251,7 +258,7 @@ enum AiModel: string
         return match ($this) {
             // The embeddings endpoint takes no sampling parameters of any kind,
             // so "rejects them" is literally true for it as well.
-            self::ClaudeOpus5, self::ClaudeSonnet5, self::TextEmbedding3Small, self::GptImage25Flare, self::Gpt61Sol, self::Gemini31Pro, self::Gpt6Luna, self::Gemini38Flash => true,
+            self::ClaudeOpus5, self::ClaudeSonnet5, self::TextEmbedding3Small, self::GptImage25Flare, self::Gpt61Sol, self::Gemini31Pro, self::Gpt6Luna, self::Gemini38Flash, self::FluxSchnell => true,
             self::ClaudeHaiku45, self::Gpt4oMini, self::Grok47, self::Grok43 => false,
         };
     }
@@ -271,7 +278,7 @@ enum AiModel: string
     {
         return match ($this) {
             self::ClaudeOpus5, self::ClaudeSonnet5 => true,
-            self::ClaudeHaiku45, self::Gpt4oMini, self::TextEmbedding3Small, self::GptImage25Flare, self::Grok47, self::Grok43, self::Gpt61Sol, self::Gemini31Pro, self::Gpt6Luna, self::Gemini38Flash => false,
+            self::ClaudeHaiku45, self::Gpt4oMini, self::TextEmbedding3Small, self::GptImage25Flare, self::Grok47, self::Grok43, self::Gpt61Sol, self::Gemini31Pro, self::Gpt6Luna, self::Gemini38Flash, self::FluxSchnell => false,
         };
     }
 

@@ -69,6 +69,8 @@ return [
 
     'gemini_api_key' => env('GEMINI_API_KEY'),
 
+    'fal_api_key' => env('FAL_API_KEY'),
+
     /*
     | Infobip — numbers, SMS/10DLC, WhatsApp, voice, and brand registration.
     | `CLAUDE.md` names it the single vendor for all of those; email is

@@ -33,6 +33,8 @@ enum AiProvider: string
 
     case Gemini = 'gemini';
 
+    case Fal = 'fal';
+
     /**
      * The PlatformCredentials key holding this provider's API key.
      */
@@ -43,6 +45,7 @@ enum AiProvider: string
             self::OpenAi => 'openai_api_key',
             self::Xai => 'xai_api_key',
             self::Gemini => 'gemini_api_key',
+            self::Fal => 'fal_api_key',
         };
     }
 
@@ -53,6 +56,7 @@ enum AiProvider: string
             self::OpenAi => 'OpenAI',
             self::Xai => 'xAI (Grok)',
             self::Gemini => 'Google (Gemini)',
+            self::Fal => 'fal.ai (FLUX)',
         };
     }
 }
