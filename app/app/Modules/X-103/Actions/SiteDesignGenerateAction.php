@@ -41,6 +41,14 @@ final class SiteDesignGenerateAction
         .'team (heading, items: name, role) · faq (items: question, answer; variant "list" | "cards" | "columns") · cta_band (heading, text, label, url) · '
         .'booking_button (label, url; variant "inline" | "banner") · contact (address, phone, email; variant "stack" | "columns" | "card")';
 
+    /** What each page of a whole site is for (SiteBuildWholeAction), told to the AI so the four pages do not repeat each other. */
+    public const PAGE_PURPOSES = [
+        'home' => 'the home page: the whole business at a glance — a strong hero, the main services, why choose us, a few reviews if real ones are given, and a call to action',
+        'services' => 'the services page: every service in detail with prices where given, how it works, and a call to action',
+        'about' => 'the about page: the business\'s story, the team if given, why choose us, reviews if real ones are given, and the area served',
+        'contact' => 'the contact page: how to get in touch, the area served, booking if offered, and short questions and answers',
+    ];
+
     public function __construct(
         private readonly AiRouter $router,
         private readonly DefaultsRegistry $registry,
@@ -54,7 +62,7 @@ final class SiteDesignGenerateAction
     /**
      * @return array{status: string, reason?: string, model?: string}
      */
-    public function handle(int $businessId, int $pageId, string $engine = 'claude'): array
+    public function handle(int $businessId, int $pageId, string $engine = 'claude', bool $keepSiteTheme = false): array
     {
         $page = Page::where('business_id', $businessId)->findOrFail($pageId);
         $model = SiteDesignEngines::model($engine);
@@ -113,10 +121,15 @@ final class SiteDesignGenerateAction
         }
         $tokens = app(IndustryStartingPoints::class)->forBusiness($businessId);
         $peerNotes = $this->peers->referenceBlock($businessId);
+        // Building a whole site: the first page chose the theme; every later page keeps it so the site looks like one brand.
+        $siteTheme = $keepSiteTheme && is_string($tokens['theme'] ?? null) && SiteThemes::get($tokens['theme']) !== null ? $tokens['theme'] : null;
+        $purpose = self::PAGE_PURPOSES[(string) $page->slug] ?? null;
 
         $prompt = $this->statedFacts->section($businessId)
             ."\n\n".($prices === [] ? 'Prices you may use: none — do not state any price.' : "Prices you may use (never any other price):\n".implode("\n", $prices))
             ."\n\nPage title: ".(string) $page->title
+            .($purpose === null ? '' : "\nThis is ".$purpose.'.')
+            .($siteTheme === null ? '' : "\nThis site already uses the theme \"".$siteTheme.'". Use it: return "theme": "'.$siteTheme.'" and no "style", so every page looks the same.')
             ."\n\nThis page's current content (JSON):\n".json_encode($content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
             .($oldHero !== null && ! empty($oldHero['image_path']) ? "\n\nThe business already has a main picture; it is kept on the hero." : '')
             ."\n\nThemes (use one id):\n".implode("\n", $themes)
@@ -143,9 +156,12 @@ final class SiteDesignGenerateAction
         }
 
         $theme = is_string($json['theme'] ?? null) && SiteThemes::get($json['theme']) !== null ? $json['theme'] : null;
+        if ($siteTheme !== null) {
+            $theme = $siteTheme;
+        }
 
         $style = null;
-        if (is_array($json['style'] ?? null) && $json['style'] !== []) {
+        if ($siteTheme === null && is_array($json['style'] ?? null) && $json['style'] !== []) {
             $base = $theme !== null
                 ? ['palette' => SiteThemes::THEMES[$theme]['palette'], 'type_pairing' => SiteThemes::THEMES[$theme]['type_pairing']]
                 : ['palette' => $tokens['palette'] ?? [], 'type_pairing' => $tokens['type_pairing'] ?? []];

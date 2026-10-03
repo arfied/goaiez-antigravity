@@ -7,6 +7,7 @@ namespace App\Modules\X103\Actions;
 use App\Modules\X103\Domain\SiteDesignEngines;
 use App\Modules\X103\Domain\SiteThemes;
 use App\Modules\X103\Models\Page;
+use App\Services\Industry\IndustryStartingPoints;
 
 /**
  * Turns one AI's design into the page's proposal: its sections, its theme, and the theme's colours and fonts with the
@@ -33,6 +34,12 @@ final class SiteDesignUseAction
 
         $theme = is_string($design['theme'] ?? null) ? SiteThemes::get($design['theme']) : null;
         $style = is_array($design['style'] ?? null) ? $design['style'] : [];
+        // A design that keeps the site's current theme and brings no colours of its own changes no look — so the colours
+        // an earlier page tuned are not reset to the theme's defaults (a whole site is applied page by page).
+        $siteTheme = app(IndustryStartingPoints::class)->forBusiness($businessId)['theme'] ?? null;
+        if ($theme !== null && $theme['id'] === $siteTheme && $style === []) {
+            $theme = null;
+        }
         if ($theme !== null) {
             $style = array_replace_recursive(['palette' => $theme['palette'], 'type_pairing' => $theme['type_pairing']], $style);
         }

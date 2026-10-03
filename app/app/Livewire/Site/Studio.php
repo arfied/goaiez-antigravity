@@ -11,6 +11,7 @@ use App\Modules\X103\Actions\PageUndoAction;
 use App\Modules\X103\Actions\SiteBlockAddAction;
 use App\Modules\X103\Actions\SiteBlockArrangeAction;
 use App\Modules\X103\Actions\SiteBlockFieldSetAction;
+use App\Modules\X103\Actions\SiteBuildWholeAction;
 use App\Modules\X103\Actions\SiteDesignRequestAction;
 use App\Modules\X103\Actions\SiteDesignUseAction;
 use App\Modules\X103\Actions\SiteEditApplyAction;
@@ -316,6 +317,26 @@ class Studio extends Component
     public function designWithAll(SiteDesignRequestAction $action): void
     {
         $this->startDesign(array_keys(SiteDesignEngines::ENGINES), $action);
+    }
+
+    /** Builds Home, Services, About and Contact with the default AI, one page after another (SiteBuildWholeAction). */
+    public function buildWholeSite(SiteBuildWholeAction $action): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $res = $action->handle($this->businessId, 'claude');
+        if ($res['status'] !== 'queued') {
+            $this->error = 'Your site is already being built. Give it a few minutes.';
+
+            return;
+        }
+
+        $this->pageId = $res['home_id'] ?? $this->pageId;
+        $this->selectedBlockIndex = null;
+        $this->showDesign = null;
+        $this->success = 'Building Home, Services, About and Contact, one page after another — about a minute each. Empty pages fill in by themselves; a page that already has sections gets a design you can use. Nothing is published until you publish it.';
     }
 
     /** Puts one AI's design up as the page's proposal: preview it, then Apply or Discard. */

@@ -99,6 +99,7 @@
                                     @endforeach
                                     <button wire:click="designWithAll" class="px-3 py-1 text-sm border border-rule rounded text-ink font-bold">All four</button>
                                 </div>
+                                <button wire:click="buildWholeSite" class="mt-2 block w-full text-center px-4 py-2 border border-rule text-ink font-bold rounded">Build the whole site with AI</button>
                                 @php $anyRunning = collect($designs)->contains(fn ($d) => ($d['status'] ?? null) === 'running'); @endphp
                                 <ul class="mt-2 text-xs text-ink-2"@if($anyRunning) wire:poll.5s @endif>
                                     @foreach(\App\Modules\X103\Domain\SiteDesignEngines::ENGINES as $engineKey => $engineInfo)
@@ -195,7 +196,14 @@
                 </div>
             @else
                 <div class="flex items-center justify-center h-full">
-                    <p class="text-ink-2">You have no pages yet. <a href="{{ route('x-103.site-build') }}" class="underline text-brand">Run 'Build my site'</a> first.</p>
+                    <div class="max-w-md text-center">
+                        <p class="text-ink-2">You have no pages yet.</p>
+                        <button wire:click="buildWholeSite" class="mt-3 px-4 py-2 bg-ink text-paper font-bold rounded">Build my whole site with AI</button>
+                        <p class="mt-2 text-xs text-ink-2">The AI writes Home, Services, About and Contact from your business details and what top local businesses cover — no website needed. Or <a href="{{ route('x-103.site-build') }}" class="underline text-brand">build from your current website</a>.</p>
+                        @if($error)
+                            <p class="mt-2 text-sm text-attention">{{ $error }}</p>
+                        @endif
+                    </div>
                 </div>
             @endif
         </div>

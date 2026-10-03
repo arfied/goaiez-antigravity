@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Modules\X103\Jobs\SiteDesignJob;
 use App\Modules\X103\Models\Page;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
@@ -393,5 +394,24 @@ class StudioInspectorTest extends TestCase
         $tokens = Business::find($business->id)->site_tokens;
         $this->assertSame('warm-local', $tokens['theme']);
         $this->assertSame('#a23e2a', $tokens['palette']['primary']);
+    }
+
+    public function test_an_owner_with_no_pages_can_build_the_whole_site_in_one_click(): void
+    {
+        Bus::fake();
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $business = TestCase::provisionTenant(['name' => 'Inspector Owner', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($business->id);
+
+        $component = Livewire::test(Studio::class)
+            ->assertSee('Build my whole site with AI')
+            ->call('buildWholeSite')
+            ->assertSet('error', null);
+
+        $home = Page::where('business_id', $business->id)->where('slug', 'home')->firstOrFail();
+        $component->assertSet('pageId', $home->id);
+        $this->assertSame(4, Page::where('business_id', $business->id)->count());
+        Bus::assertChained([SiteDesignJob::class, SiteDesignJob::class, SiteDesignJob::class, SiteDesignJob::class]);
     }
 }
