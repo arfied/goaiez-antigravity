@@ -2620,6 +2620,10 @@ class X103Test extends TestCase
      */
     private function buildTenantWithARecentCrawl(bool $cutShort): array
     {
+        // This class has no per-test rollback (TestCase's RefreshesTenantDatabase is commented out), so the fetch attempts of
+        // earlier crawl tests in the same minute would use up tenant_site's four-a-minute budget and the crawl would queue
+        // instead of read. Two minutes on, they no longer count.
+        $this->travel(2)->minutes();
         $biz = TestCase::provisionTenant(['name' => 'Cut Short Tenant', 'currency' => 'USD']);
         Tenancy::set($biz->id);
         $location = Location::factory()->create([
@@ -2677,5 +2681,47 @@ class X103Test extends TestCase
 
         $this->assertSame('reused', $result['crawl']['status']);
         Http::assertNotSent(fn ($r) => $r->url() === 'https://example.com');
+    }
+
+    public function test_a_build_reads_a_new_website_instead_of_reusing_a_recent_crawl_of_the_old_one(): void
+    {
+        // This class has no per-test rollback (TestCase's RefreshesTenantDatabase is commented out), so the fetch attempts of
+        // earlier crawl tests in the same minute would use up tenant_site's four-a-minute budget and the crawl would queue
+        // instead of read. Two minutes on, they no longer count.
+        $this->travel(2)->minutes();
+        $biz = TestCase::provisionTenant(['name' => 'Changed Website Tenant', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+        $location = Location::factory()->create([
+            'business_id' => $biz->id,
+            'website_url' => 'https://example.com',
+            'website_confirmed_at' => now(),
+        ]);
+        SiteInventoryPage::create(['business_id' => $biz->id, 'location_id' => $location->id, 'url' => 'https://old-site-9403.example/', 'status' => 'fetched', 'fetched_at' => now()]);
+
+        Http::fake([
+            '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
+            'https://example.com' => Http::response('<html><head><title>Home</title></head><body><h1>Welcome</h1><p>New site 9404</p></body></html>', 200, ['Content-Type' => 'text/html']),
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_eval',
+                'choices' => [['message' => ['content' => 'Polished build line 9405']]],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => 'Polished build line 9405']],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
+            '*' => Http::response('', 404),
+        ]);
+
+        $result = app(SiteBuildRunAction::class)->handle($biz->id, $location->id);
+
+        $this->assertSame('fetched', $result['crawl']['status']);
+        $this->assertSame(0, SiteInventoryPage::where('business_id', $biz->id)->where('url', 'like', '%old-site-9403%')->count());
+        $this->assertStringContainsString('New site 9404', (string) SiteInventoryPage::where('business_id', $biz->id)->where('url', 'https://example.com')->value('text'));
     }
 }

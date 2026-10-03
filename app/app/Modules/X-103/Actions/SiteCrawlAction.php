@@ -55,12 +55,50 @@ final class SiteCrawlAction
         }
         $startUrl = $location->website_url;
 
+        // A changed website: the pages (and, by cascade, the image rows) crawled from this location's PREVIOUS website are
+        // forgotten before the new one is read, so the old site's words, brand and photos stop feeding drafts and designs (the
+        // owner testing another business's site, 2026-10-03). The picture files stay on disk, so a page already using one keeps
+        // it. Only when the address names a host: an unreadable one must never forget the whole crawl.
+        if (self::hostOf($startUrl) !== '') {
+            SiteInventoryPage::where('business_id', $businessId)->where('location_id', $locationId)
+                ->whereNot(fn (Builder $q) => self::onWebsite($q, $startUrl))
+                ->delete();
+        }
+
         // Pages an earlier crawl could not read because the budget ran out are read again now, linked or not — otherwise
         // a page the site no longer links to would stay "cut short" for ever and every build would re-crawl.
         $pending = array_map('strval', self::cutShort($businessId, $locationId)->orderBy('id')->pluck('url')->all());
         $queue = array_values(array_unique([$startUrl, ...$pending]));
 
         return $this->crawl($businessId, $locationId, $startUrl, $queue, array_fill_keys($queue, true), $this->registry->int('sites.crawl.max_pages'), 1);
+    }
+
+    /**
+     * Narrows a query on SiteInventoryPage to the pages of the website $websiteUrl names: its host, with or without "www.",
+     * over http or https. A website with no readable host matches nothing.
+     *
+     * @param  Builder<SiteInventoryPage>  $query
+     * @return Builder<SiteInventoryPage>
+     */
+    public static function onWebsite(Builder $query, string $websiteUrl): Builder
+    {
+        $host = self::hostOf($websiteUrl);
+        if ($host === '') {
+            return $query->whereRaw('1 = 0');
+        }
+
+        return $query->where(function (Builder $w) use ($host): void {
+            foreach (['http://', 'https://'] as $scheme) {
+                foreach (['', 'www.'] as $sub) {
+                    $w->orWhere('url', $scheme.$sub.$host)->orWhere('url', 'like', $scheme.$sub.$host.'/%');
+                }
+            }
+        });
+    }
+
+    private static function hostOf(string $url): string
+    {
+        return (string) preg_replace('/^www\./', '', strtolower((string) parse_url($url, PHP_URL_HOST)));
     }
 
     /**

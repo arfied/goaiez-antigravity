@@ -974,3 +974,32 @@ it('reads Cloudflare-protected email addresses and never crawls them or a #fragm
         ->toEqualCanonicalizing(['info-8901@example.com', 'sales-8902@example.com']);
     Http::assertNotSent(fn ($r) => str_contains($r->url(), 'cdn-cgi'));
 });
+
+it('forgets the pages and photos of a previous website when the new one is read', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+    Location::where('business_id', $biz->id)->update([
+        'website_url' => 'https://example.com',
+        'website_confirmed_at' => now(),
+    ]);
+
+    $this->actingAs($owner);
+    Tenancy::set($biz->id);
+
+    $locationId = Location::where('business_id', $biz->id)->first()->id;
+    $old = SiteInventoryPage::create(['business_id' => $biz->id, 'location_id' => $locationId, 'url' => 'https://old-site-9401.example/', 'status' => 'fetched', 'fetched_at' => now(), 'text' => 'Old site words', 'brand' => ['colours' => ['#ff0000']]]);
+    SiteInventoryImage::create(['business_id' => $biz->id, 'page_id' => $old->id, 'source_url' => 'https://old-site-9401.example/hero.jpg', 'attribution' => 'old-site-9401.example', 'status' => 'stored', 'path' => 'inventory/old-9401.jpg']);
+
+    Queue::fake();
+    Http::fake([
+        '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
+        'https://example.com' => Http::response('<html><head><title>Home</title></head><body><p>New site words 9402</p></body></html>', 200, ['Content-Type' => 'text/html']),
+    ]);
+
+    app(SiteCrawlAction::class)->handle($biz->id, $locationId);
+
+    expect(SiteInventoryPage::where('business_id', $biz->id)->where('url', 'like', '%old-site-9401%')->count())->toBe(0)
+        ->and(SiteInventoryImage::where('business_id', $biz->id)->count())->toBe(0)
+        ->and(SiteInventoryPage::where('business_id', $biz->id)->where('url', 'https://example.com')->value('text'))->toContain('New site words 9402');
+});

@@ -32,10 +32,13 @@ final class SiteBuildRunAction
         $hours = $this->registry->int('sites.build.recrawl_after_hours');
         $cutoff = now()->subHours($hours);
 
+        // Only pages of the CURRENT website count: after the website changes, a recent crawl of the old one is not reused.
+        $websiteUrl = (string) (Location::whereKey($locationId)->value('website_url') ?? '');
         $hasRecentInventory = SiteInventoryPage::where('business_id', $businessId)
             ->where('location_id', $locationId)
             ->where('status', 'fetched')
             ->where('fetched_at', '>=', $cutoff)
+            ->when($websiteUrl !== '', fn ($q) => SiteCrawlAction::onWebsite($q, $websiteUrl))
             ->exists();
 
         // A crawl the shared budget cut short is not a reusable inventory (the owner's build, 2026-10-03: "crawl: reused,
@@ -61,7 +64,8 @@ final class SiteBuildRunAction
         } else {
             $crawlResult = [
                 'status' => 'reused',
-                'pages' => SiteInventoryPage::where('business_id', $businessId)->where('location_id', $locationId)->where('status', 'fetched')->count(),
+                'pages' => SiteInventoryPage::where('business_id', $businessId)->where('location_id', $locationId)->where('status', 'fetched')
+                    ->when($websiteUrl !== '', fn ($q) => SiteCrawlAction::onWebsite($q, $websiteUrl))->count(),
                 'refused' => 0,
             ];
         }
