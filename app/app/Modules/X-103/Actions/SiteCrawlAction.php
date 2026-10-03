@@ -210,17 +210,36 @@ final class SiteCrawlAction
                     $phones[] = substr($href, 4);
                 } elseif (str_starts_with(strtolower($href), 'mailto:')) {
                     $emails[] = substr($href, 7);
+                } elseif (str_contains($href, '/cdn-cgi/l/email-protection')) {
+                    // Cloudflare rewrites every mailto: into this, with the address XOR-encoded in the fragment. It is an
+                    // address, never a page: following them used 17 of one site's 25-page allowance (production, 2026-10-03).
+                    $cfEmail = self::cloudflareEmail((string) parse_url($href, PHP_URL_FRAGMENT));
+                    if ($cfEmail !== null) {
+                        $emails[] = $cfEmail;
+                    }
                 } else {
                     $resolved = $this->resolveUrl($url, $href);
                     if ($resolved) {
+                        // A #fragment is the same page; /cdn-cgi/ is Cloudflare's own machinery, never the site's.
+                        $resolved = explode('#', $resolved, 2)[0];
                         $parsedHost = parse_url($resolved, PHP_URL_HOST);
-                        if ($parsedHost === $host) {
+                        if ($parsedHost === $host && ! str_starts_with((string) parse_url($resolved, PHP_URL_PATH), '/cdn-cgi/')) {
                             $linksOut[] = $resolved;
                             if (! isset($seen[$resolved])) {
                                 $seen[$resolved] = true;
                                 $queue[] = $resolved;
                             }
                         }
+                    }
+                }
+            }
+
+            // Cloudflare's other form of the same obfuscation: <a class="__cf_email__" data-cfemail="…">.
+            foreach ((new \DOMXPath($dom))->query('//*[@data-cfemail]') ?: [] as $node) {
+                if ($node instanceof \DOMElement) {
+                    $cfEmail = self::cloudflareEmail($node->getAttribute('data-cfemail'));
+                    if ($cfEmail !== null) {
+                        $emails[] = $cfEmail;
                     }
                 }
             }
@@ -304,6 +323,24 @@ final class SiteCrawlAction
             'refused' => $refusedCount,
             'queued' => $queuedCount,
         ];
+    }
+
+    /**
+     * Decodes Cloudflare's email obfuscation: hex bytes, the first of which is the XOR key for the rest. Anything that does
+     * not decode to a valid address is ignored.
+     */
+    private static function cloudflareEmail(string $hex): ?string
+    {
+        if (strlen($hex) < 4 || strlen($hex) % 2 !== 0 || ! ctype_xdigit($hex)) {
+            return null;
+        }
+        $key = (int) hexdec(substr($hex, 0, 2));
+        $email = '';
+        for ($i = 2; $i < strlen($hex); $i += 2) {
+            $email .= chr((int) hexdec(substr($hex, $i, 2)) ^ $key);
+        }
+
+        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false ? $email : null;
     }
 
     private function resolveUrl(string $base, string $rel): ?string

@@ -936,3 +936,41 @@ it('stops counting a page past the page limit as cut short', function () {
     Http::assertNotSent(fn ($r) => str_contains($r->url(), '/p2') || str_contains($r->url(), '/p3'));
     Livewire::test(SiteInventory::class)->assertSee('past the page limit');
 });
+
+it('reads Cloudflare-protected email addresses and never crawls them or a #fragment as pages', function () {
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+    Location::where('business_id', $biz->id)->update([
+        'website_url' => 'https://example.com',
+        'website_confirmed_at' => now(),
+    ]);
+
+    $this->actingAs($owner);
+    Tenancy::set($biz->id);
+
+    Queue::fake();
+    Http::fake([
+        '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
+        'https://example.com' => Http::response(
+            '<html><head><title>Home</title></head><body>'
+            .'<a href="/cdn-cgi/l/email-protection#422b2c242d6f7a7b727302273a232f322e276c212d2f">[email&#160;protected]</a>'
+            .'<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1764767b72643a2f2e272557726f767a677b723974787a">[email&#160;protected]</a>'
+            .'<a href="/services#pricing">Prices</a><a href="/services">Services</a>'
+            .'</body></html>',
+            200,
+            ['Content-Type' => 'text/html']
+        ),
+        'https://example.com/services' => Http::response('<html><head><title>Services</title></head><body><p>Services 8903</p></body></html>', 200, ['Content-Type' => 'text/html']),
+    ]);
+    $locationId = Location::where('business_id', $biz->id)->first()->id;
+
+    $result = app(SiteCrawlAction::class)->handle($biz->id, $locationId);
+
+    expect($result)->toBe(['status' => 'fetched', 'pages' => 2, 'refused' => 0, 'queued' => 0])
+        ->and(SiteInventoryPage::where('business_id', $biz->id)->where('url', 'like', '%cdn-cgi%')->count())->toBe(0)
+        ->and(SiteInventoryPage::where('business_id', $biz->id)->where('url', 'like', '%#%')->count())->toBe(0)
+        ->and(SiteInventoryPage::where('business_id', $biz->id)->where('url', 'https://example.com')->first()->emails)
+        ->toEqualCanonicalizing(['info-8901@example.com', 'sales-8902@example.com']);
+    Http::assertNotSent(fn ($r) => str_contains($r->url(), 'cdn-cgi'));
+});
