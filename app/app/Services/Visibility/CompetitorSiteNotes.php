@@ -118,8 +118,11 @@ final class CompetitorSiteNotes
             ->all();
     }
 
-    /** The prompt section built from notesFor(), or '' when there are none. */
-    public function referenceBlock(int $businessId): string
+    /**
+     * The prompt section built from notesFor(), or '' when there are none. Without $withText it carries titles,
+     * descriptions and headings only — never a peer's own page sentences (X-103's CompetitorDigest falls back to it).
+     */
+    public function referenceBlock(int $businessId, bool $withText = true): string
     {
         $notes = $this->notesFor($businessId);
         if ($notes === []) {
@@ -129,7 +132,7 @@ final class CompetitorSiteNotes
         foreach ($notes as $n) {
             $parts = array_filter([$n['title'], $n['description'], implode(' | ', $n['headings'])], fn ($p) => $p !== null && $p !== '');
             $lines[] = '- '.$n['name'].': '.implode(' — ', $parts);
-            if ($n['text'] !== null) {
+            if ($withText && $n['text'] !== null) {
                 $lines[] = '  Their page says (do not copy): '.mb_substr($n['text'], 0, 1200);
             }
         }

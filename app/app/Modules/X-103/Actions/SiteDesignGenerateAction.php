@@ -6,6 +6,7 @@ namespace App\Modules\X103\Actions;
 
 use App\Enums\AiTask;
 use App\Modules\X103\Domain\BlockPatchSchema;
+use App\Modules\X103\Domain\CompetitorDigest;
 use App\Modules\X103\Domain\SiteBlockRenderer;
 use App\Modules\X103\Domain\SiteDesignEngines;
 use App\Modules\X103\Domain\SiteThemes;
@@ -18,7 +19,6 @@ use App\Services\Assistant\PriceBook;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Industry\IndustryStartingPoints;
 use App\Services\Industry\SiteStyle;
-use App\Services\Visibility\CompetitorSiteNotes;
 use App\Support\PlanPricing;
 use Throwable;
 
@@ -53,7 +53,7 @@ final class SiteDesignGenerateAction
         private readonly AiRouter $router,
         private readonly DefaultsRegistry $registry,
         private readonly StatedFacts $statedFacts,
-        private readonly CompetitorSiteNotes $peers,
+        private readonly CompetitorDigest $peers,
         private readonly SiteImageGenerateAction $picture,
         private readonly PriceBook $priceBook,
         private readonly SiteBlockRenderer $renderer,
@@ -122,7 +122,8 @@ final class SiteDesignGenerateAction
             $themes[] = $id.' — '.$theme['label'].' (best for: '.$theme['for'].')';
         }
         $tokens = app(IndustryStartingPoints::class)->forBusiness($businessId);
-        $peerNotes = $this->peers->referenceBlock($businessId);
+        // A summary of what the top local peers cover, never their own sentences (CompetitorDigest).
+        $peerNotes = $this->peers->block($businessId);
         // Building a whole site: the first page chose the theme; every later page keeps it so the site looks like one brand.
         $siteTheme = $keepSiteTheme && is_string($tokens['theme'] ?? null) && SiteThemes::get($tokens['theme']) !== null ? $tokens['theme'] : null;
         $purpose = self::PAGE_PURPOSES[(string) $page->slug] ?? null;

@@ -81,6 +81,7 @@ final class EvalRunAction
                 AiTask::SiteImage => AiTask::SiteImage,
                 AiTask::SiteAuthoring => AiTask::SiteAuthoring,
                 AiTask::SiteDesign => AiTask::SiteDesign,
+                AiTask::CompetitorDigest => AiTask::CompetitorDigest,
             };
         }
 

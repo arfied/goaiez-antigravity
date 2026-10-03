@@ -109,6 +109,12 @@ enum AiTask: string
     case SiteDesign = 'site_design';
 
     /**
+     * A neutral checklist of what the top local businesses cover on their websites, made from their pages so the AI
+     * designer never reads their own sentences (the boss, 2026-10-02: "Grok summarising competitors").
+     */
+    case CompetitorDigest = 'competitor_digest';
+
+    /**
      * The `platform_settings` key an operator overrides to move this tier.
      */
     public function settingKey(): string
@@ -142,6 +148,8 @@ enum AiTask: string
             self::SiteImage => AiModel::GptImage25Flare,
             // The boss, 2026-10-02: "the default designer & copywriter: claude-haiku-4-5" — low cost, good taste.
             self::SiteDesign => AiModel::ClaudeHaiku45,
+            // The boss, 2026-10-02: "Grok summarising competitors" — a short summary on a low-cost model.
+            self::CompetitorDigest => AiModel::Grok43,
         };
     }
 
@@ -205,6 +213,8 @@ enum AiTask: string
             self::SiteImage => 0,
             // A whole designed page, CSS included; on Sonnet 5 max_tokens bounds thinking and text together.
             self::SiteDesign => 16000,
+            // A dozen short checklist lines.
+            self::CompetitorDigest => 2048,
         };
     }
 
