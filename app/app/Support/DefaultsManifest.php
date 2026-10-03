@@ -333,6 +333,26 @@ final class DefaultsManifest
                 'group' => 'Content',
                 'description' => 'System prompt for "Make me a page": the AI proposes a new page (title, slug, blocks) from an owner\'s plain-words request; the page lands as an unpublished draft the owner publishes or deletes',
             ],
+            'sites.design.engine.claude' => [
+                'seed' => 'anthropic-haiku-4-5',
+                'group' => 'Content',
+                'description' => 'The model behind the site designer\'s "Claude" option (an AiModel value such as anthropic-haiku-4-5). Change it to try another model without a release; a value that is not a text model falls back to the default.',
+            ],
+            'sites.design.engine.chatgpt' => [
+                'seed' => 'openai-gpt-6-luna',
+                'group' => 'Content',
+                'description' => 'The model behind the site designer\'s "ChatGPT" option (an AiModel value such as openai-gpt-6-luna). Change it to try another model without a release; a value that is not a text model falls back to the default.',
+            ],
+            'sites.design.engine.gemini' => [
+                'seed' => 'google-gemini-3.8-flash',
+                'group' => 'Content',
+                'description' => 'The model behind the site designer\'s "Gemini" option (an AiModel value such as google-gemini-3.8-flash). Change it to try another model without a release; a value that is not a text model falls back to the default.',
+            ],
+            'sites.design.engine.grok' => [
+                'seed' => 'xai-grok-4.3',
+                'group' => 'Content',
+                'description' => 'The model behind the site designer\'s "Grok" option (an AiModel value such as xai-grok-4.3). Change it to try another model without a release; a value that is not a text model falls back to the default.',
+            ],
             'sites.design.system_prompt' => [
                 'seed' => 'You are a top web designer. Design ONE complete, modern page for a small local business by returning ONLY a JSON object — no markdown, no HTML, no code. Keys: "theme": one theme id from the list given; "style": optional {"palette": {"surface", "card", "ink", "primary", "accent" as #rrggbb}, "type_pairing": {"heading", "body"} from the fonts given} to fit the theme to this brand — text must stay easy to read; "blocks": the page as an ordered list of sections, each an object with "type" and that type\'s fields from the catalogue given (lists go in "items"); "images": optional [{"block_index": <index of a hero, about or cta_band in your blocks>, "description": "a realistic photo of this business\'s work, no text or logos"}], at most three, never for a hero when the business already has a main picture; "explanation": two or three plain sentences on the design choices. Rules: (1) Start with a hero: a clear headline, a one-sentence subline, a button (cta_label and cta_url — use the phone number as a tel: link when one is given) and a variant. Give every section a variant from its list, and choose them so the page has rhythm — not every section the same shape. (2) A good page has 5 to 8 sections — hero, a stats row only if there are real numbers, services, why choose us (about), reviews only if real reviews are given, questions and answers, a cta_band, and contact. (3) Use the business\'s real content, facts and prices; never invent reviews, prices, awards, years in business, phone numbers or addresses. Where facts are thin, describe the trade\'s usual services in general terms. (4) Notes about nearby businesses are reference only: cover what they cover when it fits; never reuse their names, sentences or wording. (5) Every link must start with https://, http://, tel: or mailto:. (6) Choose the theme that suits this kind of business; write like a person, in short plain sentences.',
                 'group' => 'Content',

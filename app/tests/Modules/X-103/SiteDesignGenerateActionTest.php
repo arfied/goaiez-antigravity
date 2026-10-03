@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103;
 
+use App\Enums\AiModel;
 use App\Models\User;
 use App\Modules\X103\Actions\SiteDesignGenerateAction;
+use App\Modules\X103\Domain\SiteDesignEngines;
 use App\Modules\X103\Jobs\SiteDesignJob;
 use App\Modules\X103\Models\Page;
+use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -94,9 +97,16 @@ class SiteDesignGenerateActionTest extends TestCase
     public function test_an_answer_that_is_not_json_or_has_no_usable_section_is_never_kept(): void
     {
         $page = $this->page([['type' => 'hero', 'headline' => 'H']]);
-        Http::fake(['api.anthropic.com/*' => Http::sequence()
-            ->push($this->claudeBody('Sorry, I cannot help with that.'))
-            ->push($this->claudeBody('{"theme":"bold-trade","blocks":[{"type":"script","text":"x"}]}')),
+        // The second AI (GPT-6 Luna) answers unusably too, so each call fails with the FIRST AI's reason.
+        Http::fake([
+            'api.anthropic.com/*' => Http::sequence()
+                ->push($this->claudeBody('Sorry, I cannot help with that.'))
+                ->push($this->claudeBody('{"theme":"bold-trade","blocks":[{"type":"script","text":"x"}]}')),
+            'api.openai.com/v1/chat/completions' => Http::response([
+                'id' => 'x',
+                'choices' => [['message' => ['content' => 'Sorry, no.']]],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ], 200, ['Content-Type' => 'application/json']),
         ]);
 
         $first = app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id);
@@ -243,5 +253,50 @@ class SiteDesignGenerateActionTest extends TestCase
         $made = collect(Http::recorded())->filter(fn ($pair) => str_contains($pair[0]->url(), 'images/generations'))->count();
         $this->assertSame(3, $made);
         Http::assertNotSent(fn ($r) => str_contains($r->url(), 'images/generations') && str_contains($r->body(), 'not for services 7911'));
+    }
+
+    public function test_an_unusable_answer_is_retried_once_on_a_second_ai(): void
+    {
+        $page = $this->page([['type' => 'hero', 'headline' => 'H']]);
+        Http::fake([
+            'api.openai.com/v1/chat/completions' => Http::response([
+                'id' => 'x',
+                'choices' => [['message' => ['content' => json_encode(['theme' => 'clean-clinic', 'blocks' => [['type' => 'hero', 'headline' => 'Rescued 8201']]])]]],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ], 200, ['Content-Type' => 'application/json']),
+        ]);
+        $this->fakeAnswer('Sorry, I cannot help with that.');
+
+        $res = app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id, 'claude');
+
+        $this->assertSame('ready', $res['status']);
+        $page->refresh();
+        $design = $page->draft_meta['designs']['claude'];
+        $this->assertSame('Rescued 8201', $design['blocks'][0]['headline']);
+        $this->assertSame('openai-gpt-6-luna', $design['model']);
+        $this->assertSame('anthropic-haiku-4-5', $design['fallback_from']);
+    }
+
+    public function test_a_designer_model_is_an_admin_setting(): void
+    {
+        $page = $this->page([['type' => 'hero', 'headline' => 'H']]);
+        app(DefaultsRegistry::class)->set('sites.design.engine.claude', AiModel::ClaudeSonnet5->value, 'test_user');
+        $this->fakeAnswer(json_encode(['theme' => 'bold-trade', 'blocks' => [['type' => 'hero', 'headline' => 'From Sonnet 8202']]]));
+
+        app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id, 'claude');
+
+        Http::assertSent(fn ($r) => str_contains($r->url(), 'api.anthropic.com') && $r['model'] === AiModel::ClaudeSonnet5->apiModelId());
+        $page->refresh();
+        $this->assertSame(AiModel::ClaudeSonnet5->value, $page->draft_meta['designs']['claude']['model']);
+    }
+
+    public function test_a_designer_setting_that_names_a_picture_model_falls_back_to_its_default(): void
+    {
+        $this->page([['type' => 'hero', 'headline' => 'H']]);
+        app(DefaultsRegistry::class)->set('sites.design.engine.claude', AiModel::FluxSchnell->value, 'test_user');
+
+        $this->assertSame(AiModel::ClaudeHaiku45, SiteDesignEngines::model('claude'));
+        $this->assertSame(AiModel::Gpt6Luna, SiteDesignEngines::fallbackFor(AiModel::ClaudeHaiku45));
+        $this->assertSame(AiModel::ClaudeHaiku45, SiteDesignEngines::fallbackFor(AiModel::Gpt6Luna));
     }
 }

@@ -139,20 +139,47 @@ final class SiteDesignGenerateAction
             .($crawled === '' ? '' : "\n\nText from the business's current website, for reference only:".$crawled)
             .($peerNotes === '' ? '' : "\n\n".$peerNotes);
 
-        $response = $this->router->dispatch(new AiRequest(
-            task: AiTask::SiteDesign,
-            prompt: $prompt,
-            system: $this->registry->string('sites.design.system_prompt'),
-            model: $model,
-        ));
-
-        if (! $response->isUsable() || ! is_string($response->text)) {
-            return $this->fail($page, $engine, (string) ($response->failureReason ?? $response->refusalCategory ?? 'unknown'));
+        // The chosen AI first. If it fails or its answer is unusable, one retry on a second AI (the boss's plan: "a
+        // structural fallback for strict JSON") — the design records which model made it and what it fell back from.
+        $attempts = [$model];
+        $fallback = SiteDesignEngines::fallbackFor($model);
+        if ($fallback !== $model) {
+            $attempts[] = $fallback;
         }
-
-        $json = self::decode($response->text);
-        if ($json === null) {
-            return $this->fail($page, $engine, 'not_json');
+        $firstReason = null;
+        $json = null;
+        $blocks = [];
+        $response = null;
+        foreach ($attempts as $attemptModel) {
+            $response = $this->router->dispatch(new AiRequest(
+                task: AiTask::SiteDesign,
+                prompt: $prompt,
+                system: $this->registry->string('sites.design.system_prompt'),
+                model: $attemptModel,
+            ));
+            $reason = null;
+            if (! $response->isUsable() || ! is_string($response->text)) {
+                $reason = (string) ($response->failureReason ?? $response->refusalCategory ?? 'unknown');
+            } else {
+                $json = self::decode($response->text);
+                if ($json === null) {
+                    $reason = 'not_json';
+                } else {
+                    $blocks = $this->sections($json, $response->model->value);
+                    if ($blocks === []) {
+                        $reason = 'no_valid_blocks';
+                    }
+                }
+            }
+            if ($reason === null) {
+                break;
+            }
+            $firstReason ??= $reason;
+            $json = null;
+            $blocks = [];
+        }
+        if ($json === null || $blocks === []) {
+            return $this->fail($page, $engine, (string) $firstReason);
         }
 
         $theme = is_string($json['theme'] ?? null) && SiteThemes::get($json['theme']) !== null ? $json['theme'] : null;
@@ -169,23 +196,6 @@ final class SiteDesignGenerateAction
             if ($validation['ok']) {
                 $style = $validation['style'];
             }
-        }
-
-        $blocks = [];
-        foreach (is_array($json['blocks'] ?? null) ? $json['blocks'] : [] as $block) {
-            $type = is_array($block) ? ($block['type'] ?? null) : null;
-            if (! is_string($type) || ! in_array($type, BlockPatchSchema::ADDABLE_TYPES, true)) {
-                continue;
-            }
-            $clean = BlockPatchSchema::modelBlock($type, $block, $block['items'] ?? null);
-            if (BlockPatchSchema::hasContent($clean) && $this->renderer->isValidBlock($clean)) {
-                $clean['source'] = 'ai';
-                $clean['model'] = $response->model->value;
-                $blocks[] = $clean;
-            }
-        }
-        if ($blocks === []) {
-            return $this->fail($page, $engine, 'no_valid_blocks');
         }
 
         // The hero keeps the owner's own picture. Up to three new ones are made, each for a hero, about section or cta_band
@@ -237,12 +247,38 @@ final class SiteDesignGenerateAction
             'blocks' => $blocks,
             'explanation' => is_string($json['explanation'] ?? null) ? mb_substr($json['explanation'], 0, 600) : '',
             'model' => $response->model->value,
+            'fallback_from' => $response->model === $model ? null : $model->value,
             'drafted_at' => now()->toIso8601String(),
         ];
         $page->draft_meta = $meta;
         $page->save();
 
         return ['status' => 'ready', 'model' => $response->model->value];
+    }
+
+    /**
+     * The AI's sections, each cleaned by the same rules as every AI edit; anything else is dropped.
+     *
+     * @param  array<string, mixed>  $json
+     * @return list<array<string, mixed>>
+     */
+    private function sections(array $json, string $modelValue): array
+    {
+        $blocks = [];
+        foreach (is_array($json['blocks'] ?? null) ? $json['blocks'] : [] as $block) {
+            $type = is_array($block) ? ($block['type'] ?? null) : null;
+            if (! is_string($type) || ! in_array($type, BlockPatchSchema::ADDABLE_TYPES, true)) {
+                continue;
+            }
+            $clean = BlockPatchSchema::modelBlock($type, $block, $block['items'] ?? null);
+            if (BlockPatchSchema::hasContent($clean) && $this->renderer->isValidBlock($clean)) {
+                $clean['source'] = 'ai';
+                $clean['model'] = $modelValue;
+                $blocks[] = $clean;
+            }
+        }
+
+        return $blocks;
     }
 
     /**
