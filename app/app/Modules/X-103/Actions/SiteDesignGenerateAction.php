@@ -35,10 +35,11 @@ use Throwable;
 final class SiteDesignGenerateAction
 {
     /** The section types the designer may use, with the fields each takes — what the AI is told, in its own words. */
-    private const CATALOGUE = 'hero (headline, subline, variant: "split" | "centered" | "cover", cta_label, cta_url) · '
-        .'stats (heading, items: value, label) · services (heading, items: name, description, price_text) · '
-        .'about (heading, text) · reviews_strip (heading, items: author, rating, text, source) · team (heading, items: name, role) · '
-        .'faq (items: question, answer) · cta_band (heading, text, label, url) · booking_button (label, url) · contact (address, phone, email)';
+    private const CATALOGUE = 'hero (headline, subline, cta_label, cta_url; variant "split" | "centered" | "cover") · '
+        .'stats (heading, items: value, label; variant "row" | "cards") · services (heading, items: name, description, price_text; variant "cards" | "list" | "columns") · '
+        .'about (heading, text; variant "plain" | "centered" | "split") · reviews_strip (heading, items: author, rating, text, source; variant "cards" | "quote" | "row") · '
+        .'team (heading, items: name, role) · faq (items: question, answer; variant "list" | "cards" | "columns") · cta_band (heading, text, label, url) · '
+        .'booking_button (label, url; variant "inline" | "banner") · contact (address, phone, email; variant "stack" | "columns" | "card")';
 
     public function __construct(
         private readonly AiRouter $router,
@@ -171,7 +172,8 @@ final class SiteDesignGenerateAction
             return $this->fail($page, $engine, 'no_valid_blocks');
         }
 
-        // The hero keeps the owner's picture; a new one is made only when asked for and there is none.
+        // The hero keeps the owner's own picture. Up to three new ones are made, each for a hero, about section or cta_band
+        // that has none (the boss, 2026-10-02: "order up to 3 realistic photos per page").
         $heroIndex = null;
         foreach ($blocks as $i => $block) {
             if ($block['type'] === 'hero') {
@@ -186,22 +188,27 @@ final class SiteDesignGenerateAction
                     $blocks[$heroIndex][$key] = $oldHero[$key];
                 }
             }
-        } elseif ($heroIndex !== null) {
-            foreach (is_array($json['images'] ?? null) ? $json['images'] : [] as $wanted) {
-                $description = is_array($wanted) && is_string($wanted['description'] ?? null) ? trim($wanted['description']) : '';
-                if ($description === '') {
-                    continue;
-                }
-                try {
-                    $made = $this->picture->handle($businessId, $description);
-                } catch (Throwable) {
-                    $made = ['status' => 'failed'];
-                }
-                if (($made['status'] ?? null) === 'generated' && is_string($made['path'] ?? null)) {
-                    $blocks[$heroIndex]['image_path'] = $made['path'];
-                    $blocks[$heroIndex]['image_alt'] = mb_substr($description, 0, 120);
-                }
+        }
+        $made = 0;
+        foreach (is_array($json['images'] ?? null) ? $json['images'] : [] as $wanted) {
+            if ($made >= 3) {
                 break;
+            }
+            $index = is_array($wanted) && is_int($wanted['block_index'] ?? null) ? $wanted['block_index'] : null;
+            $description = is_array($wanted) && is_string($wanted['description'] ?? null) ? trim($wanted['description']) : '';
+            if ($index === null || $description === '' || ! isset($blocks[$index])
+                || ! in_array($blocks[$index]['type'], ['hero', 'about', 'cta_band'], true) || ! empty($blocks[$index]['image_path'])) {
+                continue;
+            }
+            $made++;
+            try {
+                $picture = $this->picture->handle($businessId, $description);
+            } catch (Throwable) {
+                $picture = ['status' => 'failed'];
+            }
+            if (($picture['status'] ?? null) === 'generated' && is_string($picture['path'] ?? null)) {
+                $blocks[$index]['image_path'] = $picture['path'];
+                $blocks[$index]['image_alt'] = mb_substr($description, 0, 120);
             }
         }
 

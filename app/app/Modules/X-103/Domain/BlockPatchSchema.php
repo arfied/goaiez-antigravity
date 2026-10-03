@@ -32,6 +32,23 @@ final class BlockPatchSchema
     /** The top banner's layouts: words beside the picture, large centred words, or words over a full-width picture. */
     public const HERO_VARIANTS = ['split', 'centered', 'cover'];
 
+    /**
+     * Each section's layouts — the first is the default and renders exactly the markup that section always had. A
+     * layout is a modifier class on the section (services--list, faq--cards…) styled in SiteBlockRenderer, so the
+     * markup every module parses (FAQ items, reviews, contact links) never changes shape. A theme picks one per section
+     * (SiteThemes) and the AI may pick one per section ('variant').
+     */
+    public const VARIANTS = [
+        'hero' => self::HERO_VARIANTS,
+        'services' => ['cards', 'list', 'columns'],
+        'reviews_strip' => ['cards', 'quote', 'row'],
+        'faq' => ['list', 'cards', 'columns'],
+        'about' => ['plain', 'centered', 'split'],
+        'contact' => ['stack', 'columns', 'card'],
+        'booking_button' => ['inline', 'banner'],
+        'stats' => ['row', 'cards'],
+    ];
+
     /** The plain-text fields of a LIST item the owner may type over in the Studio (set_item_string). Never sent by the model. */
     public const ITEM_TEXT_FIELDS = [
         'faq' => ['question', 'answer'],
@@ -136,7 +153,7 @@ final class BlockPatchSchema
             return false;
         }
 
-        if ($field === 'variant' && ! in_array((string) $value, self::HERO_VARIANTS, true)) {
+        if ($field === 'variant' && ! in_array((string) $value, array_merge(...array_values(self::VARIANTS)), true)) {
             return false;
         }
 
@@ -180,6 +197,10 @@ final class BlockPatchSchema
             if (is_string($k) && self::modelMayWrite($k, $v) && trim((string) $v) !== '') {
                 $block[$k] = (string) $v;
             }
+        }
+        // A layout must be one this section has; anything else is dropped and the section keeps its default.
+        if (isset($block['variant']) && ! in_array($block['variant'], self::VARIANTS[$type] ?? [], true)) {
+            unset($block['variant']);
         }
         if (in_array($type, self::ITEM_TYPES, true) && $items !== null) {
             $block['items'] = self::modelItems($items);

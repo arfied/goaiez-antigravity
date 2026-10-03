@@ -122,6 +122,34 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .stat-list { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); text-align: center; }
 .stat-list strong { display: block; font-family: var(--font-heading); font-size: clamp(2.25rem, 4.5vw, 3.25rem); line-height: 1; color: var(--color-accent-text); }
 .stat-list span { display: block; margin-top: 0.5rem; opacity: 0.8; }
+.site-block.services.services--list ul { grid-template-columns: 1fr; gap: 0; }
+.site-block.services.services--list li { grid-template-columns: minmax(0, 1fr) auto; column-gap: 1.5rem; align-items: baseline; padding: 1.1rem 0; background: transparent; border: 0; border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent); border-radius: 0; box-shadow: none; text-align: left; }
+.site-block.services.services--list li::before { display: none; }
+.site-block.services.services--list li span { grid-column: 2; grid-row: 1; white-space: nowrap; }
+.site-block.services.services--list li p { grid-column: 1; }
+@media (min-width: 52rem) { .site-block.services.services--columns > div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 3rem; align-items: start; } }
+.site-block.reviews.reviews--quote .review-list { grid-template-columns: 1fr; max-width: 46rem; margin-inline: auto; text-align: center; }
+.site-block.reviews.reviews--quote blockquote { background: transparent; border: 0; box-shadow: none; padding: 1.5rem 0; }
+.site-block.reviews.reviews--quote blockquote p { font-family: var(--font-heading); font-size: clamp(1.3rem, 2.6vw, 1.75rem); line-height: 1.35; }
+.site-block.reviews.reviews--row .review-list { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(16rem, 22rem); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 0.5rem; }
+.site-block.reviews.reviews--row blockquote { scroll-snap-align: start; }
+.site-block.faq.faq--cards .faq-item { background: var(--color-card); border: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent); border-radius: 14px; padding: 1.1rem 1.4rem; margin-bottom: 0.75rem; }
+@media (min-width: 46rem) { .site-block.faq.faq--columns > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 2.5rem; } }
+.site-block.about.about--centered > div { max-width: 44rem; margin-inline: auto; text-align: center; }
+.site-block.about.about--centered p { margin-inline: auto; }
+@media (min-width: 52rem) { .site-block.about.about--split > div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 3rem; align-items: start; } }
+.site-block.about.about--split .about-media { grid-column: 1 / -1; }
+.about-media { margin-top: 1.5rem; border-radius: 16px; overflow: hidden; max-width: 48rem; }
+.about-media img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; }
+@media (min-width: 40rem) { .site-block.contact.contact--columns > div { display: grid; grid-template-rows: auto auto; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); column-gap: 2rem; } }
+.site-block.contact.contact--card > div { max-width: 34rem; margin-inline: auto; background: var(--color-card); border: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent); border-radius: 18px; padding: clamp(1.5rem, 4vw, 2.5rem); text-align: center; box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+.site-block.contact.contact--card a[href^="tel:"] { font-size: 1.6rem; font-weight: 700; text-decoration: none; }
+.site-block.booking.booking--banner { text-align: center; }
+.site-block.booking.booking--banner > div > div { justify-content: center; }
+.site-block.stats.stats--cards li { background: var(--color-card); border-radius: 16px; padding: 1.5rem 1rem; box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+.site-block.cta.cta--photo { position: relative; overflow: hidden; }
+.cta-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.3; }
+.site-block.cta.cta--photo > div { position: relative; }
 </style>
 ';
 
@@ -143,9 +171,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
                 continue;
             }
 
-            // The theme picks the top banner's layout unless the owner (or the AI) chose one for this page.
-            if ($type === 'hero' && $theme !== null && ! isset($block['variant'])) {
-                $block['variant'] = $theme['hero'];
+            // The theme picks each section's layout unless the owner (or the AI) chose one for this page.
+            if ($theme !== null && ! isset($block['variant'])) {
+                $themeLayout = $theme['layouts'][$type] ?? ($type === 'hero' ? $theme['hero'] : null);
+                if (is_string($themeLayout)) {
+                    $block['variant'] = $themeLayout;
+                }
             }
 
             if (! $this->validateBlock($block)) {

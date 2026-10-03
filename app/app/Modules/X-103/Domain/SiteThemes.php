@@ -7,8 +7,8 @@ namespace App\Modules\X103\Domain;
 /**
  * The prebuilt site themes (the boss, 2026-10-02: prebuilt themes are the base; the AI picks and customises one).
  *
- * A theme is a complete look over the SAME section markup every module reads — colours, fonts, the top banner's layout
- * and a stylesheet — so the contact form, search data, reviews, booking and tracking keep working under every theme.
+ * A theme is a complete look over the SAME section markup every module reads — colours, fonts, a layout for every
+ * section (BlockPatchSchema::VARIANTS) and a stylesheet — so the contact form, search data, reviews, booking and tracking keep working under every theme.
  * Each stylesheet lives beside the block templates in Ui/views/site/themes/<id>.css, styles only the published class
  * names and the colour/font variables, and loads nothing from outside the page. Ids come only from this list, so a
  * theme id can never name a file outside that directory.
@@ -22,6 +22,7 @@ final class SiteThemes
             'palette' => ['surface' => '#f3f2ee', 'card' => '#ffffff', 'ink' => '#15171a', 'primary' => '#f5b800', 'accent' => '#a66f00'],
             'type_pairing' => ['heading' => 'Helvetica, Arial, sans-serif', 'body' => 'Helvetica, Arial, sans-serif'],
             'hero' => 'split',
+            'layouts' => ['hero' => 'split', 'services' => 'cards', 'reviews_strip' => 'quote', 'faq' => 'list', 'about' => 'split', 'contact' => 'card', 'booking_button' => 'banner', 'stats' => 'row'],
         ],
         'clean-clinic' => [
             'label' => 'Clean Clinic',
@@ -29,6 +30,7 @@ final class SiteThemes
             'palette' => ['surface' => '#f6f9f9', 'card' => '#ffffff', 'ink' => '#12302d', 'primary' => '#0f766e', 'accent' => '#0e7490'],
             'type_pairing' => ['heading' => 'system-ui, sans-serif', 'body' => 'system-ui, sans-serif'],
             'hero' => 'centered',
+            'layouts' => ['hero' => 'centered', 'services' => 'cards', 'reviews_strip' => 'cards', 'faq' => 'cards', 'about' => 'centered', 'contact' => 'columns', 'booking_button' => 'banner', 'stats' => 'cards'],
         ],
         'warm-local' => [
             'label' => 'Warm Local',
@@ -36,6 +38,7 @@ final class SiteThemes
             'palette' => ['surface' => '#fbf6ef', 'card' => '#ffffff', 'ink' => '#2b1d16', 'primary' => '#a23e2a', 'accent' => '#6b7f3a'],
             'type_pairing' => ['heading' => 'Georgia, serif', 'body' => 'Trebuchet MS, sans-serif'],
             'hero' => 'split',
+            'layouts' => ['hero' => 'split', 'services' => 'list', 'reviews_strip' => 'quote', 'faq' => 'list', 'about' => 'centered', 'contact' => 'card', 'booking_button' => 'banner', 'stats' => 'row'],
         ],
         'modern-dark' => [
             'label' => 'Modern Dark',
@@ -43,6 +46,7 @@ final class SiteThemes
             'palette' => ['surface' => '#0e1014', 'card' => '#171a21', 'ink' => '#eceef3', 'primary' => '#8ea2ff', 'accent' => '#7fe0c0'],
             'type_pairing' => ['heading' => 'system-ui, sans-serif', 'body' => 'system-ui, sans-serif'],
             'hero' => 'centered',
+            'layouts' => ['hero' => 'centered', 'services' => 'cards', 'reviews_strip' => 'row', 'faq' => 'columns', 'about' => 'split', 'contact' => 'columns', 'booking_button' => 'banner', 'stats' => 'cards'],
         ],
         'classic-pro' => [
             'label' => 'Classic Professional',
@@ -50,6 +54,7 @@ final class SiteThemes
             'palette' => ['surface' => '#fbfaf7', 'card' => '#ffffff', 'ink' => '#1a2333', 'primary' => '#1f3a5f', 'accent' => '#a07a2c'],
             'type_pairing' => ['heading' => 'Palatino, Book Antiqua, serif', 'body' => 'Helvetica, Arial, sans-serif'],
             'hero' => 'split',
+            'layouts' => ['hero' => 'split', 'services' => 'list', 'reviews_strip' => 'quote', 'faq' => 'columns', 'about' => 'split', 'contact' => 'columns', 'booking_button' => 'inline', 'stats' => 'row'],
         ],
         'fresh-friendly' => [
             'label' => 'Fresh Friendly',
@@ -57,6 +62,7 @@ final class SiteThemes
             'palette' => ['surface' => '#f4fbf6', 'card' => '#ffffff', 'ink' => '#12291c', 'primary' => '#1f9d55', 'accent' => '#e08a00'],
             'type_pairing' => ['heading' => 'Trebuchet MS, sans-serif', 'body' => 'Tahoma, Segoe UI, sans-serif'],
             'hero' => 'split',
+            'layouts' => ['hero' => 'split', 'services' => 'cards', 'reviews_strip' => 'row', 'faq' => 'cards', 'about' => 'plain', 'contact' => 'card', 'booking_button' => 'banner', 'stats' => 'cards'],
         ],
     ];
 

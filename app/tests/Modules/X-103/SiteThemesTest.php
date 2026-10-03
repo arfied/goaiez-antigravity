@@ -76,4 +76,19 @@ class SiteThemesTest extends TestCase
         $this->assertSame(1, substr_count($unknown, '<style>'));
         $this->assertSame('', SiteThemes::css('../../etc/passwd'));
     }
+
+    public function test_every_theme_layout_is_a_real_layout_for_its_section_and_the_renderer_uses_it(): void
+    {
+        foreach (SiteThemes::THEMES as $id => $theme) {
+            foreach ($theme['layouts'] as $type => $layout) {
+                $this->assertContains($layout, BlockPatchSchema::VARIANTS[$type] ?? [], "$id: $type");
+            }
+        }
+
+        $themed = $this->render([['type' => 'services', 'items' => [['name' => 'S1']]]], 'warm-local');
+        $this->assertStringContainsString('class="site-block services services--list"', $themed);
+
+        $own = $this->render([['type' => 'services', 'variant' => 'columns', 'items' => [['name' => 'S1']]]], 'warm-local');
+        $this->assertStringContainsString('class="site-block services services--columns"', $own);
+    }
 }

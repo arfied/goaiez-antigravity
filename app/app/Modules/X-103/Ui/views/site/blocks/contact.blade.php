@@ -1,4 +1,5 @@
-<div class="site-block contact {{ $band ?? '' }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="contact">
+@php $layout = in_array($block['variant'] ?? null, \App\Modules\X103\Domain\BlockPatchSchema::VARIANTS['contact'], true) ? $block['variant'] : 'stack'; @endphp
+<div class="site-block contact {{ trim(($band ?? '').($layout !== 'stack' ? ' contact--'.$layout : '')) }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="contact">
     <div class="site-block__inner">
         @if(isset($block['address']) && is_scalar($block['address']) && trim((string)$block['address']) !== '')
             <h3>Visit</h3>

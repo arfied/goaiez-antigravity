@@ -1,4 +1,5 @@
-<div class="site-block stats {{ $band ?? '' }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="stats">
+@php $layout = in_array($block['variant'] ?? null, \App\Modules\X103\Domain\BlockPatchSchema::VARIANTS['stats'], true) ? $block['variant'] : 'row'; @endphp
+<div class="site-block stats {{ trim(($band ?? '').($layout !== 'row' ? ' stats--'.$layout : '')) }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="stats">
     <div class="site-block__inner">
         @if(isset($block['heading']) && is_scalar($block['heading']) && trim((string) $block['heading']) !== '')
             <h2{!! empty($context['editable']) ? '' : ' data-field="heading"' !!}>{{ $block['heading'] }}</h2>

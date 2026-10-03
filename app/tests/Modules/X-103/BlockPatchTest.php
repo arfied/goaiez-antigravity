@@ -383,4 +383,22 @@ final class BlockPatchTest extends TestCase
             $this->assertSame($blocks, $res['blocks'], $field);
         }
     }
+
+    public function test_a_layout_must_belong_to_its_section(): void
+    {
+        $kept = BlockPatchSchema::modelBlock('services', ['heading' => 'H', 'variant' => 'list'], [['name' => 'S']]);
+        $this->assertSame('list', $kept['variant']);
+
+        $dropped = BlockPatchSchema::modelBlock('services', ['heading' => 'H', 'variant' => 'cover'], [['name' => 'S']]);
+        $this->assertArrayNotHasKey('variant', $dropped);
+
+        $applier = app(BlockPatchApplier::class);
+        $blocks = [['type' => 'services', 'heading' => 'H', 'items' => [['name' => 'S']]]];
+        $ok = $applier->apply($blocks, [['op' => 'set_string', 'block_index' => 0, 'field' => 'variant', 'value' => 'list']]);
+        $this->assertSame('applied', $ok['status']);
+        $this->assertSame('list', $ok['blocks'][0]['variant']);
+
+        $bad = $applier->apply($blocks, [['op' => 'set_string', 'block_index' => 0, 'field' => 'variant', 'value' => 'zigzag']]);
+        $this->assertSame('refused', $bad['status']);
+    }
 }

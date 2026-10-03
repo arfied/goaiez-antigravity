@@ -1,4 +1,5 @@
-<div class="site-block reviews {{ $band ?? '' }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="reviews_strip">
+@php $layout = in_array($block['variant'] ?? null, \App\Modules\X103\Domain\BlockPatchSchema::VARIANTS['reviews_strip'], true) ? $block['variant'] : 'cards'; @endphp
+<div class="site-block reviews {{ trim(($band ?? '').($layout !== 'cards' ? ' reviews--'.$layout : '')) }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="reviews_strip">
     <div class="site-block__inner">
         @if(isset($block['heading']) && is_scalar($block['heading']) && trim((string)$block['heading']) !== '')
             <h2{!! empty($context['editable']) ? '' : ' data-field="heading"' !!}>{{ $block['heading'] }}</h2>

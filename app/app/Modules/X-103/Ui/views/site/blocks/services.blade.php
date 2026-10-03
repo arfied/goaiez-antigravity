@@ -1,4 +1,5 @@
-<div class="site-block services {{ $band ?? '' }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="services">
+@php $layout = in_array($block['variant'] ?? null, \App\Modules\X103\Domain\BlockPatchSchema::VARIANTS['services'], true) ? $block['variant'] : 'cards'; @endphp
+<div class="site-block services {{ trim(($band ?? '').($layout !== 'cards' ? ' services--'.$layout : '')) }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="services">
     <div class="site-block__inner">
         @if(isset($block['heading']) && is_scalar($block['heading']) && trim((string)$block['heading']) !== '')
             <h2{!! empty($context['editable']) ? '' : ' data-field="heading"' !!}>{{ $block['heading'] }}</h2>

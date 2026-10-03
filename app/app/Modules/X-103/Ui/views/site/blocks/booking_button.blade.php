@@ -1,4 +1,5 @@
-<div class="site-block booking {{ $band ?? '' }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="booking_button">
+@php $layout = in_array($block['variant'] ?? null, \App\Modules\X103\Domain\BlockPatchSchema::VARIANTS['booking_button'], true) ? $block['variant'] : 'inline'; @endphp
+<div class="site-block booking {{ trim(($band ?? '').($layout !== 'inline' ? ' booking--'.$layout : '')) }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="booking_button">
     <div class="site-block__inner">
         <div class="actions">
             @if(isset($block['url']) && is_scalar($block['url']) && trim((string) $block['url']) !== '')

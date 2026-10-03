@@ -391,4 +391,43 @@ class BlockMarkupTest extends TestCase
         $empty = $this->renderBlock(['type' => 'stats', 'heading' => 'H', 'items' => []]);
         $this->assertStringNotContainsString('data-block-type="stats"', $empty);
     }
+
+    public function test_section_layouts_add_their_modifier_class_and_the_default_stays_the_same(): void
+    {
+        $list = $this->renderBlock(['type' => 'services', 'variant' => 'list', 'items' => [['name' => 'S1']]]);
+        $this->assertStringContainsString('class="site-block services services--list"', $list);
+
+        $default = $this->renderBlock(['type' => 'services', 'items' => [['name' => 'S1']]]);
+        $this->assertStringContainsString('class="site-block services "', $default);
+        $this->assertStringNotContainsString('class="site-block services services--', $default);
+
+        $unknown = $this->renderBlock(['type' => 'services', 'variant' => 'cover', 'items' => [['name' => 'S1']]]);
+        $this->assertStringNotContainsString('class="site-block services services--', $unknown);
+
+        $faq = $this->renderBlock(['type' => 'faq', 'variant' => 'cards', 'question' => 'Q1', 'answer' => 'A1']);
+        $this->assertStringContainsString('class="site-block faq faq--cards"', $faq);
+        $this->assertStringContainsString('class="faq-item" data-question="Q1"', $faq);
+
+        $contact = $this->renderBlock(['type' => 'contact', 'variant' => 'card', 'phone' => '0100']);
+        $this->assertStringContainsString('class="site-block contact contact--card"', $contact);
+
+        $reviews = $this->renderBlock(['type' => 'reviews_strip', 'variant' => 'quote', 'items' => [['author' => 'A', 'rating' => '5', 'text' => 'T']]]);
+        $this->assertStringContainsString('class="site-block reviews reviews--quote"', $reviews);
+    }
+
+    public function test_an_about_and_a_call_to_action_can_carry_a_picture(): void
+    {
+        $about = $this->renderBlock(['type' => 'about', 'variant' => 'split', 'text' => 'T', 'image_path' => 'ABOUT_7901.jpg', 'image_alt' => 'A crew at work']);
+        $this->assertStringContainsString('class="site-block about about--split"', $about);
+        $this->assertStringContainsString('class="about-media"', $about);
+        $this->assertStringContainsString('ABOUT_7901.jpg', $about);
+
+        $plain = $this->renderBlock(['type' => 'about', 'text' => 'T']);
+        $this->assertStringNotContainsString('class="about-media"', $plain);
+
+        $cta = $this->renderBlock(['type' => 'cta_band', 'heading' => 'H', 'image_path' => 'CTA_7902.jpg']);
+        $this->assertStringContainsString('class="site-block cta site-block--primary cta--photo"', $cta);
+        $this->assertStringContainsString('class="cta-photo"', $cta);
+        $this->assertStringContainsString('CTA_7902.jpg', $cta);
+    }
 }

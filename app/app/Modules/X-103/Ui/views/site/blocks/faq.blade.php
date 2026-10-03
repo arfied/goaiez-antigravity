@@ -1,4 +1,5 @@
-<div id="faq-x176" class="site-block faq {{ $band ?? '' }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="faq">
+@php $layout = in_array($block['variant'] ?? null, \App\Modules\X103\Domain\BlockPatchSchema::VARIANTS['faq'], true) ? $block['variant'] : 'list'; @endphp
+<div id="faq-x176" class="site-block faq {{ trim(($band ?? '').($layout !== 'list' ? ' faq--'.$layout : '')) }}" data-block-index="{{ $blockIndex ?? '' }}" data-block-type="faq">
   <div class="site-block__inner">
     @if (isset($block['items']) && is_array($block['items']))
       @foreach ($block['items'] as $itemIndex => $item)

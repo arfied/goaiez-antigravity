@@ -203,4 +203,45 @@ class SiteDesignGenerateActionTest extends TestCase
 
         $this->assertSame('unknown_engine', app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id, 'nope')['reason']);
     }
+
+    public function test_the_designer_can_order_up_to_three_pictures_for_a_hero_an_about_and_a_call_to_action(): void
+    {
+        Storage::fake('local');
+        $page = $this->page([['type' => 'hero', 'headline' => 'H']]);
+        Http::fake([
+            'api.openai.com/v1/images/generations' => Http::response([
+                'data' => [['b64_json' => '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=']],
+            ], 200, ['Content-Type' => 'application/json']),
+        ]);
+        $this->fakeAnswer(json_encode([
+            'theme' => 'bold-trade',
+            'blocks' => [
+                ['type' => 'hero', 'headline' => 'H'],
+                ['type' => 'services', 'items' => [['name' => 'S']]],
+                ['type' => 'about', 'text' => 'A'],
+                ['type' => 'cta_band', 'heading' => 'C'],
+                ['type' => 'about', 'text' => 'A2'],
+            ],
+            'images' => [
+                ['block_index' => 1, 'description' => 'not for services 7911'],
+                ['block_index' => 0, 'description' => 'hero photo 7912'],
+                ['block_index' => 2, 'description' => 'about photo 7913'],
+                ['block_index' => 3, 'description' => 'cta photo 7914'],
+                ['block_index' => 4, 'description' => 'a fourth photo 7915'],
+            ],
+        ]));
+
+        app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id);
+
+        $page->refresh();
+        $blocks = $page->draft_meta['designs']['claude']['blocks'];
+        $this->assertArrayNotHasKey('image_path', $blocks[1]);
+        $this->assertNotEmpty($blocks[0]['image_path']);
+        $this->assertNotEmpty($blocks[2]['image_path']);
+        $this->assertNotEmpty($blocks[3]['image_path']);
+        $this->assertArrayNotHasKey('image_path', $blocks[4]);
+        $made = collect(Http::recorded())->filter(fn ($pair) => str_contains($pair[0]->url(), 'images/generations'))->count();
+        $this->assertSame(3, $made);
+        Http::assertNotSent(fn ($r) => str_contains($r->url(), 'images/generations') && str_contains($r->body(), 'not for services 7911'));
+    }
 }
