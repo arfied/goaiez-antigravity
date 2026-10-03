@@ -14,6 +14,7 @@ use App\Modules\X103\Actions\PageVariantResultAction;
 use App\Modules\X103\Actions\PageVariantStartAction;
 use App\Modules\X103\Actions\PageVariantStopAction;
 use App\Modules\X103\Actions\SiteBuildRunAction;
+use App\Modules\X103\Actions\SiteCrawlAction;
 use App\Modules\X103\Actions\SiteEditProposeAction;
 use App\Modules\X103\Actions\SitePreviewAction;
 use App\Modules\X103\Actions\SitePublishAction;
@@ -119,6 +120,31 @@ class SiteBuild extends Component
                 $this->buildReason = $result['reason'] ?? '';
             }
             $this->ledger = $result;
+        } catch (Throwable $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+
+    /**
+     * Reads the website again now, whatever "Run Build Pipeline" would reuse — the build screen had no way to (the owner,
+     * 2026-10-03: "it is still showing Run Build Pipeline"). Pages past the per-minute budget are read in the background.
+     */
+    public function recrawl(SiteCrawlAction $action): void
+    {
+        $this->error = null;
+        $this->success = null;
+        try {
+            $result = $action->handle($this->businessId, $this->locationId);
+            if (($result['status'] ?? null) === 'refused') {
+                $this->buildStatus = 'refused';
+                $this->buildReason = (string) ($result['reason'] ?? '');
+
+                return;
+            }
+            $pages = (int) ($result['pages'] ?? 0);
+            $queued = (int) ($result['queued'] ?? 0);
+            $this->success = 'Read '.$pages.' '.($pages === 1 ? 'page' : 'pages').' of your website'
+                .($queued > 0 ? '; '.$queued.' more are read over the next few minutes.' : '.');
         } catch (Throwable $e) {
             $this->error = $e->getMessage();
         }

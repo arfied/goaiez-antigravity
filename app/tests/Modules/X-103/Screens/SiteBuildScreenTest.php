@@ -690,4 +690,38 @@ class SiteBuildScreenTest extends TestCase
         $this->actingAs($admin)->get(route('x-103.site-build.admin'))
             ->assertForbidden();
     }
+
+    public function test_the_owner_can_read_the_website_again_from_the_build_screen(): void
+    {
+        $user = User::factory()->create(['role' => UserRole::Owner]);
+        $business = $this->provisionTenant(['owner_user_id' => $user->id, 'name' => 'Recrawl Corp']);
+        Tenancy::set($business->id);
+        $location = Location::where('business_id', $business->id)->first();
+        if (! $location) {
+            $location = Location::factory()->create(['business_id' => $business->id]);
+        }
+        $location->website_url = 'https://example.com';
+        $location->website_confirmed_at = now();
+        $location->save();
+
+        Http::fake([
+            'https://example.com' => Http::response(
+                '<html><head><title>Home</title></head><body><h1>Welcome</h1><a href="/about">About</a></body></html>', 200
+            ),
+            'https://example.com/about' => Http::response(
+                '<html><head><title>About</title></head><body><h1>About Us 9001</h1></body></html>', 200
+            ),
+            '*' => Http::response('', 404),
+        ]);
+
+        $user->refresh();
+        Livewire::actingAs($user)
+            ->test(SiteBuild::class)
+            ->assertSee('See what was read')
+            ->call('recrawl')
+            ->assertSet('error', null)
+            ->assertSet('success', 'Read 2 pages of your website.');
+
+        $this->assertSame(2, SiteInventoryPage::where('business_id', $business->id)->where('status', 'fetched')->count());
+    }
 }

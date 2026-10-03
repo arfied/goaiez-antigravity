@@ -16,10 +16,12 @@
                 <h3 class="text-lg font-medium text-ink">1. Crawl</h3>
                 <p class="mt-1 text-sm text-ink-2">We analyze your current website to copy structure, text, and images.</p>
                 
-                <div class="mt-4">
+                <div class="mt-4 flex flex-wrap items-center gap-3">
                     <x-ui.button wire:click="runBuild" size="default">
                         Run Build Pipeline
                     </x-ui.button>
+                    <x-ui.button wire:click="recrawl" size="default" variant="secondary">Read my website again</x-ui.button>
+                    <a href="{{ route('x-103.site-inventory') }}" class="text-sm underline text-ink-2">See what was read</a>
                 </div>
 
                 @if($buildStatus)
