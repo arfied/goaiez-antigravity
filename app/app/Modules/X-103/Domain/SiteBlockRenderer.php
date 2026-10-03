@@ -24,8 +24,9 @@ final class SiteBlockRenderer
         $fontHeading = e($t['heading'] ?? 'sans-serif');
         $fontBody = e($t['body'] ?? 'sans-serif');
 
+        // The site's modern fonts (SiteFonts), inside the base stylesheet so the page carries no extra <style> element.
         $html = '<style>
-:root {
+'.SiteFonts::faceCss(is_array($t) ? $t : []).':root {
     --color-paper: '.$surface.';
     --color-canvas: '.$surface.';
     --color-card: '.$card.';

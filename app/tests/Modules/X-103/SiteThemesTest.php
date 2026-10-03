@@ -6,6 +6,7 @@ namespace Tests\Modules\X103;
 
 use App\Modules\X103\Domain\BlockPatchSchema;
 use App\Modules\X103\Domain\SiteBlockRenderer;
+use App\Modules\X103\Domain\SiteFonts;
 use App\Modules\X103\Domain\SiteThemes;
 use App\Services\Industry\IndustryStartingPoints;
 use App\Services\Industry\SiteStyle;
@@ -123,5 +124,38 @@ class SiteThemesTest extends TestCase
 
         $bad = SiteStyle::validate(['corners' => 'blob', 'palette' => ['primary' => '#123456']], $base);
         $this->assertArrayNotHasKey('corners', $bad['style'] ?? []);
+    }
+
+    public function test_a_modern_font_is_served_from_our_own_server_and_a_system_font_needs_nothing(): void
+    {
+        $hero = [['type' => 'hero', 'headline' => 'FONTS_9301']];
+        $tokens = app(IndustryStartingPoints::class)->for(null);
+
+        $modern = app(SiteBlockRenderer::class)->render($hero, ['tokens' => ['type_pairing' => ['heading' => 'Playfair Display, Georgia, serif', 'body' => 'Inter, system-ui, sans-serif']] + $tokens] + self::CONTEXT);
+        $this->assertStringContainsString('@font-face { font-family: "Playfair Display";', $modern);
+        $this->assertStringContainsString('src: url("/site-fonts/inter-700.woff2") format("woff2")', $modern);
+        $this->assertSame(4, substr_count($modern, '@font-face'));
+        $this->assertSame(1, substr_count($modern, '<style>'));
+        $this->assertStringNotContainsString('fonts.g', $modern);
+
+        $system = app(SiteBlockRenderer::class)->render($hero, ['tokens' => $tokens] + self::CONTEXT);
+        $this->assertStringNotContainsString('@font-face', $system);
+    }
+
+    public function test_every_modern_font_has_its_files_its_licence_and_one_stack_that_leads_with_it(): void
+    {
+        foreach (SiteFonts::FAMILIES as $family => $stem) {
+            foreach (SiteFonts::WEIGHTS as $weight) {
+                $path = public_path('site-fonts/'.$stem.'-'.$weight.'.woff2');
+                $this->assertFileExists($path);
+                $this->assertSame('wOF2', substr((string) file_get_contents($path), 0, 4), $path);
+            }
+            $this->assertFileExists(public_path('site-fonts/OFL-'.str_replace('-', '', $stem).'.txt'));
+            $this->assertCount(1, array_filter(SiteStyle::FONT_STACKS, fn (string $stack) => str_starts_with($stack, $family.',')), $family);
+        }
+
+        foreach (SiteThemes::THEMES as $id => $theme) {
+            $this->assertArrayHasKey(trim(explode(',', $theme['type_pairing']['heading'])[0]), SiteFonts::FAMILIES, $id);
+        }
     }
 }

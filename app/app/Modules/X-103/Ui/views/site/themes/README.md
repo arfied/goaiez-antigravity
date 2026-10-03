@@ -21,7 +21,7 @@ reviews, booking and tracking working under any theme. A theme stylesheet must:
 | `--color-on-primary` | text on the primary colour (always readable) |
 | `--color-accent` | accent marks |
 | `--color-accent-text` | accent used as text (always readable) |
-| `--font-heading`, `--font-body` | the font pair |
+| `--font-heading`, `--font-body` | the font pair — a system font or one of the modern families in `SiteFonts`, whose `@font-face` rules the renderer adds; a theme never declares a font file |
 
 ## Page frame
 

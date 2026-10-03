@@ -6,7 +6,12 @@ namespace App\Services\Industry;
 
 final class SiteStyle
 {
-    public const FONT_STACKS = ['system-ui, sans-serif', 'Georgia, serif', 'Helvetica, Arial, sans-serif', 'Palatino, Book Antiqua, serif', 'Verdana, Geneva, sans-serif', 'Trebuchet MS, sans-serif', 'Garamond, Times New Roman, serif', 'Tahoma, Segoe UI, sans-serif'];
+    /**
+     * The font stacks a site may use: eight system stacks, then eight modern families served from our own server (X-103's
+     * SiteFonts, which emits their @font-face rules — each stack leads with a family it knows, falling back to a system font).
+     */
+    public const FONT_STACKS = ['system-ui, sans-serif', 'Georgia, serif', 'Helvetica, Arial, sans-serif', 'Palatino, Book Antiqua, serif', 'Verdana, Geneva, sans-serif', 'Trebuchet MS, sans-serif', 'Garamond, Times New Roman, serif', 'Tahoma, Segoe UI, sans-serif',
+        'Inter, system-ui, sans-serif', 'Poppins, system-ui, sans-serif', 'Montserrat, system-ui, sans-serif', 'Nunito, system-ui, sans-serif', 'DM Sans, system-ui, sans-serif', 'Playfair Display, Georgia, serif', 'Lora, Georgia, serif', 'Merriweather, Georgia, serif'];
 
     public const PALETTE_KEYS = ['surface', 'card', 'ink', 'primary', 'accent'];
 
