@@ -109,4 +109,24 @@ class FluxPicturesTest extends TestCase
         Http::assertSent(fn ($r) => str_contains($r->url(), 'fal.run/fal-ai/flux/schnell') && str_contains((string) $r['prompt'], 'a tidy kitchen 7804'));
         Http::assertNotSent(fn ($r) => str_contains($r->url(), 'api.openai.com'));
     }
+
+    public function test_a_refused_flux_picture_falls_back_to_openai(): void
+    {
+        Storage::fake('local');
+        $owner = User::factory()->create();
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+        config(['credentials.openai_api_key' => 'fake-openai', 'credentials.fal_api_key' => 'fake-fal']);
+        Http::fake([
+            'api.openai.com/v1/images/generations' => Http::response(['data' => [['b64_json' => self::JPEG]]], 200, ['Content-Type' => 'application/json']),
+            'fal.run/*' => Http::response(['detail' => 'Forbidden'], 403, ['Content-Type' => 'application/json']),
+        ]);
+
+        $result = app(SiteImageGenerateAction::class)->handle((int) $biz->id, 'a tidy kitchen 9601');
+
+        $this->assertSame('generated', $result['status']);
+        Storage::disk('local')->assertExists($result['path']);
+        Http::assertSent(fn ($r) => str_contains($r->url(), 'fal.run/fal-ai/flux/schnell'));
+        Http::assertSent(fn ($r) => str_contains($r->url(), 'api.openai.com/v1/images/generations') && str_contains($r->body(), 'a tidy kitchen 9601'));
+    }
 }

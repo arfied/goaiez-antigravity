@@ -10,6 +10,7 @@ use App\Modules\X103\Domain\BlockPatchSchema;
 use App\Modules\X103\Domain\CompetitorDigest;
 use App\Modules\X103\Domain\SiteBlockRenderer;
 use App\Modules\X103\Domain\SiteDesignEngines;
+use App\Modules\X103\Domain\SiteFonts;
 use App\Modules\X103\Domain\SiteThemes;
 use App\Modules\X103\Domain\StatedFacts;
 use App\Modules\X103\Models\Page;
@@ -153,7 +154,7 @@ final class SiteDesignGenerateAction
             .($photoLines === [] ? '' : "\n\nPhotos from the business's own website — place one with \"owner_photo\": <its number> ONLY if it truly shows this business; otherwise describe a new one:\n".implode("\n", $photoLines))
             ."\n\nThemes (use one id):\n".implode("\n", $themes)
             ."\n\nSection types and their fields: ".self::CATALOGUE
-            ."\n\nFonts you may use: ".implode(' | ', SiteStyle::FONT_STACKS)
+            ."\n\nFonts you may use: ".implode(' | ', self::modernFontStacks())
             ."\n\nThe brand's current colours and fonts (JSON): ".json_encode(['palette' => $tokens['palette'] ?? [], 'type_pairing' => $tokens['type_pairing'] ?? []], JSON_UNESCAPED_SLASHES)
             .($siteTheme !== null || ! is_array($oldBrand) || $oldBrand === [] ? '' : "\n\nColours and fonts on the business's current website — keep the brand recognisable: use these colours for primary and accent where text stays easy to read, and choose the listed font closest to theirs (JSON): ".json_encode($oldBrand, JSON_UNESCAPED_SLASHES))
             .($crawled === '' ? '' : "\n\nText from the business's current website, for reference only:".$crawled)
@@ -215,6 +216,21 @@ final class SiteDesignGenerateAction
             $validation = SiteStyle::validate($json['style'], $base);
             if ($validation['ok']) {
                 $style = $validation['style'];
+            }
+        }
+        // Only modern fonts from the AI: an old system font it still names (three of four designs chose Trebuchet + Tahoma on
+        // production, 2026-10-04) is dropped, so the theme's own modern pair stands.
+        if (is_array($style) && is_array($style['type_pairing'] ?? null)) {
+            foreach ($style['type_pairing'] as $role => $stack) {
+                if (! isset(SiteFonts::FAMILIES[trim(explode(',', (string) $stack)[0])])) {
+                    unset($style['type_pairing'][$role]);
+                }
+            }
+            if ($style['type_pairing'] === []) {
+                unset($style['type_pairing']);
+            }
+            if ($style === []) {
+                $style = null;
             }
         }
 
@@ -369,5 +385,15 @@ final class SiteDesignGenerateAction
         $decoded = json_decode(substr($text, $start, $end - $start + 1), true);
 
         return is_array($decoded) ? $decoded : null;
+    }
+
+    /**
+     * The font stacks the AI is offered: only those led by a modern family (SiteFonts), never the old system stacks.
+     *
+     * @return list<string>
+     */
+    private static function modernFontStacks(): array
+    {
+        return array_values(array_filter(SiteStyle::FONT_STACKS, fn (string $stack) => isset(SiteFonts::FAMILIES[trim(explode(',', $stack)[0])])));
     }
 }

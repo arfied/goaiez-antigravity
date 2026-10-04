@@ -409,4 +409,31 @@ class SiteDesignGenerateActionTest extends TestCase
             && ! str_contains($r->body(), 'Company logo 9203'));
         Http::assertNotSent(fn ($r) => str_contains($r->url(), 'images/generations'));
     }
+
+    public function test_the_ai_is_offered_only_modern_fonts_and_an_old_font_it_names_is_dropped(): void
+    {
+        $page = $this->page([['type' => 'hero', 'headline' => 'H', 'image_path' => 'images/kept-9602.jpg']]);
+        $this->fakeAnswer(json_encode([
+            'theme' => 'bold-trade',
+            'style' => ['type_pairing' => ['heading' => 'Trebuchet MS, sans-serif', 'body' => 'Inter, system-ui, sans-serif']],
+            'blocks' => [['type' => 'hero', 'headline' => 'Fonts 9603']],
+        ]));
+
+        app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id);
+
+        $page->refresh();
+        $style = $page->draft_meta['designs']['claude']['style'];
+        $this->assertSame('Inter, system-ui, sans-serif', $style['type_pairing']['body']);
+        $this->assertArrayNotHasKey('heading', $style['type_pairing']);
+        Http::assertSent(function ($r) {
+            if (! str_contains($r->url(), 'api.anthropic.com')) {
+                return false;
+            }
+            $prompt = (string) data_get(json_decode($r->body(), true), 'messages.0.content');
+
+            return preg_match('/Fonts you may use: ([^\n]*)/', $prompt, $m) === 1
+                && str_contains($m[1], 'Montserrat, system-ui, sans-serif')
+                && ! str_contains($m[1], 'Trebuchet');
+        });
+    }
 }

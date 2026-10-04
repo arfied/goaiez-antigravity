@@ -26,6 +26,11 @@ final readonly class SiteImageGenerateAction
         // Low-cost FLUX pictures once a fal.ai key is set (the boss, 2026-10-02); OpenAI images until then, so pictures never stop.
         $model = PlatformCredentials::has(AiProvider::Fal->credentialKey()) ? AiModel::FluxSchnell : null;
         $response = $router->image(new ImageRequest(AiTask::SiteImage, $prompt, model: $model));
+        // A refused FLUX picture falls back to OpenAI once (production, 2026-10-04: fal.ai answered 403 to all twelve pictures
+        // of four designs and every page came out with none, although the OpenAI image key worked).
+        if (! $response->isUsable() && $model === AiModel::FluxSchnell) {
+            $response = $router->image(new ImageRequest(AiTask::SiteImage, $prompt));
+        }
 
         if (! $response->isUsable()) {
             return [
