@@ -82,6 +82,38 @@ final class SiteTemplates
             'type_pairing' => ['heading' => 'Playfair Display, Georgia, serif', 'body' => 'Nunito, system-ui, sans-serif'],
             'sections' => ['hero', 'products', 'about', 'gallery', 'reviews_strip', 'faq', 'cta_band', 'contact'],
         ],
+        'trades-heritage' => [
+            'label' => 'Trades Heritage',
+            'for' => 'Family trades firms, roofers, builders, plumbers — cream and brick, a solid serif, stamped trust badges',
+            'families' => ['trades'],
+            'palette' => ['surface' => '#f7f1e6', 'card' => '#fffaf2', 'ink' => '#2a1d17', 'primary' => '#a4321f', 'accent' => '#a4321f'],
+            'type_pairing' => ['heading' => 'Merriweather, Georgia, serif', 'body' => 'Inter, system-ui, sans-serif'],
+            'sections' => ['hero', 'stats', 'services', 'about', 'gallery', 'reviews_strip', 'faq', 'cta_band', 'contact'],
+        ],
+        'spa-bright' => [
+            'label' => 'Spa Bright',
+            'for' => 'Day spas, facials, massage, wellness and beauty studios — light, soft colour, rounded cards',
+            'families' => ['medspa', 'care'],
+            'palette' => ['surface' => '#fffdfb', 'card' => '#ffffff', 'ink' => '#2e2a3a', 'primary' => '#6b4fbb', 'accent' => '#b0466f'],
+            'type_pairing' => ['heading' => 'Lora, Georgia, serif', 'body' => 'Nunito, system-ui, sans-serif'],
+            'sections' => ['hero', 'services', 'about', 'gallery', 'reviews_strip', 'booking_button', 'faq', 'cta_band', 'contact'],
+        ],
+        'nail-pop' => [
+            'label' => 'Nail Pop',
+            'for' => 'Nail salons and nail-art studios — playful colour, a tilted photo grid, a menu of price pills',
+            'families' => ['care'],
+            'palette' => ['surface' => '#fdfaff', 'card' => '#ffffff', 'ink' => '#24123a', 'primary' => '#7c3aed', 'accent' => '#0e7c7e'],
+            'type_pairing' => ['heading' => 'Poppins, system-ui, sans-serif', 'body' => 'Nunito, system-ui, sans-serif'],
+            'sections' => ['hero', 'services', 'gallery', 'about', 'reviews_strip', 'booking_button', 'faq', 'cta_band', 'contact'],
+        ],
+        'shop-bold' => [
+            'label' => 'Shop Bold',
+            'for' => 'Online shops with a bold brand — dark, bright yellow, products up front',
+            'families' => [],
+            'palette' => ['surface' => '#111316', 'card' => '#1b1e23', 'ink' => '#f2f3f5', 'primary' => '#ffcc33', 'accent' => '#ffcc33'],
+            'type_pairing' => ['heading' => 'DM Sans, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
+            'sections' => ['hero', 'products', 'about', 'gallery', 'reviews_strip', 'faq', 'cta_band', 'contact'],
+        ],
     ];
 
     /**

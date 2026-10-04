@@ -1,0 +1,179 @@
+{{-- Trades Heritage — family trades firms, roofers, builders, plumbers: cream and brick, a solid serif, stamped trust badges. A frozen layout: the AI fills the blocks, never this markup. --}}
+@php
+    $phoneSvg = '<svg class="th-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>';
+    $hero = $b['hero'] ?? null;
+    $heroImg = $hero ? $img($hero['image_path'] ?? null) : null;
+    $heroHref = $hero && $txt($hero['cta_label'] ?? null) ? $link($hero['cta_url'] ?? null) : null;
+    $services = array_values(array_filter((array) ($b['services']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['name'] ?? null)));
+    $reviews = array_values(array_filter((array) ($b['reviews_strip']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['text'] ?? null)));
+    $stats = array_values(array_filter((array) ($b['stats']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['value'] ?? null)));
+    $faqs = array_values(array_filter((array) ($b['faq']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['question'] ?? null) && $txt($i['answer'] ?? null)));
+    $gallery = array_values(array_filter((array) ($b['gallery']['items'] ?? []), fn ($i) => is_array($i) && $img($i['image_path'] ?? null)));
+    $about = isset($b['about']) && $txt($b['about']['text'] ?? null) ? $b['about'] : null;
+    $cta = isset($b['cta_band']) && $txt($b['cta_band']['heading'] ?? null) ? $b['cta_band'] : null;
+    $ctaHref = $cta && $txt($cta['label'] ?? null) ? $link($cta['url'] ?? null) : null;
+    $badges = array_values(array_filter([
+        isset($facts['years_in_business']) ? ['big' => (string) $facts['years_in_business'], 'small' => 'years in business'] : null,
+        isset($facts['insurance']) ? ['big' => '✓', 'small' => (string) $facts['insurance']] : null,
+        isset($facts['licence_number']) ? ['big' => 'Lic.', 'small' => (string) $facts['licence_number']] : null,
+    ]));
+    $area = $facts['service_area'] ?? null;
+    $nav = array_filter(['services' => $services ? 'Services' : null, 'about' => $about ? 'Our story' : null, 'reviews' => $reviews ? 'Reviews' : null, 'contact' => 'Contact']);
+@endphp
+<div class="th">
+<header class="th-nav">
+    <div class="th-wrap th-nav__row">
+        <a class="th-brand" href="#top">{{ $name }}</a>
+        <nav class="th-nav__links" aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
+        @if($phone)<a class="th-button th-nav__call" href="{{ $tel }}">{!! $phoneSvg !!}<span>{{ $phone }}</span></a>@endif
+        <details class="th-menu">
+            <summary aria-label="Menu"><span></span><span></span><span></span></summary>
+            <nav aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
+        </details>
+    </div>
+</header>
+
+@if($hero)
+<section id="top" class="th-hero{{ $heroImg ? '' : ' th-hero--text' }}"{!! $at('hero') !!}>
+    <div class="th-wrap th-hero__grid">
+        <div class="th-hero__body">
+            @if($area)<p class="th-kicker">Serving {{ $area }}</p>@endif
+            <h1{!! $f('headline') !!}>{{ $hero['headline'] }}</h1>
+            @if($txt($hero['subline'] ?? null))<p class="th-hero__sub"{!! $f('subline') !!}>{{ $hero['subline'] }}</p>@endif
+            <div class="th-actions">
+                @if($phone)<a class="th-button th-button--lg" href="{{ $tel }}">{!! $phoneSvg !!}Call {{ $phone }}</a>@endif
+                @if($heroHref)<a class="th-button th-button--outline th-button--lg" href="{{ $heroHref }}"{!! $f('cta_label') !!}>{{ $hero['cta_label'] }}</a>@endif
+            </div>
+        </div>
+        @if($heroImg)<figure class="th-hero__media"><img src="{{ $heroImg }}" alt="{{ $txt($hero['image_alt'] ?? null) ?? '' }}"></figure>@endif
+    </div>
+    @if($badges)
+    <div class="th-wrap"><ul class="th-badges">@foreach($badges as $badge)<li><strong>{{ $badge['big'] }}</strong><span>{{ $badge['small'] }}</span></li>@endforeach</ul></div>
+    @endif
+</section>
+@endif
+
+@if($stats)
+<section class="th-stats"{!! $at('stats') !!}>
+    <ul class="th-wrap th-stats__row">@foreach($stats as $s)<li><strong>{{ $s['value'] }}</strong>@if($txt($s['label'] ?? null))<span>{{ $s['label'] }}</span>@endif</li>@endforeach</ul>
+</section>
+@endif
+
+@if($services)
+<section id="services" class="th-section"{!! $at('services') !!}>
+    <div class="th-wrap">
+        <div class="th-head">
+            <p class="th-kicker">What we do</p>
+            @if($txt($b['services']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['services']['heading'] }}</h2>@endif
+        </div>
+        <ol class="th-services">
+            @foreach($services as $n => $s)
+            <li>
+                <span class="th-services__n" aria-hidden="true">{{ str_pad((string) ($n + 1), 2, '0', STR_PAD_LEFT) }}</span>
+                <div>
+                    <h3>{{ $s['name'] }}</h3>
+                    @if($txt($s['description'] ?? null))<p>{{ $s['description'] }}</p>@endif
+                </div>
+                @if($txt($s['price_text'] ?? null))<span class="th-services__price">{{ $s['price_text'] }}</span>@endif
+            </li>
+            @endforeach
+        </ol>
+    </div>
+</section>
+@endif
+
+@if($about)
+@php $aboutImg = $img($about['image_path'] ?? null); @endphp
+<section id="about" class="th-section th-section--dark"{!! $at('about') !!}>
+    <div class="th-wrap th-about{{ $aboutImg ? '' : ' th-about--text' }}">
+        @if($aboutImg)<img class="th-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
+        <div class="th-about__body">
+            <p class="th-kicker">Our story</p>
+            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
+            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
+        </div>
+    </div>
+</section>
+@endif
+
+@if($gallery)
+<section class="th-section"{!! $at('gallery') !!}>
+    <div class="th-wrap">
+        <div class="th-head"><p class="th-kicker">Our work</p>@if($txt($b['gallery']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['gallery']['heading'] }}</h2>@endif</div>
+        <div class="th-gallery">@foreach(array_slice($gallery, 0, 6) as $g)<img src="{{ $img($g['image_path']) }}" alt="{{ $txt($g['alt'] ?? null) ?? '' }}" loading="lazy">@endforeach</div>
+    </div>
+</section>
+@endif
+
+@if($reviews)
+<section id="reviews" class="th-section th-section--cream"{!! $at('reviews_strip') !!}>
+    <div class="th-wrap">
+        <div class="th-head"><p class="th-kicker">Reviews</p>@if($txt($b['reviews_strip']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['reviews_strip']['heading'] }}</h2>@endif</div>
+        <div class="th-reviews">
+            @foreach(array_slice($reviews, 0, 6) as $r)
+            @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
+            <blockquote>
+                @if($stars > 0)<p class="th-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                <p>{{ $r['text'] }}</p>
+                @if($txt($r['author'] ?? null))<cite>{{ $r['author'] }}@if($txt($r['source'] ?? null)) · {{ $r['source'] }}@endif</cite>@endif
+            </blockquote>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
+@if($faqs)
+<section id="faq" class="th-section"{!! $at('faq') !!}>
+    <div class="th-wrap th-faq">
+        <div class="th-head"><p class="th-kicker">Questions</p>@if($txt($b['faq']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['faq']['heading'] }}</h2>@endif</div>
+        <div id="faq-x176" class="th-faq__list">
+            @foreach($b['faq']['items'] as $qi => $q)
+            @if(is_array($q) && $txt($q['question'] ?? null) && $txt($q['answer'] ?? null))
+            <details class="th-q" data-question="{{ trim((string) $q['question']) }}">
+                <summary{!! $f('items.'.(int) $qi.'.question') !!}>{{ trim((string) $q['question']) }}</summary>
+                <p{!! $f('items.'.(int) $qi.'.answer') !!}>{{ trim((string) $q['answer']) }}</p>
+            </details>
+            @endif
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
+@if($cta || $phone)
+<section class="th-cta"{!! $cta ? $at('cta_band') : '' !!}>
+    <div class="th-wrap th-cta__row">
+        <div>
+            @if($cta)<h2{!! $f('heading') !!}>{{ $cta['heading'] }}</h2>@else<h2>Talk to us today</h2>@endif
+            @if($cta && $txt($cta['text'] ?? null))<p{!! $f('text') !!}>{{ $cta['text'] }}</p>@endif
+        </div>
+        <div class="th-actions">
+            @if($phone)<a class="th-button th-button--cream th-button--lg" href="{{ $tel }}">{!! $phoneSvg !!}{{ $phone }}</a>@endif
+            @if($ctaHref)<a class="th-button th-button--ghost th-button--lg" href="{{ $ctaHref }}"{!! $f('label') !!}>{{ $cta['label'] }}</a>@endif
+        </div>
+    </div>
+</section>
+@endif
+
+<section id="contact" class="th-section"{!! $at('contact') !!}>
+    <div class="th-wrap th-contact">
+        <div>
+            @if($name !== '')<h2>{{ $name }}</h2>@endif
+            @if($address)<p>{{ $address }}</p>@endif
+            @if($phone)<p><a href="{{ $tel }}">{{ $phone }}</a></p>@endif
+            @if($email)<p><a href="mailto:{{ $email }}">{{ $email }}</a></p>@endif
+        </div>
+        @if($hours)
+        <table class="th-hours">
+            <caption>Opening hours</caption>
+            @foreach($hours as $h)
+            @if(is_array($h) && $txt($h['day'] ?? null))
+            <tr><th scope="row">{{ $h['day'] }}</th><td>{{ $txt($h['close'] ?? null) === null ? 'Closed' : ($h['open'] ?? '').' – '.$h['close'] }}</td></tr>
+            @endif
+            @endforeach
+        </table>
+        @endif
+    </div>
+</section>
+</div>
