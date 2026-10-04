@@ -8,6 +8,10 @@
             @foreach($block['items'] ?? [] as $item)
                 @if(isset($item['rating']) && is_scalar($item['rating']) && isset($item['text']) && is_scalar($item['text']))
                     <blockquote class="card">
+                        @php $stars = is_numeric($item['rating']) ? max(0, min(5, (int) round((float) $item['rating']))) : 0; @endphp
+                        @if($stars > 0)
+                            <div class="review-stars" aria-hidden="true">{{ str_repeat('★', $stars) }}{{ str_repeat('☆', 5 - $stars) }}</div>
+                        @endif
                         <p>{{ $item['text'] }}</p>
                         <cite>
                             {{ $item['rating'] }} stars

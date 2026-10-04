@@ -94,6 +94,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .site-block.gallery h2 { grid-column: 1 / -1; }
 .site-block.gallery > img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; }
 .review-list { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); }
+.review-stars { color: var(--color-accent-text); letter-spacing: 0.12em; font-size: 1.05rem; line-height: 1; margin-bottom: 0.6rem; }
 .review-list blockquote { margin: 0; padding: 1.25rem; border-radius: 12px; background: var(--color-card); }
 .review-list cite { font-style: normal; font-size: 0.9rem; opacity: 0.8; }
 .site-block.booking a { display: inline-block; padding: 0.85rem 1.5rem; border-radius: 999px; background: var(--color-primary); color: var(--color-on-primary); font-weight: 600; text-decoration: none; }
@@ -122,7 +123,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .cta-band { display: grid; justify-items: center; gap: 1rem; text-align: center; }
 .cta-band p { margin-inline: auto; opacity: 0.9; }
 .cta-band a { display: inline-block; padding: 0.9rem 1.75rem; border-radius: 999px; font-weight: 700; text-decoration: none; background: var(--color-on-primary); color: var(--color-primary); }
-.stat-list { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); text-align: center; }
+.stat-list { display: grid; gap: clamp(0.75rem, 3vw, 1.5rem); grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr)); text-align: center; }
 .stat-list strong { display: block; font-family: var(--font-heading); font-size: clamp(2.25rem, 4.5vw, 3.25rem); line-height: 1; color: var(--color-accent-text); }
 .stat-list span { display: block; margin-top: 0.5rem; opacity: 0.8; }
 .site-block.services.services--list ul { grid-template-columns: 1fr; gap: 0; }

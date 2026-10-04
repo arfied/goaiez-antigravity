@@ -464,4 +464,15 @@ class BlockMarkupTest extends TestCase
         $this->assertStringContainsString('.site-block.contact a[href^="tel:"] { white-space: nowrap; }', $html);
         $this->assertStringContainsString('class="about-media"', $html);
     }
+
+    public function test_a_review_shows_its_stars_and_a_rating_that_is_not_a_number_shows_none(): void
+    {
+        $html = $this->renderBlock(['type' => 'reviews_strip', 'items' => [['author' => 'A', 'rating' => '4', 'text' => 'Four stars 9801']]]);
+        $this->assertStringContainsString('<div class="review-stars" aria-hidden="true">★★★★☆</div>', $html);
+        $this->assertStringContainsString('Four stars 9801', $html);
+
+        $none = $this->renderBlock(['type' => 'reviews_strip', 'items' => [['author' => 'A', 'rating' => 'great', 'text' => 'Words only 9802']]]);
+        $this->assertStringNotContainsString('class="review-stars"', $none);
+        $this->assertStringContainsString('Words only 9802', $none);
+    }
 }
