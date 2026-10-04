@@ -121,12 +121,13 @@ final class SiteDesignGenerateAction
         // The business's own photos from its old website, offered by number: the AI places one only when it truly shows this
         // business (the boss, 2026-10-03: "why does this still look horrible" — no page had a single picture). Logos, icons and
         // small or extreme-shaped images are left out.
-        $ownerPhotos = SiteInventoryImage::where('business_id', $businessId)->where('status', 'stored')
+        $photoCandidates = SiteInventoryImage::where('business_id', $businessId)->where('status', 'stored')
             ->where('width', '>=', 600)->where('height', '>=', 300)
-            ->orderByRaw('width * height desc')->limit(12)->get(['path', 'alt', 'width', 'height'])
+            ->orderByRaw('width * height desc')->limit(24)->get(['path', 'alt', 'width', 'height'])
             ->filter(fn ($i) => ! preg_match('/logo|icon|badge|favicon|sprite/i', ((string) $i->alt).' '.((string) $i->path))
                 && $i->width / max(1, $i->height) >= 0.6 && $i->width / max(1, $i->height) <= 2.5)
-            ->take(6)->values()->all();
+            ->values()->all();
+        $ownerPhotos = array_slice($photoCandidates, 0, 6);
         $photoLines = [];
         foreach ($ownerPhotos as $n => $photo) {
             $photoLines[] = ($n + 1).'. "'.mb_substr(trim((string) $photo->alt) !== '' ? (string) $photo->alt : 'no description', 0, 120).'" ('.$photo->width.'×'.$photo->height.')';
@@ -331,6 +332,49 @@ final class SiteDesignGenerateAction
             if (($picture['status'] ?? null) === 'generated' && is_string($picture['path'] ?? null)) {
                 $blocks[$index]['image_path'] = $picture['path'];
                 $blocks[$index]['image_alt'] = mb_substr($description, 0, 120);
+            }
+        }
+
+        // On a template, the business's own photos come first (the boss's brief, 2026-10-04: real photos, never a made-up one
+        // passed off as the business): a banner or about section the AI left without a picture gets the owner's next best photo,
+        // and a template with a gallery gets one from the photos left — at least three, at most eight. A picture is made only
+        // when the business has no usable photo of its own.
+        if ($template !== null) {
+            $usedPaths = [];
+            foreach ($blocks as $block) {
+                if (! empty($block['image_path'])) {
+                    $usedPaths[(string) $block['image_path']] = true;
+                }
+            }
+            $unused = array_values(array_filter($photoCandidates, static fn ($p): bool => ! isset($usedPaths[(string) $p->path])));
+            foreach ($blocks as $i => $block) {
+                if (! in_array($block['type'], ['hero', 'about'], true) || ! empty($block['image_path'])) {
+                    continue;
+                }
+                // The banner wants a wide photo; take the first that is at least a little wider than tall.
+                $pick = null;
+                foreach ($unused as $n => $photo) {
+                    if ($block['type'] !== 'hero' || $photo->width >= $photo->height * 1.2) {
+                        $pick = $n;
+                        break;
+                    }
+                }
+                if ($pick === null) {
+                    continue;
+                }
+                $photo = $unused[$pick];
+                array_splice($unused, $pick, 1);
+                $blocks[$i]['image_path'] = (string) $photo->path;
+                $blocks[$i]['image_alt'] = mb_substr(trim((string) $photo->alt) !== '' ? (string) $photo->alt : (string) ($block['headline'] ?? $block['heading'] ?? ''), 0, 120);
+                $blocks[$i]['image_width'] = (int) $photo->width;
+                $blocks[$i]['image_height'] = (int) $photo->height;
+            }
+            if (in_array('gallery', $template['sections'], true) && ! in_array('gallery', array_column($blocks, 'type'), true) && count($unused) >= 3) {
+                $items = [];
+                foreach (array_slice($unused, 0, 8) as $photo) {
+                    $items[] = ['image_path' => (string) $photo->path, 'alt' => mb_substr(trim((string) $photo->alt), 0, 120), 'width' => (int) $photo->width, 'height' => (int) $photo->height];
+                }
+                $blocks[] = ['type' => 'gallery', 'items' => $items, 'source' => 'owner_photos'];
             }
         }
 

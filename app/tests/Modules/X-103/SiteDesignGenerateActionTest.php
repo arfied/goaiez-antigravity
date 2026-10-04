@@ -515,4 +515,98 @@ class SiteDesignGenerateActionTest extends TestCase
         $this->assertSame('Yes 7318', $contact['industry_facts'][0]['value']);
         Http::assertSent(fn ($r) => str_contains($r->body(), 'Themes (use one id)'));
     }
+
+    /**
+     * The business's own photos, largest first. Fixture taken from test_the_ai_can_place_the_businesss_own_photo_and_logos_are_never_offered.
+     *
+     * @param  list<array{0: string, 1: int, 2: int}>  $photos  path, width, height
+     */
+    private function ownerPhotos(Page $page, array $photos): void
+    {
+        $locationId = Location::where('business_id', $page->business_id)->value('id');
+        $inventoryPage = SiteInventoryPage::create(['business_id' => $page->business_id, 'location_id' => $locationId, 'url' => 'https://example.com', 'status' => 'fetched', 'fetched_at' => now()]);
+        foreach ($photos as [$path, $width, $height]) {
+            SiteInventoryImage::create([
+                'business_id' => $page->business_id,
+                'page_id' => $inventoryPage->id,
+                'source_url' => 'https://example.com/'.basename($path),
+                'attribution' => 'example.com',
+                'status' => 'stored',
+                'path' => $path,
+                'alt' => 'Photo '.basename($path),
+                'width' => $width,
+                'height' => $height,
+            ]);
+        }
+    }
+
+    public function test_on_a_template_the_owners_own_photos_fill_the_banner_the_about_and_a_gallery_before_any_picture_is_made(): void
+    {
+        $page = $this->page([['type' => 'hero', 'headline' => 'Old headline']]);
+        app(SiteTemplateApplyAction::class)->handle($page->business_id, $page->id, 'trades-pro');
+        $this->ownerPhotos($page, [
+            ['inventory/tall-7401.jpg', 1400, 1800],
+            ['inventory/van-7402.jpg', 1600, 1000],
+            ['inventory/crew-7403.jpg', 1200, 900],
+            ['inventory/sink-7404.jpg', 1000, 800],
+            ['inventory/pipes-7405.jpg', 900, 700],
+            ['inventory/meter-7406.jpg', 800, 600],
+        ]);
+        $this->fakeAnswer(json_encode([
+            'blocks' => [
+                ['type' => 'hero', 'headline' => 'Plumbing fixed right 7407'],
+                ['type' => 'about', 'text' => 'A family crew 7408.'],
+            ],
+        ]));
+
+        app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id);
+
+        $page->refresh();
+        $blocks = $page->draft_meta['designs']['claude']['blocks'];
+        $this->assertSame(['hero', 'about', 'gallery'], array_column($blocks, 'type'));
+        // The banner takes the largest WIDE photo, so the tall one is passed over for it and goes to the about section.
+        $this->assertSame('inventory/van-7402.jpg', $blocks[0]['image_path']);
+        $this->assertSame('inventory/tall-7401.jpg', $blocks[1]['image_path']);
+        $this->assertSame(['inventory/crew-7403.jpg', 'inventory/sink-7404.jpg', 'inventory/pipes-7405.jpg', 'inventory/meter-7406.jpg'], array_column($blocks[2]['items'], 'image_path'));
+        Http::assertNotSent(fn ($r) => str_contains($r->url(), 'images/generations') || str_contains($r->url(), 'fal.run'));
+    }
+
+    public function test_on_a_template_too_few_photos_make_no_gallery(): void
+    {
+        $page = $this->page([['type' => 'hero', 'headline' => 'Old headline']]);
+        app(SiteTemplateApplyAction::class)->handle($page->business_id, $page->id, 'trades-pro');
+        $this->ownerPhotos($page, [['inventory/van-7411.jpg', 1600, 1000], ['inventory/crew-7412.jpg', 1200, 900]]);
+        $this->fakeAnswer(json_encode([
+            'blocks' => [
+                ['type' => 'hero', 'headline' => 'Plumbing 7413', 'image_path' => 'x.jpg'],
+                ['type' => 'about', 'text' => 'Crew 7414.'],
+            ],
+        ]));
+
+        app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id);
+
+        $page->refresh();
+        $blocks = $page->draft_meta['designs']['claude']['blocks'];
+        $this->assertSame(['hero', 'about'], array_column($blocks, 'type'));
+        $this->assertSame('inventory/van-7411.jpg', $blocks[0]['image_path']);
+        $this->assertSame('inventory/crew-7412.jpg', $blocks[1]['image_path']);
+    }
+
+    public function test_without_a_template_the_ai_alone_decides_which_sections_get_the_owners_photos(): void
+    {
+        $themePage = $this->page([['type' => 'hero', 'headline' => 'Old headline', 'image_path' => 'images/kept-7415.jpg']]);
+        $this->ownerPhotos($themePage, [['inventory/van-7416.jpg', 1600, 1000], ['inventory/a-7417.jpg', 1200, 900], ['inventory/b-7418.jpg', 1100, 900], ['inventory/c-7419.jpg', 1000, 800]]);
+        $this->fakeAnswer(json_encode([
+            'theme' => 'bold-trade',
+            'blocks' => [['type' => 'hero', 'headline' => 'Theme 7420'], ['type' => 'about', 'text' => 'Crew 7421.']],
+        ]));
+
+        app(SiteDesignGenerateAction::class)->handle($themePage->business_id, $themePage->id);
+
+        $themePage->refresh();
+        $themeBlocks = $themePage->draft_meta['designs']['claude']['blocks'];
+        $this->assertSame(['hero', 'about'], array_column($themeBlocks, 'type'));
+        $this->assertSame('images/kept-7415.jpg', $themeBlocks[0]['image_path']);
+        $this->assertArrayNotHasKey('image_path', $themeBlocks[1]);
+    }
 }
