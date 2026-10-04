@@ -24,6 +24,7 @@ class SiteInventoryPage extends Model implements TenantScoped
         'emails' => 'array',
         'links_out' => 'array',
         'brand' => 'array',
+        'products' => 'array',
         'fetched_at' => 'datetime',
     ];
 

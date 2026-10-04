@@ -378,6 +378,44 @@ final class SiteDesignGenerateAction
             }
         }
 
+        // A template with a shop gets the business's real products from its own online store (SiteProductSignals, read by the
+        // crawl) — never products or prices from the AI. Each keeps its own page as its link and, when the crawl stored its
+        // picture, that picture. At most twelve, in the order the site lists them.
+        if ($template !== null && in_array('products', $template['sections'], true) && ! in_array('products', array_column($blocks, 'type'), true)) {
+            $items = [];
+            $seenNames = [];
+            foreach (SiteInventoryPage::where('business_id', $businessId)->whereNotNull('products')->orderBy('id')->get(['products']) as $inventoryPage) {
+                foreach (is_array($inventoryPage->products) ? $inventoryPage->products : [] as $found) {
+                    $name = is_array($found) && is_string($found['name'] ?? null) ? trim($found['name']) : '';
+                    if ($name === '' || isset($seenNames[mb_strtolower($name)])) {
+                        continue;
+                    }
+                    $seenNames[mb_strtolower($name)] = true;
+                    $item = ['name' => $name];
+                    foreach (['price_text', 'description', 'url'] as $key) {
+                        if (is_string($found[$key] ?? null) && trim($found[$key]) !== '') {
+                            $item[$key] = trim($found[$key]);
+                        }
+                    }
+                    if (is_string($found['image_url'] ?? null)) {
+                        $stored = SiteInventoryImage::where('business_id', $businessId)->where('source_url', $found['image_url'])
+                            ->where('status', 'stored')->value('path');
+                        if (is_string($stored) && $stored !== '') {
+                            $item['image_path'] = $stored;
+                            $item['image_alt'] = $name;
+                        }
+                    }
+                    $items[] = $item;
+                    if (count($items) >= 12) {
+                        break 2;
+                    }
+                }
+            }
+            if ($items !== []) {
+                $blocks[] = ['type' => 'products', 'items' => $items, 'source' => 'website'];
+            }
+        }
+
         // The top banner is never left without a picture: when neither the AI nor the business supplied one, one is made from
         // the banner's own words. A banner with a picture sits beside its words ("split") rather than a centred column of text.
         if ($heroIndex !== null && empty($blocks[$heroIndex]['image_path']) && $made < 3) {

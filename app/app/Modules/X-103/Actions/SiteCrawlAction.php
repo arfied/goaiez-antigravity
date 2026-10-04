@@ -9,6 +9,7 @@ use App\Enums\FetchOutcome;
 use App\Enums\FetchRefusalReason;
 use App\Models\Location;
 use App\Modules\X103\Domain\SiteBrandSignals;
+use App\Modules\X103\Domain\SiteProductSignals;
 use App\Modules\X103\Jobs\SiteCrawlContinueJob;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Services\Config\DefaultsRegistry;
@@ -233,6 +234,10 @@ final class SiteCrawlAction
                 }
             }
             $imageUrls = array_values(array_unique(array_filter($imageUrls)));
+            // The store's own products (SiteProductSignals). Their pictures go first in the page's images, so the image copy
+            // (SiteImagesCopyAction, capped per site) stores them before decorative ones.
+            $products = SiteProductSignals::read((string) $result->body, $url);
+            $imageUrls = array_values(array_unique(array_merge(array_filter(array_column($products, 'image_url')), $imageUrls)));
 
             $phones = [];
             $emails = [];
@@ -316,6 +321,7 @@ final class SiteCrawlAction
                 ['business_id' => $businessId, 'url' => $url],
                 [
                     'brand' => $brand === [] ? null : $brand,
+                    'products' => $products === [] ? null : $products,
                     'location_id' => $locationId,
                     'title' => $title ? trim($title) : null,
                     'headings' => $headings,

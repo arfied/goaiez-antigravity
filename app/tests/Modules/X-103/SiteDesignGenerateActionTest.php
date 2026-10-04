@@ -609,4 +609,55 @@ class SiteDesignGenerateActionTest extends TestCase
         $this->assertSame('images/kept-7415.jpg', $themeBlocks[0]['image_path']);
         $this->assertArrayNotHasKey('image_path', $themeBlocks[1]);
     }
+
+    /** A page of the business's own website on which its store listed these products. */
+    private function storeProducts(Page $page, array $products): SiteInventoryPage
+    {
+        $locationId = Location::where('business_id', $page->business_id)->value('id');
+
+        return SiteInventoryPage::create(['business_id' => $page->business_id, 'location_id' => $locationId, 'url' => 'https://example.com/shop', 'status' => 'fetched', 'fetched_at' => now(), 'products' => $products]);
+    }
+
+    public function test_a_template_with_a_shop_gets_the_stores_real_products_and_their_stored_pictures(): void
+    {
+        $page = $this->page([['type' => 'hero', 'headline' => 'Old headline']]);
+        app(SiteTemplateApplyAction::class)->handle($page->business_id, $page->id, 'maker-market');
+        $inventoryPage = $this->storeProducts($page, [
+            ['name' => 'Folk slip mug 7521', 'url' => 'https://example.com/products/mug', 'price_text' => '$38', 'image_url' => 'https://example.com/img/mug-7521.jpg'],
+            ['name' => 'Blue vase 7522', 'url' => 'https://example.com/products/vase', 'description' => 'Runny cobalt glaze.', 'image_url' => 'https://example.com/img/not-stored.jpg'],
+            ['name' => 'folk SLIP mug 7521', 'url' => 'https://example.com/products/mug-2'],
+        ]);
+        SiteInventoryImage::create([
+            'business_id' => $page->business_id, 'page_id' => $inventoryPage->id, 'source_url' => 'https://example.com/img/mug-7521.jpg',
+            'attribution' => 'example.com', 'status' => 'stored', 'path' => 'inventory/mug-7521.jpg', 'alt' => '', 'width' => 800, 'height' => 1000,
+        ]);
+        $this->fakeAnswer(json_encode([
+            'blocks' => [['type' => 'hero', 'headline' => 'Pottery 7523'], ['type' => 'about', 'text' => 'Two potters 7524.']],
+        ]));
+
+        app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id);
+
+        $page->refresh();
+        $blocks = $page->draft_meta['designs']['claude']['blocks'];
+        $products = collect($blocks)->firstWhere('type', 'products');
+        $this->assertNotNull($products);
+        // draft_meta is jsonb, which keeps a list's order but not an object's keys: compared by key and value.
+        $this->assertEquals([
+            ['name' => 'Folk slip mug 7521', 'price_text' => '$38', 'url' => 'https://example.com/products/mug', 'image_path' => 'inventory/mug-7521.jpg', 'image_alt' => 'Folk slip mug 7521'],
+            ['name' => 'Blue vase 7522', 'description' => 'Runny cobalt glaze.', 'url' => 'https://example.com/products/vase'],
+        ], $products['items']);
+    }
+
+    public function test_a_theme_site_or_a_template_without_a_shop_gets_no_products(): void
+    {
+        $page = $this->page([['type' => 'hero', 'headline' => 'Old headline', 'image_path' => 'images/kept-7525.jpg']]);
+        app(SiteTemplateApplyAction::class)->handle($page->business_id, $page->id, 'trades-pro');
+        $this->storeProducts($page, [['name' => 'Shut-off valve 7526', 'url' => 'https://example.com/products/valve', 'price_text' => '$24']]);
+        $this->fakeAnswer(json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Plumbing 7527']]]));
+
+        app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id);
+
+        $page->refresh();
+        $this->assertNotContains('products', array_column($page->draft_meta['designs']['claude']['blocks'], 'type'));
+    }
 }

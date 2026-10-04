@@ -1003,3 +1003,35 @@ it('forgets the pages and photos of a previous website when the new one is read'
         ->and(SiteInventoryImage::where('business_id', $biz->id)->count())->toBe(0)
         ->and(SiteInventoryPage::where('business_id', $biz->id)->where('url', 'https://example.com')->value('text'))->toContain('New site words 9402');
 });
+
+it('reads the products a store publishes on its pages, and puts their pictures first in line to be copied', function () {
+    // Fixture taken from 'reads the brand colours and fonts from the home page and its own theme stylesheet, and shows them'.
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+    Location::where('business_id', $biz->id)->update([
+        'website_url' => 'https://example.com',
+        'website_confirmed_at' => now(),
+    ]);
+
+    $this->actingAs($owner);
+    Tenancy::set($biz->id);
+
+    Http::fake([
+        '*/robots.txt' => Http::response("User-agent: *\nAllow: /", 200, ['Content-Type' => 'text/plain']),
+        'https://example.com' => Http::response(
+            '<html><head><title>Shop</title>'
+            .'<script type="application/ld+json">{"@type":"Product","name":"Folk slip mug 7511","url":"/products/mug","image":"/img/mug-7511.jpg","offers":{"price":"38","priceCurrency":"USD"}}</script>'
+            .'</head><body><main><h1>Shop</h1><img src="/img/banner-7512.jpg" alt="Banner"></main></body></html>',
+            200,
+            ['Content-Type' => 'text/html']
+        ),
+    ]);
+
+    app(SiteCrawlAction::class)->handle($biz->id, Location::where('business_id', $biz->id)->first()->id);
+
+    $home = SiteInventoryPage::where('business_id', $biz->id)->where('url', 'https://example.com')->first();
+    // jsonb keeps a list's order but not an object's keys, so the product is compared by key and value (toEqual), the list by order (toBe).
+    expect($home->products)->toEqual([['name' => 'Folk slip mug 7511', 'url' => 'https://example.com/products/mug', 'price_text' => '$38', 'image_url' => 'https://example.com/img/mug-7511.jpg']])
+        ->and($home->image_urls)->toBe(['https://example.com/img/mug-7511.jpg', 'https://example.com/img/banner-7512.jpg']);
+});
