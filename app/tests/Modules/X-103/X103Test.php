@@ -2622,8 +2622,9 @@ class X103Test extends TestCase
     {
         // This class has no per-test rollback (TestCase's RefreshesTenantDatabase is commented out), so the fetch attempts of
         // earlier crawl tests in the same minute would use up tenant_site's four-a-minute budget and the crawl would queue
-        // instead of read. Two minutes on, they no longer count.
-        $this->travel(2)->minutes();
+        // instead of read. They are cleared, not out-waited: moving the clock forward left attempts dated in the FUTURE in
+        // this un-rolled-back table, which then spent the budget of later tests in other classes (X189Test, 2026-10-03).
+        DB::table('fetch_attempts')->where('source_key', 'tenant_site')->delete();
         $biz = TestCase::provisionTenant(['name' => 'Cut Short Tenant', 'currency' => 'USD']);
         Tenancy::set($biz->id);
         $location = Location::factory()->create([
@@ -2687,8 +2688,9 @@ class X103Test extends TestCase
     {
         // This class has no per-test rollback (TestCase's RefreshesTenantDatabase is commented out), so the fetch attempts of
         // earlier crawl tests in the same minute would use up tenant_site's four-a-minute budget and the crawl would queue
-        // instead of read. Two minutes on, they no longer count.
-        $this->travel(2)->minutes();
+        // instead of read. They are cleared, not out-waited: moving the clock forward left attempts dated in the FUTURE in
+        // this un-rolled-back table, which then spent the budget of later tests in other classes (X189Test, 2026-10-03).
+        DB::table('fetch_attempts')->where('source_key', 'tenant_site')->delete();
         $biz = TestCase::provisionTenant(['name' => 'Changed Website Tenant', 'currency' => 'USD']);
         Tenancy::set($biz->id);
         $location = Location::factory()->create([
