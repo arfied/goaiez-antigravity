@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103;
 
+use App\Enums\IndustryFamily;
 use App\Modules\X103\Domain\SiteBlockRenderer;
 use App\Modules\X103\Domain\SiteFonts;
 use App\Modules\X103\Domain\SiteTemplates;
@@ -29,7 +30,9 @@ class SiteTemplatesTest extends TestCase
             ['type' => 'stats', 'items' => [['value' => '18', 'label' => 'Years in Tacoma'], ['value' => '24/7', 'label' => 'Emergency line']]],
             ['type' => 'services', 'heading' => 'Repairs we handle', 'items' => [['name' => 'Leak repair', 'description' => 'Hidden leaks found and fixed.', 'price_text' => 'from $129'], ['name' => 'Water heaters', 'description' => 'Repair or same-day replacement.']]],
             ['type' => 'about', 'heading' => 'A family crew', 'text' => 'We show up on time and agree the price first.', 'image_path' => 'about.jpg'],
+            ['type' => 'gallery', 'heading' => 'Recent work', 'items' => [['image_path' => 'one.jpg'], ['image_path' => 'two.jpg'], ['image_path' => 'three.jpg'], ['image_path' => 'four.jpg']]],
             ['type' => 'reviews_strip', 'heading' => 'What homeowners say', 'items' => [['author' => 'Maria G.', 'rating' => '5', 'text' => 'Fixed the same day.', 'source' => 'Google']]],
+            ['type' => 'booking_button', 'label' => 'Book online', 'url' => 'https://book.example.com/harbor'],
             ['type' => 'faq', 'heading' => 'Common questions', 'items' => [['question' => 'Do you charge for estimates?', 'answer' => 'No, estimates are free.']]],
             ['type' => 'cta_band', 'heading' => 'Leak or clog?', 'text' => 'Talk to a plumber now.', 'label' => 'Book a visit', 'url' => '#contact'],
             ['type' => 'contact', 'phone' => '(253) 555-0187', 'email' => 'office@example.com', 'address' => '2215 Pacific Ave, Tacoma',
@@ -125,23 +128,29 @@ class SiteTemplatesTest extends TestCase
             $rewritten[$i]['variant'] = $block['type'] === 'hero' ? 'cover' : 'list';
         }
 
-        $before = $this->render($this->blocks(), 'trades-pro');
-        $after = $this->render($rewritten, 'trades-pro');
-        $this->assertStringContainsString('REWRITTEN_headline_0', $after);
-        $this->assertStringNotContainsString('REWRITTEN_headline_0', $before);
-        $this->assertSame($skeleton($before), $skeleton($after));
+        foreach (array_keys(SiteTemplates::TEMPLATES) as $id) {
+            $before = $this->render($this->blocks(), $id);
+            $after = $this->render($rewritten, $id);
+            $this->assertStringContainsString('REWRITTEN_headline_0', $after, $id);
+            $this->assertStringNotContainsString('REWRITTEN_headline_0', $before, $id);
+            $this->assertSame($skeleton($before), $skeleton($after), $id);
+        }
     }
 
     public function test_the_studio_can_find_every_section_and_its_words(): void
     {
-        $html = $this->render($this->blocks(), 'trades-pro', editable: true);
-        foreach ($this->blocks() as $i => $block) {
-            $this->assertStringContainsString('data-block-index="'.$i.'" data-block-type="'.$block['type'].'"', $html, $block['type']);
-        }
-        $this->assertStringContainsString('<h1 data-field="headline">', $html);
-        $this->assertStringContainsString('data-field="items.0.question"', $html);
+        foreach (SiteTemplates::TEMPLATES as $id => $template) {
+            $html = $this->render($this->blocks(), $id, editable: true);
+            foreach ($this->blocks() as $i => $block) {
+                if (in_array($block['type'], $template['sections'], true)) {
+                    $this->assertSame(1, substr_count($html, 'data-block-index="'.$i.'" data-block-type="'.$block['type'].'"'), "$id: {$block['type']}");
+                }
+            }
+            $this->assertStringContainsString('<h1 data-field="headline">', $html, $id);
+            $this->assertStringContainsString('data-field="items.0.question"', $html, $id);
 
-        $this->assertStringNotContainsString('data-field=', $this->render($this->blocks(), 'trades-pro'));
+            $this->assertStringNotContainsString('data-field=', $this->render($this->blocks(), $id), $id);
+        }
     }
 
     public function test_unsafe_links_and_markup_never_reach_the_page_and_unlisted_sections_are_not_drawn(): void
@@ -149,7 +158,7 @@ class SiteTemplatesTest extends TestCase
         $blocks = $this->blocks();
         $blocks[0]['headline'] = '<b>BOLD_7731</b>';
         $blocks[0]['cta_url'] = 'javascript:alert(1)';
-        $blocks[6]['label'] = 'Book a visit 4412';
+        $blocks[8]['label'] = 'Book a visit 4412';
         $blocks[] = ['type' => 'team', 'heading' => 'TEAM_HEADING_5521', 'items' => [['name' => 'Dan']]];
         unset($blocks[1]);
 
@@ -161,5 +170,41 @@ class SiteTemplatesTest extends TestCase
         $this->assertStringContainsString('href="#contact">Book a visit 4412</a>', $html);
         $this->assertStringNotContainsString('TEAM_HEADING_5521', $html);
         $this->assertStringNotContainsString('class="tp-stats"', $html);
+    }
+
+    public function test_every_template_draws_a_whole_page_with_no_script_and_one_faq(): void
+    {
+        foreach (SiteTemplates::TEMPLATES as $id => $template) {
+            $html = $this->render($this->blocks(), $id);
+            $this->assertStringNotContainsString('.site-block__inner {', $html, $id);
+            $this->assertStringNotContainsString('class="site-block', $html, $id);
+            $this->assertStringContainsString('>Harbor Line Plumbing<', $html, $id);
+            $this->assertStringContainsString('<summary aria-label="Menu">', $html, $id);
+            $this->assertStringContainsString('href="tel:2535550187"', $html, $id);
+            $this->assertStringContainsString('font-family: "'.trim(explode(',', $template['type_pairing']['heading'])[0]).'"', $html, $id);
+            $this->assertSame(0, substr_count($html, '<script'), $id);
+            $this->assertSame(1, substr_count($html, 'id="faq-x176"'), $id);
+            foreach ($template['families'] as $family) {
+                $this->assertNotNull(IndustryFamily::tryFrom($family), "$id: $family");
+            }
+        }
+    }
+
+    public function test_every_template_refuses_unsafe_links_and_escapes_words(): void
+    {
+        foreach (array_keys(SiteTemplates::TEMPLATES) as $id) {
+            $this->assertStringContainsString('href="#contact">Get a free quote</a>', $this->render($this->blocks(), $id), $id);
+
+            $blocks = $this->blocks();
+            $blocks[0]['headline'] = '<b>BOLD_7731</b>';
+            $blocks[0]['cta_url'] = 'javascript:alert(1)';
+            $blocks[] = ['type' => 'team', 'heading' => 'TEAM_HEADING_5521', 'items' => [['name' => 'Dan']]];
+            $html = $this->render($blocks, $id);
+            $this->assertStringContainsString('&lt;b&gt;BOLD_7731&lt;/b&gt;', $html, $id);
+            $this->assertStringNotContainsString('<b>BOLD_7731', $html, $id);
+            $this->assertStringNotContainsString('javascript:', $html, $id);
+            $this->assertStringNotContainsString('>Get a free quote</a>', $html, $id);
+            $this->assertStringNotContainsString('TEAM_HEADING_5521', $html, $id);
+        }
     }
 }

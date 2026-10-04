@@ -26,6 +26,22 @@ final class SiteTemplates
             'type_pairing' => ['heading' => 'Montserrat, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
             'sections' => ['hero', 'stats', 'services', 'about', 'reviews_strip', 'gallery', 'faq', 'cta_band', 'contact'],
         ],
+        'calm-spa' => [
+            'label' => 'Calm Spa',
+            'for' => 'Day spas, massage, facials, wellness studios',
+            'families' => ['medspa', 'care'],
+            'palette' => ['surface' => '#f6f1ea', 'card' => '#fffdf9', 'ink' => '#2d2621', 'primary' => '#56634b', 'accent' => '#8f6447'],
+            'type_pairing' => ['heading' => 'Playfair Display, Georgia, serif', 'body' => 'Nunito, system-ui, sans-serif'],
+            'sections' => ['hero', 'about', 'services', 'gallery', 'reviews_strip', 'booking_button', 'faq', 'cta_band', 'contact'],
+        ],
+        'polish-bar' => [
+            'label' => 'Polish Bar',
+            'for' => 'Nail salons, lash and brow bars',
+            'families' => ['care'],
+            'palette' => ['surface' => '#fff8f8', 'card' => '#ffffff', 'ink' => '#2a1730', 'primary' => '#c2185b', 'accent' => '#a3245e'],
+            'type_pairing' => ['heading' => 'Poppins, system-ui, sans-serif', 'body' => 'Nunito, system-ui, sans-serif'],
+            'sections' => ['hero', 'services', 'gallery', 'about', 'reviews_strip', 'booking_button', 'faq', 'cta_band', 'contact'],
+        ],
     ];
 
     /**
