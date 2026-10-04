@@ -23,7 +23,10 @@ final class BlockPatchApplier
      */
     public function apply(array $blocks, array $patches): array
     {
-        // Validate the ENTIRE set before mutating anything.
+        // Validate the ENTIRE set before mutating anything. The patches are applied in order, so each is checked against the
+        // page as the patches before it leave it: an added section can be moved or edited by a later patch (production,
+        // 2026-10-04: "add a numbers row, then move it up" was refused as out of range and the whole proposal was lost).
+        $length = count($blocks);
         foreach ($patches as $i => $patch) {
             $op = $patch['op'] ?? null;
             if (! in_array($op, BlockPatchSchema::APPLIER_OPS, true)) {
@@ -32,7 +35,7 @@ final class BlockPatchApplier
 
             $blockIndex = $patch['block_index'] ?? null;
             // An add is an INSERT POSITION, so one past the last block is legal and means "at the end".
-            $maxIndex = $op === 'add_block' ? count($blocks) : count($blocks) - 1;
+            $maxIndex = $op === 'add_block' ? $length : $length - 1;
             if (! is_int($blockIndex) || $blockIndex < 0 || $blockIndex > $maxIndex) {
                 return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: block_index out of range"];
             }
@@ -82,11 +85,17 @@ final class BlockPatchApplier
                     return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: move requires to_index in range"];
                 }
             }
+
+            if ($op === 'add_block') {
+                $length++;
+            } elseif ($op === 'remove') {
+                $length--;
+            }
         }
 
         // Apply sequentially
         $appliedBlocks = $blocks;
-        foreach ($patches as $patch) {
+        foreach ($patches as $i => $patch) {
             $op = $patch['op'];
             $blockIndex = $patch['block_index'];
 

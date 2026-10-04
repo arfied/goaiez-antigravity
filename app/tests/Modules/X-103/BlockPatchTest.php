@@ -401,4 +401,49 @@ final class BlockPatchTest extends TestCase
         $bad = $applier->apply($blocks, [['op' => 'set_string', 'block_index' => 0, 'field' => 'variant', 'value' => 'zigzag']]);
         $this->assertSame('refused', $bad['status']);
     }
+
+    public function test_a_section_added_by_one_patch_can_be_moved_and_edited_by_the_next(): void
+    {
+        // The shape of production's refused proposal (2026-10-04): add two sections at the end, then move one up.
+        $applier = app(BlockPatchApplier::class);
+        $blocks = [
+            ['type' => 'hero', 'headline' => 'Old Title'],
+            ['type' => 'about', 'text' => 'Hello'],
+            ['type' => 'contact', 'phone' => '0100'],
+        ];
+
+        $patches = [
+            ['op' => 'add_block', 'block_index' => 3, 'type' => 'stats', 'fields' => ['heading' => 'In numbers'], 'items' => [['value' => '18', 'label' => 'Years']]],
+            ['op' => 'add_block', 'block_index' => 4, 'type' => 'cta_band', 'fields' => ['heading' => 'Call us today 8101']],
+            ['op' => 'move', 'block_index' => 4, 'to_index' => 1],
+            ['op' => 'set_string', 'block_index' => 4, 'field' => 'heading', 'value' => 'Our numbers 8102'],
+        ];
+
+        $result = $applier->apply($blocks, $patches);
+
+        $this->assertSame('applied', $result['status'], (string) $result['reason']);
+        $this->assertSame(['hero', 'cta_band', 'about', 'contact', 'stats'], array_column($result['blocks'], 'type'));
+        $this->assertSame('Call us today 8101', $result['blocks'][1]['heading']);
+        $this->assertSame('Our numbers 8102', $result['blocks'][4]['heading']);
+    }
+
+    public function test_a_move_past_the_end_of_the_page_as_it_will_be_is_still_refused(): void
+    {
+        $applier = app(BlockPatchApplier::class);
+        $blocks = [
+            ['type' => 'hero', 'headline' => 'Old Title'],
+            ['type' => 'about', 'text' => 'Hello'],
+        ];
+
+        $added = ['op' => 'add_block', 'block_index' => 2, 'type' => 'cta_band', 'fields' => ['heading' => 'Call us']];
+        $tooFar = $applier->apply($blocks, [$added, ['op' => 'move', 'block_index' => 0, 'to_index' => 3]]);
+        $this->assertSame('refused', $tooFar['status']);
+        $this->assertSame($blocks, $tooFar['blocks']);
+        $this->assertStringContainsString('move requires to_index in range', $tooFar['reason']);
+
+        // A removal shortens the page for the patches after it.
+        $afterRemove = $applier->apply($blocks, [['op' => 'remove', 'block_index' => 1], ['op' => 'move', 'block_index' => 0, 'to_index' => 1]]);
+        $this->assertSame('refused', $afterRemove['status']);
+        $this->assertSame($blocks, $afterRemove['blocks']);
+    }
 }
