@@ -53,6 +53,18 @@ final class SiteTemplates
     ];
 
     /**
+     * Every template, the ones made for this kind of business (an IndustryFamily value) first, the rest after in list order.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public static function forFamily(?string $family): array
+    {
+        $matching = array_filter(self::TEMPLATES, static fn (array $t): bool => $family !== null && in_array($family, $t['families'], true));
+
+        return $matching + self::TEMPLATES;
+    }
+
+    /**
      * @return array<string, mixed>|null
      */
     public static function get(mixed $id): ?array

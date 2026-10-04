@@ -78,6 +78,15 @@
                             @endif
                             @if(isset($selectedPage))
                             <div class="mt-4 border-t border-rule pt-3">
+                                <p class="text-sm font-bold text-ink mb-1">Template</p>
+                                <p class="text-xs text-ink-2 mb-2">A whole page designed for your kind of business. Your words and photos fill it in; its layout stays put. Undo brings the old look back.</p>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach($templates as $templateKey => $templateInfo)
+                                        <button wire:click="applyTemplate('{{ $templateKey }}')" title="Best for: {{ $templateInfo['for'] }}" class="px-3 py-1 text-sm border border-rule rounded text-ink{{ $currentTemplate === $templateKey ? ' font-bold' : '' }}">{{ $templateInfo['label'] }}</button>
+                                    @endforeach
+                                </div>
+                            </div>
+                            <div class="mt-4 border-t border-rule pt-3">
                                 <p class="text-sm font-bold text-ink mb-1">Theme</p>
                                 <p class="text-xs text-ink-2 mb-2">A complete look for your whole site. Your words and sections stay the same; Undo brings the old look back.</p>
                                 <div class="flex flex-wrap gap-2">

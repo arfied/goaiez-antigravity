@@ -19,12 +19,14 @@ use App\Modules\X103\Actions\SiteEditApplyAction;
 use App\Modules\X103\Actions\SiteEditAskAction;
 use App\Modules\X103\Actions\SiteEditDiscardAction;
 use App\Modules\X103\Actions\SitePublishAction;
+use App\Modules\X103\Actions\SiteTemplateApplyAction;
 use App\Modules\X103\Actions\SiteThemeApplyAction;
 use App\Modules\X103\Domain\InlineFields;
 use App\Modules\X103\Domain\PageLayouts;
 use App\Modules\X103\Domain\PagePreview;
 use App\Modules\X103\Domain\SiteDesignEngines;
 use App\Modules\X103\Domain\SiteEngine;
+use App\Modules\X103\Domain\SiteTemplates;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
@@ -527,6 +529,27 @@ class Studio extends Component
         }
     }
 
+    public function applyTemplate(string $templateId, SiteTemplateApplyAction $action): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        if ($this->pageId === null) {
+            $this->error = 'Select a page first.';
+
+            return;
+        }
+
+        $res = $action->handle($this->businessId, $this->pageId, $templateId);
+        if ($res['status'] === 'applied') {
+            $this->showDesign = null;
+            $this->success = 'Template applied to your draft. Publish to put it on your live site; Undo brings the old look back.';
+        } else {
+            $this->error = 'There is no such template.';
+        }
+    }
+
     public function setCorners(string $corners, SiteCornersSetAction $action): void
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
@@ -707,6 +730,8 @@ HTML;
             'selectedBlockType' => $selectedBlockType,
             'currentTheme' => app(IndustryStartingPoints::class)->forBusiness($this->businessId)['theme'] ?? null,
             'currentCorners' => app(IndustryStartingPoints::class)->forBusiness($this->businessId)['corners'] ?? null,
+            'currentTemplate' => app(IndustryStartingPoints::class)->forBusiness($this->businessId)['template'] ?? null,
+            'templates' => SiteTemplates::forFamily(app(IndustryStartingPoints::class)->forBusiness($this->businessId)['family'] ?? null),
         ]);
     }
 }
