@@ -116,3 +116,10 @@ p { margin: 0; }
 .cc-hours { border-collapse: collapse; width: 100%; }
 .cc-hours th, .cc-hours td { padding: 0.55rem 0; border-bottom: 1px dashed var(--line); text-align: left; font-weight: 700; }
 .cc-hours td { text-align: right; font-weight: 400; font-variant-numeric: tabular-nums; }
+
+/* Robustness (Grok's review, 2026-10-04): long words and labels wrap instead of being cut off on a phone, a long business name
+   ends in an ellipsis instead of pushing the menu off screen, and the phone menu is a 44px target. */
+.cc h1, .cc h2, .cc h3, .cc p, .cc li, .cc td, .cc th, .cc blockquote, .cc summary { overflow-wrap: break-word; }
+.cc-button { white-space: normal; text-align: center; max-width: 100%; }
+.cc-brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cc-menu summary { min-width: 44px; min-height: 44px; place-content: center; justify-items: center; }

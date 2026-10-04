@@ -115,3 +115,12 @@ body > [id$="-x176"] { font-size: 0.9rem; color: color-mix(in srgb, var(--color-
 .site-footer { margin: 0; padding: 1.4rem clamp(1rem, 4vw, 2.25rem); border-top: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent); background: var(--color-surface); color: color-mix(in srgb, var(--color-ink) 70%, transparent); text-align: center; font-size: 0.85rem; }
 .site-footer p { margin: 0; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .mm-button, .mm-product__media img { transition: none; } .mm-product__link:hover .mm-product__media img { transform: none; } }
+
+/* Robustness (Grok's review, 2026-10-04): long words and labels wrap instead of being cut off on a phone, a long business name
+   ends in an ellipsis instead of pushing the menu off screen, and the phone menu is a 44px target. */
+.mm h1, .mm h2, .mm h3, .mm p, .mm li, .mm td, .mm th, .mm blockquote, .mm summary { overflow-wrap: break-word; }
+.mm-button { white-space: normal; text-align: center; max-width: 100%; }
+.mm-brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mm-menu summary { min-width: 44px; min-height: 44px; place-content: center; justify-items: center; }
+@media (max-width: 40rem) { .mm-hero--text .mm-hero__wrap { margin-top: 0; } }
+.mm-cta a:focus-visible { outline-color: var(--color-surface); }

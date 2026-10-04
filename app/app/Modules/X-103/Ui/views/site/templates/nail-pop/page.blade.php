@@ -17,12 +17,12 @@
     $shown = count($gallery) >= 3 ? array_slice($gallery, 0, min(6, intdiv(count($gallery), 3) * 3)) : $gallery;
     $nav = array_filter(['menu' => $services ? 'Menu' : null, 'nails' => $gallery ? 'Nails' : null, 'love' => $reviews ? 'Reviews' : null, 'visit' => 'Visit']);
 @endphp
-<div class="np">
+<div class="np" id="top">
 <header class="np-nav">
     <div class="np-wrap np-nav__row">
         <a class="np-brand" href="#top">{{ $name }}</a>
         <nav class="np-nav__links" aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
-        @if($book)<a class="np-button np-nav__book" href="{{ $book }}">Book now</a>@endif
+        @if($book)<a class="np-button np-nav__book" href="{{ $book }}">{{ $bookHref !== null ? 'Book now' : ($heroHref !== null ? $hero['cta_label'] : 'Call') }}</a>@endif
         <details class="np-menu">
             <summary aria-label="Menu"><span></span><span></span></summary>
             <nav aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
@@ -31,7 +31,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="np-hero{{ $heroImg ? '' : ' np-hero--text' }}"{!! $at('hero') !!}>
+<section class="np-hero{{ $heroImg ? '' : ' np-hero--text' }}"{!! $at('hero') !!}>
     <div class="np-wrap np-hero__grid">
         <div class="np-hero__body">
             <h1{!! $f('headline') !!}>{{ $hero['headline'] }}</h1>
@@ -89,7 +89,7 @@
             @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
             <figure>
                 <blockquote>
-                    @if($stars > 0)<p class="np-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                    @if($stars > 0)<p class="np-stars" role="img" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
                     <p>{{ $r['text'] }}</p>
                 </blockquote>
                 @if($txt($r['author'] ?? null))<figcaption>{{ $r['author'] }}@if($txt($r['source'] ?? null)) · {{ $r['source'] }}@endif</figcaption>@endif

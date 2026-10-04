@@ -16,7 +16,7 @@
     $shown = count($gallery) >= 3 ? array_slice($gallery, 0, min(6, intdiv(count($gallery), 3) * 3)) : $gallery;
     $nav = array_filter(['menu' => $menu ? 'Menu' : null, 'about' => $about ? 'About' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => 'Find us']);
 @endphp
-<div class="cc">
+<div class="cc" id="top">
 <header class="cc-nav">
     <div class="cc-wrap cc-nav__row">
         <a class="cc-brand" href="#top"><span class="cc-brand__mark" aria-hidden="true">{{ mb_strtoupper(mb_substr($name !== '' ? $name : 'C', 0, 1)) }}</span><span>{{ $name }}</span></a>
@@ -30,7 +30,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="cc-hero"{!! $at('hero') !!}>
+<section class="cc-hero"{!! $at('hero') !!}>
     <div class="cc-wrap cc-hero__grid{{ $heroImg ? '' : ' cc-hero__grid--text' }}">
         <div class="cc-hero__body">
             <h1{!! $f('headline') !!}>{{ $hero['headline'] }}</h1>
@@ -43,7 +43,7 @@
             <div class="cc-today">
                 @if($openHours)
                 <ul class="cc-today__hours">
-                    @foreach(array_slice($openHours, 0, 4) as $h)
+                    @foreach($openHours as $h)
                     <li><span>{{ $h['day'] }}</span><span>{{ $txt($h['close'] ?? null) === null ? 'Closed' : ($h['open'] ?? '').' – '.$h['close'] }}</span></li>
                     @endforeach
                 </ul>
@@ -96,7 +96,7 @@
             @foreach(array_slice($reviews, 0, 3) as $r)
             @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
             <figure>
-                @if($stars > 0)<p class="cc-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                @if($stars > 0)<p class="cc-stars" role="img" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
                 <blockquote><p>{{ $r['text'] }}</p></blockquote>
                 @if($txt($r['author'] ?? null))<figcaption>{{ $r['author'] }}@if($txt($r['source'] ?? null)) <span>· {{ $r['source'] }}</span>@endif</figcaption>@endif
             </figure>
@@ -110,7 +110,7 @@
 <section class="cc-band"{!! $cta ? $at('cta_band') : '' !!}>
     <div class="cc-wrap cc-band__inner">
         <div>
-            @if($cta)<h2{!! $f('heading') !!}>{{ $cta['heading'] }}</h2>@else<h2>Order ahead</h2>@endif
+            @if($cta)<h2{!! $f('heading') !!}>{{ $cta['heading'] }}</h2>@else<h2>Come and see us</h2>@endif
             @if($cta && $txt($cta['text'] ?? null))<p{!! $f('text') !!}>{{ $cta['text'] }}</p>@endif
         </div>
         <div class="cc-actions">

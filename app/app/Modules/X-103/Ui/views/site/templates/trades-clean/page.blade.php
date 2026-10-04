@@ -17,12 +17,12 @@
     $area = $facts['service_area'] ?? null;
     $nav = array_filter(['services' => $services ? 'Services' : null, 'about' => $about ? 'About' : null, 'reviews' => $reviews ? 'Reviews' : null, 'contact' => 'Contact']);
 @endphp
-<div class="tc">
+<div class="tc" id="top">
 <header class="tc-nav">
     <div class="tc-wrap tc-nav__row">
         <a class="tc-brand" href="#top">{{ $name }}</a>
         <nav class="tc-nav__links" aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
-        @if($phone)<a class="tc-nav__phone" href="{{ $tel }}">{!! $phoneSvg !!}<span>{{ $phone }}</span></a>@endif
+        @if($phone)<a class="tc-nav__phone" href="{{ $tel }}" aria-label="Call {{ $phone }}">{!! $phoneSvg !!}<span>{{ $phone }}</span></a>@endif
         <details class="tc-menu">
             <summary aria-label="Menu"><span></span><span></span><span></span></summary>
             <nav aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
@@ -31,7 +31,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="tc-hero{{ $heroImg ? '' : ' tc-hero--text' }}"{!! $at('hero') !!}>
+<section class="tc-hero{{ $heroImg ? '' : ' tc-hero--text' }}"{!! $at('hero') !!}>
     <div class="tc-wrap tc-hero__grid">
         <div class="tc-hero__body">
             @if($area)<p class="tc-pill">Serving {{ $area }}</p>@endif
@@ -80,7 +80,7 @@
             @foreach(array_slice($reviews, 0, 6) as $r)
             @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
             <blockquote class="tc-review">
-                @if($stars > 0)<p class="tc-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                @if($stars > 0)<p class="tc-stars" role="img" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
                 <p>“{{ $r['text'] }}”</p>
                 @if($txt($r['author'] ?? null))<cite>{{ $r['author'] }}@if($txt($r['source'] ?? null)) · {{ $r['source'] }}@endif</cite>@endif
             </blockquote>

@@ -18,12 +18,12 @@
     $grid = count($gallery) >= 3 ? array_slice($gallery, 0, min(9, intdiv(count($gallery), 3) * 3)) : $gallery;
     $nav = array_filter(['prices' => $services ? 'Prices' : null, 'work' => $gallery ? 'Work' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => 'Visit']);
 @endphp
-<div class="ns">
+<div class="ns" id="top">
 <header class="ns-nav">
     <div class="ns-wrap ns-nav__row">
         <a class="ns-brand" href="#top">{{ $name }}</a>
         <nav class="ns-nav__links" aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
-        @if($book)<a class="ns-button ns-nav__book" href="{{ $book }}">Book</a>@endif
+        @if($book)<a class="ns-button ns-nav__book" href="{{ $book }}">{{ $bookHref !== null ? 'Book' : ($heroHref !== null ? $hero['cta_label'] : 'Call') }}</a>@endif
         <details class="ns-menu">
             <summary aria-label="Menu"><span></span><span></span></summary>
             <nav aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
@@ -32,7 +32,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="ns-hero"{!! $at('hero') !!}>
+<section class="ns-hero"{!! $at('hero') !!}>
     <div class="ns-wrap">
         <h1{!! $f('headline') !!}>{{ $hero['headline'] }}</h1>
         <div class="ns-hero__row">
@@ -86,7 +86,7 @@
             @foreach(array_slice($reviews, 0, 3) as $r)
             @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
             <blockquote>
-                @if($stars > 0)<p class="ns-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                @if($stars > 0)<p class="ns-stars" role="img" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
                 <p>{{ $r['text'] }}</p>
                 @if($txt($r['author'] ?? null))<cite>— {{ $r['author'] }}@if($txt($r['source'] ?? null)), {{ $r['source'] }}@endif</cite>@endif
             </blockquote>

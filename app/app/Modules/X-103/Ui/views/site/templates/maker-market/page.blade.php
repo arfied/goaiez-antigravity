@@ -12,7 +12,7 @@
     $ctaHref = $cta && $txt($cta['label'] ?? null) ? $link($cta['url'] ?? null) : null;
     $nav = array_filter(['shop' => $products ? 'Shop' : null, 'story' => $about ? 'Our story' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => 'Visit']);
 @endphp
-<div class="mm">
+<div class="mm" id="top">
 <header class="mm-nav">
     <div class="mm-wrap mm-nav__row">
         <a class="mm-brand" href="#top">{{ $name }}</a>
@@ -26,7 +26,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="mm-hero{{ $heroImg ? '' : ' mm-hero--text' }}"{!! $at('hero') !!}>
+<section class="mm-hero{{ $heroImg ? '' : ' mm-hero--text' }}"{!! $at('hero') !!}>
     @if($heroImg)<img class="mm-hero__img" src="{{ $heroImg }}" alt="{{ $txt($hero['image_alt'] ?? null) ?? '' }}">@endif
     <div class="mm-wrap mm-hero__wrap">
         <div class="mm-hero__card">
@@ -78,7 +78,7 @@
             @foreach(array_slice($reviews, 0, 3) as $r)
             @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
             <blockquote class="mm-review">
-                @if($stars > 0)<p class="mm-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                @if($stars > 0)<p class="mm-stars" role="img" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
                 <p>{{ $r['text'] }}</p>
                 @if($txt($r['author'] ?? null))<cite>{{ $r['author'] }}@if($txt($r['source'] ?? null)) · {{ $r['source'] }}@endif</cite>@endif
             </blockquote>

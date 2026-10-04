@@ -59,7 +59,7 @@ p { margin: 0; }
 .tp-hero__trust li { display: inline-flex; align-items: center; gap: 0.4rem; }
 
 /* stats card, lifted over the hero's bottom edge */
-.tp-stats { position: relative; z-index: 2; margin-top: -3.5rem; }
+.tp-stats { position: relative; z-index: 2; }
 .tp-hero + .tp-stats { margin-top: -3.5rem; }
 .tp-stats__card { list-style: none; margin: 0; padding: clamp(1.25rem, 3vw, 2rem); display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 1rem; background: var(--color-card); border-radius: 10px; box-shadow: 0 18px 40px rgba(0,0,0,0.12); border-top: 4px solid var(--color-primary); }
 .tp-stats__card li { display: grid; gap: 0.2rem; text-align: center; }
@@ -136,3 +136,11 @@ body > [id$="-x176"] { font-size: 0.9rem; color: color-mix(in srgb, var(--color-
 .site-footer { margin: 0; padding: 1.25rem clamp(1rem, 4vw, 2rem); background: var(--color-ink); color: var(--color-surface); text-align: center; font-size: 0.88rem; }
 .site-footer p { margin: 0; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .tp-button, .tp-service { transition: none; } .tp-button:hover { transform: none; } }
+
+/* Robustness (Grok's review, 2026-10-04): long words and labels wrap instead of being cut off on a phone, a long business name
+   ends in an ellipsis instead of pushing the menu off screen, and the phone menu is a 44px target. */
+.tp h1, .tp h2, .tp h3, .tp p, .tp li, .tp td, .tp th, .tp blockquote, .tp summary { overflow-wrap: break-word; }
+.tp-button { white-space: normal; text-align: center; max-width: 100%; }
+.tp-brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tp-menu summary { min-width: 44px; min-height: 44px; place-content: center; justify-items: center; }
+@media (max-width: 40rem) { .tp-hero::after { background: color-mix(in srgb, var(--deep) 88%, transparent); } }

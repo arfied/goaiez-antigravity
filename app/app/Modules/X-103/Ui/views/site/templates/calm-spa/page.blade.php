@@ -21,12 +21,12 @@
     $nav = array_filter(['treatments' => $services ? 'Treatments' : null, 'about' => $about ? 'About' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => 'Visit']);
     $leaf = '<svg class="cs-leaf" viewBox="0 0 40 12" aria-hidden="true"><path d="M2 6h13M25 6h13"/><path d="M20 1c3 2 3 8 0 10-3-2-3-8 0-10z"/></svg>';
 @endphp
-<div class="cs">
+<div class="cs" id="top">
 <header class="cs-nav">
     <div class="cs-wrap cs-nav__row">
         <a class="cs-brand" href="#top">{{ $name }}</a>
         <nav class="cs-nav__links" aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
-        @if($book)<a class="cs-button cs-button--solid cs-nav__book" href="{{ $book['href'] }}">{{ $book['field'] === null ? 'Call us' : 'Book now' }}</a>@endif
+        @if($book)<a class="cs-button cs-button--solid cs-nav__book" href="{{ $book['href'] }}">{{ $book['field'] === 'label' ? 'Book now' : ($book['field'] === null ? 'Call us' : $book['label']) }}</a>@endif
         <details class="cs-menu">
             <summary aria-label="Menu"><span></span><span></span></summary>
             <nav aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
@@ -35,7 +35,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="cs-hero{{ $heroImg ? '' : ' cs-hero--text' }}"{!! $at('hero') !!}>
+<section class="cs-hero{{ $heroImg ? '' : ' cs-hero--text' }}"{!! $at('hero') !!}>
     <div class="cs-wrap cs-hero__grid">
         <div class="cs-hero__body">
             <h1{!! $f('headline') !!}>{{ $hero['headline'] }}</h1>
@@ -49,7 +49,7 @@
         <figure class="cs-hero__media">
             <img src="{{ $heroImg }}" alt="{{ $txt($hero['image_alt'] ?? null) ?? '' }}">
             @if($first && $firstStars > 0)
-            <figcaption class="cs-hero__quote"><span class="cs-stars" aria-label="{{ $firstStars }} out of 5 stars">{{ str_repeat('★', $firstStars) }}</span>“{{ \Illuminate\Support\Str::limit(trim((string) $first['text']), 90) }}”@if($txt($first['author'] ?? null))<cite>{{ $first['author'] }}</cite>@endif</figcaption>
+            <figcaption class="cs-hero__quote"><span class="cs-stars" role="img" aria-label="{{ $firstStars }} out of 5 stars">{{ str_repeat('★', $firstStars) }}</span>“{{ \Illuminate\Support\Str::limit(trim((string) $first['text']), 90) }}”@if($txt($first['author'] ?? null))<cite>{{ $first['author'] }}</cite>@endif</figcaption>
             @endif
         </figure>
         @endif
@@ -73,7 +73,7 @@
             </li>
             @endforeach
         </ul>
-        @if($book)<p class="cs-center"><a class="cs-button cs-button--solid" href="{{ $book['href'] }}">{{ $book['field'] === null ? $book['label'] : 'Book a treatment' }}</a></p>@endif
+        @if($book)<p class="cs-center"><a class="cs-button cs-button--solid" href="{{ $book['href'] }}">{{ $book['field'] === 'label' ? 'Book a treatment' : $book['label'] }}</a></p>@endif
     </div>
 </section>
 @endif
@@ -98,7 +98,7 @@
             @foreach(array_slice($reviews, 0, 3) as $r)
             @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
             <blockquote class="cs-quote">
-                @if($stars > 0)<p class="cs-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                @if($stars > 0)<p class="cs-stars" role="img" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
                 <p class="cs-quote__text">“{{ $r['text'] }}”</p>
                 @if($txt($r['author'] ?? null))<cite>{{ $r['author'] }}@if($txt($r['source'] ?? null)) · {{ $r['source'] }}@endif</cite>@endif
             </blockquote>

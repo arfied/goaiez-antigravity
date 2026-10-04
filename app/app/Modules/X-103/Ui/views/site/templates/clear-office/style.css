@@ -132,3 +132,10 @@ p { margin: 0; }
 .co-team__role { color: var(--color-accent-text); font-size: 0.9rem; font-weight: 600; }
 .co-team p { margin: 0; }
 .co-team li > div > p:not(.co-team__role) { color: color-mix(in srgb, var(--color-ink) 74%, transparent); font-size: 0.95rem; }
+
+/* Robustness (Grok's review, 2026-10-04): long words and labels wrap instead of being cut off on a phone, a long business name
+   ends in an ellipsis instead of pushing the menu off screen, and the phone menu is a 44px target. */
+.co h1, .co h2, .co h3, .co p, .co li, .co td, .co th, .co blockquote, .co summary { overflow-wrap: break-word; }
+.co-button { white-space: normal; text-align: center; max-width: 100%; }
+.co-brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.co-menu summary { min-width: 44px; min-height: 44px; place-content: center; justify-items: center; }

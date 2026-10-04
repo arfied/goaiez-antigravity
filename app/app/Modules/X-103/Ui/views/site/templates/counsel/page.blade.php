@@ -18,7 +18,7 @@
     $openHours = array_values(array_filter($hours, fn ($h) => is_array($h) && $txt($h['day'] ?? null)));
     $nav = array_filter(['services' => $services ? 'Services' : null, 'firm' => $about ? 'The firm' : null, 'clients' => $reviews ? 'Clients' : null, 'contact' => 'Contact']);
 @endphp
-<div class="cn">
+<div class="cn" id="top">
 <header class="cn-nav">
     <div class="cn-wrap cn-nav__row">
         <a class="cn-brand" href="#top">{{ $name }}</a>
@@ -32,7 +32,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="cn-hero"{!! $at('hero') !!}>
+<section class="cn-hero"{!! $at('hero') !!}>
     <div class="cn-wrap cn-hero__grid{{ $heroImg ? '' : ' cn-hero__grid--text' }}">
         <div class="cn-hero__body">
             <span class="cn-rule" aria-hidden="true"></span>
@@ -67,7 +67,7 @@
             @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
             <figure>
                 <blockquote><p>“{{ $r['text'] }}”</p></blockquote>
-                <figcaption>@if($txt($r['author'] ?? null)){{ $r['author'] }}@endif @if($stars > 0)<span class="cn-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</span>@endif @if($txt($r['source'] ?? null))<span class="cn-source">{{ $r['source'] }}</span>@endif</figcaption>
+                <figcaption>@if($txt($r['author'] ?? null)){{ $r['author'] }}@endif @if($stars > 0)<span class="cn-stars" role="img" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</span>@endif @if($txt($r['source'] ?? null))<span class="cn-source">{{ $r['source'] }}</span>@endif</figcaption>
             </figure>
             @endforeach
         </div>

@@ -19,7 +19,7 @@
     $shown = count($gallery) >= 3 ? array_slice($gallery, 0, min(6, intdiv(count($gallery), 3) * 3)) : $gallery;
     $nav = array_filter(['services' => $services ? 'Services' : null, 'about' => $about ? 'About' : null, 'reviews' => $reviews ? 'Reviews' : null, 'faq' => $faqs ? 'FAQ' : null, 'contact' => 'Contact']);
 @endphp
-<div class="co">
+<div class="co" id="top">
 <header class="co-nav">
     <div class="co-wrap co-nav__row">
         <a class="co-brand" href="#top"><span class="co-brand__dot" aria-hidden="true"></span>{{ $name }}</a>
@@ -33,7 +33,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="co-hero"{!! $at('hero') !!}>
+<section class="co-hero"{!! $at('hero') !!}>
     <div class="co-wrap">
         <div class="co-panel{{ $heroImg ? '' : ' co-panel--text' }}">
             <div class="co-panel__body">
@@ -67,7 +67,7 @@
             @foreach(array_slice($reviews, 0, 3) as $r)
             @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
             <figure>
-                @if($stars > 0)<p class="co-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                @if($stars > 0)<p class="co-stars" role="img" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
                 <blockquote><p>{{ $r['text'] }}</p></blockquote>
                 @if($txt($r['author'] ?? null))<figcaption><span class="co-avatar" aria-hidden="true">{{ mb_strtoupper(mb_substr(trim((string) $r['author']), 0, 1)) }}</span>{{ $r['author'] }}@if($txt($r['source'] ?? null)) <span class="co-source">· {{ $r['source'] }}</span>@endif</figcaption>@endif
             </figure>

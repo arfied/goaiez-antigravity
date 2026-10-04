@@ -12,7 +12,7 @@
     $ctaHref = $cta && $txt($cta['label'] ?? null) ? $link($cta['url'] ?? null) : null;
     $nav = array_filter(['shop' => $products ? 'Shop' : null, 'story' => $about ? 'Our story' : null, 'reviews' => $reviews ? 'Kind words' : null, 'visit' => 'Visit us']);
 @endphp
-<div class="cb">
+<div class="cb" id="top">
 <header class="cb-nav">
     <div class="cb-wrap cb-nav__row">
         <nav class="cb-nav__links" aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
@@ -28,7 +28,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="cb-hero{{ $heroImg ? '' : ' cb-hero--text' }}"{!! $at('hero') !!}>
+<section class="cb-hero{{ $heroImg ? '' : ' cb-hero--text' }}"{!! $at('hero') !!}>
     <div class="cb-wrap cb-hero__grid">
         <div class="cb-hero__body">
             <h1{!! $f('headline') !!}>{{ $hero['headline'] }}</h1>
@@ -77,7 +77,7 @@
             @foreach(array_slice($reviews, 0, 3) as $r)
             @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
             <blockquote>
-                @if($stars > 0)<p class="cb-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                @if($stars > 0)<p class="cb-stars" role="img" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
                 <p>“{{ $r['text'] }}”</p>
                 @if($txt($r['author'] ?? null))<cite>{{ $r['author'] }}</cite>@endif
             </blockquote>

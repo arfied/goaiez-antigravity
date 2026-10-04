@@ -39,7 +39,7 @@ p { margin: 0; }
 /* hero: the photograph full width, the words heavy at the bottom */
 .gh-hero { position: relative; isolation: isolate; display: grid; align-items: end; min-height: clamp(30rem, 78vh, 46rem); color: #ffffff; background: #0d0c0b; }
 .gh-hero__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
-.gh-hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.45) 45%, rgba(0,0,0,0.88) 100%); }
+.gh-hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.64) 40%, rgba(0,0,0,0.9) 100%); }
 .gh-hero--plain { min-height: 0; background: var(--color-card); color: var(--color-ink); }
 .gh-hero--plain::after { display: none; }
 .gh-hero--plain .gh-button--line { color: var(--color-ink); border-color: var(--line); }
@@ -110,3 +110,10 @@ p { margin: 0; }
 .gh-hours th, .gh-hours td { padding: 0.8rem 0; border-bottom: 1px solid var(--line); text-align: left; font-family: var(--font-heading); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.9rem; }
 .gh-hours td { text-align: right; font-family: var(--font-body); text-transform: none; letter-spacing: 0; font-size: 1rem; font-variant-numeric: tabular-nums; }
 @media (max-width: 44rem) { .gh-visit { grid-template-columns: 1fr; } }
+
+/* Robustness (Grok's review, 2026-10-04): long words and labels wrap instead of being cut off on a phone, a long business name
+   ends in an ellipsis instead of pushing the menu off screen, and the phone menu is a 44px target. */
+.gh h1, .gh h2, .gh h3, .gh p, .gh li, .gh td, .gh th, .gh blockquote, .gh summary { overflow-wrap: break-word; }
+.gh-button { white-space: normal; text-align: center; max-width: 100%; }
+.gh-brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gh-menu summary { min-width: 44px; min-height: 44px; place-content: center; justify-items: center; }

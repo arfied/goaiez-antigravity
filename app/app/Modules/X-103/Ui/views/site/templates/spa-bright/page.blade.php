@@ -16,12 +16,12 @@
     $cta = isset($b['cta_band']) && $txt($b['cta_band']['heading'] ?? null) ? $b['cta_band'] : null;
     $nav = array_filter(['treatments' => $services ? 'Treatments' : null, 'about' => $about ? 'About' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => 'Visit']);
 @endphp
-<div class="sb">
+<div class="sb" id="top">
 <header class="sb-nav">
     <div class="sb-wrap sb-nav__row">
         <a class="sb-brand" href="#top"><span class="sb-brand__dot" aria-hidden="true"></span>{{ $name }}</a>
         <nav class="sb-nav__links" aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
-        @if($book)<a class="sb-button sb-nav__book" href="{{ $book }}">Book</a>@endif
+        @if($book)<a class="sb-button sb-nav__book" href="{{ $book }}">{{ $bookHref !== null ? 'Book' : ($heroHref !== null ? $hero['cta_label'] : 'Call') }}</a>@endif
         <details class="sb-menu">
             <summary aria-label="Menu"><span></span><span></span></summary>
             <nav aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
@@ -30,7 +30,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="sb-hero"{!! $at('hero') !!}>
+<section class="sb-hero"{!! $at('hero') !!}>
     <div class="sb-wrap sb-hero__body">
         <h1{!! $f('headline') !!}>{{ $hero['headline'] }}</h1>
         @if($txt($hero['subline'] ?? null))<p{!! $f('subline') !!}>{{ $hero['subline'] }}</p>@endif
@@ -91,7 +91,7 @@
             @foreach(array_slice($reviews, 0, 3) as $r)
             @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
             <blockquote>
-                @if($stars > 0)<p class="sb-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                @if($stars > 0)<p class="sb-stars" role="img" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
                 <p>{{ $r['text'] }}</p>
                 @if($txt($r['author'] ?? null))<cite><span aria-hidden="true">{{ mb_strtoupper(mb_substr(trim((string) $r['author']), 0, 1)) }}</span>{{ $r['author'] }}</cite>@endif
             </blockquote>

@@ -15,9 +15,9 @@
     $cta = isset($b['cta_band']) && $txt($b['cta_band']['heading'] ?? null) ? $b['cta_band'] : null;
     $openHours = array_values(array_filter($hours, fn ($h) => is_array($h) && $txt($h['day'] ?? null)));
     $strip = count($gallery) >= 4 ? array_slice($gallery, 0, 4) : $gallery;
-    $nav = array_filter(['menu' => $menu ? 'Menu' : null, 'about' => $about ? 'About' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => 'Hours']);
+    $nav = array_filter(['menu' => $menu ? 'Menu' : null, 'about' => $about ? 'About' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => $openHours ? 'Hours' : 'Contact']);
 @endphp
-<div class="gh">
+<div class="gh" id="top">
 <header class="gh-nav">
     <div class="gh-wrap gh-nav__row">
         <a class="gh-brand" href="#top">{{ $name }}</a>
@@ -31,7 +31,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="gh-hero{{ $heroImg ? '' : ' gh-hero--plain' }}"{!! $at('hero') !!}>
+<section class="gh-hero{{ $heroImg ? '' : ' gh-hero--plain' }}"{!! $at('hero') !!}>
     @if($heroImg)<img class="gh-hero__img" src="{{ $heroImg }}" alt="{{ $txt($hero['image_alt'] ?? null) ?? '' }}">@endif
     <div class="gh-wrap gh-hero__body">
         <h1{!! $f('headline') !!}>{{ $hero['headline'] }}</h1>
@@ -91,7 +91,7 @@
             @foreach(array_slice($reviews, 0, 3) as $r)
             @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
             <figure>
-                @if($stars > 0)<p class="gh-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                @if($stars > 0)<p class="gh-stars" role="img" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
                 <blockquote><p>{{ $r['text'] }}</p></blockquote>
                 @if($txt($r['author'] ?? null))<figcaption>{{ $r['author'] }}@if($txt($r['source'] ?? null)) · {{ $r['source'] }}@endif</figcaption>@endif
             </figure>

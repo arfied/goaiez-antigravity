@@ -130,3 +130,10 @@ p { margin: 0; }
 .ms-team__role { color: var(--color-accent-text); font-size: 0.9rem; font-weight: 600; }
 .ms-team p { margin: 0; }
 .ms-team li > div > p:not(.ms-team__role) { color: color-mix(in srgb, var(--color-ink) 74%, transparent); font-size: 0.95rem; }
+
+/* Robustness (Grok's review, 2026-10-04): long words and labels wrap instead of being cut off on a phone, a long business name
+   ends in an ellipsis instead of pushing the menu off screen, and the phone menu is a 44px target. */
+.ms h1, .ms h2, .ms h3, .ms p, .ms li, .ms td, .ms th, .ms blockquote, .ms summary { overflow-wrap: break-word; }
+.ms-button { white-space: normal; text-align: center; max-width: 100%; }
+.ms-brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ms-menu summary { min-width: 44px; min-height: 44px; place-content: center; justify-items: center; }

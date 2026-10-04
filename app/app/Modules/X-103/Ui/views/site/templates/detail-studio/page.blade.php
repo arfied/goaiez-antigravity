@@ -18,7 +18,7 @@
     $shown = count($gallery) >= 4 ? array_slice($gallery, 0, min(8, intdiv(count($gallery), 4) * 4)) : $gallery;
     $nav = array_filter(['packages' => $services ? 'Packages' : null, 'work' => $shown ? 'Our work' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => 'Contact']);
 @endphp
-<div class="ds">
+<div class="ds" id="top">
 <header class="ds-nav">
     <div class="ds-wrap ds-nav__row">
         <a class="ds-brand" href="#top">{{ $name }}</a>
@@ -32,7 +32,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="ds-hero"{!! $at('hero') !!}>
+<section class="ds-hero"{!! $at('hero') !!}>
     <div class="ds-wrap ds-hero__body">
         <h1{!! $f('headline') !!}>{{ $hero['headline'] }}</h1>
         @if($txt($hero['subline'] ?? null))<p class="ds-hero__sub"{!! $f('subline') !!}>{{ $hero['subline'] }}</p>@endif
@@ -94,7 +94,7 @@
             @foreach(array_slice($reviews, 0, 3) as $r)
             @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
             <figure>
-                @if($stars > 0)<p class="ds-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                @if($stars > 0)<p class="ds-stars" role="img" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
                 <blockquote><p>{{ $r['text'] }}</p></blockquote>
                 @if($txt($r['author'] ?? null))<figcaption>{{ $r['author'] }}@if($txt($r['source'] ?? null)) <span>· {{ $r['source'] }}</span>@endif</figcaption>@endif
             </figure>

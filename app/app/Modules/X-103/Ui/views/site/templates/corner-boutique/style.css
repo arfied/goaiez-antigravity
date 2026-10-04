@@ -111,3 +111,10 @@ body > [id$="-x176"] { font-size: 0.9rem; color: color-mix(in srgb, var(--color-
 .site-footer { margin: 0; padding: 1.5rem clamp(1rem, 4vw, 2.25rem); background: var(--color-surface); border-top: 1px solid color-mix(in srgb, var(--color-ink) 13%, transparent); color: color-mix(in srgb, var(--color-ink) 65%, transparent); text-align: center; font-size: 0.85rem; }
 .site-footer p { margin: 0; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .cb-button, .cb-product__media img { transition: none; } .cb-product__link:hover .cb-product__media img { transform: none; } }
+
+/* Robustness (Grok's review, 2026-10-04): long words and labels wrap instead of being cut off on a phone, a long business name
+   ends in an ellipsis instead of pushing the menu off screen, and the phone menu is a 44px target. */
+.cb h1, .cb h2, .cb h3, .cb p, .cb li, .cb td, .cb th, .cb blockquote, .cb summary { overflow-wrap: break-word; }
+.cb-button { white-space: normal; text-align: center; max-width: 100%; }
+.cb-brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cb-menu summary { min-width: 44px; min-height: 44px; place-content: center; justify-items: center; }

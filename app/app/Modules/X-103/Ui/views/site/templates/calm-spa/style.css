@@ -141,3 +141,10 @@ body > [id$="-x176"] { font-size: 0.9rem; color: color-mix(in srgb, var(--color-
 .cs-team__role { color: var(--color-accent-text); font-size: 0.9rem; font-weight: 600; }
 .cs-team p { margin: 0; }
 .cs-team li > div > p:not(.cs-team__role) { color: color-mix(in srgb, var(--color-ink) 74%, transparent); font-size: 0.95rem; }
+
+/* Robustness (Grok's review, 2026-10-04): long words and labels wrap instead of being cut off on a phone, a long business name
+   ends in an ellipsis instead of pushing the menu off screen, and the phone menu is a 44px target. */
+.cs h1, .cs h2, .cs h3, .cs p, .cs li, .cs td, .cs th, .cs blockquote, .cs summary { overflow-wrap: break-word; }
+.cs-button { white-space: normal; text-align: center; max-width: 100%; }
+.cs-brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cs-menu summary { min-width: 44px; min-height: 44px; place-content: center; justify-items: center; }

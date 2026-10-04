@@ -130,3 +130,11 @@ p { margin: 0; }
 .gp-hours th, .gp-hours td { padding: 0.75rem 0; border-bottom: 1px solid var(--line); text-align: left; font-weight: 700; }
 .gp-hours td { text-align: right; font-weight: 400; font-variant-numeric: tabular-nums; }
 @media (max-width: 44rem) { .gp-visit { grid-template-columns: 1fr; } }
+
+/* Robustness (Grok's review, 2026-10-04): long words and labels wrap instead of being cut off on a phone, a long business name
+   ends in an ellipsis instead of pushing the menu off screen, and the phone menu is a 44px target. */
+.gp h1, .gp h2, .gp h3, .gp p, .gp li, .gp td, .gp th, .gp blockquote, .gp summary { overflow-wrap: break-word; }
+.gp-button { white-space: normal; text-align: center; max-width: 100%; }
+.gp-brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gp-menu summary { min-width: 44px; min-height: 44px; place-content: center; justify-items: center; }
+.gp-button:focus-visible { clip-path: none; }

@@ -18,12 +18,12 @@
     $collage = array_slice($gallery, 0, 2);
     $nav = array_filter(['menu' => $services ? 'Menu' : null, 'work' => $gallery ? 'Our work' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => 'Visit']);
 @endphp
-<div class="pb">
+<div class="pb" id="top">
 <header class="pb-nav">
     <div class="pb-wrap pb-nav__row">
         <a class="pb-brand" href="#top">{{ $name }}<span aria-hidden="true">.</span></a>
         <nav class="pb-nav__links" aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
-        @if($book)<a class="pb-button pb-button--dark pb-nav__book" href="{{ $book }}">Book</a>@endif
+        @if($book)<a class="pb-button pb-button--dark pb-nav__book" href="{{ $book }}">{{ $bookHref !== null ? 'Book' : ($heroHref !== null ? $hero['cta_label'] : 'Call') }}</a>@endif
         <details class="pb-menu">
             <summary aria-label="Menu"><span></span><span></span></summary>
             <nav aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
@@ -32,7 +32,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="pb-hero{{ $heroImg ? '' : ' pb-hero--text' }}"{!! $at('hero') !!}>
+<section class="pb-hero{{ $heroImg ? '' : ' pb-hero--text' }}"{!! $at('hero') !!}>
     <div class="pb-wrap pb-hero__grid">
         <div class="pb-hero__body">
             <h1{!! $f('headline') !!}>{{ $hero['headline'] }}</h1>
@@ -97,7 +97,7 @@
             @foreach(array_slice($reviews, 0, 6) as $r)
             @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
             <blockquote class="pb-review">
-                @if($stars > 0)<p class="pb-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                @if($stars > 0)<p class="pb-stars" role="img" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
                 <p>{{ $r['text'] }}</p>
                 @if($txt($r['author'] ?? null))<cite>{{ $r['author'] }}@if($txt($r['source'] ?? null))<span>{{ $r['source'] }}</span>@endif</cite>@endif
             </blockquote>
@@ -111,7 +111,7 @@
 <section class="pb-book"{!! $cta ? $at('cta_band') : '' !!}>
     <div class="pb-wrap pb-book__row">
         <div>
-            @if($cta)<h2{!! $f('heading') !!}>{{ $cta['heading'] }}</h2>@else<h2>Ready for fresh nails?</h2>@endif
+            @if($cta)<h2{!! $f('heading') !!}>{{ $cta['heading'] }}</h2>@else<h2>Ready when you are</h2>@endif
             @if($cta && $txt($cta['text'] ?? null))<p{!! $f('text') !!}>{{ $cta['text'] }}</p>@endif
         </div>
         @if($book)<a class="pb-button pb-button--pop pb-button--lg" href="{{ $book }}"{!! $bookHref !== null ? $at('booking_button') : '' !!}>{{ $bookLabel }}</a>@endif

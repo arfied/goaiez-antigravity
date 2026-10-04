@@ -17,12 +17,12 @@
     $quote = $reviews[0] ?? null;
     $nav = array_filter(['menu' => $services ? 'Menu' : null, 'about' => $about ? 'About' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => 'Visit']);
 @endphp
-<div class="sl">
+<div class="sl" id="top">
 <header class="sl-nav">
     <div class="sl-wrap sl-nav__row">
         <a class="sl-brand" href="#top">{{ $name }}</a>
         <nav class="sl-nav__links" aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
-        @if($book)<a class="sl-button sl-nav__book" href="{{ $book }}">Book</a>@endif
+        @if($book)<a class="sl-button sl-nav__book" href="{{ $book }}">{{ $bookHref !== null ? 'Book' : ($heroHref !== null ? $hero['cta_label'] : 'Call') }}</a>@endif
         <details class="sl-menu">
             <summary aria-label="Menu"><span></span><span></span></summary>
             <nav aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
@@ -31,7 +31,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="sl-hero{{ $heroImg ? '' : ' sl-hero--text' }}"{!! $at('hero') !!}>
+<section class="sl-hero{{ $heroImg ? '' : ' sl-hero--text' }}"{!! $at('hero') !!}>
     @if($heroImg)<img class="sl-hero__img" src="{{ $heroImg }}" alt="{{ $txt($hero['image_alt'] ?? null) ?? '' }}">@endif
     <div class="sl-wrap sl-hero__body">
         <span class="sl-rule" aria-hidden="true"></span>

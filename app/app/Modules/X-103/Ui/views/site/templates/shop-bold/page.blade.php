@@ -15,7 +15,7 @@
     $mosaic = count($mosaic) === 4 ? $mosaic : [];
     $nav = array_filter(['shop' => $products ? 'Shop' : null, 'about' => $about ? 'About' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => 'Contact']);
 @endphp
-<div class="sx">
+<div class="sx" id="top">
 <header class="sx-nav">
     <div class="sx-wrap sx-nav__row">
         <a class="sx-brand" href="#top">{{ $name }}</a>
@@ -29,7 +29,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="sx-hero"{!! $at('hero') !!}>
+<section class="sx-hero"{!! $at('hero') !!}>
     <div class="sx-wrap sx-hero__grid{{ $mosaic || $heroImg ? '' : ' sx-hero__grid--text' }}">
         <div class="sx-hero__body">
             <h1{!! $f('headline') !!}>{{ $hero['headline'] }}</h1>
@@ -84,7 +84,7 @@
             @foreach(array_slice($reviews, 0, 3) as $r)
             @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
             <blockquote>
-                @if($stars > 0)<p class="sx-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                @if($stars > 0)<p class="sx-stars" role="img" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
                 <p>{{ $r['text'] }}</p>
                 @if($txt($r['author'] ?? null))<cite>{{ $r['author'] }}@if($txt($r['source'] ?? null)) · {{ $r['source'] }}@endif</cite>@endif
             </blockquote>

@@ -19,7 +19,7 @@
     $shown = count($gallery) >= 3 ? array_slice($gallery, 0, min(6, intdiv(count($gallery), 3) * 3)) : $gallery;
     $nav = array_filter(['services' => $services ? 'Services' : null, 'about' => $about ? 'About' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => 'Contact']);
 @endphp
-<div class="gp">
+<div class="gp" id="top">
 @if($openHours || $address)
 <div class="gp-top">
     <div class="gp-wrap gp-top__row">
@@ -41,7 +41,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="gp-hero{{ $heroImg ? '' : ' gp-hero--plain' }}"{!! $at('hero') !!}>
+<section class="gp-hero{{ $heroImg ? '' : ' gp-hero--plain' }}"{!! $at('hero') !!}>
     <div class="gp-hero__body">
         <div class="gp-hero__inner">
             <h1{!! $f('headline') !!}>{{ $hero['headline'] }}</h1>
@@ -95,7 +95,7 @@
             @foreach(array_slice($reviews, 0, 3) as $r)
             @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
             <figure>
-                @if($stars > 0)<p class="gp-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                @if($stars > 0)<p class="gp-stars" role="img" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
                 <blockquote><p>{{ $r['text'] }}</p></blockquote>
                 @if($txt($r['author'] ?? null))<figcaption>{{ $r['author'] }}@if($txt($r['source'] ?? null)) · {{ $r['source'] }}@endif</figcaption>@endif
             </figure>

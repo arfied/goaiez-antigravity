@@ -230,4 +230,42 @@ class SiteTemplatesTest extends TestCase
         }
         $this->assertGreaterThan(0, $withTeam);
     }
+
+    public function test_every_template_keeps_its_top_link_without_a_banner_and_names_its_star_ratings(): void
+    {
+        $named = 0;
+        foreach (array_keys(SiteTemplates::TEMPLATES) as $id) {
+            $noHero = array_values(array_filter($this->blocks(), static fn (array $b): bool => $b['type'] !== 'hero'));
+            $html = $this->render($noHero, $id);
+            $this->assertStringContainsString('href="#top"', $html, $id);
+            $this->assertSame(1, substr_count($html, 'id="top"'), $id);
+
+            $html = $this->render($this->blocks(), $id);
+            $this->assertSame(1, substr_count($html, 'id="top"'), $id);
+            $stars = substr_count($html, 'aria-label="5 out of 5 stars"');
+            $this->assertSame($stars, substr_count($html, 'role="img" aria-label="5 out of 5 stars"'), $id);
+            $named += $stars;
+        }
+        $this->assertGreaterThan(0, $named);
+    }
+
+    public function test_no_template_says_book_without_a_booking_link(): void
+    {
+        $blocks = array_values(array_filter($this->blocks(), static fn (array $b): bool => $b['type'] !== 'booking_button'));
+        unset($blocks[0]['cta_label'], $blocks[0]['cta_url']);
+        foreach (array_keys(SiteTemplates::TEMPLATES) as $id) {
+            $html = $this->render($blocks, $id);
+            foreach (['>Book<', '>Book now<', '>Book a treatment<'] as $needle) {
+                $this->assertStringNotContainsString($needle, $html, "$id: $needle");
+            }
+            $this->assertStringContainsString('href="tel:2535550187"', $html, $id);
+        }
+
+        // The positive control: with a booking link, the templates that say "Book" do say it.
+        $booked = 0;
+        foreach (array_keys(SiteTemplates::TEMPLATES) as $id) {
+            $booked += substr_count($this->render($this->blocks(), $id), '>Book<');
+        }
+        $this->assertGreaterThan(0, $booked);
+    }
 }

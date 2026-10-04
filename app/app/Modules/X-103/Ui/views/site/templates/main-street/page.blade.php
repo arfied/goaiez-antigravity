@@ -19,7 +19,7 @@
     $shown = count($gallery) >= 3 ? array_slice($gallery, 0, min(6, intdiv(count($gallery), 3) * 3)) : $gallery;
     $nav = array_filter(['services' => $services ? 'Services' : null, 'about' => $about ? 'About' : null, 'reviews' => $reviews ? 'Kind words' : null, 'visit' => 'Visit']);
 @endphp
-<div class="ms">
+<div class="ms" id="top">
 <header class="ms-nav">
     <div class="ms-wrap ms-nav__row">
         <a class="ms-brand" href="#top">{{ $name }}</a>
@@ -33,7 +33,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="ms-hero"{!! $at('hero') !!}>
+<section class="ms-hero"{!! $at('hero') !!}>
     <div class="ms-wrap ms-hero__grid{{ $heroImg ? '' : ' ms-hero__grid--text' }}">
         <div class="ms-hero__body">
             @if($address)<p class="ms-hero__where">{{ $address }}</p>@endif
@@ -88,7 +88,7 @@
             <figure>
                 <span class="ms-quote" aria-hidden="true">“</span>
                 <blockquote><p>{{ $r['text'] }}</p></blockquote>
-                @if($stars > 0)<p class="ms-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                @if($stars > 0)<p class="ms-stars" role="img" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
                 @if($txt($r['author'] ?? null))<figcaption>{{ $r['author'] }}@if($txt($r['source'] ?? null)) <span>· {{ $r['source'] }}</span>@endif</figcaption>@endif
             </figure>
             @endforeach

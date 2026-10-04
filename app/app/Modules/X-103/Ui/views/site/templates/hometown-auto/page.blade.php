@@ -19,7 +19,7 @@
     $shown = count($gallery) >= 3 ? array_slice($gallery, 0, min(6, intdiv(count($gallery), 3) * 3)) : $gallery;
     $nav = array_filter(['services' => $services ? 'Services' : null, 'about' => $about ? 'About us' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => 'Hours & directions']);
 @endphp
-<div class="hm">
+<div class="hm" id="top">
 <header class="hm-nav">
     <div class="hm-wrap hm-nav__row">
         <a class="hm-brand" href="#top">{{ $name }}</a>
@@ -33,7 +33,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="hm-hero{{ $heroImg ? '' : ' hm-hero--plain' }}"{!! $at('hero') !!}>
+<section class="hm-hero{{ $heroImg ? '' : ' hm-hero--plain' }}"{!! $at('hero') !!}>
     @if($heroImg)<img class="hm-hero__img" src="{{ $heroImg }}" alt="{{ $txt($hero['image_alt'] ?? null) ?? '' }}">@endif
     <div class="hm-wrap">
         <div class="hm-hero__card">
@@ -92,7 +92,7 @@
             @foreach(array_merge([$lead], $rest) as $ri => $r)
             @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
             <figure class="{{ $ri === 0 ? 'hm-review hm-review--lead' : 'hm-review' }}">
-                @if($stars > 0)<p class="hm-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                @if($stars > 0)<p class="hm-stars" role="img" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
                 <blockquote><p>“{{ $r['text'] }}”</p></blockquote>
                 @if($txt($r['author'] ?? null))<figcaption>{{ $r['author'] }}@if($txt($r['source'] ?? null)) · {{ $r['source'] }}@endif</figcaption>@endif
             </figure>

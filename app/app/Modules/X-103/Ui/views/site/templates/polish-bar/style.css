@@ -136,3 +136,10 @@ body > [id$="-x176"] { font-size: 0.9rem; color: color-mix(in srgb, var(--color-
 .pb-team__role { color: var(--color-accent-text); font-size: 0.9rem; font-weight: 600; }
 .pb-team p { margin: 0; }
 .pb-team li > div > p:not(.pb-team__role) { color: color-mix(in srgb, var(--color-ink) 74%, transparent); font-size: 0.95rem; }
+
+/* Robustness (Grok's review, 2026-10-04): long words and labels wrap instead of being cut off on a phone, a long business name
+   ends in an ellipsis instead of pushing the menu off screen, and the phone menu is a 44px target. */
+.pb h1, .pb h2, .pb h3, .pb p, .pb li, .pb td, .pb th, .pb blockquote, .pb summary { overflow-wrap: break-word; }
+.pb-button { white-space: normal; text-align: center; max-width: 100%; }
+.pb-brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pb-menu summary { min-width: 44px; min-height: 44px; place-content: center; justify-items: center; }

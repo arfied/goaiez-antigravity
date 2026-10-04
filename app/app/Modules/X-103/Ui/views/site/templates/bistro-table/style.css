@@ -40,7 +40,7 @@ p { margin: 0; }
 /* hero: a full photograph, the words centred on it */
 .bt-hero { position: relative; isolation: isolate; color: #ffffff; background: #1a1a1a; text-align: center; }
 .bt-hero__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
-.bt-hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(10,12,10,0.55) 0%, rgba(10,12,10,0.68) 100%); }
+.bt-hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(10,12,10,0.64) 0%, rgba(10,12,10,0.74) 100%); }
 .bt-hero--plain { background: var(--deep); color: var(--on-deep); }
 .bt-hero--plain::after { display: none; }
 .bt-hero--plain .bt-button--line { color: var(--on-deep); border-color: color-mix(in srgb, var(--on-deep) 60%, transparent); }
@@ -116,3 +116,10 @@ p { margin: 0; }
 .bt-hours td { text-align: right; font-variant-numeric: tabular-nums; }
 @media (max-width: 40rem) { .bt-visit { grid-template-columns: 1fr; } }
 .bt-hero--plain + .bt-info { border-top: 1px solid color-mix(in srgb, var(--on-deep) 22%, transparent); }
+
+/* Robustness (Grok's review, 2026-10-04): long words and labels wrap instead of being cut off on a phone, a long business name
+   ends in an ellipsis instead of pushing the menu off screen, and the phone menu is a 44px target. */
+.bt h1, .bt h2, .bt h3, .bt p, .bt li, .bt td, .bt th, .bt blockquote, .bt summary { overflow-wrap: break-word; }
+.bt-button { white-space: normal; text-align: center; max-width: 100%; }
+.bt-brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bt-menu summary { min-width: 44px; min-height: 44px; place-content: center; justify-items: center; }

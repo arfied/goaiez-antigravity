@@ -16,7 +16,7 @@
     $shown = count($gallery) >= 3 ? array_slice($gallery, 0, min(6, intdiv(count($gallery), 3) * 3)) : $gallery;
     $nav = array_filter(['menu' => $menu ? 'Menu' : null, 'story' => $about ? 'Our story' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => 'Hours & visit']);
 @endphp
-<div class="bt">
+<div class="bt" id="top">
 <header class="bt-nav">
     <div class="bt-wrap bt-nav__row">
         <a class="bt-brand" href="#top">{{ $name }}</a>
@@ -30,7 +30,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="bt-hero{{ $heroImg ? '' : ' bt-hero--plain' }}"{!! $at('hero') !!}>
+<section class="bt-hero{{ $heroImg ? '' : ' bt-hero--plain' }}"{!! $at('hero') !!}>
     @if($heroImg)<img class="bt-hero__img" src="{{ $heroImg }}" alt="{{ $txt($hero['image_alt'] ?? null) ?? '' }}">@endif
     <div class="bt-wrap bt-hero__body">
         <p class="bt-flourish" aria-hidden="true">— ✦ —</p>
@@ -96,7 +96,7 @@
             @foreach(array_slice($reviews, 0, 3) as $r)
             @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
             <figure>
-                @if($stars > 0)<p class="bt-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                @if($stars > 0)<p class="bt-stars" role="img" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
                 <blockquote><p>“{{ $r['text'] }}”</p></blockquote>
                 @if($txt($r['author'] ?? null))<figcaption>{{ $r['author'] }}@if($txt($r['source'] ?? null)) · {{ $r['source'] }}@endif</figcaption>@endif
             </figure>
@@ -109,7 +109,7 @@
 @if($book || $cta)
 <section class="bt-band"{!! $cta ? $at('cta_band') : '' !!}>
     <div class="bt-wrap bt-band__inner">
-        @if($cta)<h2{!! $f('heading') !!}>{{ $cta['heading'] }}</h2>@else<h2>Join us for dinner</h2>@endif
+        @if($cta)<h2{!! $f('heading') !!}>{{ $cta['heading'] }}</h2>@else<h2>Come and see us</h2>@endif
         @if($cta && $txt($cta['text'] ?? null))<p{!! $f('text') !!}>{{ $cta['text'] }}</p>@endif
         @if($book)<a class="bt-button bt-button--light bt-button--lg" href="{{ $book }}"{!! $bookHref !== null ? $at('booking_button') : '' !!}>{{ $bookLabel }}</a>@endif
     </div>

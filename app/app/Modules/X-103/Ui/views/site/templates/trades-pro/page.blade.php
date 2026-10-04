@@ -39,7 +39,7 @@
     $area = $facts['service_area'] ?? null;
     $nav = array_filter(['services' => $services ? 'Services' : null, 'about' => $about ? 'About' : null, 'reviews' => $reviews ? 'Reviews' : null, 'faq' => $faqs ? 'FAQ' : null, 'contact' => 'Contact']);
 @endphp
-<div class="tp">
+<div class="tp" id="top">
 @if($trust || $phone)
 <div class="tp-top">
     <div class="tp-wrap tp-top__row">
@@ -52,7 +52,7 @@
     <div class="tp-wrap tp-nav__row">
         <a class="tp-brand" href="#top">@if($name !== '')<span class="tp-brand__mark" aria-hidden="true">{{ mb_strtoupper(mb_substr($name, 0, 1)) }}</span><span>{{ $name }}</span>@endif</a>
         <nav class="tp-nav__links" aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
-        @if($phone)<a class="tp-button tp-button--primary tp-nav__call" href="{{ $tel }}">{!! $phoneSvg !!}<span>{{ $phone }}</span></a>@endif
+        @if($phone)<a class="tp-button tp-button--primary tp-nav__call" href="{{ $tel }}" aria-label="Call {{ $phone }}">{!! $phoneSvg !!}<span>{{ $phone }}</span></a>@endif
         <details class="tp-menu">
             <summary aria-label="Menu"><span></span><span></span><span></span></summary>
             <nav aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
@@ -61,7 +61,7 @@
 </header>
 
 @if($hero)
-<section id="top" class="tp-hero{{ $heroImg ? '' : ' tp-hero--plain' }}"{!! $at('hero') !!}>
+<section class="tp-hero{{ $heroImg ? '' : ' tp-hero--plain' }}"{!! $at('hero') !!}>
     @if($heroImg)<img class="tp-hero__img" src="{{ $heroImg }}" alt="{{ $txt($hero['image_alt'] ?? null) ?? '' }}">@endif
     <div class="tp-wrap tp-hero__body">
         @if($area)<p class="tp-eyebrow tp-eyebrow--light">{!! $pinSvg !!}Serving {{ $area }}</p>@endif
@@ -114,7 +114,7 @@
             @foreach($reviews as $r)
             @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
             <blockquote class="tp-review">
-                @if($stars > 0)<p class="tp-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}<span>{{ str_repeat('★', 5 - $stars) }}</span></p>@endif
+                @if($stars > 0)<p class="tp-stars" role="img" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}<span>{{ str_repeat('★', 5 - $stars) }}</span></p>@endif
                 <p>{{ $r['text'] }}</p>
                 @if($txt($r['author'] ?? null))<cite>{{ $r['author'] }}@if($txt($r['source'] ?? null))<span> · {{ $r['source'] }}</span>@endif</cite>@endif
             </blockquote>
