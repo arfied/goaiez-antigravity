@@ -7,6 +7,7 @@ namespace Tests\Modules\X103;
 use App\Enums\AiModel;
 use App\Models\Business;
 use App\Models\Location;
+use App\Models\Review;
 use App\Models\User;
 use App\Modules\X103\Actions\SiteDesignGenerateAction;
 use App\Modules\X103\Actions\SiteDesignUseAction;
@@ -476,7 +477,7 @@ class SiteDesignGenerateActionTest extends TestCase
         $this->assertSame('tenant/1/shop-7312.jpg', $design['blocks'][4]['items'][0]['image_path']);
         $this->assertSame('Saturday', $design['blocks'][2]['hours'][0]['day']);
         $this->assertSame('Asheville 7313', $design['blocks'][2]['facts']['service_area']);
-        Http::assertSent(fn ($r) => str_contains($r->body(), 'Maker Market') && str_contains($r->body(), 'hero, reviews_strip, about, faq, cta_band, contact')
+        Http::assertSent(fn ($r) => str_contains($r->body(), 'Maker Market') && str_contains($r->body(), 'hero, about, faq, cta_band, contact')
             && ! str_contains($r->body(), 'Themes (use one id)') && ! str_contains($r->body(), 'Fonts you may use'));
 
         $preview = app(PagePreview::class)->designHtml($page, 'claude');
@@ -638,6 +639,85 @@ class SiteDesignGenerateActionTest extends TestCase
         $this->assertSame('Spa, stones, candles (stock photo)', $hero['image_alt']);
         Storage::disk('local')->assertExists($hero['image_path']);
         Http::assertNotSent(fn ($r) => str_contains($r->url(), 'images/generations') || str_contains($r->url(), 'fal.run'));
+    }
+
+    public function test_on_a_template_the_ai_never_writes_reviews_and_the_businesss_approved_reviews_fill_the_section(): void
+    {
+        // Fixture taken from test_on_a_template_the_ai_never_writes_the_team_and_the_owners_team_is_kept.
+        $page = $this->page([['type' => 'hero', 'headline' => 'Old headline']]);
+        app(SiteTemplateApplyAction::class)->handle($page->business_id, $page->id, 'calm-spa');
+        $locationId = Location::where('business_id', $page->business_id)->value('id');
+        Review::factory()->fromGoogle()->approved()->create(['business_id' => $page->business_id, 'location_id' => $locationId, 'display_on_website' => true, 'rating' => 5, 'comment' => 'The calmest hour of my month 7481', 'reviewer_name' => 'Dana R. 7482']);
+        Review::factory()->fromGoogle()->approved()->create(['business_id' => $page->business_id, 'location_id' => $locationId, 'display_on_website' => false, 'rating' => 5, 'comment' => 'Not ticked for the website 7483']);
+        $this->fakeAnswer(json_encode([
+            'blocks' => [
+                ['type' => 'hero', 'headline' => 'Slow down 7484'],
+                ['type' => 'reviews_strip', 'heading' => 'Invented heading 7485', 'items' => [['author' => 'Made Up 7486', 'rating' => 5, 'text' => 'Invented praise 7487']]],
+            ],
+        ]));
+
+        app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id);
+
+        $page->refresh();
+        $blocks = $page->draft_meta['designs']['claude']['blocks'];
+        $strips = array_values(array_filter($blocks, static fn (array $b): bool => $b['type'] === 'reviews_strip'));
+        $this->assertCount(1, $strips);
+        // Postgres jsonb keeps list order but not object key order, so the item is compared by value (assertEquals).
+        $this->assertEquals([['rating' => 5, 'text' => 'The calmest hour of my month 7481', 'author' => 'Dana R. 7482']], $strips[0]['items']);
+        $this->assertSame('reviews', $strips[0]['source']);
+        $json = (string) json_encode($blocks);
+        foreach (['Invented praise 7487', 'Made Up 7486', 'Invented heading 7485', 'Not ticked for the website 7483'] as $needle) {
+            $this->assertStringNotContainsString($needle, $json);
+        }
+        Http::assertSent(fn ($r) => str_contains($r->body(), 'and no others: hero') && preg_match('/and no others: [^.]*reviews_strip/', $r->body()) !== 1);
+    }
+
+    public function test_a_stats_number_the_business_never_stated_is_dropped(): void
+    {
+        // Fixture taken from the ownerPhotos() helper: the business's own website, as the crawl stored it.
+        $page = $this->page([['type' => 'hero', 'headline' => 'Old headline']]);
+        $locationId = Location::where('business_id', $page->business_id)->value('id');
+        SiteInventoryPage::create(['business_id' => $page->business_id, 'location_id' => $locationId, 'url' => 'https://example.com', 'status' => 'fetched', 'fetched_at' => now(), 'text' => 'Serving Tacoma for 18 years. Rated 4.9 by our customers.']);
+        $this->fakeAnswer(json_encode([
+            'theme' => 'warm-local',
+            'blocks' => [
+                ['type' => 'hero', 'headline' => 'Plumbing 7491', 'image_path' => 'x.jpg'],
+                ['type' => 'stats', 'items' => [
+                    ['value' => '18', 'label' => 'Years in Tacoma'],
+                    ['value' => '4.9', 'label' => 'Rating'],
+                    ['value' => '2,500+', 'label' => 'Jobs done'],
+                    ['value' => '24/7', 'label' => 'Emergency line'],
+                    ['value' => 'Same day', 'label' => 'Most repairs'],
+                ]],
+                ['type' => 'about', 'text' => 'A family crew 7492.'],
+            ],
+        ]));
+
+        app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id);
+
+        $page->refresh();
+        $blocks = $page->draft_meta['designs']['claude']['blocks'];
+        $stats = array_values(array_filter($blocks, static fn (array $b): bool => $b['type'] === 'stats'));
+        $this->assertCount(1, $stats);
+        $this->assertSame(['18', '4.9'], array_column($stats[0]['items'], 'value'));
+    }
+
+    public function test_a_stats_section_with_no_number_the_business_stated_is_left_out(): void
+    {
+        $page = $this->page([['type' => 'hero', 'headline' => 'Old headline']]);
+        $this->fakeAnswer(json_encode([
+            'theme' => 'warm-local',
+            'blocks' => [
+                ['type' => 'hero', 'headline' => 'Plumbing 7493', 'image_path' => 'x.jpg'],
+                ['type' => 'stats', 'items' => [['value' => '9731', 'label' => 'Years 7494'], ['value' => '8642+', 'label' => 'Happy clients']]],
+                ['type' => 'about', 'text' => 'A family crew 7495.'],
+            ],
+        ]));
+
+        app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id);
+
+        $page->refresh();
+        $this->assertSame(['hero', 'about'], array_column($page->draft_meta['designs']['claude']['blocks'], 'type'));
     }
 
     public function test_on_a_template_too_few_photos_make_no_gallery(): void

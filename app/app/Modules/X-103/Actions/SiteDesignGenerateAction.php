@@ -6,6 +6,7 @@ namespace App\Modules\X103\Actions;
 
 use App\Enums\AiTask;
 use App\Models\Business;
+use App\Models\Review;
 use App\Modules\X103\Domain\BlockPatchSchema;
 use App\Modules\X103\Domain\CompetitorDigest;
 use App\Modules\X103\Domain\SiteBlockRenderer;
@@ -47,10 +48,11 @@ final class SiteDesignGenerateAction
 
     /** What each page of a whole site is for (SiteBuildWholeAction), told to the AI so the four pages do not repeat each other. */
     /**
-     * On a site template, the sections only the owner writes. A team section names real people who work here, so the AI never
-     * writes one (the boss's brief: no invented staff); the owner's own team section is kept as it is.
+     * On a site template, the sections the AI never writes. A team section names real people who work here (the boss's brief: no
+     * invented staff), and reviews are real customers' words — the business's own approved reviews fill that section (below).
+     * The owner's own section of either kind is kept as it is.
      */
-    private const OWNER_ONLY_ON_TEMPLATE = ['team'];
+    private const OWNER_ONLY_ON_TEMPLATE = ['team', 'reviews_strip'];
 
     public const PAGE_PURPOSES = [
         'home' => 'the home page: the whole business at a glance — a strong hero, the main services, why choose us, a few reviews if real ones are given, and a call to action',
@@ -166,7 +168,7 @@ final class SiteDesignGenerateAction
             .($oldHero !== null && ! empty($oldHero['image_path']) ? "\n\nThe business already has a main picture; it is kept on the hero." : '')
             .($photoLines === [] ? '' : "\n\nPhotos from the business's own website — place one with \"owner_photo\": <its number> ONLY if it truly shows this business; otherwise describe a new one:\n".implode("\n", $photoLines))
             .($template !== null
-                ? "\n\nThis site uses the \"".$template['label'].'" template, a finished page designed for '.$template['for'].'. Return these sections, in this order, and no others: '.implode(', ', $templateSections).'. Do not return a "theme", a "style" or any "variant": the template sets the whole look.'
+                ? "\n\nThis site uses the \"".$template['label'].'" template, a finished page designed for '.$template['for'].'. Return these sections, in this order, and no others: '.implode(', ', $templateSections).'. Leave out a stats section unless the facts or the business\'s own website give real numbers. Do not return a "theme", a "style" or any "variant": the template sets the whole look.'
                 : "\n\nThemes (use one id):\n".implode("\n", $themes))
             ."\n\nSection types and their fields: ".self::CATALOGUE
             .($template !== null ? '' : "\n\nFonts you may use: ".implode(' | ', self::modernFontStacks())
@@ -445,6 +447,34 @@ final class SiteDesignGenerateAction
             }
         }
 
+        // A template's reviews are the business's real ones: the reviews the owner ticked for the website, through the same
+        // moderation gate the public reviews widget applies (Review::displayable). With none, the owner's own reviews section
+        // stays as it was; with neither, the template simply does not draw one.
+        if ($template !== null && in_array('reviews_strip', $template['sections'], true)) {
+            $items = [];
+            $real = Review::query()->displayable()->where('business_id', $businessId)->where('display_on_website', true)
+                ->where('rating', '>=', $this->registry->int('sites.draft.reviews_min_rating'))
+                ->latest('id')->take($this->registry->int('sites.draft.reviews_max'))->get();
+            foreach ($real as $review) {
+                $text = trim((string) $review->comment);
+                if ($text !== '') {
+                    $items[] = ['rating' => $review->rating, 'text' => $text, 'author' => trim((string) $review->reviewer_name) !== '' ? (string) $review->reviewer_name : 'Customer'];
+                }
+            }
+            if ($items !== []) {
+                $at = array_search('reviews_strip', array_column($blocks, 'type'), true);
+                $strip = ['type' => 'reviews_strip', 'items' => $items, 'source' => 'reviews'];
+                if ($at === false) {
+                    $blocks[] = $strip;
+                } else {
+                    if (is_string($blocks[$at]['heading'] ?? null) && trim($blocks[$at]['heading']) !== '') {
+                        $strip['heading'] = $blocks[$at]['heading'];
+                    }
+                    $blocks[$at] = $strip;
+                }
+            }
+        }
+
         // The top banner is never left without a picture: when neither the AI nor the business supplied one, one is made from
         // the banner's own words. A banner with a picture sits beside its words ("split") rather than a centred column of text.
         if ($heroIndex !== null && empty($blocks[$heroIndex]['image_path']) && $made < 3) {
@@ -465,6 +495,13 @@ final class SiteDesignGenerateAction
             && ! in_array($blocks[$heroIndex]['variant'] ?? null, ['split', 'cover'], true)) {
             $blocks[$heroIndex]['variant'] = 'split';
         }
+
+        // A number the AI states must be the business's own (the boss's brief: no invented years in business or review counts): a
+        // stats item is kept only when every number in it appears in the owner's stated facts, the business's own website or the
+        // page as it stands; one with no number at all is a claim nobody stated, so it goes too. A stats section left empty is
+        // dropped. Done last, after every picture is placed, so no block index the AI named moves under it.
+        $blocks = self::onlySupportedStats($blocks, $this->statedFacts->section($businessId)."\n".$crawled."\n"
+            .json_encode($content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
         $page->refresh();
         $meta = $page->draft_meta ?? [];
@@ -539,6 +576,41 @@ final class SiteDesignGenerateAction
         $decoded = json_decode(substr($text, $start, $end - $start + 1), true);
 
         return is_array($decoded) ? $decoded : null;
+    }
+
+    /**
+     * The blocks with every stats item whose numbers are not all in the evidence removed, and an emptied stats block dropped.
+     *
+     * @param  list<array<string, mixed>>  $blocks
+     * @return list<array<string, mixed>>
+     */
+    private static function onlySupportedStats(array $blocks, string $evidence): array
+    {
+        $kept = [];
+        foreach ($blocks as $block) {
+            if (($block['type'] ?? null) === 'stats') {
+                $items = array_values(array_filter(is_array($block['items'] ?? null) ? $block['items'] : [], static function (mixed $item) use ($evidence): bool {
+                    $value = is_array($item) && is_scalar($item['value'] ?? null) ? (string) $item['value'] : '';
+                    if (preg_match_all('/\d+(?:[.,]\d+)?/', $value, $numbers) < 1) {
+                        return false;
+                    }
+                    foreach ($numbers[0] as $number) {
+                        if (preg_match('/(?<![\d.,])'.preg_quote($number, '/').'(?![\d]|[.,]\d)/', $evidence) !== 1) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }));
+                if ($items === []) {
+                    continue;
+                }
+                $block['items'] = $items;
+            }
+            $kept[] = $block;
+        }
+
+        return $kept;
     }
 
     /**
