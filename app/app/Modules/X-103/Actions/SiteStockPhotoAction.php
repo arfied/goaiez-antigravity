@@ -41,6 +41,9 @@ final readonly class SiteStockPhotoAction
         'main-street' => 'office desk coffee',
     ];
 
+    /** The picture types kept, by their file extension. */
+    private const EXTENSIONS = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+
     /** Tags that mean a person is in the photo. */
     private const PEOPLE = ['woman', 'women', 'man', 'men', 'girl', 'boy', 'people', 'person', 'child', 'lady', 'guy', 'businessman',
         'businesswoman', 'female', 'male', 'model', 'portrait', 'face', 'couple', 'family', 'worker', 'team', 'mechanic', 'chef', 'waiter', 'barista'];
@@ -85,12 +88,7 @@ final readonly class SiteStockPhotoAction
         if (! is_array($size)) {
             return ['status' => 'none', 'reason' => 'not_an_image'];
         }
-        $ext = match ($size['mime']) {
-            'image/jpeg' => 'jpg',
-            'image/png' => 'png',
-            'image/webp' => 'webp',
-            default => null,
-        };
+        $ext = self::EXTENSIONS[$size['mime']] ?? null;
         if ($ext === null) {
             return ['status' => 'none', 'reason' => 'not_an_image'];
         }
