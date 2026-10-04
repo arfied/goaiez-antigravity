@@ -314,6 +314,14 @@ class Studio extends Component
             abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
             $this->error = null;
             $this->success = null;
+            // The designer's proposal goes up only onto a page with no open proposal, so starting it now would design a page the
+            // owner never sees (production, 2026-10-04: a design finished behind an open quick-edit proposal).
+            $open = Page::where('business_id', $this->businessId)->find($this->pageId);
+            if ($open !== null && isset($open->draft_meta['pending_edit'])) {
+                $this->error = 'Apply or discard the proposal you are previewing first.';
+
+                return;
+            }
             $res = $designer->handle($this->businessId, $this->pageId, ['claude'], proposeWhenReady: true);
             if ($res['status'] === 'queued') {
                 $this->success = 'Designing your page in the '.$template['label'].' template — the words and a picture. It takes a minute or two; the proposal appears here when it is ready.';

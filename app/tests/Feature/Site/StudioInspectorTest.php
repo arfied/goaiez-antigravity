@@ -522,4 +522,41 @@ class StudioInspectorTest extends TestCase
         $this->assertSame('running', $page->draft_meta['designs']['claude']['status']);
         $this->assertArrayNotHasKey('pending_edit', $page->draft_meta);
     }
+
+    public function test_make_it_look_great_on_a_template_refuses_while_a_proposal_is_open(): void
+    {
+        // Fixture taken from test_make_it_look_great_on_a_template_starts_the_designer_and_proposes_its_design_when_ready.
+        Queue::fake();
+        Http::fake();
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $business = TestCase::provisionTenant(['name' => 'Inspector Owner', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($business->id);
+
+        $page = Page::create([
+            'business_id' => $business->id, 'slug' => 'p'.rand(), 'title' => 'T',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old', 'subline' => 'Old'],
+                ['type' => 'about', 'text' => 'Unchanged'],
+            ],
+            'is_published' => false,
+        ]);
+        app(SiteTemplateApplyAction::class)->handle($business->id, $page->id, 'trades-pro');
+        $page->refresh();
+        $meta = $page->draft_meta ?? [];
+        $meta['pending_edit'] = ['blocks' => [['type' => 'hero', 'headline' => 'Open proposal 8801']]];
+        $page->update(['draft_meta' => $meta]);
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('askDesign')
+            ->assertSet('success', null)
+            ->assertSet('error', 'Apply or discard the proposal you are previewing first.');
+
+        Queue::assertNotPushed(SiteDesignJob::class);
+        Http::assertNothingSent();
+        $page->refresh();
+        $this->assertArrayNotHasKey('designs', $page->draft_meta);
+        $this->assertSame('Open proposal 8801', $page->draft_meta['pending_edit']['blocks'][0]['headline']);
+    }
 }
