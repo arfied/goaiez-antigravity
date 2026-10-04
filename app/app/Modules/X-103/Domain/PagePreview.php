@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X103\Domain;
 
+use App\Models\Business;
 use App\Modules\X103\Models\Page;
 use App\Services\Industry\IndustryStartingPoints;
 use Illuminate\Support\Facades\Storage;
@@ -24,6 +25,7 @@ final class PagePreview
         // A proposal can carry a theme (an AI design, SiteDesignUseAction): preview it with that theme.
         if ($proposed && is_string($page->draft_meta['pending_edit']['theme'] ?? null)) {
             $tokens['theme'] = $page->draft_meta['pending_edit']['theme'];
+            unset($tokens['template']);
         }
 
         if ($proposed && isset($page->draft_meta['pending_edit']['style'])) {
@@ -39,7 +41,7 @@ final class PagePreview
             }
         }
 
-        return $this->document($blocks, $tokens, $selectedIndex, $editable);
+        return $this->document($blocks, $tokens, $selectedIndex, $editable, (string) Business::whereKey($page->business_id)->value('name'));
     }
 
     /**
@@ -54,6 +56,7 @@ final class PagePreview
         }
 
         $tokens = app(IndustryStartingPoints::class)->forBusiness($page->business_id);
+        unset($tokens['template']);
         $theme = is_string($design['theme'] ?? null) ? SiteThemes::get($design['theme']) : null;
         if ($theme !== null) {
             $tokens['theme'] = $theme['id'];
@@ -71,16 +74,16 @@ final class PagePreview
             $tokens['corners'] = $style['corners'];
         }
 
-        return $this->document($design['blocks'], $tokens, null, false);
+        return $this->document($design['blocks'], $tokens, null, false, (string) Business::whereKey($page->business_id)->value('name'));
     }
 
     /**
      * @param  array<int, mixed>  $blocks
      * @param  array<string, mixed>  $tokens
      */
-    private function document(array $blocks, array $tokens, ?int $selectedIndex, bool $editable): string
+    private function document(array $blocks, array $tokens, ?int $selectedIndex, bool $editable, string $businessName): string
     {
-        $html = app(SiteBlockRenderer::class)->render($blocks, ['tokens' => $tokens, 'editable' => $editable] + self::CONTEXT);
+        $html = app(SiteBlockRenderer::class)->render($blocks, ['tokens' => $tokens, 'editable' => $editable, 'businessName' => $businessName] + self::CONTEXT);
 
         $disk = Storage::disk('local');
         $finfo = new \finfo(FILEINFO_MIME_TYPE);

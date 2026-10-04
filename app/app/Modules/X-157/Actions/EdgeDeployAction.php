@@ -8,6 +8,7 @@ use App\Models\Business;
 use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X103\Actions\PageVersionAction;
 use App\Modules\X103\Domain\SiteBlockRenderer;
+use App\Modules\X103\Domain\SiteTemplates;
 use App\Modules\X108\Actions\AppointmentListAction;
 use App\Modules\X155\Actions\FormReadAction;
 use App\Modules\X157\Events\DeployCompleted;
@@ -381,7 +382,9 @@ JS;
                         'form_action_base' => route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false),
                         'tokens' => app(IndustryStartingPoints::class)->forBusiness($businessId),
                     ];
-                    $html .= '<header class="site-header"><p class="site-header__name">'.e($businessName)."</p></header>\n";
+                    if (SiteTemplates::get($context['tokens']['template'] ?? null) === null) {
+                        $html .= '<header class="site-header"><p class="site-header__name">'.e($businessName)."</p></header>\n";
+                    }
                     $html .= app(SiteBlockRenderer::class)->render($contentBlocks, $context);
                 }
             }

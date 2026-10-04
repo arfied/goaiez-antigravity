@@ -61,6 +61,7 @@ final class SiteEditApplyAction
                 // An AI design brings its theme with its colours (SiteDesignUseAction always pairs them).
                 if (is_string($pending['theme'] ?? null) && SiteThemes::get($pending['theme']) !== null) {
                     $tokens['theme'] = $pending['theme'];
+                    unset($tokens['template']);
                 }
                 Business::whereKey($businessId)->update(['site_tokens' => $tokens]);
                 $appliedStyle = true;

@@ -12,6 +12,12 @@ final class SiteBlockRenderer
 {
     public function render(array $contentBlocks, array $context): string
     {
+        // A site template (SiteTemplates) owns the whole page: its own markup and stylesheet, never layered on this one.
+        $template = SiteTemplates::get($context['tokens']['template'] ?? null);
+        if ($template !== null) {
+            return app(SiteTemplateRenderer::class)->render($template, $contentBlocks, $context);
+        }
+
         $p = $context['tokens']['palette'] ?? [];
         $t = $context['tokens']['type_pairing'] ?? [];
         $surface = e($p['surface'] ?? '#16191c');

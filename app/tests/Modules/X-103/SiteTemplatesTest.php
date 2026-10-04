@@ -1,0 +1,165 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Modules\X103;
+
+use App\Modules\X103\Domain\SiteBlockRenderer;
+use App\Modules\X103\Domain\SiteFonts;
+use App\Modules\X103\Domain\SiteTemplates;
+use App\Services\Industry\IndustryStartingPoints;
+use App\Services\Industry\SiteStyle;
+use Illuminate\Support\Facades\View;
+use Tests\TestCase;
+
+class SiteTemplatesTest extends TestCase
+{
+    private const CONTEXT = [
+        'businessName' => 'Harbor Line Plumbing',
+        'deployHash' => 'template',
+        'tenant_storage_url_prefix' => '/m/',
+        'form_action_base' => '/f',
+    ];
+
+    /** A whole plumber's page, as the AI fills one. */
+    private function blocks(): array
+    {
+        return [
+            ['type' => 'hero', 'headline' => 'Plumbing fixed right, the first time', 'subline' => 'Licensed plumbers across Tacoma.', 'cta_label' => 'Get a free quote', 'cta_url' => '#contact', 'image_path' => 'hero.jpg', 'image_alt' => 'A plumber at work'],
+            ['type' => 'stats', 'items' => [['value' => '18', 'label' => 'Years in Tacoma'], ['value' => '24/7', 'label' => 'Emergency line']]],
+            ['type' => 'services', 'heading' => 'Repairs we handle', 'items' => [['name' => 'Leak repair', 'description' => 'Hidden leaks found and fixed.', 'price_text' => 'from $129'], ['name' => 'Water heaters', 'description' => 'Repair or same-day replacement.']]],
+            ['type' => 'about', 'heading' => 'A family crew', 'text' => 'We show up on time and agree the price first.', 'image_path' => 'about.jpg'],
+            ['type' => 'reviews_strip', 'heading' => 'What homeowners say', 'items' => [['author' => 'Maria G.', 'rating' => '5', 'text' => 'Fixed the same day.', 'source' => 'Google']]],
+            ['type' => 'faq', 'heading' => 'Common questions', 'items' => [['question' => 'Do you charge for estimates?', 'answer' => 'No, estimates are free.']]],
+            ['type' => 'cta_band', 'heading' => 'Leak or clog?', 'text' => 'Talk to a plumber now.', 'label' => 'Book a visit', 'url' => '#contact'],
+            ['type' => 'contact', 'phone' => '(253) 555-0187', 'email' => 'office@example.com', 'address' => '2215 Pacific Ave, Tacoma',
+                'hours' => [['day' => 'Mon–Fri', 'open' => '7:00', 'close' => '18:00']], 'facts' => ['insurance' => 'Licensed and insured', 'service_area' => 'Tacoma and Lakewood']],
+        ];
+    }
+
+    private function render(array $blocks, ?string $template, bool $editable = false): string
+    {
+        $tokens = app(IndustryStartingPoints::class)->for(null);
+        if ($template !== null) {
+            // As SiteTemplateApplyAction leaves them: the template, its colours and its fonts.
+            $tokens['template'] = $template;
+            $tokens['palette'] = SiteTemplates::TEMPLATES[$template]['palette'];
+            $tokens['type_pairing'] = SiteTemplates::TEMPLATES[$template]['type_pairing'];
+        }
+
+        return app(SiteBlockRenderer::class)->render($blocks, ['tokens' => $tokens, 'editable' => $editable] + self::CONTEXT);
+    }
+
+    public function test_every_template_is_complete_readable_and_self_contained(): void
+    {
+        $this->assertNotEmpty(SiteTemplates::TEMPLATES);
+
+        foreach (SiteTemplates::TEMPLATES as $id => $template) {
+            $p = $template['palette'];
+            $this->assertSame(SiteStyle::PALETTE_KEYS, array_keys($p), $id);
+            foreach (['heading', 'body'] as $role) {
+                $stack = $template['type_pairing'][$role];
+                $this->assertContains($stack, SiteStyle::FONT_STACKS, $id);
+                $this->assertArrayHasKey(trim(explode(',', $stack)[0]), SiteFonts::FAMILIES, "$id: $role font is one we serve");
+            }
+            $this->assertGreaterThanOrEqual(4.5, SiteStyle::contrast($p['ink'], $p['surface']), $id);
+            $this->assertGreaterThanOrEqual(4.5, SiteStyle::contrast($p['ink'], $p['card']), $id);
+            $onPrimary = SiteStyle::textOn($p['primary'], [$p['surface'], $p['ink'], '#ffffff', '#111111']);
+            $this->assertGreaterThanOrEqual(4.5, SiteStyle::contrast($onPrimary, $p['primary']), "$id: button text");
+            $accentText = SiteStyle::readable($p['accent'], [$p['surface'], $p['card']], $p['ink']);
+            $this->assertGreaterThanOrEqual(4.5, SiteStyle::contrast($accentText, $p['surface']), "$id: links on the page");
+            $this->assertGreaterThanOrEqual(4.5, SiteStyle::contrast($accentText, $p['card']), "$id: links on a card");
+
+            $this->assertTrue(View::exists(SiteTemplates::view($id)), $id);
+            $css = SiteTemplates::css($id);
+            $this->assertGreaterThan(2000, strlen($css), $id);
+            foreach (['url(', '@import', 'http', '<'] as $needle) {
+                $this->assertStringNotContainsString($needle, $css, "$id: $needle");
+            }
+        }
+
+        $this->assertNull(SiteTemplates::get('../themes/bold-trade'));
+        $this->assertNull(SiteTemplates::get(null));
+    }
+
+    public function test_a_template_draws_the_whole_page_with_its_own_stylesheet_and_no_script(): void
+    {
+        $plain = $this->render($this->blocks(), null);
+        $this->assertStringContainsString('.site-block__inner {', $plain);
+
+        $html = $this->render($this->blocks(), 'trades-pro');
+        $this->assertStringNotContainsString('.site-block__inner {', $html);
+        $this->assertStringNotContainsString('class="site-block', $html);
+        $this->assertStringContainsString('class="tp-hero"', $html);
+        $this->assertStringContainsString('<span>Harbor Line Plumbing</span>', $html);
+        $this->assertStringContainsString('<details class="tp-menu">', $html);
+        $this->assertStringContainsString('href="tel:2535550187"', $html);
+        $this->assertStringContainsString('</svg>Licensed and insured</span>', $html);
+        $this->assertStringContainsString('Serving Tacoma and Lakewood', $html);
+        $this->assertStringContainsString('font-family: "Montserrat"', $html);
+        $this->assertSame(0, substr_count($html, '<script'));
+        $this->assertSame(1, substr_count($html, 'id="faq-x176"'));
+    }
+
+    public function test_the_ai_changing_every_word_cannot_change_the_layout(): void
+    {
+        // Every tag and class, with the words and the other attribute values taken out.
+        $skeleton = fn (string $html): string => preg_replace(['/>[^<]*</', '/\s(?!class=)[a-z-]+="[^"]*"/'], ['><', ''], $html);
+
+        $rewritten = $this->blocks();
+        foreach ($rewritten as $i => $block) {
+            foreach (['headline', 'subline', 'cta_label', 'heading', 'text', 'label'] as $field) {
+                if (isset($block[$field])) {
+                    $rewritten[$i][$field] = 'REWRITTEN_'.$field.'_'.$i;
+                }
+            }
+            // A service's icon follows its name by design, so the names stay; every other word changes.
+            foreach ($block['items'] ?? [] as $j => $item) {
+                foreach (['description', 'text', 'question', 'answer', 'label', 'author'] as $field) {
+                    if (isset($item[$field])) {
+                        $rewritten[$i]['items'][$j][$field] = 'REWRITTEN_ITEM_'.$i.'_'.$j;
+                    }
+                }
+            }
+            // A layout the AI asks for is ignored: the template's layout is frozen.
+            $rewritten[$i]['variant'] = $block['type'] === 'hero' ? 'cover' : 'list';
+        }
+
+        $before = $this->render($this->blocks(), 'trades-pro');
+        $after = $this->render($rewritten, 'trades-pro');
+        $this->assertStringContainsString('REWRITTEN_headline_0', $after);
+        $this->assertStringNotContainsString('REWRITTEN_headline_0', $before);
+        $this->assertSame($skeleton($before), $skeleton($after));
+    }
+
+    public function test_the_studio_can_find_every_section_and_its_words(): void
+    {
+        $html = $this->render($this->blocks(), 'trades-pro', editable: true);
+        foreach ($this->blocks() as $i => $block) {
+            $this->assertStringContainsString('data-block-index="'.$i.'" data-block-type="'.$block['type'].'"', $html, $block['type']);
+        }
+        $this->assertStringContainsString('<h1 data-field="headline">', $html);
+        $this->assertStringContainsString('data-field="items.0.question"', $html);
+
+        $this->assertStringNotContainsString('data-field=', $this->render($this->blocks(), 'trades-pro'));
+    }
+
+    public function test_unsafe_links_and_markup_never_reach_the_page_and_unlisted_sections_are_not_drawn(): void
+    {
+        $blocks = $this->blocks();
+        $blocks[0]['headline'] = '<b>BOLD_7731</b>';
+        $blocks[0]['cta_url'] = 'javascript:alert(1)';
+        $blocks[6]['label'] = 'Book a visit 4412';
+        $blocks[] = ['type' => 'team', 'heading' => 'TEAM_HEADING_5521', 'items' => [['name' => 'Dan']]];
+        unset($blocks[1]);
+
+        $html = $this->render(array_values($blocks), 'trades-pro');
+        $this->assertStringContainsString('&lt;b&gt;BOLD_7731&lt;/b&gt;', $html);
+        $this->assertStringNotContainsString('<b>BOLD_7731', $html);
+        $this->assertStringNotContainsString('javascript:', $html);
+        $this->assertStringNotContainsString('>Get a free quote</a>', $html);
+        $this->assertStringContainsString('href="#contact">Book a visit 4412</a>', $html);
+        $this->assertStringNotContainsString('TEAM_HEADING_5521', $html);
+        $this->assertStringNotContainsString('class="tp-stats"', $html);
+    }
+}
