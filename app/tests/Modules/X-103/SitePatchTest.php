@@ -286,4 +286,50 @@ class SitePatchTest extends TestCase
         $this->assertArrayNotHasKey('image_path', $blocks[0]);
         $this->assertEquals(['type' => 'about', 'text' => 'Unchanged'], $blocks[1]);
     }
+
+    public function test_an_ai_move_past_the_end_of_the_page_goes_to_the_last_place_and_the_edits_beside_it_are_kept()
+    {
+        // Production, 2026-10-04: the AI added a section and moved another to "the number of sections" — one past the end —
+        // and the whole proposal was refused. Fixture taken from test_one_forbidden_edit_is_dropped_and_the_valid_edits_beside_it_are_still_proposed.
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $business = TestCase::provisionTenant(['name' => 'SitePatchMove', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($business->id);
+
+        $page = Page::create([
+            'business_id' => $business->id, 'slug' => 'p'.rand(), 'title' => 'T',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old', 'subline' => 'Old'],
+                ['type' => 'about', 'text' => 'Unchanged'],
+            ],
+        ]);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [
+                    ['message' => ['content' => json_encode([
+                        'patches' => [
+                            ['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Kept headline 9111'],
+                            ['op' => 'add_block', 'block_index' => 2, 'type' => 'cta_band', 'fields' => ['heading' => 'Call us today 9112']],
+                            ['op' => 'move', 'block_index' => 1, 'to_index' => 3],
+                        ],
+                        'explanation' => 'A call to action, and the story last.',
+                    ])]],
+                ],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ], 200, ['Content-Type' => 'application/json']),
+        ]);
+
+        Livewire::test(Pages::class)
+            ->set('editRequest', [$page->id => 'Make it look great'])
+            ->call('askEdit', $page->id)
+            ->assertSet('error', null);
+
+        $page->refresh();
+        $blocks = $page->draft_meta['pending_edit']['blocks'];
+        $this->assertSame(['hero', 'cta_band', 'about'], array_column($blocks, 'type'));
+        $this->assertSame('Kept headline 9111', $blocks[0]['headline']);
+        $this->assertSame('Call us today 9112', $blocks[1]['heading']);
+    }
 }

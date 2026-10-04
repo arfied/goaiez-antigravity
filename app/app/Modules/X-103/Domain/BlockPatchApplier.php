@@ -37,7 +37,7 @@ final class BlockPatchApplier
             // An add is an INSERT POSITION, so one past the last block is legal and means "at the end".
             $maxIndex = $op === 'add_block' ? $length : $length - 1;
             if (! is_int($blockIndex) || $blockIndex < 0 || $blockIndex > $maxIndex) {
-                return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: block_index out of range"];
+                return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: block_index out of range ({$op} at ".json_encode($blockIndex).", page has {$length} sections)"];
             }
 
             if (($patch['field'] ?? null) === 'type') {
@@ -82,7 +82,7 @@ final class BlockPatchApplier
             } elseif ($op === 'move') {
                 $toIndex = $patch['to_index'] ?? null;
                 if (! is_int($toIndex) || $toIndex < 0 || $toIndex > $maxIndex) {
-                    return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: move requires to_index in range"];
+                    return ['status' => 'refused', 'blocks' => $blocks, 'applied' => 0, 'reason' => "patch $i: move requires to_index in range (to ".json_encode($toIndex).", page has {$length} sections)"];
                 }
             }
 

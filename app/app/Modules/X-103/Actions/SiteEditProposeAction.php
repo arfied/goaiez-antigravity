@@ -127,6 +127,23 @@ final class SiteEditProposeAction
             }
         }
         $patches = $kept;
+
+        // A move only reorders. The edit prompt says "the number of blocks means last" for an add, and the AI uses that for a
+        // move too — one place past the end — which the applier rightly refuses, throwing away every edit beside it
+        // ("Make it look great" → "could not be applied", production 2026-10-04). So an AI move past either end is pulled back
+        // to the first or the last place, counted on the page as the AI's own adds and removes before it leave it. The applier
+        // stays strict: the owner's own move up/down relies on its refusal to say "already at the top".
+        $length = count($currentBlocks);
+        foreach ($patches as $n => $patch) {
+            if (($patch['op'] ?? null) === 'move' && is_int($patch['to_index'] ?? null)) {
+                $patches[$n]['to_index'] = max(0, min($patch['to_index'], $length - 1));
+            } elseif (($patch['op'] ?? null) === 'add_block') {
+                $length++;
+            } elseif (($patch['op'] ?? null) === 'remove') {
+                $length--;
+            }
+        }
+
         if ($dropped !== []) {
             Log::warning('site edit: the AI proposed edits it may not make; they were dropped', [
                 'business_id' => $businessId,
