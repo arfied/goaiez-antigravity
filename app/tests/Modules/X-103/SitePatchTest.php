@@ -332,4 +332,76 @@ class SitePatchTest extends TestCase
         $this->assertSame('Kept headline 9111', $blocks[0]['headline']);
         $this->assertSame('Call us today 9112', $blocks[1]['heading']);
     }
+
+    /** The AI's answer to "Make it look great", as an OpenAI chat reply. Fixture taken from test_one_forbidden_edit_is_dropped_and_the_valid_edits_beside_it_are_still_proposed. */
+    private function aiAnswers(array $patches): void
+    {
+        Http::fake([
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [['message' => ['content' => json_encode(['patches' => $patches, 'explanation' => 'A bolder page.'])]]],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ], 200, ['Content-Type' => 'application/json']),
+        ]);
+    }
+
+    private function ownersPage(string $name): Page
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $business = TestCase::provisionTenant(['name' => $name, 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($business->id);
+
+        return Page::create([
+            'business_id' => $business->id, 'slug' => 'p'.rand(), 'title' => 'T',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old', 'subline' => 'Old'],
+                ['type' => 'about', 'text' => 'Unchanged'],
+            ],
+        ]);
+    }
+
+    public function test_one_edit_that_does_not_fit_is_skipped_and_every_edit_beside_it_is_still_proposed()
+    {
+        // Production, 2026-10-04 14:59: "block_index out of range (move at 4, page has 4 sections)" sank the whole answer.
+        $page = $this->ownersPage('SitePatchSkip');
+        $this->aiAnswers([
+            ['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Kept headline 9121'],
+            ['op' => 'add_block', 'block_index' => 2, 'type' => 'cta_band', 'fields' => ['heading' => 'Call us today 9122']],
+            ['op' => 'move', 'block_index' => 4, 'to_index' => 0],
+            ['op' => 'set_string', 'block_index' => 1, 'field' => 'text', 'value' => 'Kept story 9123'],
+        ]);
+
+        Livewire::test(Pages::class)
+            ->set('editRequest', [$page->id => 'Make it look great'])
+            ->call('askEdit', $page->id)
+            ->assertSet('error', null);
+
+        $page->refresh();
+        $blocks = $page->draft_meta['pending_edit']['blocks'];
+        $this->assertSame(['hero', 'about', 'cta_band'], array_column($blocks, 'type'));
+        $this->assertSame('Kept headline 9121', $blocks[0]['headline']);
+        $this->assertSame('Kept story 9123', $blocks[1]['text']);
+        $this->assertSame('Call us today 9122', $blocks[2]['heading']);
+    }
+
+    public function test_after_a_skipped_add_the_edits_after_it_are_not_tried_so_none_lands_on_the_wrong_section()
+    {
+        $page = $this->ownersPage('SitePatchStop');
+        $this->aiAnswers([
+            ['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Kept headline 9124'],
+            ['op' => 'add_block', 'block_index' => 1, 'type' => 'gallery', 'fields' => ['heading' => 'Photos']],
+            ['op' => 'set_string', 'block_index' => 1, 'field' => 'heading', 'value' => 'Meant for the gallery 9125'],
+        ]);
+
+        Livewire::test(Pages::class)
+            ->set('editRequest', [$page->id => 'Make it look great'])
+            ->call('askEdit', $page->id)
+            ->assertSet('error', null);
+
+        $page->refresh();
+        $blocks = $page->draft_meta['pending_edit']['blocks'];
+        $this->assertSame('Kept headline 9124', $blocks[0]['headline']);
+        $this->assertEquals(['type' => 'about', 'text' => 'Unchanged'], $blocks[1]);
+    }
 }

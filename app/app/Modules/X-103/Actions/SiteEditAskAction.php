@@ -103,16 +103,44 @@ final class SiteEditAskAction
         // A follow-up continues the open proposal: SiteEditProposeAction numbered the PENDING blocks, so the
         // patches must land on them — applying to draft_blocks dropped every earlier proposed edit.
         $base = $hasPending ? ($page->draft_meta['pending_edit']['blocks'] ?? []) : ($page->draft_blocks ?? []);
-        $applyResult = $this->applier->apply($base, $res['patches']);
+        // Each AI edit is applied on its own, in order, on the page as the edits before it left it. One edit that does not fit
+        // (a section that is not there, a place past the end) is skipped rather than sinking every edit beside it — production,
+        // 2026-10-04: "Make it look great" was refused three times running, each time by one stray move. After a skipped add or
+        // remove the AI's section numbers no longer match the page, so the edits after it are skipped too rather than landing on
+        // the wrong section. The applier itself stays all-or-nothing: the owner's own buttons rely on it.
+        $blocks = $base;
+        $applied = 0;
+        $skipped = [];
+        foreach (array_values($res['patches']) as $n => $patch) {
+            $one = $this->applier->apply($blocks, [$patch]);
+            if ($one['status'] === 'applied') {
+                $blocks = $one['blocks'];
+                $applied++;
 
-        if ($applyResult['status'] === 'refused') {
-            // The owner sees one plain sentence; the applier's exact reason is kept here so a report can be diagnosed.
+                continue;
+            }
+            $skipped[] = 'edit '.$n.': '.preg_replace('/^patch 0: /', '', (string) $one['reason']);
+            if (in_array($patch['op'] ?? null, ['add_block', 'remove'], true)) {
+                $skipped[] = 'the '.(count($res['patches']) - $n - 1).' edits after it were not tried';
+                break;
+            }
+        }
+        // Refused only when the AI proposed edits and not one of them fitted, and it brought no colours either. An answer with no
+        // edits at all (a picture request alone) still becomes a proposal, so its picture notes reach the owner.
+        $refused = $skipped !== [] && $applied === 0 && $res['style'] === null;
+        $applyResult = ['status' => $refused ? 'refused' : 'applied', 'blocks' => $blocks, 'reason' => implode('; ', $skipped)];
+
+        if ($skipped !== []) {
+            // The owner sees one plain sentence; the applier's exact reasons are kept here so a report can be diagnosed.
             Log::warning('an AI page edit could not be applied', [
                 'business_id' => $businessId,
                 'page_id' => $pageId,
                 'reason' => $applyResult['reason'],
+                'applied' => $applied,
             ]);
+        }
 
+        if ($applyResult['status'] === 'refused') {
             return [
                 'status' => 'refused',
                 'reason' => $applyResult['reason'],
@@ -169,7 +197,7 @@ final class SiteEditAskAction
         return [
             'status' => 'proposed',
             'reason' => null,
-            'edits' => count($res['patches']),
+            'edits' => $applied,
             'model' => $res['model'],
             'images' => $res['images'] ?? 0,
         ];
