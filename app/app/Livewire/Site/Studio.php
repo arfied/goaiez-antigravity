@@ -304,8 +304,26 @@ class Studio extends Component
         }
     }
 
-    public function askDesign(SiteEditAskAction $action): void
+    public function askDesign(SiteEditAskAction $action, SiteDesignRequestAction $designer): void
     {
+        // On a site template the whole-page designer fills the template — every section's words, and a picture for the banner
+        // (the business's own photos first) — and its design goes up as the proposal when it is ready. The quick Ask edit asks a
+        // small model for patches, which on a template dropped pictures and invented field names (production, 2026-10-04).
+        $template = SiteTemplates::get(app(IndustryStartingPoints::class)->forBusiness($this->businessId)['template'] ?? null);
+        if ($template !== null && $this->pageId !== null) {
+            abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+            $this->error = null;
+            $this->success = null;
+            $res = $designer->handle($this->businessId, $this->pageId, ['claude'], proposeWhenReady: true);
+            if ($res['status'] === 'queued') {
+                $this->success = 'Designing your page in the '.$template['label'].' template — the words and a picture. It takes a minute or two; the proposal appears here when it is ready.';
+            } else {
+                $this->error = 'The AI is already designing this page. The proposal appears here when it is ready.';
+            }
+
+            return;
+        }
+
         $this->request = self::DESIGN_ASK;
         $this->ask($action);
     }

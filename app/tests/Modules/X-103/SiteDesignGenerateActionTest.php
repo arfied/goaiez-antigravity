@@ -660,4 +660,28 @@ class SiteDesignGenerateActionTest extends TestCase
         $page->refresh();
         $this->assertNotContains('products', array_column($page->draft_meta['designs']['claude']['blocks'], 'type'));
     }
+
+    public function test_a_design_started_by_make_it_look_great_goes_up_as_the_proposal_and_never_over_one_already_open(): void
+    {
+        $page = $this->page([['type' => 'hero', 'headline' => 'Old headline', 'image_path' => 'images/kept-7531.jpg']]);
+        app(SiteTemplateApplyAction::class)->handle($page->business_id, $page->id, 'trades-pro');
+        $this->fakeAnswer(json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Proposed 7532'], ['type' => 'about', 'text' => 'A family crew 7533.']]]));
+
+        (new SiteDesignJob($page->business_id, $page->id, 'claude', proposeWhenReady: true))->handle(app(SiteDesignGenerateAction::class));
+
+        $page->refresh();
+        $this->assertSame('Proposed 7532', $page->draft_meta['pending_edit']['blocks'][0]['headline']);
+        $this->assertSame('Old headline', $page->draft_blocks[0]['headline']);
+        $this->assertSame('trades-pro', app(IndustryStartingPoints::class)->forBusiness($page->business_id)['template']);
+
+        // A proposal the owner is already looking at is never replaced. (The fake answers the same again, so the open proposal
+        // is marked by hand: an overwrite would put 'Proposed 7532' back.)
+        $meta = $page->draft_meta;
+        $meta['pending_edit']['blocks'][0]['headline'] = 'Owner is reviewing 7535';
+        $page->draft_meta = $meta;
+        $page->save();
+        (new SiteDesignJob($page->business_id, $page->id, 'claude', proposeWhenReady: true))->handle(app(SiteDesignGenerateAction::class));
+        $page->refresh();
+        $this->assertSame('Owner is reviewing 7535', $page->draft_meta['pending_edit']['blocks'][0]['headline']);
+    }
 }

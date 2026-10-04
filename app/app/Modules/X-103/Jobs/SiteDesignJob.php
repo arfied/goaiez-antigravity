@@ -39,6 +39,9 @@ final class SiteDesignJob implements ShouldQueue
         public readonly string $engine = 'claude',
         public readonly bool $applyIfEmpty = false,
         public readonly bool $keepSiteTheme = false,
+        // "Make it look great" on a site template: the finished design goes up as the page's proposal (preview, then Apply or
+        // Discard) — never applied by itself, and never over a proposal the owner is already looking at.
+        public readonly bool $proposeWhenReady = false,
     ) {}
 
     public function handle(SiteDesignGenerateAction $action): void
@@ -49,6 +52,12 @@ final class SiteDesignJob implements ShouldQueue
         Tenancy::actingAs($this->businessId, function () use ($action): void {
             try {
                 $result = $action->handle($this->businessId, $this->pageId, $this->engine, $this->keepSiteTheme);
+                if ($this->proposeWhenReady && ($result['status'] ?? null) === 'ready') {
+                    $page = Page::where('business_id', $this->businessId)->find($this->pageId);
+                    if ($page !== null && ! isset($page->draft_meta['pending_edit'])) {
+                        app(SiteDesignUseAction::class)->handle($this->businessId, $this->pageId, $this->engine);
+                    }
+                }
                 if ($this->applyIfEmpty && ($result['status'] ?? null) === 'ready') {
                     $page = Page::where('business_id', $this->businessId)->find($this->pageId);
                     if ($page !== null && empty($page->draft_blocks) && ! isset($page->draft_meta['pending_edit'])) {

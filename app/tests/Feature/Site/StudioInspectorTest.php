@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use App\Livewire\Site\Studio;
 use App\Models\Business;
 use App\Models\User;
+use App\Modules\X103\Actions\SiteTemplateApplyAction;
 use App\Modules\X103\Jobs\SiteDesignJob;
 use App\Modules\X103\Models\Page;
 use App\Support\Tenancy;
@@ -486,5 +487,39 @@ class StudioInspectorTest extends TestCase
         $tokens = Business::find($business->id)->site_tokens;
         $this->assertSame('soft', $tokens['corners']);
         $this->assertSame('warm-local', $tokens['theme']);
+    }
+
+    public function test_make_it_look_great_on_a_template_starts_the_designer_and_proposes_its_design_when_ready(): void
+    {
+        // Fixture taken from test_design_with_all_four_ais_queues_each_and_shows_the_chosen_design_when_ready.
+        Queue::fake();
+        Http::fake();
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $business = TestCase::provisionTenant(['name' => 'Inspector Owner', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($business->id);
+
+        $page = Page::create([
+            'business_id' => $business->id, 'slug' => 'p'.rand(), 'title' => 'T',
+            'draft_blocks' => [
+                ['type' => 'hero', 'headline' => 'Old', 'subline' => 'Old'],
+                ['type' => 'about', 'text' => 'Unchanged'],
+            ],
+            'is_published' => false,
+        ]);
+        app(SiteTemplateApplyAction::class)->handle($business->id, $page->id, 'trades-pro');
+
+        Livewire::test(Studio::class)
+            ->set('pageId', $page->id)
+            ->call('askDesign')
+            ->assertSet('error', null)
+            ->assertSet('success', 'Designing your page in the Trades Pro template — the words and a picture. It takes a minute or two; the proposal appears here when it is ready.');
+
+        Queue::assertPushed(SiteDesignJob::class, 1);
+        Queue::assertPushed(SiteDesignJob::class, fn (SiteDesignJob $job) => $job->engine === 'claude' && $job->pageId === $page->id && $job->proposeWhenReady);
+        Http::assertNothingSent();
+        $page->refresh();
+        $this->assertSame('running', $page->draft_meta['designs']['claude']['status']);
+        $this->assertArrayNotHasKey('pending_edit', $page->draft_meta);
     }
 }

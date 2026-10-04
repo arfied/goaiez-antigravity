@@ -20,7 +20,7 @@ final class SiteDesignRequestAction
      * @param  list<string>  $engines
      * @return array{status: string, reason?: string, engines?: list<string>}
      */
-    public function handle(int $businessId, int $pageId, array $engines): array
+    public function handle(int $businessId, int $pageId, array $engines, bool $proposeWhenReady = false): array
     {
         $page = Page::where('business_id', $businessId)->findOrFail($pageId);
         $meta = $page->draft_meta ?? [];
@@ -47,7 +47,7 @@ final class SiteDesignRequestAction
         $page->save();
 
         foreach ($queued as $engine) {
-            SiteDesignJob::dispatch($businessId, $pageId, $engine);
+            SiteDesignJob::dispatch($businessId, $pageId, $engine, proposeWhenReady: $proposeWhenReady);
         }
 
         return ['status' => 'queued', 'engines' => $queued];
