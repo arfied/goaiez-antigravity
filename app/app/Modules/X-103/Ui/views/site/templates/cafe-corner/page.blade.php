@@ -64,7 +64,7 @@
             <p class="cc-kicker">Menu</p>
             @if($txt($b['services']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['services']['heading'] }}</h2>@endif
         </div>
-        <ul class="cc-menucards">
+        <ul class="cc-menucards{{ count($menu) % 3 !== 0 && count($menu) % 2 === 0 ? ' cc-menucards--two' : '' }}">
             @foreach($menu as $m)
             <li>
                 <div class="cc-menucards__top"><h3>{{ $m['name'] }}</h3>@if($txt($m['price_text'] ?? null))<span class="cc-price">{{ $m['price_text'] }}</span>@endif</div>

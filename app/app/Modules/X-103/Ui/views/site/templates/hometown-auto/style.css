@@ -1,0 +1,130 @@
+/* Hometown Auto. Colours come only from the --color-* variables, so an owner's colour edits restyle it and the contrast rules still hold. */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 5rem; }
+body { margin: 0; background: var(--color-surface); color: var(--color-ink); font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.6; }
+img { max-width: 100%; display: block; }
+a { color: var(--color-accent-text); }
+a:focus-visible, summary:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
+h1, h2, h3 { font-family: var(--font-heading); line-height: 1.18; margin: 0; text-wrap: balance; }
+h2 { font-size: clamp(1.75rem, 3.6vw, 2.5rem); font-weight: 900; }
+h3 { font-family: var(--font-body); font-size: 1.1rem; font-weight: 700; }
+p { margin: 0; }
+.hm { overflow-x: clip; --line: color-mix(in srgb, var(--color-ink) 12%, transparent); --soft: color-mix(in srgb, var(--color-ink) 72%, transparent); }
+.hm-wrap { max-width: 72rem; margin-inline: auto; padding-inline: clamp(1rem, 4vw, 2rem); }
+.hm-narrow { max-width: 48rem; }
+.hm-label { font-size: 0.82rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-accent-text); }
+.hm-label--light { color: inherit; opacity: 0.8; }
+.hm-button { display: inline-flex; align-items: center; justify-content: center; padding: 0.7rem 1.3rem; border-radius: 8px; font-weight: 700; text-decoration: none; border: 2px solid transparent; white-space: nowrap; background: var(--color-primary); color: var(--color-on-primary); transition: filter .15s ease; }
+.hm-button:hover { filter: brightness(1.1); }
+.hm-button--lg { padding: 0.9rem 1.6rem; font-size: 1.03rem; }
+.hm-button--line { background: transparent; color: var(--color-primary); border-color: var(--color-primary); }
+.hm-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+/* navigation */
+.hm-nav { position: sticky; top: 0; z-index: 20; background: var(--color-surface); box-shadow: 0 1px 0 var(--line), 0 6px 20px rgba(0,0,0,0.04); }
+.hm-nav__row { display: flex; align-items: center; gap: 1.75rem; min-height: 4.4rem; }
+.hm-brand { margin-right: auto; color: var(--color-primary); text-decoration: none; font-family: var(--font-heading); font-weight: 900; font-size: 1.25rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hm-nav__links { display: flex; gap: 1.5rem; }
+.hm-nav__links a { color: var(--color-ink); text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+.hm-nav__links a:hover { color: var(--color-primary); }
+.hm-nav__call { font-weight: 800; color: var(--color-ink); text-decoration: none; white-space: nowrap; }
+.hm-nav__call span { font-weight: 600; color: var(--soft); }
+.hm-menu { display: none; position: relative; }
+.hm-menu summary { list-style: none; cursor: pointer; display: grid; gap: 5px; padding: 0.7rem 0.5rem; }
+.hm-menu summary::-webkit-details-marker { display: none; }
+.hm-menu summary span { display: block; width: 1.4rem; height: 2px; background: var(--color-ink); }
+.hm-menu nav { position: absolute; right: 0; top: calc(100% + 0.6rem); min-width: 14rem; display: grid; padding: 0.5rem; background: var(--color-surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 14px 30px rgba(0,0,0,0.12); }
+.hm-menu nav a { padding: 0.75rem 0.9rem; color: var(--color-ink); text-decoration: none; font-weight: 600; border-radius: 6px; }
+.hm-menu nav a:hover { background: var(--color-card); }
+@media (max-width: 58rem) { .hm-nav__links { display: none; } .hm-menu { display: block; } .hm-nav__row { gap: 0.75rem; } }
+@media (max-width: 34rem) { .hm-nav__call { display: none; } .hm-brand { font-size: 1.05rem; } }
+
+/* hero: the photograph wide, the words on a white card over its lower left */
+.hm-hero { position: relative; isolation: isolate; padding-top: clamp(14rem, 34vw, 24rem); background: var(--color-surface); }
+.hm-hero__img { position: absolute; inset: 0 0 4rem 0; width: 100%; height: calc(100% - 4rem); object-fit: cover; z-index: -1; }
+.hm-hero--plain { padding-top: clamp(2.5rem, 6vw, 4rem); background: var(--color-card); }
+.hm-hero__card { display: grid; gap: 1.1rem; max-width: 40rem; padding: clamp(1.5rem, 4vw, 2.75rem); background: var(--color-surface); border-radius: 14px 14px 0 0; border-top: 6px solid var(--color-primary); box-shadow: 0 -10px 40px rgba(0,0,0,0.1); }
+.hm-hero--plain .hm-hero__card { border-radius: 14px; margin-bottom: clamp(2rem, 5vw, 3rem); box-shadow: none; }
+.hm-hero h1 { font-size: clamp(2.1rem, 4.8vw, 3.4rem); font-weight: 900; }
+.hm-hero__sub { font-size: clamp(1.05rem, 1.6vw, 1.2rem); color: var(--soft); }
+@media (max-width: 40rem) { .hm-hero__card { margin-inline: -0.25rem; } }
+
+/* trust row */
+.hm-trust { background: var(--color-surface); border-bottom: 1px solid var(--line); }
+.hm-trust__row { list-style: none; margin-block: 0; padding-block: 1rem; display: flex; flex-wrap: wrap; gap: 0.6rem 2rem; font-weight: 700; font-size: 0.97rem; }
+.hm-trust li { display: inline-flex; align-items: center; gap: 0.45rem; }
+.hm-trust svg, .hm-checklist svg { width: 1.3rem; height: 1.3rem; flex: none; fill: none; stroke: var(--color-primary); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+/* stats */
+.hm-stats { list-style: none; margin-block: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 1rem; }
+.hm-stats li { display: grid; gap: 0.15rem; padding: 1.25rem 1.4rem; background: var(--color-card); border-radius: 12px; }
+.hm-stats strong { font-family: var(--font-heading); font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 900; color: var(--color-primary); line-height: 1.1; }
+.hm-stats span { color: var(--soft); font-size: 0.92rem; }
+
+/* sections */
+.hm-section { padding-block: clamp(3.5rem, 8vw, 6rem); }
+.hm-section--tight { padding-block: clamp(2rem, 5vw, 3.5rem); }
+.hm-section--card { background: var(--color-card); }
+.hm-section--blue { background: var(--color-primary); color: var(--color-on-primary); }
+.hm-head { display: grid; gap: 0.6rem; max-width: 46rem; margin-bottom: clamp(1.75rem, 4vw, 2.75rem); }
+.hm-head--center { justify-items: center; text-align: center; margin-inline: auto; }
+.hm-section--blue h2 { color: inherit; }
+
+/* the checklist of services */
+.hm-checklist { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 3rem; }
+.hm-checklist li { display: flex; gap: 0.85rem; padding-block: 1.15rem; border-bottom: 1px solid var(--line); }
+.hm-checklist svg { margin-top: 0.15rem; }
+.hm-checklist__body { flex: 1; display: grid; gap: 0.25rem; }
+.hm-checklist__top { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.hm-price { flex: none; font-weight: 800; color: var(--color-accent-text); }
+.hm-checklist p { color: var(--soft); font-size: 0.97rem; }
+@media (max-width: 46rem) { .hm-checklist { grid-template-columns: 1fr; } }
+
+/* about */
+.hm-about { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+.hm-about--text { grid-template-columns: 1fr; max-width: 48rem; }
+.hm-about__img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 14px; }
+.hm-about__body { display: grid; gap: 1rem; }
+.hm-about__body > p:not(.hm-label) { color: var(--soft); font-size: 1.07rem; }
+.hm-since { font-weight: 800; color: var(--color-primary) !important; }
+@media (max-width: 46rem) { .hm-about { grid-template-columns: 1fr; } }
+
+/* reviews: one large, two beside it */
+.hm-reviews { display: grid; grid-template-columns: 1.4fr 1fr; grid-template-rows: auto auto; gap: 1rem; }
+.hm-review { margin: 0; display: grid; align-content: start; gap: 0.75rem; padding: 1.6rem; background: var(--color-surface); color: var(--color-ink); border-radius: 14px; }
+.hm-review--lead { grid-row: span 2; padding: clamp(1.75rem, 4vw, 2.75rem); align-content: center; }
+.hm-review--lead blockquote { font-family: var(--font-heading); font-size: clamp(1.25rem, 2.2vw, 1.6rem); line-height: 1.45; }
+.hm-review:only-child { grid-column: 1 / -1; }
+.hm-stars { color: var(--color-accent-text); letter-spacing: 0.1em; }
+.hm-review blockquote { margin: 0; }
+.hm-review figcaption { font-weight: 700; color: var(--soft); font-size: 0.92rem; }
+@media (max-width: 46rem) { .hm-reviews { grid-template-columns: 1fr; } .hm-review--lead { grid-row: auto; } }
+
+/* gallery */
+.hm-gallery__head { margin-bottom: 1.5rem; }
+.hm-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+.hm-gallery img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; }
+@media (max-width: 36rem) { .hm-gallery { grid-template-columns: 1fr 1fr; } }
+
+/* booking */
+.hm-band { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.5rem; padding: clamp(1.75rem, 4vw, 2.75rem); background: var(--color-card); border-radius: 14px; border-left: 6px solid var(--color-primary); }
+.hm-band p { margin-top: 0.4rem; color: var(--soft); max-width: 38rem; }
+
+/* questions */
+.hm-faq { display: grid; border-top: 1px solid var(--line); }
+.hm-q { border-bottom: 1px solid var(--line); }
+.hm-q summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 1rem; padding: 1.1rem 0; font-weight: 700; }
+.hm-q summary::-webkit-details-marker { display: none; }
+.hm-q summary::after { content: "+"; color: var(--color-primary); font-weight: 800; font-size: 1.35rem; line-height: 1; }
+.hm-q[open] summary::after { content: "−"; }
+.hm-q p { padding: 0 0 1.2rem; color: var(--soft); }
+
+/* hours and directions */
+.hm-visit { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start; }
+.hm-visit__where { display: grid; gap: 0.6rem; }
+.hm-visit__phone a { font-family: var(--font-heading); font-weight: 900; font-size: 1.55rem; text-decoration: none; color: var(--color-primary); }
+.hm-hours { border-collapse: collapse; width: 100%; background: var(--color-surface); border-radius: 12px; overflow: hidden; }
+.hm-hours th, .hm-hours td { padding: 0.8rem 1.1rem; border-bottom: 1px solid var(--line); text-align: left; font-weight: 700; }
+.hm-hours td { text-align: right; font-weight: 400; font-variant-numeric: tabular-nums; }
+.hm-hours tr:last-child th, .hm-hours tr:last-child td { border-bottom: 0; }
+@media (max-width: 44rem) { .hm-visit { grid-template-columns: 1fr; } }

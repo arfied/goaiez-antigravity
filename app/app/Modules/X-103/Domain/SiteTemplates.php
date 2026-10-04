@@ -138,6 +138,30 @@ final class SiteTemplates
             'type_pairing' => ['heading' => 'Montserrat, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
             'sections' => ['hero', 'services', 'about', 'gallery', 'reviews_strip', 'booking_button', 'faq', 'cta_band', 'contact'],
         ],
+        'garage-pro' => [
+            'label' => 'Garage Pro',
+            'for' => 'Auto repair shops, brake and tyre centres, mechanics — steel grey and racing red, an angled photo, numbered services',
+            'families' => ['auto'],
+            'palette' => ['surface' => '#f2f3f5', 'card' => '#ffffff', 'ink' => '#13161b', 'primary' => '#c8201e', 'accent' => '#b51c1a'],
+            'type_pairing' => ['heading' => 'Montserrat, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
+            'sections' => ['hero', 'stats', 'services', 'about', 'gallery', 'reviews_strip', 'booking_button', 'faq', 'cta_band', 'contact'],
+        ],
+        'detail-studio' => [
+            'label' => 'Detail Studio',
+            'for' => 'Car detailing, ceramic coating, tint and wrap shops, car washes — near-black and electric teal, priced packages',
+            'families' => ['auto'],
+            'palette' => ['surface' => '#0b0d10', 'card' => '#151920', 'ink' => '#eef2f6', 'primary' => '#2bc4b6', 'accent' => '#2bc4b6'],
+            'type_pairing' => ['heading' => 'DM Sans, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
+            'sections' => ['hero', 'stats', 'services', 'gallery', 'about', 'reviews_strip', 'booking_button', 'faq', 'cta_band', 'contact'],
+        ],
+        'hometown-auto' => [
+            'label' => 'Hometown Auto',
+            'for' => 'Family garages, tyre shops and small-town mechanics — white and royal blue, the words on a card over the photo, a checklist of services',
+            'families' => ['auto'],
+            'palette' => ['surface' => '#ffffff', 'card' => '#eef3fa', 'ink' => '#0f1d33', 'primary' => '#1747a6', 'accent' => '#a14a07'],
+            'type_pairing' => ['heading' => 'Merriweather, Georgia, serif', 'body' => 'Inter, system-ui, sans-serif'],
+            'sections' => ['hero', 'stats', 'services', 'about', 'reviews_strip', 'gallery', 'booking_button', 'faq', 'cta_band', 'contact'],
+        ],
     ];
 
     /**
