@@ -72,7 +72,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
         & > :only-child { grid-column: 1 / -1; }
     }
 }
-.hero__media { min-width: 0; }
+.hero__media { min-width: 0;
+    & .media { aspect-ratio: 4 / 3; }
+}
 .media { overflow: hidden; border-radius: 14px; }
 .media img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .media--wide { aspect-ratio: 16 / 9; }
@@ -82,7 +84,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .site-block.hero { padding-top: clamp(3rem, 8vw, 6rem); }
 .site-block.hero p { font-size: 1.25rem; opacity: 0.85; }
 .site-block.hero > img { margin-top: 1.5rem; width: 100%; max-height: 32rem; object-fit: cover; border-radius: 12px; }
-.site-block.services ul, .site-block.team ul { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); }
+.site-block.services ul, .site-block.team ul { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
 .site-block.services li, .site-block.team li { display: grid; gap: 0.35rem; padding: 1.25rem; border-radius: 12px; background: var(--color-card); }
 .site-block.services li span { color: var(--color-accent-text); font-weight: 600; }
 .site-block.services li p { margin: 0; opacity: 0.85; }
@@ -131,6 +133,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 @media (min-width: 52rem) { .site-block.services.services--columns > div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 3rem; align-items: start; } }
 .site-block.reviews.reviews--quote .review-list { grid-template-columns: 1fr; max-width: 46rem; margin-inline: auto; text-align: center; }
 .site-block.reviews.reviews--quote blockquote { background: transparent; border: 0; box-shadow: none; padding: 1.5rem 0; }
+.site-block.reviews.reviews--quote blockquote::before { content: "\201C"; display: block; font-family: var(--font-heading); font-size: 4.5rem; line-height: 0.6; color: var(--color-accent-text); margin-bottom: 0.25rem; }
 .site-block.reviews.reviews--quote blockquote p { font-family: var(--font-heading); font-size: clamp(1.3rem, 2.6vw, 1.75rem); line-height: 1.35; }
 .site-block.reviews.reviews--row .review-list { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(16rem, 22rem); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 0.5rem; }
 .site-block.reviews.reviews--row blockquote { scroll-snap-align: start; }
@@ -140,10 +143,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .site-block.about.about--centered p { margin-inline: auto; }
 @media (min-width: 52rem) { .site-block.about.about--split > div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 3rem; align-items: start; } }
 .site-block.about.about--split .about-media { grid-column: 1 / -1; }
+@media (min-width: 52rem) { .site-block.about.about--split > div:has(.about-media) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: 1fr auto auto 1fr; gap: 0 3rem; align-items: start; } .site-block.about.about--split > div:has(.about-media) > h2 { grid-column: 1; grid-row: 2; } .site-block.about.about--split > div:has(.about-media) > p { grid-column: 1; grid-row: 3; } .site-block.about.about--split > div:has(.about-media) .about-media { grid-column: 2; grid-row: 1 / -1; margin-top: 0; } }
 .about-media { margin-top: 1.5rem; border-radius: 16px; overflow: hidden; max-width: 48rem; }
 .about-media img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; }
 @media (min-width: 40rem) { .site-block.contact.contact--columns > div { display: grid; grid-template-rows: auto auto; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); column-gap: 2rem; } }
-.site-block.contact.contact--card > div { max-width: 34rem; margin-inline: auto; background: var(--color-card); border: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent); border-radius: 18px; padding: clamp(1.5rem, 4vw, 2.5rem); text-align: center; box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+.site-block.contact.contact--card > div { max-width: 52rem; margin-inline: auto; background: var(--color-card); border: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent); border-radius: 18px; padding: clamp(1.5rem, 4vw, 2.5rem); text-align: center; box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+.site-block.contact a[href^="tel:"] { white-space: nowrap; }
 .site-block.contact.contact--card a[href^="tel:"] { font-size: 1.6rem; font-weight: 700; text-decoration: none; }
 .site-block.booking.booking--banner { text-align: center; }
 .site-block.booking.booking--banner > div > div { justify-content: center; }

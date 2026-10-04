@@ -444,4 +444,24 @@ class BlockMarkupTest extends TestCase
         $this->assertStringContainsString('class="site-block stats stats--bar"', $bar);
         $this->assertStringContainsString('STAT_BAR_8202', $bar);
     }
+
+    public function test_a_question_section_shows_its_heading_only_when_it_has_one(): void
+    {
+        $with = $this->renderBlock(['type' => 'faq', 'heading' => 'Common questions 9701', 'items' => [['question' => 'Q1', 'answer' => 'A1']]]);
+        $this->assertStringContainsString('<h2>Common questions 9701</h2>', $with);
+        $this->assertStringContainsString('class="faq-item" data-question="Q1"', $with);
+
+        $without = $this->renderBlock(['type' => 'faq', 'items' => [['question' => 'Q1', 'answer' => 'A1']]]);
+        $this->assertStringNotContainsString('<h2>', $without);
+    }
+
+    public function test_the_polished_layouts_are_in_the_stylesheet(): void
+    {
+        $html = $this->renderBlock(['type' => 'about', 'variant' => 'split', 'text' => 'T', 'image_path' => 'ABOUT_9702.jpg']);
+
+        $this->assertStringContainsString('.site-block.services ul, .site-block.team ul { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit', $html);
+        $this->assertStringContainsString('.site-block.about.about--split > div:has(.about-media) .about-media { grid-column: 2; grid-row: 1 / -1;', $html);
+        $this->assertStringContainsString('.site-block.contact a[href^="tel:"] { white-space: nowrap; }', $html);
+        $this->assertStringContainsString('class="about-media"', $html);
+    }
 }

@@ -41,7 +41,7 @@ final class SiteDesignGenerateAction
     private const CATALOGUE = 'hero (headline, subline, cta_label, cta_url; variant "split" | "centered" | "cover") · '
         .'stats (heading, items: value, label; variant "row" | "cards" | "bar") · services (heading, items: name, description, price_text; variant "cards" | "list" | "columns") · '
         .'about (heading, text; variant "plain" | "centered" | "split") · reviews_strip (heading, items: author, rating, text, source; variant "cards" | "quote" | "row") · '
-        .'team (heading, items: name, role) · faq (items: question, answer; variant "list" | "cards" | "columns") · cta_band (heading, text, label, url) · '
+        .'team (heading, items: name, role) · faq (heading, items: question, answer; variant "list" | "cards" | "columns") · cta_band (heading, text, label, url) · '
         .'booking_button (label, url; variant "inline" | "banner" | "card") · contact (address, phone, email; variant "stack" | "columns" | "card")';
 
     /** What each page of a whole site is for (SiteBuildWholeAction), told to the AI so the four pages do not repeat each other. */
