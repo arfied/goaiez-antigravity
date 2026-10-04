@@ -37,6 +37,7 @@ class SiteTemplatesTest extends TestCase
             ['type' => 'cta_band', 'heading' => 'Leak or clog?', 'text' => 'Talk to a plumber now.', 'label' => 'Book a visit', 'url' => '#contact'],
             ['type' => 'contact', 'phone' => '(253) 555-0187', 'email' => 'office@example.com', 'address' => '2215 Pacific Ave, Tacoma',
                 'hours' => [['day' => 'Mon–Fri', 'open' => '7:00', 'close' => '18:00']], 'facts' => ['insurance' => 'Licensed and insured', 'service_area' => 'Tacoma and Lakewood']],
+            ['type' => 'form', 'source' => 'forms', 'definition_id' => 7701, 'fields' => [['name' => 'name', 'label' => 'Your name 7702', 'type' => 'text'], ['name' => 'email', 'label' => 'Email', 'type' => 'email'], ['name' => 'message', 'label' => 'How can we help? 7703', 'type' => 'textarea']], 'required' => ['name', 'email'], 'honeypot' => 'website_7704'],
             ['type' => 'products', 'heading' => 'Parts we stock', 'items' => [['name' => 'Shut-off valve', 'price_text' => '$24', 'description' => 'Quarter-turn brass valve.', 'image_path' => 'valve.jpg', 'url' => 'https://shop.example.com/valve']]],
         ];
     }
@@ -267,5 +268,22 @@ class SiteTemplatesTest extends TestCase
             $booked += substr_count($this->render($this->blocks(), $id), '>Book<');
         }
         $this->assertGreaterThan(0, $booked);
+    }
+
+    public function test_every_template_draws_the_businesss_own_contact_form_posting_to_the_form_endpoint(): void
+    {
+        foreach (array_keys(SiteTemplates::TEMPLATES) as $id) {
+            $html = $this->render($this->blocks(), $id);
+            $this->assertSame(1, substr_count($html, '<form '), $id);
+            $this->assertStringContainsString('action="/f/forms/7701"', $html, $id);
+            $this->assertStringContainsString('Your name 7702', $html, $id);
+            $this->assertStringContainsString('How can we help? 7703', $html, $id);
+            $this->assertStringContainsString('name="website_7704"', $html, $id);
+            $this->assertMatchesRegularExpression('/name="name" type="text" required/', $html, $id);
+            $this->assertMatchesRegularExpression('/<textarea id="form-7701-message" name="message" rows="4"><\/textarea>/', $html, $id);
+
+            $noForm = array_values(array_filter($this->blocks(), static fn (array $b): bool => $b['type'] !== 'form'));
+            $this->assertSame(0, substr_count($this->render($noForm, $id), '<form '), "$id: no form without the business's own");
+        }
     }
 }

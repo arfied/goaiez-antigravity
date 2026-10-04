@@ -11,6 +11,7 @@
     $cta = isset($b['cta_band']) && $txt($b['cta_band']['heading'] ?? null) ? $b['cta_band'] : null;
     $ctaHref = $cta && $txt($cta['label'] ?? null) ? $link($cta['url'] ?? null) : null;
     $nav = array_filter(['shop' => $products ? 'Shop' : null, 'story' => $about ? 'Our story' : null, 'reviews' => $reviews ? 'Kind words' : null, 'visit' => 'Visit us']);
+    $form = is_array($b['form'] ?? null) && is_array($b['form']['fields'] ?? null) && $txt($b['form']['definition_id'] ?? null) && $formBase !== '' ? $b['form'] : null;
 @endphp
 <div class="cb" id="top">
 <header class="cb-nav">
@@ -137,6 +138,27 @@
             @endif
             @endforeach
         </div>
+    </div>
+</section>
+@endif
+
+@if($form)
+<section id="message" class="cb-section"{!! $at('form') !!}>
+    <div class="cb-wrap">
+        <div class="cb-head">
+            <p class="cb-script">Message</p>
+            <h2>Send us a message</h2>
+        </div>
+        <form class="cb-form" method="post" action="{{ $formBase }}/forms/{{ $form['definition_id'] }}">
+            @foreach($form['fields'] as $field)
+            @if(is_array($field) && $txt($field['name'] ?? null))
+            @php $fieldId = 'form-'.$form['definition_id'].'-'.$field['name']; $fieldType = in_array($field['type'] ?? 'text', ['text', 'email', 'tel', 'number', 'date'], true) ? $field['type'] : 'text'; @endphp
+            <label class="cb-form__field" for="{{ $fieldId }}"><span>{{ $txt($field['label'] ?? null) ?? $field['name'] }}</span>@if(($field['type'] ?? null) === 'textarea')<textarea id="{{ $fieldId }}" name="{{ $field['name'] }}" rows="4"@if(in_array($field['name'], (array) ($form['required'] ?? []), true)) required @endif></textarea>@else<input id="{{ $fieldId }}" name="{{ $field['name'] }}" type="{{ $fieldType }}"@if(in_array($field['name'], (array) ($form['required'] ?? []), true)) required @endif>@endif</label>
+            @endif
+            @endforeach
+            @if($txt($form['honeypot'] ?? null))<input class="cb-form__trap" type="text" name="{{ $form['honeypot'] }}" tabindex="-1" autocomplete="off" aria-hidden="true">@endif
+            <button type="submit" class="cb-button cb-form__send">Send</button>
+        </form>
     </div>
 </section>
 @endif

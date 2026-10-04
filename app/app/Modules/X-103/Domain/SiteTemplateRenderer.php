@@ -83,6 +83,8 @@ final class SiteTemplateRenderer
             'address' => $txt($contact['address'] ?? null),
             'hours' => is_array($contact['hours'] ?? null) ? $contact['hours'] : [],
             'facts' => is_array($contact['facts'] ?? null) ? array_filter($contact['facts'], static fn (mixed $v): bool => $txt($v) !== null) : [],
+            // Where the business's own contact form posts — the same endpoint the shared form section uses; '' draws no form.
+            'formBase' => rtrim((string) ($context['form_action_base'] ?? ''), '/'),
         ])->render();
 
         return $html;

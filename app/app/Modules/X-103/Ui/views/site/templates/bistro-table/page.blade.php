@@ -15,6 +15,7 @@
     $cta = isset($b['cta_band']) && $txt($b['cta_band']['heading'] ?? null) ? $b['cta_band'] : null;
     $shown = count($gallery) >= 3 ? array_slice($gallery, 0, min(6, intdiv(count($gallery), 3) * 3)) : $gallery;
     $nav = array_filter(['menu' => $menu ? 'Menu' : null, 'story' => $about ? 'Our story' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => 'Hours & visit']);
+    $form = is_array($b['form'] ?? null) && is_array($b['form']['fields'] ?? null) && $txt($b['form']['definition_id'] ?? null) && $formBase !== '' ? $b['form'] : null;
 @endphp
 <div class="bt" id="top">
 <header class="bt-nav">
@@ -148,6 +149,27 @@
             @endif
             @endforeach
         </div>
+    </div>
+</section>
+@endif
+
+@if($form)
+<section id="message" class="bt-section"{!! $at('form') !!}>
+    <div class="bt-wrap">
+        <div class="bt-head">
+            <p class="bt-label">Message</p>
+            <h2>Send us a message</h2>
+        </div>
+        <form class="bt-form" method="post" action="{{ $formBase }}/forms/{{ $form['definition_id'] }}">
+            @foreach($form['fields'] as $field)
+            @if(is_array($field) && $txt($field['name'] ?? null))
+            @php $fieldId = 'form-'.$form['definition_id'].'-'.$field['name']; $fieldType = in_array($field['type'] ?? 'text', ['text', 'email', 'tel', 'number', 'date'], true) ? $field['type'] : 'text'; @endphp
+            <label class="bt-form__field" for="{{ $fieldId }}"><span>{{ $txt($field['label'] ?? null) ?? $field['name'] }}</span>@if(($field['type'] ?? null) === 'textarea')<textarea id="{{ $fieldId }}" name="{{ $field['name'] }}" rows="4"@if(in_array($field['name'], (array) ($form['required'] ?? []), true)) required @endif></textarea>@else<input id="{{ $fieldId }}" name="{{ $field['name'] }}" type="{{ $fieldType }}"@if(in_array($field['name'], (array) ($form['required'] ?? []), true)) required @endif>@endif</label>
+            @endif
+            @endforeach
+            @if($txt($form['honeypot'] ?? null))<input class="bt-form__trap" type="text" name="{{ $form['honeypot'] }}" tabindex="-1" autocomplete="off" aria-hidden="true">@endif
+            <button type="submit" class="bt-button bt-form__send">Send</button>
+        </form>
     </div>
 </section>
 @endif

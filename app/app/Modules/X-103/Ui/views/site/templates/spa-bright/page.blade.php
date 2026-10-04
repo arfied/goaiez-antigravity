@@ -15,6 +15,7 @@
     $bookLabel = $bookHref !== null ? $booking['label'] : ($heroHref !== null ? $hero['cta_label'] : ($phone ? 'Call '.$phone : null));
     $cta = isset($b['cta_band']) && $txt($b['cta_band']['heading'] ?? null) ? $b['cta_band'] : null;
     $nav = array_filter(['treatments' => $services ? 'Treatments' : null, 'about' => $about ? 'About' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => 'Visit']);
+    $form = is_array($b['form'] ?? null) && is_array($b['form']['fields'] ?? null) && $txt($b['form']['definition_id'] ?? null) && $formBase !== '' ? $b['form'] : null;
 @endphp
 <div class="sb" id="top">
 <header class="sb-nav">
@@ -160,6 +161,27 @@
             @endif
             @endforeach
         </div>
+    </div>
+</section>
+@endif
+
+@if($form)
+<section id="message" class="sb-section"{!! $at('form') !!}>
+    <div class="sb-wrap">
+        <div class="sb-head">
+            <p class="sb-tag">Message</p>
+            <h2>Send us a message</h2>
+        </div>
+        <form class="sb-form" method="post" action="{{ $formBase }}/forms/{{ $form['definition_id'] }}">
+            @foreach($form['fields'] as $field)
+            @if(is_array($field) && $txt($field['name'] ?? null))
+            @php $fieldId = 'form-'.$form['definition_id'].'-'.$field['name']; $fieldType = in_array($field['type'] ?? 'text', ['text', 'email', 'tel', 'number', 'date'], true) ? $field['type'] : 'text'; @endphp
+            <label class="sb-form__field" for="{{ $fieldId }}"><span>{{ $txt($field['label'] ?? null) ?? $field['name'] }}</span>@if(($field['type'] ?? null) === 'textarea')<textarea id="{{ $fieldId }}" name="{{ $field['name'] }}" rows="4"@if(in_array($field['name'], (array) ($form['required'] ?? []), true)) required @endif></textarea>@else<input id="{{ $fieldId }}" name="{{ $field['name'] }}" type="{{ $fieldType }}"@if(in_array($field['name'], (array) ($form['required'] ?? []), true)) required @endif>@endif</label>
+            @endif
+            @endforeach
+            @if($txt($form['honeypot'] ?? null))<input class="sb-form__trap" type="text" name="{{ $form['honeypot'] }}" tabindex="-1" autocomplete="off" aria-hidden="true">@endif
+            <button type="submit" class="sb-button sb-form__send">Send</button>
+        </form>
     </div>
 </section>
 @endif

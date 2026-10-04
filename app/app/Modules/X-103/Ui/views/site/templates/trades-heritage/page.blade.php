@@ -19,6 +19,7 @@
     ]));
     $area = $facts['service_area'] ?? null;
     $nav = array_filter(['services' => $services ? 'Services' : null, 'about' => $about ? 'Our story' : null, 'reviews' => $reviews ? 'Reviews' : null, 'contact' => 'Contact']);
+    $form = is_array($b['form'] ?? null) && is_array($b['form']['fields'] ?? null) && $txt($b['form']['definition_id'] ?? null) && $formBase !== '' ? $b['form'] : null;
 @endphp
 <div class="th" id="top">
 <header class="th-nav">
@@ -152,6 +153,27 @@
             @if($phone)<a class="th-button th-button--cream th-button--lg" href="{{ $tel }}">{!! $phoneSvg !!}{{ $phone }}</a>@endif
             @if($ctaHref)<a class="th-button th-button--ghost th-button--lg" href="{{ $ctaHref }}"{!! $f('label') !!}>{{ $cta['label'] }}</a>@endif
         </div>
+    </div>
+</section>
+@endif
+
+@if($form)
+<section id="message" class="th-section"{!! $at('form') !!}>
+    <div class="th-wrap">
+        <div class="th-head">
+            <p class="th-kicker">Message</p>
+            <h2>Send us a message</h2>
+        </div>
+        <form class="th-form" method="post" action="{{ $formBase }}/forms/{{ $form['definition_id'] }}">
+            @foreach($form['fields'] as $field)
+            @if(is_array($field) && $txt($field['name'] ?? null))
+            @php $fieldId = 'form-'.$form['definition_id'].'-'.$field['name']; $fieldType = in_array($field['type'] ?? 'text', ['text', 'email', 'tel', 'number', 'date'], true) ? $field['type'] : 'text'; @endphp
+            <label class="th-form__field" for="{{ $fieldId }}"><span>{{ $txt($field['label'] ?? null) ?? $field['name'] }}</span>@if(($field['type'] ?? null) === 'textarea')<textarea id="{{ $fieldId }}" name="{{ $field['name'] }}" rows="4"@if(in_array($field['name'], (array) ($form['required'] ?? []), true)) required @endif></textarea>@else<input id="{{ $fieldId }}" name="{{ $field['name'] }}" type="{{ $fieldType }}"@if(in_array($field['name'], (array) ($form['required'] ?? []), true)) required @endif>@endif</label>
+            @endif
+            @endforeach
+            @if($txt($form['honeypot'] ?? null))<input class="th-form__trap" type="text" name="{{ $form['honeypot'] }}" tabindex="-1" autocomplete="off" aria-hidden="true">@endif
+            <button type="submit" class="th-button th-form__send">Send</button>
+        </form>
     </div>
 </section>
 @endif

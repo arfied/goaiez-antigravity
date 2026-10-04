@@ -24,7 +24,7 @@ final class SiteTemplates
             'families' => ['trades'],
             'palette' => ['surface' => '#f4f3ef', 'card' => '#ffffff', 'ink' => '#0f1c2e', 'primary' => '#f2711c', 'accent' => '#b4500e'],
             'type_pairing' => ['heading' => 'Montserrat, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
-            'sections' => ['hero', 'stats', 'services', 'reviews_strip', 'about', 'gallery', 'faq', 'cta_band', 'contact'],
+            'sections' => ['hero', 'stats', 'services', 'reviews_strip', 'about', 'gallery', 'faq', 'cta_band', 'form', 'contact'],
         ],
         'calm-spa' => [
             'label' => 'Calm Spa',
@@ -32,7 +32,7 @@ final class SiteTemplates
             'families' => ['medspa', 'care'],
             'palette' => ['surface' => '#f6f1ea', 'card' => '#fffdf9', 'ink' => '#2d2621', 'primary' => '#56634b', 'accent' => '#8f6447'],
             'type_pairing' => ['heading' => 'Playfair Display, Georgia, serif', 'body' => 'Nunito, system-ui, sans-serif'],
-            'sections' => ['hero', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'team', 'about', 'faq', 'contact'],
+            'sections' => ['hero', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'team', 'about', 'faq', 'form', 'contact'],
         ],
         'polish-bar' => [
             'label' => 'Polish Bar',
@@ -40,7 +40,7 @@ final class SiteTemplates
             'families' => ['care'],
             'palette' => ['surface' => '#fff8f8', 'card' => '#ffffff', 'ink' => '#2a1730', 'primary' => '#c2185b', 'accent' => '#a3245e'],
             'type_pairing' => ['heading' => 'Poppins, system-ui, sans-serif', 'body' => 'Nunito, system-ui, sans-serif'],
-            'sections' => ['hero', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'team', 'about', 'faq', 'contact'],
+            'sections' => ['hero', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'team', 'about', 'faq', 'form', 'contact'],
         ],
         'maker-market' => [
             'label' => 'Maker Market',
@@ -48,7 +48,7 @@ final class SiteTemplates
             'families' => [],
             'palette' => ['surface' => '#faf8f4', 'card' => '#ffffff', 'ink' => '#1c1b19', 'primary' => '#a0472a', 'accent' => '#9c4a24'],
             'type_pairing' => ['heading' => 'DM Sans, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
-            'sections' => ['hero', 'products', 'reviews_strip', 'about', 'gallery', 'faq', 'cta_band', 'contact'],
+            'sections' => ['hero', 'products', 'reviews_strip', 'about', 'gallery', 'faq', 'cta_band', 'form', 'contact'],
         ],
         'trades-clean' => [
             'label' => 'Trades Clean',
@@ -56,7 +56,7 @@ final class SiteTemplates
             'families' => ['trades'],
             'palette' => ['surface' => '#ffffff', 'card' => '#f2f6fb', 'ink' => '#0d2238', 'primary' => '#0b5cc2', 'accent' => '#0b5cc2'],
             'type_pairing' => ['heading' => 'Poppins, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
-            'sections' => ['hero', 'stats', 'services', 'reviews_strip', 'about', 'gallery', 'faq', 'cta_band', 'contact'],
+            'sections' => ['hero', 'stats', 'services', 'reviews_strip', 'about', 'gallery', 'faq', 'cta_band', 'form', 'contact'],
         ],
         'spa-luxe' => [
             'label' => 'Spa Luxe',
@@ -64,7 +64,7 @@ final class SiteTemplates
             'families' => ['medspa', 'care'],
             'palette' => ['surface' => '#0f0e0c', 'card' => '#1a1815', 'ink' => '#f3eee6', 'primary' => '#c8a96a', 'accent' => '#c8a96a'],
             'type_pairing' => ['heading' => 'Playfair Display, Georgia, serif', 'body' => 'Lora, Georgia, serif'],
-            'sections' => ['hero', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'team', 'about', 'faq', 'contact'],
+            'sections' => ['hero', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'team', 'about', 'faq', 'form', 'contact'],
         ],
         'nail-studio' => [
             'label' => 'Nail Studio',
@@ -72,7 +72,7 @@ final class SiteTemplates
             'families' => ['care'],
             'palette' => ['surface' => '#ffffff', 'card' => '#f4f4f2', 'ink' => '#121212', 'primary' => '#121212', 'accent' => '#9b2c58'],
             'type_pairing' => ['heading' => 'Montserrat, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
-            'sections' => ['hero', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'team', 'about', 'faq', 'contact'],
+            'sections' => ['hero', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'team', 'about', 'faq', 'form', 'contact'],
         ],
         'corner-boutique' => [
             'label' => 'Corner Boutique',
@@ -80,7 +80,7 @@ final class SiteTemplates
             'families' => [],
             'palette' => ['surface' => '#fbf7f2', 'card' => '#ffffff', 'ink' => '#2b2320', 'primary' => '#7a4b3a', 'accent' => '#9c5b48'],
             'type_pairing' => ['heading' => 'Playfair Display, Georgia, serif', 'body' => 'Nunito, system-ui, sans-serif'],
-            'sections' => ['hero', 'products', 'reviews_strip', 'about', 'gallery', 'cta_band', 'faq', 'contact'],
+            'sections' => ['hero', 'products', 'reviews_strip', 'about', 'gallery', 'cta_band', 'faq', 'form', 'contact'],
         ],
         'trades-heritage' => [
             'label' => 'Trades Heritage',
@@ -88,7 +88,7 @@ final class SiteTemplates
             'families' => ['trades'],
             'palette' => ['surface' => '#f7f1e6', 'card' => '#fffaf2', 'ink' => '#2a1d17', 'primary' => '#a4321f', 'accent' => '#a4321f'],
             'type_pairing' => ['heading' => 'Merriweather, Georgia, serif', 'body' => 'Inter, system-ui, sans-serif'],
-            'sections' => ['hero', 'stats', 'services', 'reviews_strip', 'about', 'gallery', 'faq', 'cta_band', 'contact'],
+            'sections' => ['hero', 'stats', 'services', 'reviews_strip', 'about', 'gallery', 'faq', 'cta_band', 'form', 'contact'],
         ],
         'spa-bright' => [
             'label' => 'Spa Bright',
@@ -96,7 +96,7 @@ final class SiteTemplates
             'families' => ['medspa', 'care'],
             'palette' => ['surface' => '#fffdfb', 'card' => '#ffffff', 'ink' => '#2e2a3a', 'primary' => '#6b4fbb', 'accent' => '#b0466f'],
             'type_pairing' => ['heading' => 'Lora, Georgia, serif', 'body' => 'Nunito, system-ui, sans-serif'],
-            'sections' => ['hero', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'team', 'about', 'faq', 'contact'],
+            'sections' => ['hero', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'team', 'about', 'faq', 'form', 'contact'],
         ],
         'nail-pop' => [
             'label' => 'Nail Pop',
@@ -104,7 +104,7 @@ final class SiteTemplates
             'families' => ['care'],
             'palette' => ['surface' => '#fdfaff', 'card' => '#ffffff', 'ink' => '#24123a', 'primary' => '#7c3aed', 'accent' => '#0e7c7e'],
             'type_pairing' => ['heading' => 'Poppins, system-ui, sans-serif', 'body' => 'Nunito, system-ui, sans-serif'],
-            'sections' => ['hero', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'team', 'about', 'faq', 'contact'],
+            'sections' => ['hero', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'team', 'about', 'faq', 'form', 'contact'],
         ],
         'shop-bold' => [
             'label' => 'Shop Bold',
@@ -112,7 +112,7 @@ final class SiteTemplates
             'families' => [],
             'palette' => ['surface' => '#111316', 'card' => '#1b1e23', 'ink' => '#f2f3f5', 'primary' => '#ffcc33', 'accent' => '#ffcc33'],
             'type_pairing' => ['heading' => 'DM Sans, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
-            'sections' => ['hero', 'products', 'reviews_strip', 'about', 'gallery', 'cta_band', 'faq', 'contact'],
+            'sections' => ['hero', 'products', 'reviews_strip', 'about', 'gallery', 'cta_band', 'faq', 'form', 'contact'],
         ],
         'bistro-table' => [
             'label' => 'Bistro Table',
@@ -120,7 +120,7 @@ final class SiteTemplates
             'families' => ['food'],
             'palette' => ['surface' => '#f4ede0', 'card' => '#fbf7ef', 'ink' => '#1d2621', 'primary' => '#1f4a38', 'accent' => '#9a3b1f'],
             'type_pairing' => ['heading' => 'Playfair Display, Georgia, serif', 'body' => 'Lora, Georgia, serif'],
-            'sections' => ['hero', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'about', 'faq', 'contact'],
+            'sections' => ['hero', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'about', 'faq', 'form', 'contact'],
         ],
         'cafe-corner' => [
             'label' => 'Café Corner',
@@ -128,7 +128,7 @@ final class SiteTemplates
             'families' => ['food'],
             'palette' => ['surface' => '#fbf5ec', 'card' => '#ffffff', 'ink' => '#2c211a', 'primary' => '#b5462a', 'accent' => '#a1401f'],
             'type_pairing' => ['heading' => 'Poppins, system-ui, sans-serif', 'body' => 'Nunito, system-ui, sans-serif'],
-            'sections' => ['hero', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'about', 'faq', 'contact'],
+            'sections' => ['hero', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'about', 'faq', 'form', 'contact'],
         ],
         'grill-house' => [
             'label' => 'Grill House',
@@ -136,7 +136,7 @@ final class SiteTemplates
             'families' => ['food'],
             'palette' => ['surface' => '#141211', 'card' => '#1f1c1a', 'ink' => '#f4ede4', 'primary' => '#e8552b', 'accent' => '#f0a23c'],
             'type_pairing' => ['heading' => 'Montserrat, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
-            'sections' => ['hero', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'about', 'faq', 'contact'],
+            'sections' => ['hero', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'about', 'faq', 'form', 'contact'],
         ],
         'garage-pro' => [
             'label' => 'Garage Pro',
@@ -144,7 +144,7 @@ final class SiteTemplates
             'families' => ['auto'],
             'palette' => ['surface' => '#f2f3f5', 'card' => '#ffffff', 'ink' => '#13161b', 'primary' => '#c8201e', 'accent' => '#b51c1a'],
             'type_pairing' => ['heading' => 'Montserrat, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
-            'sections' => ['hero', 'stats', 'services', 'reviews_strip', 'cta_band', 'booking_button', 'about', 'gallery', 'faq', 'contact'],
+            'sections' => ['hero', 'stats', 'services', 'reviews_strip', 'cta_band', 'booking_button', 'about', 'gallery', 'faq', 'form', 'contact'],
         ],
         'detail-studio' => [
             'label' => 'Detail Studio',
@@ -152,7 +152,7 @@ final class SiteTemplates
             'families' => ['auto'],
             'palette' => ['surface' => '#0b0d10', 'card' => '#151920', 'ink' => '#eef2f6', 'primary' => '#2bc4b6', 'accent' => '#2bc4b6'],
             'type_pairing' => ['heading' => 'DM Sans, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
-            'sections' => ['hero', 'stats', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'about', 'faq', 'contact'],
+            'sections' => ['hero', 'stats', 'services', 'gallery', 'reviews_strip', 'cta_band', 'booking_button', 'about', 'faq', 'form', 'contact'],
         ],
         'hometown-auto' => [
             'label' => 'Hometown Auto',
@@ -160,7 +160,7 @@ final class SiteTemplates
             'families' => ['auto'],
             'palette' => ['surface' => '#ffffff', 'card' => '#eef3fa', 'ink' => '#0f1d33', 'primary' => '#1747a6', 'accent' => '#a14a07'],
             'type_pairing' => ['heading' => 'Merriweather, Georgia, serif', 'body' => 'Inter, system-ui, sans-serif'],
-            'sections' => ['hero', 'stats', 'services', 'reviews_strip', 'cta_band', 'booking_button', 'about', 'gallery', 'faq', 'contact'],
+            'sections' => ['hero', 'stats', 'services', 'reviews_strip', 'cta_band', 'booking_button', 'about', 'gallery', 'faq', 'form', 'contact'],
         ],
         'counsel' => [
             'label' => 'Counsel',
@@ -168,7 +168,7 @@ final class SiteTemplates
             'families' => ['office'],
             'palette' => ['surface' => '#f7f5f0', 'card' => '#ffffff', 'ink' => '#16223a', 'primary' => '#16223a', 'accent' => '#8a6516'],
             'type_pairing' => ['heading' => 'Lora, Georgia, serif', 'body' => 'Inter, system-ui, sans-serif'],
-            'sections' => ['hero', 'stats', 'reviews_strip', 'services', 'cta_band', 'booking_button', 'team', 'about', 'faq', 'contact'],
+            'sections' => ['hero', 'stats', 'reviews_strip', 'services', 'cta_band', 'booking_button', 'team', 'about', 'faq', 'form', 'contact'],
         ],
         'clear-office' => [
             'label' => 'Clear Office',
@@ -176,7 +176,7 @@ final class SiteTemplates
             'families' => ['office'],
             'palette' => ['surface' => '#ffffff', 'card' => '#f1f6f5', 'ink' => '#0e2422', 'primary' => '#0f6b62', 'accent' => '#0f6b62'],
             'type_pairing' => ['heading' => 'DM Sans, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
-            'sections' => ['hero', 'stats', 'reviews_strip', 'services', 'cta_band', 'booking_button', 'team', 'about', 'gallery', 'faq', 'contact'],
+            'sections' => ['hero', 'stats', 'reviews_strip', 'services', 'cta_band', 'booking_button', 'team', 'about', 'gallery', 'faq', 'form', 'contact'],
         ],
         'main-street' => [
             'label' => 'Main Street',
@@ -184,7 +184,7 @@ final class SiteTemplates
             'families' => ['office'],
             'palette' => ['surface' => '#fffaf3', 'card' => '#ffffff', 'ink' => '#23223a', 'primary' => '#5b3fa8', 'accent' => '#b8452a'],
             'type_pairing' => ['heading' => 'Poppins, system-ui, sans-serif', 'body' => 'Nunito, system-ui, sans-serif'],
-            'sections' => ['hero', 'services', 'stats', 'reviews_strip', 'cta_band', 'booking_button', 'team', 'about', 'gallery', 'faq', 'contact'],
+            'sections' => ['hero', 'services', 'stats', 'reviews_strip', 'cta_band', 'booking_button', 'team', 'about', 'gallery', 'faq', 'form', 'contact'],
         ],
     ];
 

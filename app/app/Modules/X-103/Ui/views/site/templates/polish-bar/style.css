@@ -143,3 +143,12 @@ body > [id$="-x176"] { font-size: 0.9rem; color: color-mix(in srgb, var(--color-
 .pb-button { white-space: normal; text-align: center; max-width: 100%; }
 .pb-brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pb-menu summary { min-width: 44px; min-height: 44px; place-content: center; justify-items: center; }
+
+/* The business's own contact form (the Forms screen), posting to the platform's form endpoint like every other site. */
+.pb-form { display: grid; gap: 1rem; max-width: 40rem; }
+.pb-form__field { display: grid; gap: 0.35rem; font-weight: 600; }
+.pb-form__field input, .pb-form__field textarea { width: 100%; max-width: 100%; padding: 0.75rem 0.9rem; font: inherit; font-weight: 400; color: var(--color-ink); background: var(--color-card); border: 1px solid color-mix(in srgb, var(--color-ink) 28%, transparent); border-radius: 14px; }
+.pb-form__field input:focus-visible, .pb-form__field textarea:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 2px; }
+.pb-form__trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.pb-form__send { justify-self: start; background: var(--color-primary); color: var(--color-on-primary); border-color: transparent; cursor: pointer; }
+.pb-form { margin-inline: auto; }

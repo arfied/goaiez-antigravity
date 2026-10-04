@@ -144,3 +144,11 @@ body > [id$="-x176"] { font-size: 0.9rem; color: color-mix(in srgb, var(--color-
 .tp-brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tp-menu summary { min-width: 44px; min-height: 44px; place-content: center; justify-items: center; }
 @media (max-width: 40rem) { .tp-hero::after { background: color-mix(in srgb, var(--deep) 88%, transparent); } }
+
+/* The business's own contact form (the Forms screen), posting to the platform's form endpoint like every other site. */
+.tp-form { display: grid; gap: 1rem; max-width: 40rem; }
+.tp-form__field { display: grid; gap: 0.35rem; font-weight: 600; }
+.tp-form__field input, .tp-form__field textarea { width: 100%; max-width: 100%; padding: 0.75rem 0.9rem; font: inherit; font-weight: 400; color: var(--color-ink); background: var(--color-card); border: 1px solid color-mix(in srgb, var(--color-ink) 28%, transparent); border-radius: 6px; }
+.tp-form__field input:focus-visible, .tp-form__field textarea:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 2px; }
+.tp-form__trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.tp-form__send { justify-self: start; background: var(--color-primary); color: var(--color-on-primary); border-color: transparent; cursor: pointer; }
