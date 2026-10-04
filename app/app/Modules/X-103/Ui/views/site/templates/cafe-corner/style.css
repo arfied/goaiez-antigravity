@@ -1,0 +1,115 @@
+/* Café Corner. Colours come only from the --color-* variables, so an owner's colour edits restyle it and the contrast rules still hold. */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 5rem; }
+body { margin: 0; background: var(--color-surface); color: var(--color-ink); font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.6; }
+img { max-width: 100%; display: block; }
+a { color: var(--color-accent-text); }
+a:focus-visible, summary:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
+h1, h2, h3 { font-family: var(--font-heading); line-height: 1.12; margin: 0; text-wrap: balance; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.8rem, 3.6vw, 2.5rem); font-weight: 700; }
+h3 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.01em; }
+p { margin: 0; }
+.cc { overflow-x: clip; --line: color-mix(in srgb, var(--color-ink) 11%, transparent); --soft: color-mix(in srgb, var(--color-ink) 74%, transparent); --tint: color-mix(in srgb, var(--color-primary) 9%, var(--color-surface)); }
+.cc-wrap { max-width: 72rem; margin-inline: auto; padding-inline: clamp(1rem, 4vw, 2rem); }
+.cc-narrow { max-width: 48rem; }
+.cc-kicker { display: inline-block; justify-self: start; padding: 0.25rem 0.75rem; border-radius: 999px; background: color-mix(in srgb, var(--color-primary) 13%, transparent); color: var(--color-accent-text); font-size: 0.8rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
+.cc-button { display: inline-flex; align-items: center; justify-content: center; padding: 0.7rem 1.3rem; border-radius: 999px; font-weight: 800; text-decoration: none; border: 2px solid transparent; white-space: nowrap; background: var(--color-primary); color: var(--color-on-primary); transition: transform .15s ease, filter .15s ease; }
+.cc-button:hover { transform: translateY(-1px); filter: brightness(1.05); }
+.cc-button--lg { padding: 0.9rem 1.6rem; font-size: 1.04rem; }
+.cc-button--soft { background: var(--color-card); color: var(--color-ink); border-color: var(--line); }
+.cc-button--light { background: var(--color-card); color: var(--color-ink); }
+.cc-button--outline { background: transparent; color: var(--color-on-primary); border-color: color-mix(in srgb, var(--color-on-primary) 65%, transparent); }
+.cc-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+
+/* navigation */
+.cc-nav { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--color-surface) 94%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.cc-nav__row { display: flex; align-items: center; gap: 1.5rem; min-height: 4.25rem; }
+.cc-brand { display: inline-flex; align-items: center; gap: 0.6rem; margin-right: auto; color: var(--color-ink); text-decoration: none; font-family: var(--font-heading); font-weight: 700; font-size: 1.15rem; min-width: 0; }
+.cc-brand span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cc-brand__mark { flex: none; display: grid; place-items: center; width: 2.3rem; height: 2.3rem; border-radius: 50%; background: var(--color-primary); color: var(--color-on-primary); font-size: 1.1rem; }
+.cc-nav__links { display: flex; gap: 1.4rem; }
+.cc-nav__links a { color: var(--color-ink); text-decoration: none; font-weight: 700; font-size: 0.97rem; }
+.cc-nav__links a:hover { color: var(--color-accent-text); }
+.cc-menu { display: none; position: relative; }
+.cc-menu summary { list-style: none; cursor: pointer; display: grid; gap: 5px; padding: 0.75rem 0.6rem; border-radius: 999px; border: 1px solid var(--line); background: var(--color-card); }
+.cc-menu summary::-webkit-details-marker { display: none; }
+.cc-menu summary span { display: block; width: 1.25rem; height: 2px; border-radius: 2px; background: var(--color-ink); }
+.cc-menu nav { position: absolute; right: 0; top: calc(100% + 0.5rem); min-width: 13rem; display: grid; padding: 0.5rem; background: var(--color-card); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 14px 30px rgba(0,0,0,0.12); }
+.cc-menu nav a { padding: 0.7rem 0.85rem; color: var(--color-ink); text-decoration: none; font-weight: 700; border-radius: 10px; }
+.cc-menu nav a:hover { background: var(--tint); }
+@media (max-width: 54rem) { .cc-nav__links { display: none; } .cc-menu { display: block; } .cc-nav__row { gap: 0.6rem; } }
+@media (max-width: 34rem) { .cc-nav__call { display: none; } }
+
+/* hero: words and today's hours beside a rounded photo */
+.cc-hero { padding-block: clamp(2.5rem, 6vw, 5rem); }
+.cc-hero__grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+.cc-hero__grid--text { grid-template-columns: 1fr; max-width: 44rem; }
+.cc-hero__body { display: grid; gap: 1.25rem; }
+.cc-hero h1 { font-size: clamp(2.4rem, 5.6vw, 4rem); font-weight: 800; }
+.cc-hero__sub { font-size: clamp(1.08rem, 1.7vw, 1.25rem); color: var(--soft); }
+.cc-hero__media img { width: 100%; aspect-ratio: 5 / 4; object-fit: cover; border-radius: 28px 28px 28px 120px; box-shadow: 0 24px 50px rgba(0,0,0,0.14); }
+.cc-today { display: grid; gap: 0.6rem; margin-top: 0.5rem; padding: 1rem 1.2rem; background: var(--color-card); border: 1px solid var(--line); border-radius: 18px; max-width: 26rem; }
+.cc-today__hours { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.25rem; font-size: 0.95rem; }
+.cc-today__hours li { display: flex; justify-content: space-between; gap: 1rem; }
+.cc-today__hours li span:first-child { font-weight: 800; }
+.cc-today__hours li span:last-child { font-variant-numeric: tabular-nums; color: var(--soft); }
+.cc-today__where { font-size: 0.92rem; color: var(--soft); padding-top: 0.5rem; border-top: 1px dashed var(--line); }
+@media (max-width: 48rem) { .cc-hero__grid { grid-template-columns: 1fr; } .cc-hero__media { order: -1; } .cc-hero__media img { border-radius: 24px 24px 24px 80px; } }
+
+/* sections */
+.cc-section { padding-block: clamp(3.5rem, 8vw, 6rem); }
+.cc-section--tight { padding-block: clamp(2.5rem, 6vw, 4rem); }
+.cc-section--tint { background: var(--tint); }
+.cc-head { display: grid; gap: 0.75rem; max-width: 44rem; margin-bottom: clamp(1.75rem, 4vw, 2.75rem); }
+
+/* menu cards */
+.cc-menucards { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); }
+.cc-menucards li { display: grid; align-content: start; gap: 0.5rem; padding: 1.35rem 1.4rem; background: var(--color-card); border: 1px solid var(--line); border-radius: 20px; }
+.cc-menucards__top { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; }
+.cc-price { flex: none; padding: 0.15rem 0.65rem; border-radius: 999px; background: var(--color-primary); color: var(--color-on-primary); font-weight: 800; font-size: 0.9rem; }
+.cc-menucards p { color: var(--soft); font-size: 0.97rem; }
+
+/* about */
+.cc-about { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+.cc-about--text { grid-template-columns: 1fr; max-width: 46rem; }
+.cc-about__body { display: grid; gap: 1rem; }
+.cc-about__body > p:last-child { color: var(--soft); font-size: 1.08rem; }
+.cc-about__img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 50%; border: 10px solid var(--color-card); box-shadow: 0 20px 40px rgba(0,0,0,0.12); }
+@media (max-width: 46rem) { .cc-about { grid-template-columns: 1fr; } .cc-about__img { max-width: 22rem; justify-self: center; } }
+
+/* gallery: a row of rounded photographs */
+.cc-gallery__head { margin-bottom: 1.5rem; }
+.cc-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9rem; padding-bottom: 1.25rem; }
+.cc-gallery img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 22px; }
+.cc-gallery img:nth-child(even) { transform: translateY(1.25rem); }
+@media (max-width: 34rem) { .cc-gallery { grid-template-columns: 1fr 1fr; } .cc-gallery img:nth-child(even) { transform: none; } }
+
+/* reviews */
+.cc-reviews { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+.cc-reviews figure { margin: 0; display: grid; align-content: start; gap: 0.75rem; padding: 1.6rem; background: var(--color-card); border: 1px solid var(--line); border-radius: 22px; }
+.cc-stars { color: var(--color-accent-text); letter-spacing: 0.1em; }
+.cc-reviews blockquote { margin: 0; font-size: 1.05rem; }
+.cc-reviews figcaption { font-weight: 800; }
+.cc-reviews figcaption span { font-weight: 400; color: var(--soft); }
+
+/* the order / book band */
+.cc-band { padding-inline: clamp(1rem, 4vw, 2rem); }
+.cc-band__inner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.5rem; margin-block: clamp(1rem, 3vw, 2rem); padding-block: clamp(2.25rem, 5vw, 3.25rem); padding-inline: clamp(1.25rem, 4vw, 3rem); background: var(--color-primary); color: var(--color-on-primary); border-radius: 28px; }
+.cc-band h2 { color: inherit; }
+.cc-band p { margin-top: 0.4rem; opacity: 0.92; max-width: 36rem; }
+
+/* questions */
+.cc-faq { display: grid; gap: 0.7rem; }
+.cc-q { background: var(--color-card); border: 1px solid var(--line); border-radius: 16px; }
+.cc-q summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 1rem; padding: 1.05rem 1.25rem; font-weight: 800; }
+.cc-q summary::-webkit-details-marker { display: none; }
+.cc-q summary::after { content: "+"; flex: none; display: grid; place-items: center; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: var(--tint); color: var(--color-accent-text); }
+.cc-q[open] summary::after { content: "−"; }
+.cc-q p { padding: 0 1.25rem 1.15rem; color: var(--soft); }
+
+/* find us */
+.cc-visit { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1rem; }
+.cc-card { display: grid; align-content: start; gap: 0.6rem; padding: 1.75rem; background: var(--color-card); border-radius: 24px; border: 1px solid var(--line); }
+.cc-hours { border-collapse: collapse; width: 100%; }
+.cc-hours th, .cc-hours td { padding: 0.55rem 0; border-bottom: 1px dashed var(--line); text-align: left; font-weight: 700; }
+.cc-hours td { text-align: right; font-weight: 400; font-variant-numeric: tabular-nums; }

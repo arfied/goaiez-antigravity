@@ -1,0 +1,112 @@
+/* Grill House. Colours come only from the --color-* variables, so an owner's colour edits restyle it and the contrast rules still hold. */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 5rem; }
+body { margin: 0; background: var(--color-surface); color: var(--color-ink); font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.6; }
+img { max-width: 100%; display: block; }
+a { color: var(--color-accent-text); }
+a:focus-visible, summary:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
+h1, h2, h3 { font-family: var(--font-heading); line-height: 1.02; margin: 0; text-wrap: balance; text-transform: uppercase; letter-spacing: -0.01em; }
+h2 { font-size: clamp(2rem, 4.6vw, 3.2rem); font-weight: 900; }
+h3 { font-size: 1.12rem; font-weight: 800; letter-spacing: 0.01em; }
+p { margin: 0; }
+.gh { overflow-x: clip; --line: color-mix(in srgb, var(--color-ink) 14%, transparent); --soft: color-mix(in srgb, var(--color-ink) 72%, transparent); }
+.gh-wrap { max-width: 74rem; margin-inline: auto; padding-inline: clamp(1rem, 4vw, 2rem); }
+.gh-narrow { max-width: 50rem; }
+.gh-tag { font-family: var(--font-heading); font-size: 0.82rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-accent-text); }
+.gh-button { display: inline-flex; align-items: center; justify-content: center; padding: 0.7rem 1.3rem; font-family: var(--font-heading); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.9rem; text-decoration: none; border: 2px solid transparent; white-space: nowrap; background: var(--color-primary); color: var(--color-on-primary); transition: transform .15s ease, filter .15s ease; }
+.gh-button:hover { transform: translateY(-2px); filter: brightness(1.08); }
+.gh-button--lg { padding: 1rem 1.75rem; font-size: 1rem; }
+.gh-button--line { background: transparent; color: #ffffff; border-color: rgba(255,255,255,0.75); }
+.gh-button--dark { background: var(--color-on-primary); color: var(--color-primary); }
+.gh-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+/* navigation */
+.gh-nav { position: sticky; top: 0; z-index: 20; background: var(--color-surface); border-bottom: 3px solid var(--color-primary); }
+.gh-nav__row { display: flex; align-items: center; gap: 1.75rem; min-height: 4.4rem; }
+.gh-brand { margin-right: auto; font-family: var(--font-heading); font-weight: 900; font-size: 1.35rem; text-transform: uppercase; letter-spacing: 0.02em; color: var(--color-ink); text-decoration: none; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gh-nav__links { display: flex; gap: 1.6rem; }
+.gh-nav__links a { color: var(--color-ink); text-decoration: none; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.85rem; }
+.gh-nav__links a:hover { color: var(--color-accent-text); }
+.gh-menu { display: none; position: relative; }
+.gh-menu summary { list-style: none; cursor: pointer; display: grid; gap: 5px; padding: 0.7rem 0.5rem; }
+.gh-menu summary::-webkit-details-marker { display: none; }
+.gh-menu summary span { display: block; width: 1.5rem; height: 3px; background: var(--color-ink); }
+.gh-menu nav { position: absolute; right: 0; top: calc(100% + 0.6rem); min-width: 13rem; display: grid; padding: 0.5rem; background: var(--color-card); border: 1px solid var(--line); box-shadow: 0 14px 30px rgba(0,0,0,0.4); }
+.gh-menu nav a { padding: 0.75rem 0.9rem; color: var(--color-ink); text-decoration: none; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.9rem; }
+@media (max-width: 56rem) { .gh-nav__links { display: none; } .gh-menu { display: block; } .gh-nav__row { gap: 0.6rem; } }
+@media (max-width: 34rem) { .gh-nav__call { display: none; } .gh-brand { font-size: 1.1rem; } }
+
+/* hero: the photograph full width, the words heavy at the bottom */
+.gh-hero { position: relative; isolation: isolate; display: grid; align-items: end; min-height: clamp(30rem, 78vh, 46rem); color: #ffffff; background: #0d0c0b; }
+.gh-hero__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+.gh-hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.45) 45%, rgba(0,0,0,0.88) 100%); }
+.gh-hero--plain { min-height: 0; background: var(--color-card); color: var(--color-ink); }
+.gh-hero--plain::after { display: none; }
+.gh-hero--plain .gh-button--line { color: var(--color-ink); border-color: var(--line); }
+.gh-hero__body { display: grid; gap: 1.25rem; padding-block: clamp(4rem, 10vw, 6rem) clamp(3rem, 7vw, 4.5rem); }
+.gh-hero h1 { max-width: 15ch; font-size: clamp(2.8rem, 8vw, 6rem); font-weight: 900; color: inherit; }
+.gh-hero__sub { max-width: 38rem; font-size: clamp(1.08rem, 1.8vw, 1.3rem); opacity: 0.9; }
+
+/* the hours ticker */
+.gh-ticker { background: var(--color-primary); color: var(--color-on-primary); }
+.gh-ticker__row { display: flex; flex-wrap: wrap; gap: 0.4rem 2rem; padding-block: 0.85rem; font-size: 0.95rem; font-variant-numeric: tabular-nums; }
+.gh-ticker strong { font-family: var(--font-heading); font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; margin-right: 0.35rem; }
+.gh-ticker__where { margin-left: auto; font-weight: 600; }
+@media (max-width: 40rem) { .gh-ticker__where { margin-left: 0; } }
+
+/* sections */
+.gh-section { padding-block: clamp(3.75rem, 8vw, 6.5rem); }
+.gh-section--card { background: var(--color-card); }
+.gh-head { display: grid; gap: 0.6rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
+
+/* the menu board */
+.gh-board { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); column-gap: 3rem; }
+.gh-board li { display: flex; justify-content: space-between; align-items: flex-start; gap: 1.25rem; padding-block: 1.25rem; border-bottom: 1px solid var(--line); }
+.gh-board li > div { display: grid; gap: 0.35rem; }
+.gh-board p { color: var(--soft); font-size: 0.97rem; }
+.gh-price { flex: none; font-family: var(--font-heading); font-weight: 900; font-size: 1.45rem; line-height: 1; color: var(--color-accent-text); }
+
+/* about */
+.gh-about { display: grid; grid-template-columns: 1fr 1fr; background: var(--color-card); }
+.gh-about--text { grid-template-columns: 1fr; }
+.gh-about__img { width: 100%; height: 100%; min-height: 22rem; object-fit: cover; }
+.gh-about__body { display: grid; align-content: center; gap: 1.1rem; padding: clamp(2.5rem, 6vw, 5rem) clamp(1.25rem, 5vw, 4.5rem); max-width: 40rem; }
+.gh-about--text .gh-about__body { margin-inline: auto; }
+.gh-about__body > p:last-child { color: var(--soft); font-size: 1.08rem; }
+@media (max-width: 46rem) { .gh-about { grid-template-columns: 1fr; } .gh-about__img { min-height: 0; aspect-ratio: 16 / 10; } }
+
+/* photographs edge to edge */
+.gh-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); }
+.gh-strip img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+@media (max-width: 40rem) { .gh-strip { grid-template-columns: 1fr 1fr; } }
+
+/* reviews */
+.gh-reviews { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+.gh-reviews figure { margin: 0; display: grid; align-content: start; gap: 0.8rem; padding: 1.75rem; background: var(--color-card); border-top: 4px solid var(--color-primary); }
+.gh-stars { color: var(--color-accent-text); font-size: 1.15rem; letter-spacing: 0.12em; }
+.gh-reviews blockquote { margin: 0; font-size: 1.08rem; }
+.gh-reviews figcaption { font-family: var(--font-heading); font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.82rem; color: var(--soft); }
+
+/* the order band */
+.gh-band { background: var(--color-primary); color: var(--color-on-primary); }
+.gh-band__inner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.5rem; padding-block: clamp(3rem, 7vw, 4.5rem); }
+.gh-band h2 { color: inherit; }
+.gh-band p { margin-top: 0.5rem; max-width: 36rem; font-weight: 600; }
+
+/* questions */
+.gh-faq { display: grid; border-top: 2px solid var(--line); }
+.gh-q { border-bottom: 2px solid var(--line); }
+.gh-q summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 1rem; padding: 1.2rem 0; font-family: var(--font-heading); font-weight: 800; font-size: 1.05rem; }
+.gh-q summary::-webkit-details-marker { display: none; }
+.gh-q summary::after { content: "+"; color: var(--color-accent-text); font-size: 1.5rem; line-height: 1; }
+.gh-q[open] summary::after { content: "−"; }
+.gh-q p { padding: 0 0 1.25rem; color: var(--soft); }
+
+/* come by */
+.gh-visit { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start; }
+.gh-visit__where { display: grid; gap: 0.6rem; }
+.gh-visit__phone a { font-family: var(--font-heading); font-weight: 900; font-size: 1.6rem; text-decoration: none; }
+.gh-hours { border-collapse: collapse; width: 100%; }
+.gh-hours th, .gh-hours td { padding: 0.8rem 0; border-bottom: 1px solid var(--line); text-align: left; font-family: var(--font-heading); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.9rem; }
+.gh-hours td { text-align: right; font-family: var(--font-body); text-transform: none; letter-spacing: 0; font-size: 1rem; font-variant-numeric: tabular-nums; }
+@media (max-width: 44rem) { .gh-visit { grid-template-columns: 1fr; } }

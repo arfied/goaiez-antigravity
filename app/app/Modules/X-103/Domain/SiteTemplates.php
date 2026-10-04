@@ -114,6 +114,30 @@ final class SiteTemplates
             'type_pairing' => ['heading' => 'DM Sans, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
             'sections' => ['hero', 'products', 'about', 'gallery', 'reviews_strip', 'faq', 'cta_band', 'contact'],
         ],
+        'bistro-table' => [
+            'label' => 'Bistro Table',
+            'for' => 'Restaurants, bistros and trattorias — cream and deep green, a printed menu, hours under the photo',
+            'families' => ['food'],
+            'palette' => ['surface' => '#f4ede0', 'card' => '#fbf7ef', 'ink' => '#1d2621', 'primary' => '#1f4a38', 'accent' => '#9a3b1f'],
+            'type_pairing' => ['heading' => 'Playfair Display, Georgia, serif', 'body' => 'Lora, Georgia, serif'],
+            'sections' => ['hero', 'about', 'services', 'gallery', 'reviews_strip', 'booking_button', 'faq', 'cta_band', 'contact'],
+        ],
+        'cafe-corner' => [
+            'label' => 'Café Corner',
+            'for' => 'Cafés, bakeries, breakfast and lunch spots, food trucks — warm and light, opening hours up front, a menu of cards',
+            'families' => ['food'],
+            'palette' => ['surface' => '#fbf5ec', 'card' => '#ffffff', 'ink' => '#2c211a', 'primary' => '#b5462a', 'accent' => '#a1401f'],
+            'type_pairing' => ['heading' => 'Poppins, system-ui, sans-serif', 'body' => 'Nunito, system-ui, sans-serif'],
+            'sections' => ['hero', 'services', 'about', 'gallery', 'reviews_strip', 'booking_button', 'faq', 'cta_band', 'contact'],
+        ],
+        'grill-house' => [
+            'label' => 'Grill House',
+            'for' => 'Grills, barbecue, burger and pizza places, taquerias — charcoal and fire orange, a menu board with big prices',
+            'families' => ['food'],
+            'palette' => ['surface' => '#141211', 'card' => '#1f1c1a', 'ink' => '#f4ede4', 'primary' => '#e8552b', 'accent' => '#f0a23c'],
+            'type_pairing' => ['heading' => 'Montserrat, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
+            'sections' => ['hero', 'services', 'about', 'gallery', 'reviews_strip', 'booking_button', 'faq', 'cta_band', 'contact'],
+        ],
     ];
 
     /**
