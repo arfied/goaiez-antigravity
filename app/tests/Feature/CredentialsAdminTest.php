@@ -284,3 +284,14 @@ test('a transport whose credential this board does hold says so rather than clai
         ->assertDontSee('cannot be put on it')
         ->assertDontSee('presents no credentials at all');
 });
+
+test('the board offers a field for the Pixabay stock-photo key', function (): void {
+    $label = CredentialManifest::credentials()['pixabay_api_key']['label'] ?? null;
+    expect($label)->toBe('Pixabay API key (stock photos)')
+        ->and(config()->has('credentials.pixabay_api_key'))->toBeTrue();
+
+    config()->set('credentials.pixabay_api_key', null);
+    Livewire::actingAs($this->admin)
+        ->test(CredentialsScreen::class)
+        ->assertSee('Pixabay API key (stock photos)');
+});

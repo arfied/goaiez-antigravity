@@ -132,6 +132,13 @@ final class CredentialManifest
                 'degradation' => 'Site pictures keep using OpenAI images, which cost roughly ten times more per picture.',
             ],
 
+            'pixabay_api_key' => [
+                'vendor' => 'Stock photos',
+                'label' => 'Pixabay API key (stock photos)',
+                'description' => 'Free stock photos for a site template when the business has too few photos of its own (the boss\'s template brief, 2026-10-04). The key is shown on pixabay.com/api/docs once you are logged in. Photos are downloaded to our own storage, never linked to Pixabay, and are used only for general scenes, never as the business\'s own work, staff or premises.',
+                'degradation' => 'Nothing reads this key until the stock-photo step ships. Until then, and without it, a business with no photos of its own gets an AI-made banner picture.',
+            ],
+
             'fetch_proxy_url' => [
                 'vendor' => 'Outbound proxy',
                 'label' => 'Tenant-site fetch proxy URL',
