@@ -17,6 +17,7 @@ final class SectionNames
         'form' => 'Form',
         'gallery' => 'Photos',
         'hero' => 'Top banner',
+        'products' => 'Products',
         'reviews_strip' => 'Reviews',
         'services' => 'Services',
         'stats' => 'Numbers',

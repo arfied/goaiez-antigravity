@@ -20,6 +20,7 @@ final class InlineFields
         'cta_band' => ['heading', 'text', 'label'],
         'gallery' => ['heading'],
         'hero' => ['headline', 'subline', 'cta_label'],
+        'products' => ['heading'],
         'reviews_strip' => ['heading'],
         'services' => ['heading'],
         'stats' => ['heading'],

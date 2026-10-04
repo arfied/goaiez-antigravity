@@ -37,6 +37,7 @@ class SiteTemplatesTest extends TestCase
             ['type' => 'cta_band', 'heading' => 'Leak or clog?', 'text' => 'Talk to a plumber now.', 'label' => 'Book a visit', 'url' => '#contact'],
             ['type' => 'contact', 'phone' => '(253) 555-0187', 'email' => 'office@example.com', 'address' => '2215 Pacific Ave, Tacoma',
                 'hours' => [['day' => 'Mon–Fri', 'open' => '7:00', 'close' => '18:00']], 'facts' => ['insurance' => 'Licensed and insured', 'service_area' => 'Tacoma and Lakewood']],
+            ['type' => 'products', 'heading' => 'Parts we stock', 'items' => [['name' => 'Shut-off valve', 'price_text' => '$24', 'description' => 'Quarter-turn brass valve.', 'image_path' => 'valve.jpg', 'url' => 'https://shop.example.com/valve']]],
         ];
     }
 

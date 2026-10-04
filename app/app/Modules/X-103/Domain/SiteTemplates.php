@@ -42,6 +42,14 @@ final class SiteTemplates
             'type_pairing' => ['heading' => 'Poppins, system-ui, sans-serif', 'body' => 'Nunito, system-ui, sans-serif'],
             'sections' => ['hero', 'services', 'gallery', 'about', 'reviews_strip', 'booking_button', 'faq', 'cta_band', 'contact'],
         ],
+        'maker-market' => [
+            'label' => 'Maker Market',
+            'for' => 'Small shops, makers, boutiques, gift and home stores',
+            'families' => [],
+            'palette' => ['surface' => '#faf8f4', 'card' => '#ffffff', 'ink' => '#1c1b19', 'primary' => '#a0472a', 'accent' => '#9c4a24'],
+            'type_pairing' => ['heading' => 'DM Sans, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
+            'sections' => ['hero', 'products', 'about', 'gallery', 'reviews_strip', 'faq', 'cta_band', 'contact'],
+        ],
     ];
 
     /**

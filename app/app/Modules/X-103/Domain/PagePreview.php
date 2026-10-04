@@ -93,7 +93,7 @@ final class PagePreview
             if (($block['type'] ?? '') === 'hero' && isset($block['image_path'])) {
                 $paths[] = $block['image_path'];
             }
-            if (($block['type'] ?? '') === 'gallery' && isset($block['items']) && is_array($block['items'])) {
+            if (in_array($block['type'] ?? '', ['gallery', 'products'], true) && isset($block['items']) && is_array($block['items'])) {
                 foreach ($block['items'] as $item) {
                     if (isset($item['image_path'])) {
                         $paths[] = $item['image_path'];

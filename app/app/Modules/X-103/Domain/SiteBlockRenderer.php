@@ -103,6 +103,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .review-stars { color: var(--color-accent-text); letter-spacing: 0.12em; font-size: 1.05rem; line-height: 1; margin-bottom: 0.6rem; }
 .review-list blockquote { margin: 0; padding: 1.25rem; border-radius: 12px; background: var(--color-card); }
 .review-list cite { font-style: normal; font-size: 0.9rem; opacity: 0.8; }
+.product-list { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); }
+.product-list li { display: grid; align-content: start; gap: 0.35rem; }
+.product-list img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 10px; margin-bottom: 0.4rem; }
+.product-list p { margin: 0; opacity: 0.85; font-size: 0.95rem; }
+.product-list span { font-weight: 700; }
 .site-block.booking a { display: inline-block; padding: 0.85rem 1.5rem; border-radius: 999px; background: var(--color-primary); color: var(--color-on-primary); font-weight: 600; text-decoration: none; }
 .site-block.booking a:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
 .site-block.contact ul { display: grid; gap: 0.25rem; margin-top: 0.5rem; }
@@ -188,7 +193,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
             if (! in_array($type, [
                 'hero', 'about', 'services', 'reviews_strip',
                 'booking_button', 'booking_form', 'contact', 'faq', 'video_embed',
-                'gallery', 'team', 'form', 'cta_band', 'stats',
+                'gallery', 'team', 'form', 'cta_band', 'stats', 'products',
             ], true)) {
                 continue;
             }
@@ -310,6 +315,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
         }
         if ($type === 'booking_form') {
             return $this->hasScalar($block, 'heading');
+        }
+        if ($type === 'products') {
+            return isset($block['items']) && is_array($block['items']);
         }
 
         return false;
