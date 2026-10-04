@@ -73,26 +73,6 @@
 </section>
 @endif
 
-@if($about)
-@php $aboutImg = $img($about['image_path'] ?? null); @endphp
-<section id="about" class="sx-section sx-section--card"{!! $at('about') !!}>
-    <div class="sx-wrap sx-about{{ $aboutImg ? '' : ' sx-about--text' }}">
-        <div class="sx-about__body">
-            <p class="sx-label">About</p>
-            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
-            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
-        </div>
-        @if($aboutImg)<img class="sx-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
-    </div>
-</section>
-@endif
-
-@if($gallery)
-<section class="sx-strip"{!! $at('gallery') !!} aria-label="Photos">
-    @foreach(array_slice($gallery, 0, 6) as $g)<img src="{{ $img($g['image_path']) }}" alt="{{ $txt($g['alt'] ?? null) ?? '' }}" loading="lazy">@endforeach
-</section>
-@endif
-
 @if($reviews)
 <section id="reviews" class="sx-section"{!! $at('reviews_strip') !!}>
     <div class="sx-wrap">
@@ -111,6 +91,26 @@
             @endforeach
         </div>
     </div>
+</section>
+@endif
+
+@if($about)
+@php $aboutImg = $img($about['image_path'] ?? null); @endphp
+<section id="about" class="sx-section sx-section--card"{!! $at('about') !!}>
+    <div class="sx-wrap sx-about{{ $aboutImg ? '' : ' sx-about--text' }}">
+        <div class="sx-about__body">
+            <p class="sx-label">About</p>
+            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
+            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
+        </div>
+        @if($aboutImg)<img class="sx-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
+    </div>
+</section>
+@endif
+
+@if($gallery)
+<section class="sx-strip"{!! $at('gallery') !!} aria-label="Photos">
+    @foreach(array_slice($gallery, 0, 6) as $g)<img src="{{ $img($g['image_path']) }}" alt="{{ $txt($g['alt'] ?? null) ?? '' }}" loading="lazy">@endforeach
 </section>
 @endif
 

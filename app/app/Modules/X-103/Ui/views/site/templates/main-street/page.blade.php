@@ -7,6 +7,7 @@
     $about = isset($b['about']) && $txt($b['about']['text'] ?? null) ? $b['about'] : null;
     $services = array_values(array_filter((array) ($b['services']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['name'] ?? null)));
     $reviews = array_values(array_filter((array) ($b['reviews_strip']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['text'] ?? null)));
+    $team = array_values(array_filter((array) ($b['team']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['name'] ?? null) && ! str_starts_with((string) $i['name'], 'demo·')));
     $faqs = array_values(array_filter((array) ($b['faq']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['question'] ?? null) && $txt($i['answer'] ?? null)));
     $gallery = array_values(array_filter((array) ($b['gallery']['items'] ?? []), fn ($i) => is_array($i) && $img($i['image_path'] ?? null)));
     $booking = $b['booking_button'] ?? null;
@@ -68,20 +69,6 @@
 </section>
 @endif
 
-@if($about)
-@php $aboutImg = $img($about['image_path'] ?? null); @endphp
-<section id="about" class="ms-section ms-section--card"{!! $at('about') !!}>
-    <div class="ms-wrap ms-about{{ $aboutImg ? '' : ' ms-about--text' }}">
-        @if($aboutImg)<img class="ms-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
-        <div class="ms-about__body">
-            <p class="ms-label">About</p>
-            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
-            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
-        </div>
-    </div>
-</section>
-@endif
-
 @if($stats)
 <section class="ms-section ms-section--tight"{!! $at('stats') !!}>
     <ul class="ms-wrap ms-stats">@foreach(array_slice($stats, 0, 4) as $s)<li><strong>{{ $s['value'] }}</strong>@if($txt($s['label'] ?? null))<span>{{ $s['label'] }}</span>@endif</li>@endforeach</ul>
@@ -110,21 +97,51 @@
 </section>
 @endif
 
-@if($shown)
-<section class="ms-section ms-section--tight"{!! $at('gallery') !!} aria-label="Photos">
-    <div class="ms-wrap">
-        @if($txt($b['gallery']['heading'] ?? null))<h2 class="ms-gallery__head"{!! $f('heading') !!}>{{ $b['gallery']['heading'] }}</h2>@endif
-        <div class="ms-gallery">@foreach($shown as $g)<img src="{{ $img($g['image_path']) }}" alt="{{ $txt($g['alt'] ?? null) ?? '' }}" loading="lazy">@endforeach</div>
-    </div>
-</section>
-@endif
-
 @if($book || $cta)
 <section class="ms-band"{!! $cta ? $at('cta_band') : '' !!}>
     <div class="ms-wrap ms-band__inner">
         @if($cta)<h2{!! $f('heading') !!}>{{ $cta['heading'] }}</h2>@else<h2>Come and say hello</h2>@endif
         @if($cta && $txt($cta['text'] ?? null))<p{!! $f('text') !!}>{{ $cta['text'] }}</p>@endif
         @if($book)<a class="ms-button ms-button--white ms-button--lg" href="{{ $book }}"{!! $bookHref !== null ? $at('booking_button') : '' !!}>{{ $bookLabel }}</a>@endif
+    </div>
+</section>
+@endif
+
+@if($team)
+<section id="team" class="ms-section"{!! $at('team') !!}>
+    <div class="ms-wrap">
+        <div class="ms-head ms-head--center">
+            <p class="ms-label">Meet the team</p>
+            @if($txt($b['team']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['team']['heading'] }}</h2>@endif
+        </div>
+        <ul class="ms-team">
+            @foreach($team as $m)
+            <li><span class="ms-team__face" aria-hidden="true">{{ mb_strtoupper(mb_substr(trim((string) $m['name']), 0, 1)) }}</span><div><h3>{{ $m['name'] }}</h3>@if($txt($m['role'] ?? null))<p class="ms-team__role">{{ $m['role'] }}</p>@endif@if($txt($m['description'] ?? null))<p>{{ $m['description'] }}</p>@endif</div></li>
+            @endforeach
+        </ul>
+    </div>
+</section>
+@endif
+
+@if($about)
+@php $aboutImg = $img($about['image_path'] ?? null); @endphp
+<section id="about" class="ms-section ms-section--card"{!! $at('about') !!}>
+    <div class="ms-wrap ms-about{{ $aboutImg ? '' : ' ms-about--text' }}">
+        @if($aboutImg)<img class="ms-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
+        <div class="ms-about__body">
+            <p class="ms-label">About</p>
+            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
+            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
+        </div>
+    </div>
+</section>
+@endif
+
+@if($shown)
+<section class="ms-section ms-section--tight"{!! $at('gallery') !!} aria-label="Photos">
+    <div class="ms-wrap">
+        @if($txt($b['gallery']['heading'] ?? null))<h2 class="ms-gallery__head"{!! $f('heading') !!}>{{ $b['gallery']['heading'] }}</h2>@endif
+        <div class="ms-gallery">@foreach($shown as $g)<img src="{{ $img($g['image_path']) }}" alt="{{ $txt($g['alt'] ?? null) ?? '' }}" loading="lazy">@endforeach</div>
     </div>
 </section>
 @endif

@@ -6,6 +6,7 @@
     $about = isset($b['about']) && $txt($b['about']['text'] ?? null) ? $b['about'] : null;
     $services = array_values(array_filter((array) ($b['services']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['name'] ?? null)));
     $reviews = array_values(array_filter((array) ($b['reviews_strip']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['text'] ?? null)));
+    $team = array_values(array_filter((array) ($b['team']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['name'] ?? null) && ! str_starts_with((string) $i['name'], 'demo·')));
     $faqs = array_values(array_filter((array) ($b['faq']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['question'] ?? null) && $txt($i['answer'] ?? null)));
     $gallery = array_values(array_filter((array) ($b['gallery']['items'] ?? []), fn ($i) => is_array($i) && $img($i['image_path'] ?? null)));
     $booking = $b['booking_button'] ?? null;
@@ -37,20 +38,6 @@
         <h1{!! $f('headline') !!}>{{ $hero['headline'] }}</h1>
         @if($txt($hero['subline'] ?? null))<p{!! $f('subline') !!}>{{ $hero['subline'] }}</p>@endif
         @if($heroHref)<a class="sl-button sl-button--lg" href="{{ $heroHref }}"{!! $f('cta_label') !!}>{{ $hero['cta_label'] }}</a>@elseif($book)<a class="sl-button sl-button--lg" href="{{ $book }}">{{ $bookLabel }}</a>@endif
-    </div>
-</section>
-@endif
-
-@if($about)
-@php $aboutImg = $img($about['image_path'] ?? null); @endphp
-<section id="about" class="sl-section"{!! $at('about') !!}>
-    <div class="sl-wrap sl-about{{ $aboutImg ? '' : ' sl-about--text' }}">
-        <div class="sl-about__body">
-            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
-            <span class="sl-rule" aria-hidden="true"></span>
-            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
-        </div>
-        @if($aboutImg)<img class="sl-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
     </div>
 </section>
 @endif
@@ -103,6 +90,36 @@
         @if($cta)<h2{!! $f('heading') !!}>{{ $cta['heading'] }}</h2>@else<h2>Reserve your time</h2>@endif
         @if($cta && $txt($cta['text'] ?? null))<p{!! $f('text') !!}>{{ $cta['text'] }}</p>@endif
         @if($book)<a class="sl-button sl-button--lg" href="{{ $book }}"{!! $bookHref !== null ? $at('booking_button') : '' !!}>{{ $bookLabel }}</a>@endif
+    </div>
+</section>
+@endif
+
+@if($team)
+<section id="team" class="sl-section"{!! $at('team') !!}>
+    <div class="sl-wrap">
+        <div class="sl-head">
+            <p class="sl-kicker">Our team</p>
+            @if($txt($b['team']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['team']['heading'] }}</h2>@endif
+        </div>
+        <ul class="sl-team">
+            @foreach($team as $m)
+            <li><span class="sl-team__face" aria-hidden="true">{{ mb_strtoupper(mb_substr(trim((string) $m['name']), 0, 1)) }}</span><div><h3>{{ $m['name'] }}</h3>@if($txt($m['role'] ?? null))<p class="sl-team__role">{{ $m['role'] }}</p>@endif@if($txt($m['description'] ?? null))<p>{{ $m['description'] }}</p>@endif</div></li>
+            @endforeach
+        </ul>
+    </div>
+</section>
+@endif
+
+@if($about)
+@php $aboutImg = $img($about['image_path'] ?? null); @endphp
+<section id="about" class="sl-section"{!! $at('about') !!}>
+    <div class="sl-wrap sl-about{{ $aboutImg ? '' : ' sl-about--text' }}">
+        <div class="sl-about__body">
+            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
+            <span class="sl-rule" aria-hidden="true"></span>
+            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
+        </div>
+        @if($aboutImg)<img class="sl-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
     </div>
 </section>
 @endif

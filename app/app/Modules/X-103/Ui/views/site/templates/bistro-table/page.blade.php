@@ -57,21 +57,6 @@
 </div>
 @endif
 
-@if($about)
-@php $aboutImg = $img($about['image_path'] ?? null); @endphp
-<section id="story" class="bt-section"{!! $at('about') !!}>
-    <div class="bt-wrap bt-about{{ $aboutImg ? '' : ' bt-about--text' }}">
-        @if($aboutImg)<figure class="bt-about__img"><img src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy"></figure>@endif
-        <div class="bt-about__body">
-            <p class="bt-label">Our story</p>
-            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
-            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
-            @if($txt($facts['years_in_business'] ?? null))<p class="bt-since">Serving guests for {{ $facts['years_in_business'] }} years</p>@endif
-        </div>
-    </div>
-</section>
-@endif
-
 @if($menu)
 <section id="menu" class="bt-section bt-section--card"{!! $at('services') !!}>
     <div class="bt-wrap bt-narrow">
@@ -127,6 +112,21 @@
         @if($cta)<h2{!! $f('heading') !!}>{{ $cta['heading'] }}</h2>@else<h2>Join us for dinner</h2>@endif
         @if($cta && $txt($cta['text'] ?? null))<p{!! $f('text') !!}>{{ $cta['text'] }}</p>@endif
         @if($book)<a class="bt-button bt-button--light bt-button--lg" href="{{ $book }}"{!! $bookHref !== null ? $at('booking_button') : '' !!}>{{ $bookLabel }}</a>@endif
+    </div>
+</section>
+@endif
+
+@if($about)
+@php $aboutImg = $img($about['image_path'] ?? null); @endphp
+<section id="story" class="bt-section"{!! $at('about') !!}>
+    <div class="bt-wrap bt-about{{ $aboutImg ? '' : ' bt-about--text' }}">
+        @if($aboutImg)<figure class="bt-about__img"><img src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy"></figure>@endif
+        <div class="bt-about__body">
+            <p class="bt-label">Our story</p>
+            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
+            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
+            @if($txt($facts['years_in_business'] ?? null))<p class="bt-since">Serving guests for {{ $facts['years_in_business'] }} years</p>@endif
+        </div>
     </div>
 </section>
 @endif

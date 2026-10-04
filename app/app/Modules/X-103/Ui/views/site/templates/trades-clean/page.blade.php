@@ -72,6 +72,24 @@
 </section>
 @endif
 
+@if($reviews)
+<section id="reviews" class="tc-section tc-section--soft"{!! $at('reviews_strip') !!}>
+    <div class="tc-wrap">
+        <div class="tc-head">@if($txt($b['reviews_strip']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['reviews_strip']['heading'] }}</h2>@endif</div>
+        <div class="tc-reviews">
+            @foreach(array_slice($reviews, 0, 6) as $r)
+            @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
+            <blockquote class="tc-review">
+                @if($stars > 0)<p class="tc-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                <p>“{{ $r['text'] }}”</p>
+                @if($txt($r['author'] ?? null))<cite>{{ $r['author'] }}@if($txt($r['source'] ?? null)) · {{ $r['source'] }}@endif</cite>@endif
+            </blockquote>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
 @if($about)
 @php $aboutImg = $img($about['image_path'] ?? null); @endphp
 <section id="about" class="tc-section tc-section--soft"{!! $at('about') !!}>
@@ -90,24 +108,6 @@
     <div class="tc-wrap">
         <div class="tc-head">@if($txt($b['gallery']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['gallery']['heading'] }}</h2>@else<h2>Our work</h2>@endif</div>
         <div class="tc-gallery">@foreach(array_slice($gallery, 0, 6) as $g)<img src="{{ $img($g['image_path']) }}" alt="{{ $txt($g['alt'] ?? null) ?? '' }}" loading="lazy">@endforeach</div>
-    </div>
-</section>
-@endif
-
-@if($reviews)
-<section id="reviews" class="tc-section tc-section--soft"{!! $at('reviews_strip') !!}>
-    <div class="tc-wrap">
-        <div class="tc-head">@if($txt($b['reviews_strip']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['reviews_strip']['heading'] }}</h2>@endif</div>
-        <div class="tc-reviews">
-            @foreach(array_slice($reviews, 0, 6) as $r)
-            @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
-            <blockquote class="tc-review">
-                @if($stars > 0)<p class="tc-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
-                <p>“{{ $r['text'] }}”</p>
-                @if($txt($r['author'] ?? null))<cite>{{ $r['author'] }}@if($txt($r['source'] ?? null)) · {{ $r['source'] }}@endif</cite>@endif
-            </blockquote>
-            @endforeach
-        </div>
     </div>
 </section>
 @endif

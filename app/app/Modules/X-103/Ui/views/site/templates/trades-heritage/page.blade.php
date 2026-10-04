@@ -82,6 +82,24 @@
 </section>
 @endif
 
+@if($reviews)
+<section id="reviews" class="th-section th-section--cream"{!! $at('reviews_strip') !!}>
+    <div class="th-wrap">
+        <div class="th-head"><p class="th-kicker">Reviews</p>@if($txt($b['reviews_strip']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['reviews_strip']['heading'] }}</h2>@endif</div>
+        <div class="th-reviews">
+            @foreach(array_slice($reviews, 0, 6) as $r)
+            @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
+            <blockquote>
+                @if($stars > 0)<p class="th-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                <p>{{ $r['text'] }}</p>
+                @if($txt($r['author'] ?? null))<cite>{{ $r['author'] }}@if($txt($r['source'] ?? null)) · {{ $r['source'] }}@endif</cite>@endif
+            </blockquote>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
 @if($about)
 @php $aboutImg = $img($about['image_path'] ?? null); @endphp
 <section id="about" class="th-section th-section--dark"{!! $at('about') !!}>
@@ -101,24 +119,6 @@
     <div class="th-wrap">
         <div class="th-head"><p class="th-kicker">Our work</p>@if($txt($b['gallery']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['gallery']['heading'] }}</h2>@endif</div>
         <div class="th-gallery">@foreach(array_slice($gallery, 0, 6) as $g)<img src="{{ $img($g['image_path']) }}" alt="{{ $txt($g['alt'] ?? null) ?? '' }}" loading="lazy">@endforeach</div>
-    </div>
-</section>
-@endif
-
-@if($reviews)
-<section id="reviews" class="th-section th-section--cream"{!! $at('reviews_strip') !!}>
-    <div class="th-wrap">
-        <div class="th-head"><p class="th-kicker">Reviews</p>@if($txt($b['reviews_strip']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['reviews_strip']['heading'] }}</h2>@endif</div>
-        <div class="th-reviews">
-            @foreach(array_slice($reviews, 0, 6) as $r)
-            @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
-            <blockquote>
-                @if($stars > 0)<p class="th-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
-                <p>{{ $r['text'] }}</p>
-                @if($txt($r['author'] ?? null))<cite>{{ $r['author'] }}@if($txt($r['source'] ?? null)) · {{ $r['source'] }}@endif</cite>@endif
-            </blockquote>
-            @endforeach
-        </div>
     </div>
 </section>
 @endif

@@ -199,13 +199,35 @@ class SiteTemplatesTest extends TestCase
             $blocks = $this->blocks();
             $blocks[0]['headline'] = '<b>BOLD_7731</b>';
             $blocks[0]['cta_url'] = 'javascript:alert(1)';
-            $blocks[] = ['type' => 'team', 'heading' => 'TEAM_HEADING_5521', 'items' => [['name' => 'Dan']]];
+            $blocks[] = ['type' => 'video_embed', 'name' => 'VIDEO_NAME_5521', 'contentUrl' => 'https://video.example.com/a.mp4', 'uploadDate' => '2026-01-01'];
             $html = $this->render($blocks, $id);
             $this->assertStringContainsString('&lt;b&gt;BOLD_7731&lt;/b&gt;', $html, $id);
             $this->assertStringNotContainsString('<b>BOLD_7731', $html, $id);
             $this->assertStringNotContainsString('javascript:', $html, $id);
             $this->assertStringNotContainsString('>Get a free quote</a>', $html, $id);
-            $this->assertStringNotContainsString('TEAM_HEADING_5521', $html, $id);
+            $this->assertStringNotContainsString('VIDEO_NAME_5521', $html, $id);
         }
+    }
+
+    public function test_a_template_with_a_team_section_draws_only_the_owners_people(): void
+    {
+        $withTeam = 0;
+        foreach (SiteTemplates::TEMPLATES as $id => $template) {
+            $this->assertStringNotContainsString('id="team"', $this->render($this->blocks(), $id), "$id: no team section without the owner's people");
+
+            $blocks = $this->blocks();
+            $blocks[] = ['type' => 'team', 'heading' => 'Our people 6611', 'items' => [['name' => 'Maria Lopez 6612', 'role' => 'Lead therapist 6613'], ['name' => 'demo·Sample 6614']]];
+            $html = $this->render($blocks, $id);
+            if (in_array('team', $template['sections'], true)) {
+                $withTeam++;
+                $this->assertStringContainsString('Maria Lopez 6612', $html, $id);
+                $this->assertStringContainsString('Lead therapist 6613', $html, $id);
+                $this->assertStringContainsString('Our people 6611', $html, $id);
+                $this->assertStringNotContainsString('demo·Sample 6614', $html, $id);
+            } else {
+                $this->assertStringNotContainsString('Maria Lopez 6612', $html, $id);
+            }
+        }
+        $this->assertGreaterThan(0, $withTeam);
     }
 }

@@ -83,20 +83,6 @@
 </section>
 @endif
 
-@if($about)
-@php $aboutImg = $img($about['image_path'] ?? null); @endphp
-<section id="about" class="ds-section"{!! $at('about') !!}>
-    <div class="ds-wrap ds-about{{ $aboutImg ? '' : ' ds-about--text' }}">
-        <div class="ds-about__body">
-            <p class="ds-label">About</p>
-            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
-            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
-        </div>
-        @if($aboutImg)<img class="ds-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
-    </div>
-</section>
-@endif
-
 @if($reviews)
 <section id="reviews" class="ds-section ds-section--card"{!! $at('reviews_strip') !!}>
     <div class="ds-wrap">
@@ -126,6 +112,20 @@
             @if($cta && $txt($cta['text'] ?? null))<p{!! $f('text') !!}>{{ $cta['text'] }}</p>@endif
             @if($book)<a class="ds-button ds-button--lg" href="{{ $book }}"{!! $bookHref !== null ? $at('booking_button') : '' !!}>{{ $bookLabel }}</a>@endif
         </div>
+    </div>
+</section>
+@endif
+
+@if($about)
+@php $aboutImg = $img($about['image_path'] ?? null); @endphp
+<section id="about" class="ds-section"{!! $at('about') !!}>
+    <div class="ds-wrap ds-about{{ $aboutImg ? '' : ' ds-about--text' }}">
+        <div class="ds-about__body">
+            <p class="ds-label">About</p>
+            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
+            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
+        </div>
+        @if($aboutImg)<img class="ds-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
     </div>
 </section>
 @endif

@@ -6,6 +6,7 @@
     $about = isset($b['about']) && $txt($b['about']['text'] ?? null) ? $b['about'] : null;
     $services = array_values(array_filter((array) ($b['services']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['name'] ?? null)));
     $reviews = array_values(array_filter((array) ($b['reviews_strip']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['text'] ?? null)));
+    $team = array_values(array_filter((array) ($b['team']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['name'] ?? null) && ! str_starts_with((string) $i['name'], 'demo·')));
     $faqs = array_values(array_filter((array) ($b['faq']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['question'] ?? null) && $txt($i['answer'] ?? null)));
     $gallery = array_values(array_filter((array) ($b['gallery']['items'] ?? []), fn ($i) => is_array($i) && $img($i['image_path'] ?? null)));
     $booking = $b['booking_button'] ?? null;
@@ -74,20 +75,6 @@
 </section>
 @endif
 
-@if($about)
-@php $aboutImg = $img($about['image_path'] ?? null); @endphp
-<section id="about" class="ns-section"{!! $at('about') !!}>
-    <div class="ns-wrap ns-about{{ $aboutImg ? '' : ' ns-about--text' }}">
-        @if($aboutImg)<img class="ns-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
-        <div class="ns-about__body">
-            <p class="ns-label">About</p>
-            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
-            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
-        </div>
-    </div>
-</section>
-@endif
-
 @if($reviews)
 <section id="reviews" class="ns-section ns-section--ink"{!! $at('reviews_strip') !!}>
     <div class="ns-wrap">
@@ -117,6 +104,36 @@
             @if($cta && $txt($cta['text'] ?? null))<p{!! $f('text') !!}>{{ $cta['text'] }}</p>@endif
         </div>
         @if($book)<a class="ns-button ns-button--lg" href="{{ $book }}"{!! $bookHref !== null ? $at('booking_button') : '' !!}>{{ $bookLabel }}</a>@endif
+    </div>
+</section>
+@endif
+
+@if($team)
+<section id="team" class="ns-section"{!! $at('team') !!}>
+    <div class="ns-wrap">
+        <div class="ns-head">
+            <p class="ns-label">Our team</p>
+            @if($txt($b['team']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['team']['heading'] }}</h2>@endif
+        </div>
+        <ul class="ns-team">
+            @foreach($team as $m)
+            <li><span class="ns-team__face" aria-hidden="true">{{ mb_strtoupper(mb_substr(trim((string) $m['name']), 0, 1)) }}</span><div><h3>{{ $m['name'] }}</h3>@if($txt($m['role'] ?? null))<p class="ns-team__role">{{ $m['role'] }}</p>@endif@if($txt($m['description'] ?? null))<p>{{ $m['description'] }}</p>@endif</div></li>
+            @endforeach
+        </ul>
+    </div>
+</section>
+@endif
+
+@if($about)
+@php $aboutImg = $img($about['image_path'] ?? null); @endphp
+<section id="about" class="ns-section"{!! $at('about') !!}>
+    <div class="ns-wrap ns-about{{ $aboutImg ? '' : ' ns-about--text' }}">
+        @if($aboutImg)<img class="ns-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
+        <div class="ns-about__body">
+            <p class="ns-label">About</p>
+            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
+            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
+        </div>
     </div>
 </section>
 @endif

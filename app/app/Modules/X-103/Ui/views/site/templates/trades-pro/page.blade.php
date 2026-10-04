@@ -103,21 +103,6 @@
 </section>
 @endif
 
-@if($about)
-@php $aboutImg = $img($about['image_path'] ?? null); @endphp
-<section id="about" class="tp-section tp-section--tint"{!! $at('about') !!}>
-    <div class="tp-wrap tp-about{{ $aboutImg ? '' : ' tp-about--text' }}">
-        @if($aboutImg)<figure class="tp-about__media"><img src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy"></figure>@endif
-        <div class="tp-about__body">
-            <p class="tp-eyebrow">About us</p>
-            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
-            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
-            @if($trust)<ul class="tp-checks">@foreach($trust as $item)<li>{!! $check !!}{{ $item }}</li>@endforeach</ul>@endif
-        </div>
-    </div>
-</section>
-@endif
-
 @if($reviews)
 <section id="reviews" class="tp-section"{!! $at('reviews_strip') !!}>
     <div class="tp-wrap">
@@ -134,6 +119,21 @@
                 @if($txt($r['author'] ?? null))<cite>{{ $r['author'] }}@if($txt($r['source'] ?? null))<span> · {{ $r['source'] }}</span>@endif</cite>@endif
             </blockquote>
             @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
+@if($about)
+@php $aboutImg = $img($about['image_path'] ?? null); @endphp
+<section id="about" class="tp-section tp-section--tint"{!! $at('about') !!}>
+    <div class="tp-wrap tp-about{{ $aboutImg ? '' : ' tp-about--text' }}">
+        @if($aboutImg)<figure class="tp-about__media"><img src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy"></figure>@endif
+        <div class="tp-about__body">
+            <p class="tp-eyebrow">About us</p>
+            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
+            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
+            @if($trust)<ul class="tp-checks">@foreach($trust as $item)<li>{!! $check !!}{{ $item }}</li>@endforeach</ul>@endif
         </div>
     </div>
 </section>

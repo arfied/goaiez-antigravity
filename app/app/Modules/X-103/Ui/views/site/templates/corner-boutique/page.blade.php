@@ -66,6 +66,27 @@
 </section>
 @endif
 
+@if($reviews)
+<section id="reviews" class="cb-section"{!! $at('reviews_strip') !!}>
+    <div class="cb-wrap">
+        <div class="cb-head">
+            <p class="cb-script">kind words</p>
+            @if($txt($b['reviews_strip']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['reviews_strip']['heading'] }}</h2>@endif
+        </div>
+        <div class="cb-reviews">
+            @foreach(array_slice($reviews, 0, 3) as $r)
+            @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
+            <blockquote>
+                @if($stars > 0)<p class="cb-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                <p>“{{ $r['text'] }}”</p>
+                @if($txt($r['author'] ?? null))<cite>{{ $r['author'] }}</cite>@endif
+            </blockquote>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
 @if($about)
 @php $aboutImg = $img($about['image_path'] ?? null); @endphp
 <section id="story" class="cb-section cb-section--tint"{!! $at('about') !!}>
@@ -85,27 +106,6 @@
     <div class="cb-wrap">
         @if($txt($b['gallery']['heading'] ?? null))<h2 class="cb-center"{!! $f('heading') !!}>{{ $b['gallery']['heading'] }}</h2>@endif
         <div class="cb-gallery">@foreach(array_slice($gallery, 0, 5) as $g)<img src="{{ $img($g['image_path']) }}" alt="{{ $txt($g['alt'] ?? null) ?? '' }}" loading="lazy">@endforeach</div>
-    </div>
-</section>
-@endif
-
-@if($reviews)
-<section id="reviews" class="cb-section"{!! $at('reviews_strip') !!}>
-    <div class="cb-wrap">
-        <div class="cb-head">
-            <p class="cb-script">kind words</p>
-            @if($txt($b['reviews_strip']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['reviews_strip']['heading'] }}</h2>@endif
-        </div>
-        <div class="cb-reviews">
-            @foreach(array_slice($reviews, 0, 3) as $r)
-            @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
-            <blockquote>
-                @if($stars > 0)<p class="cb-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
-                <p>“{{ $r['text'] }}”</p>
-                @if($txt($r['author'] ?? null))<cite>{{ $r['author'] }}</cite>@endif
-            </blockquote>
-            @endforeach
-        </div>
     </div>
 </section>
 @endif

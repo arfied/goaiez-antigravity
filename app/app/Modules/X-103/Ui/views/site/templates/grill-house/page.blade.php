@@ -74,18 +74,6 @@
 </section>
 @endif
 
-@if($about)
-@php $aboutImg = $img($about['image_path'] ?? null); @endphp
-<section id="about" class="gh-about{{ $aboutImg ? '' : ' gh-about--text' }}"{!! $at('about') !!}>
-    @if($aboutImg)<img class="gh-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
-    <div class="gh-about__body">
-        <p class="gh-tag">Our story</p>
-        @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
-        <p{!! $f('text') !!}>{{ $about['text'] }}</p>
-    </div>
-</section>
-@endif
-
 @if($strip)
 <section class="gh-strip"{!! $at('gallery') !!} aria-label="{{ $txt($b['gallery']['heading'] ?? null) ?? 'Photos' }}">
     @foreach($strip as $g)<img src="{{ $img($g['image_path']) }}" alt="{{ $txt($g['alt'] ?? null) ?? '' }}" loading="lazy">@endforeach
@@ -121,6 +109,18 @@
             @if($cta && $txt($cta['text'] ?? null))<p{!! $f('text') !!}>{{ $cta['text'] }}</p>@endif
         </div>
         @if($book)<a class="gh-button gh-button--dark gh-button--lg" href="{{ $book }}"{!! $bookHref !== null ? $at('booking_button') : '' !!}>{{ $bookLabel }}</a>@endif
+    </div>
+</section>
+@endif
+
+@if($about)
+@php $aboutImg = $img($about['image_path'] ?? null); @endphp
+<section id="about" class="gh-about{{ $aboutImg ? '' : ' gh-about--text' }}"{!! $at('about') !!}>
+    @if($aboutImg)<img class="gh-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
+    <div class="gh-about__body">
+        <p class="gh-tag">Our story</p>
+        @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
+        <p{!! $f('text') !!}>{{ $about['text'] }}</p>
     </div>
 </section>
 @endif

@@ -67,27 +67,6 @@
 </section>
 @endif
 
-@if($about)
-@php $aboutImg = $img($about['image_path'] ?? null); @endphp
-<section id="story" class="mm-section mm-section--tint"{!! $at('about') !!}>
-    <div class="mm-wrap mm-story{{ $aboutImg ? '' : ' mm-story--text' }}">
-        @if($aboutImg)<img class="mm-story__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
-        <div class="mm-story__body">
-            <p class="mm-eyebrow">Our story</p>
-            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
-            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
-        </div>
-    </div>
-</section>
-@endif
-
-@if($gallery)
-<section class="mm-gallery-section"{!! $at('gallery') !!}>
-    @if($txt($b['gallery']['heading'] ?? null))<div class="mm-wrap"><h2 class="mm-gallery-section__title"{!! $f('heading') !!}>{{ $b['gallery']['heading'] }}</h2></div>@endif
-    <div class="mm-strip">@foreach(array_slice($gallery, 0, 6) as $g)<img src="{{ $img($g['image_path']) }}" alt="{{ $txt($g['alt'] ?? null) ?? '' }}" loading="lazy">@endforeach</div>
-</section>
-@endif
-
 @if($reviews)
 <section id="reviews" class="mm-section"{!! $at('reviews_strip') !!}>
     <div class="mm-wrap">
@@ -106,6 +85,27 @@
             @endforeach
         </div>
     </div>
+</section>
+@endif
+
+@if($about)
+@php $aboutImg = $img($about['image_path'] ?? null); @endphp
+<section id="story" class="mm-section mm-section--tint"{!! $at('about') !!}>
+    <div class="mm-wrap mm-story{{ $aboutImg ? '' : ' mm-story--text' }}">
+        @if($aboutImg)<img class="mm-story__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
+        <div class="mm-story__body">
+            <p class="mm-eyebrow">Our story</p>
+            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
+            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
+        </div>
+    </div>
+</section>
+@endif
+
+@if($gallery)
+<section class="mm-gallery-section"{!! $at('gallery') !!}>
+    @if($txt($b['gallery']['heading'] ?? null))<div class="mm-wrap"><h2 class="mm-gallery-section__title"{!! $f('heading') !!}>{{ $b['gallery']['heading'] }}</h2></div>@endif
+    <div class="mm-strip">@foreach(array_slice($gallery, 0, 6) as $g)<img src="{{ $img($g['image_path']) }}" alt="{{ $txt($g['alt'] ?? null) ?? '' }}" loading="lazy">@endforeach</div>
 </section>
 @endif
 

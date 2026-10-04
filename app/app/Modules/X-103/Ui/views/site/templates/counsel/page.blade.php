@@ -7,6 +7,7 @@
     $about = isset($b['about']) && $txt($b['about']['text'] ?? null) ? $b['about'] : null;
     $services = array_values(array_filter((array) ($b['services']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['name'] ?? null)));
     $reviews = array_values(array_filter((array) ($b['reviews_strip']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['text'] ?? null)));
+    $team = array_values(array_filter((array) ($b['team']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['name'] ?? null) && ! str_starts_with((string) $i['name'], 'demo·')));
     $faqs = array_values(array_filter((array) ($b['faq']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['question'] ?? null) && $txt($i['answer'] ?? null)));
     $booking = $b['booking_button'] ?? null;
     $bookHref = $booking && $txt($booking['label'] ?? null) ? $link($booking['url'] ?? null) : null;
@@ -54,40 +55,6 @@
 </section>
 @endif
 
-@if($services)
-<section id="services" class="cn-section"{!! $at('services') !!}>
-    <div class="cn-wrap cn-split">
-        <div class="cn-split__head">
-            <p class="cn-label">Services</p>
-            @if($txt($b['services']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['services']['heading'] }}</h2>@endif
-        </div>
-        <ul class="cn-services">
-            @foreach($services as $s)
-            <li>
-                <div class="cn-services__top"><h3>{{ $s['name'] }}</h3>@if($txt($s['price_text'] ?? null))<span class="cn-fee">{{ $s['price_text'] }}</span>@endif</div>
-                @if($txt($s['description'] ?? null))<p>{{ $s['description'] }}</p>@endif
-            </li>
-            @endforeach
-        </ul>
-    </div>
-</section>
-@endif
-
-@if($about)
-@php $aboutImg = $img($about['image_path'] ?? null); @endphp
-<section id="firm" class="cn-section cn-section--card"{!! $at('about') !!}>
-    <div class="cn-wrap cn-about{{ $aboutImg ? '' : ' cn-about--text' }}">
-        <div class="cn-about__body">
-            <p class="cn-label">The firm</p>
-            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
-            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
-            @if($txt($facts['service_area'] ?? null))<p class="cn-area">Serving {{ $facts['service_area'] }}</p>@endif
-        </div>
-        @if($aboutImg)<img class="cn-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
-    </div>
-</section>
-@endif
-
 @if($reviews)
 <section id="clients" class="cn-section"{!! $at('reviews_strip') !!}>
     <div class="cn-wrap cn-split">
@@ -108,6 +75,25 @@
 </section>
 @endif
 
+@if($services)
+<section id="services" class="cn-section"{!! $at('services') !!}>
+    <div class="cn-wrap cn-split">
+        <div class="cn-split__head">
+            <p class="cn-label">Services</p>
+            @if($txt($b['services']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['services']['heading'] }}</h2>@endif
+        </div>
+        <ul class="cn-services">
+            @foreach($services as $s)
+            <li>
+                <div class="cn-services__top"><h3>{{ $s['name'] }}</h3>@if($txt($s['price_text'] ?? null))<span class="cn-fee">{{ $s['price_text'] }}</span>@endif</div>
+                @if($txt($s['description'] ?? null))<p>{{ $s['description'] }}</p>@endif
+            </li>
+            @endforeach
+        </ul>
+    </div>
+</section>
+@endif
+
 @if($book || $cta)
 <section class="cn-band"{!! $cta ? $at('cta_band') : '' !!}>
     <div class="cn-wrap cn-band__inner">
@@ -116,6 +102,37 @@
             @if($cta && $txt($cta['text'] ?? null))<p{!! $f('text') !!}>{{ $cta['text'] }}</p>@endif
         </div>
         @if($book)<a class="cn-button cn-button--light cn-button--lg" href="{{ $book }}"{!! $bookHref !== null ? $at('booking_button') : '' !!}>{{ $bookLabel }}</a>@endif
+    </div>
+</section>
+@endif
+
+@if($team)
+<section id="team" class="cn-section"{!! $at('team') !!}>
+    <div class="cn-wrap cn-split">
+        <div class="cn-split__head">
+            <p class="cn-label">Our people</p>
+            @if($txt($b['team']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['team']['heading'] }}</h2>@endif
+        </div>
+        <ul class="cn-team">
+            @foreach($team as $m)
+            <li><span class="cn-team__face" aria-hidden="true">{{ mb_strtoupper(mb_substr(trim((string) $m['name']), 0, 1)) }}</span><div><h3>{{ $m['name'] }}</h3>@if($txt($m['role'] ?? null))<p class="cn-team__role">{{ $m['role'] }}</p>@endif@if($txt($m['description'] ?? null))<p>{{ $m['description'] }}</p>@endif</div></li>
+            @endforeach
+        </ul>
+    </div>
+</section>
+@endif
+
+@if($about)
+@php $aboutImg = $img($about['image_path'] ?? null); @endphp
+<section id="firm" class="cn-section cn-section--card"{!! $at('about') !!}>
+    <div class="cn-wrap cn-about{{ $aboutImg ? '' : ' cn-about--text' }}">
+        <div class="cn-about__body">
+            <p class="cn-label">The firm</p>
+            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
+            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
+            @if($txt($facts['service_area'] ?? null))<p class="cn-area">Serving {{ $facts['service_area'] }}</p>@endif
+        </div>
+        @if($aboutImg)<img class="cn-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
     </div>
 </section>
 @endif

@@ -46,6 +46,12 @@ final class SiteDesignGenerateAction
         .'booking_button (label, url; variant "inline" | "banner" | "card") · contact (address, phone, email; variant "stack" | "columns" | "card")';
 
     /** What each page of a whole site is for (SiteBuildWholeAction), told to the AI so the four pages do not repeat each other. */
+    /**
+     * On a site template, the sections only the owner writes. A team section names real people who work here, so the AI never
+     * writes one (the boss's brief: no invented staff); the owner's own team section is kept as it is.
+     */
+    private const OWNER_ONLY_ON_TEMPLATE = ['team'];
+
     public const PAGE_PURPOSES = [
         'home' => 'the home page: the whole business at a glance — a strong hero, the main services, why choose us, a few reviews if real ones are given, and a call to action',
         'services' => 'the services page: every service in detail with prices where given, how it works, and a call to action',
@@ -143,7 +149,7 @@ final class SiteDesignGenerateAction
         // A site on a template (SiteTemplates): the AI fills that template's sections with words and chooses no look — the
         // template's layout, colours and fonts stay exactly as they are (the boss's brief, 2026-10-04).
         $template = SiteTemplates::get($tokens['template'] ?? null);
-        $templateSections = $template === null ? [] : array_values(array_intersect($template['sections'], BlockPatchSchema::ADDABLE_TYPES));
+        $templateSections = $template === null ? [] : array_values(array_diff(array_intersect($template['sections'], BlockPatchSchema::ADDABLE_TYPES), self::OWNER_ONLY_ON_TEMPLATE));
         // A summary of what the top local peers cover, never their own sentences (CompetitorDigest).
         $peerNotes = $this->peers->block($businessId);
         // Building a whole site: the first page chose the theme; every later page keeps it so the site looks like one brand.
@@ -218,13 +224,13 @@ final class SiteDesignGenerateAction
         if ($template !== null) {
             $theme = null;
             $sections = $template['sections'];
-            $blocks = array_values(array_filter($blocks, static fn (array $b): bool => in_array($b['type'], $sections, true)));
-            // The sections the AI may not write (its products, its photos, a form) stay as the owner has them.
+            $blocks = array_values(array_filter($blocks, static fn (array $b): bool => in_array($b['type'], $sections, true) && ! in_array($b['type'], self::OWNER_ONLY_ON_TEMPLATE, true)));
+            // The sections the AI may not write (its products, its photos, a form, the owner's team) stay as the owner has them.
             $kept = array_column($blocks, 'type');
             foreach ($current as $block) {
                 $type = is_array($block) ? ($block['type'] ?? null) : null;
                 if (is_string($type) && in_array($type, $sections, true) && ! in_array($type, $kept, true)
-                    && ! in_array($type, BlockPatchSchema::ADDABLE_TYPES, true)) {
+                    && (! in_array($type, BlockPatchSchema::ADDABLE_TYPES, true) || in_array($type, self::OWNER_ONLY_ON_TEMPLATE, true))) {
                     $blocks[] = $block;
                     $kept[] = $type;
                 }

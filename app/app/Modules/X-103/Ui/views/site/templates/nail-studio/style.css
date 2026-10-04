@@ -100,3 +100,13 @@ body > [id$="-x176"] { font-size: 0.9rem; color: color-mix(in srgb, var(--color-
 .site-footer { margin: 0; padding: 1.3rem clamp(1rem, 4vw, 2.25rem); background: var(--color-ink); color: var(--color-surface); text-align: center; font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; }
 .site-footer p { margin: 0; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .ns-button { transition: none; } }
+
+/* team — drawn only when the owner has added their people; the AI never writes this section */
+.ns-team { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); }
+.ns-team li { display: flex; gap: 1rem; align-items: flex-start; padding: 1.25rem; background: var(--color-card); color: var(--color-ink); border: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent); border-radius: 0; }
+.ns-team li > div { display: grid; gap: 0.25rem; min-width: 0; }
+.ns-team__face { flex: none; display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 50%; background: color-mix(in srgb, var(--color-primary) 14%, var(--color-card)); color: var(--color-ink); font-family: var(--font-heading); font-weight: 700; font-size: 1.2rem; }
+.ns-team h3 { font-size: 1.08rem; margin: 0; }
+.ns-team__role { color: var(--color-accent-text); font-size: 0.9rem; font-weight: 600; }
+.ns-team p { margin: 0; }
+.ns-team li > div > p:not(.ns-team__role) { color: color-mix(in srgb, var(--color-ink) 74%, transparent); font-size: 0.95rem; }

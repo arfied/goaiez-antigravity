@@ -80,21 +80,6 @@
 </section>
 @endif
 
-@if($about)
-@php $aboutImg = $img($about['image_path'] ?? null); @endphp
-<section id="about" class="hm-section"{!! $at('about') !!}>
-    <div class="hm-wrap hm-about{{ $aboutImg ? '' : ' hm-about--text' }}">
-        @if($aboutImg)<img class="hm-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
-        <div class="hm-about__body">
-            <p class="hm-label">About us</p>
-            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
-            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
-            @if($txt($facts['years_in_business'] ?? null))<p class="hm-since">{{ $facts['years_in_business'] }} years in business</p>@endif
-        </div>
-    </div>
-</section>
-@endif
-
 @if($reviews)
 @php $lead = $reviews[0]; $rest = array_slice($reviews, 1, 2); @endphp
 <section id="reviews" class="hm-section hm-section--blue"{!! $at('reviews_strip') !!}>
@@ -117,15 +102,6 @@
 </section>
 @endif
 
-@if($shown)
-<section class="hm-section hm-section--tight"{!! $at('gallery') !!} aria-label="Photos">
-    <div class="hm-wrap">
-        @if($txt($b['gallery']['heading'] ?? null))<h2 class="hm-gallery__head"{!! $f('heading') !!}>{{ $b['gallery']['heading'] }}</h2>@endif
-        <div class="hm-gallery">@foreach($shown as $g)<img src="{{ $img($g['image_path']) }}" alt="{{ $txt($g['alt'] ?? null) ?? '' }}" loading="lazy">@endforeach</div>
-    </div>
-</section>
-@endif
-
 @if($book || $cta)
 <section class="hm-section hm-section--tight"{!! $cta ? $at('cta_band') : '' !!}>
     <div class="hm-wrap">
@@ -136,6 +112,30 @@
             </div>
             @if($book)<a class="hm-button hm-button--lg" href="{{ $book }}"{!! $bookHref !== null ? $at('booking_button') : '' !!}>{{ $bookLabel }}</a>@endif
         </div>
+    </div>
+</section>
+@endif
+
+@if($about)
+@php $aboutImg = $img($about['image_path'] ?? null); @endphp
+<section id="about" class="hm-section"{!! $at('about') !!}>
+    <div class="hm-wrap hm-about{{ $aboutImg ? '' : ' hm-about--text' }}">
+        @if($aboutImg)<img class="hm-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
+        <div class="hm-about__body">
+            <p class="hm-label">About us</p>
+            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
+            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
+            @if($txt($facts['years_in_business'] ?? null))<p class="hm-since">{{ $facts['years_in_business'] }} years in business</p>@endif
+        </div>
+    </div>
+</section>
+@endif
+
+@if($shown)
+<section class="hm-section hm-section--tight"{!! $at('gallery') !!} aria-label="Photos">
+    <div class="hm-wrap">
+        @if($txt($b['gallery']['heading'] ?? null))<h2 class="hm-gallery__head"{!! $f('heading') !!}>{{ $b['gallery']['heading'] }}</h2>@endif
+        <div class="hm-gallery">@foreach($shown as $g)<img src="{{ $img($g['image_path']) }}" alt="{{ $txt($g['alt'] ?? null) ?? '' }}" loading="lazy">@endforeach</div>
     </div>
 </section>
 @endif

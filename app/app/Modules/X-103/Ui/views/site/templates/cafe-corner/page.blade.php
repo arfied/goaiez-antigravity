@@ -76,20 +76,6 @@
 </section>
 @endif
 
-@if($about)
-@php $aboutImg = $img($about['image_path'] ?? null); @endphp
-<section id="about" class="cc-section cc-section--tint"{!! $at('about') !!}>
-    <div class="cc-wrap cc-about{{ $aboutImg ? '' : ' cc-about--text' }}">
-        <div class="cc-about__body">
-            <p class="cc-kicker">About us</p>
-            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
-            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
-        </div>
-        @if($aboutImg)<img class="cc-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
-    </div>
-</section>
-@endif
-
 @if($shown)
 <section class="cc-section cc-section--tight"{!! $at('gallery') !!} aria-label="Photos">
     <div class="cc-wrap">
@@ -131,6 +117,20 @@
             @if($bookHref)<a class="cc-button cc-button--light cc-button--lg" href="{{ $bookHref }}"{!! $at('booking_button') !!}>{{ $booking['label'] }}</a>@endif
             @if($ctaHref && $ctaHref !== $bookHref)<a class="cc-button cc-button--outline cc-button--lg" href="{{ $ctaHref }}"{!! $f('label') !!}>{{ $cta['label'] }}</a>@endif
         </div>
+    </div>
+</section>
+@endif
+
+@if($about)
+@php $aboutImg = $img($about['image_path'] ?? null); @endphp
+<section id="about" class="cc-section cc-section--tint"{!! $at('about') !!}>
+    <div class="cc-wrap cc-about{{ $aboutImg ? '' : ' cc-about--text' }}">
+        <div class="cc-about__body">
+            <p class="cc-kicker">About us</p>
+            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
+            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
+        </div>
+        @if($aboutImg)<img class="cc-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
     </div>
 </section>
 @endif

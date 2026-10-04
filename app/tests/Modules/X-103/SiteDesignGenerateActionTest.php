@@ -476,7 +476,7 @@ class SiteDesignGenerateActionTest extends TestCase
         $this->assertSame('tenant/1/shop-7312.jpg', $design['blocks'][4]['items'][0]['image_path']);
         $this->assertSame('Saturday', $design['blocks'][2]['hours'][0]['day']);
         $this->assertSame('Asheville 7313', $design['blocks'][2]['facts']['service_area']);
-        Http::assertSent(fn ($r) => str_contains($r->body(), 'Maker Market') && str_contains($r->body(), 'hero, about, reviews_strip, faq, cta_band, contact')
+        Http::assertSent(fn ($r) => str_contains($r->body(), 'Maker Market') && str_contains($r->body(), 'hero, reviews_strip, about, faq, cta_band, contact')
             && ! str_contains($r->body(), 'Themes (use one id)') && ! str_contains($r->body(), 'Fonts you may use'));
 
         $preview = app(PagePreview::class)->designHtml($page, 'claude');
@@ -486,6 +486,38 @@ class SiteDesignGenerateActionTest extends TestCase
         app(SiteDesignUseAction::class)->handle($page->business_id, $page->id, 'claude');
         app(SiteEditApplyAction::class)->handle($page->business_id, $page->id);
         $this->assertSame('maker-market', app(IndustryStartingPoints::class)->forBusiness($page->business_id)['template']);
+    }
+
+    public function test_on_a_template_the_ai_never_writes_the_team_and_the_owners_team_is_kept(): void
+    {
+        // Fixture taken from test_on_a_template_the_ai_fills_its_sections_chooses_no_look_and_keeps_what_it_may_not_write.
+        $page = $this->page([
+            ['type' => 'hero', 'headline' => 'Old headline'],
+            ['type' => 'team', 'heading' => 'Our therapists', 'items' => [['name' => 'Anna Reyes 7341', 'role' => 'Founder']]],
+            ['type' => 'contact', 'phone' => '0100'],
+        ]);
+        app(SiteTemplateApplyAction::class)->handle($page->business_id, $page->id, 'calm-spa');
+        $this->fakeAnswer(json_encode([
+            'blocks' => [
+                ['type' => 'hero', 'headline' => 'Slow down 7342'],
+                ['type' => 'team', 'heading' => 'Invented 7343', 'items' => [['name' => 'Made Up Person 7344', 'role' => 'Therapist']]],
+                ['type' => 'contact', 'phone' => '0100'],
+            ],
+            'explanation' => 'Filled the template.',
+        ]));
+
+        $res = app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id);
+
+        $this->assertSame('ready', $res['status']);
+        $page->refresh();
+        $blocks = $page->draft_meta['designs']['claude']['blocks'];
+        $teams = array_values(array_filter($blocks, static fn (array $b): bool => $b['type'] === 'team'));
+        $this->assertCount(1, $teams);
+        $this->assertSame('Anna Reyes 7341', $teams[0]['items'][0]['name']);
+        $this->assertStringNotContainsString('Made Up Person 7344', (string) json_encode($blocks));
+        $this->assertStringNotContainsString('Invented 7343', (string) json_encode($blocks));
+        Http::assertSent(fn ($r) => str_contains($r->body(), 'Calm Spa') && str_contains($r->body(), 'and no others: hero')
+            && preg_match('/and no others: [^.]*team/', $r->body()) !== 1);
     }
 
     public function test_an_ai_design_keeps_the_owners_opening_hours_and_stated_facts(): void

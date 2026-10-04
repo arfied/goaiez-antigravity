@@ -6,6 +6,7 @@
     $about = isset($b['about']) && $txt($b['about']['text'] ?? null) ? $b['about'] : null;
     $services = array_values(array_filter((array) ($b['services']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['name'] ?? null)));
     $reviews = array_values(array_filter((array) ($b['reviews_strip']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['text'] ?? null)));
+    $team = array_values(array_filter((array) ($b['team']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['name'] ?? null) && ! str_starts_with((string) $i['name'], 'demo·')));
     $faqs = array_values(array_filter((array) ($b['faq']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['question'] ?? null) && $txt($i['answer'] ?? null)));
     $gallery = array_values(array_filter((array) ($b['gallery']['items'] ?? []), fn ($i) => is_array($i) && $img($i['image_path'] ?? null)));
     $booking = $b['booking_button'] ?? null;
@@ -69,20 +70,6 @@
 </section>
 @endif
 
-@if($about)
-@php $aboutImg = $img($about['image_path'] ?? null); @endphp
-<section id="about" class="sb-section sb-section--tint"{!! $at('about') !!}>
-    <div class="sb-wrap sb-about{{ $aboutImg ? '' : ' sb-about--text' }}">
-        <div class="sb-about__body">
-            <p class="sb-tag">About us</p>
-            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
-            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
-        </div>
-        @if($aboutImg)<img class="sb-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
-    </div>
-</section>
-@endif
-
 @if($gallery)
 <section class="sb-section"{!! $at('gallery') !!}>
     <div class="sb-wrap">
@@ -122,6 +109,36 @@
             @if($cta && $txt($cta['text'] ?? null))<p{!! $f('text') !!}>{{ $cta['text'] }}</p>@endif
             @if($book)<a class="sb-button sb-button--lg" href="{{ $book }}"{!! $bookHref !== null ? $at('booking_button') : '' !!}>{{ $bookLabel }}</a>@endif
         </div>
+    </div>
+</section>
+@endif
+
+@if($team)
+<section id="team" class="sb-section"{!! $at('team') !!}>
+    <div class="sb-wrap">
+        <div class="sb-head">
+            <p class="sb-tag">Our team</p>
+            @if($txt($b['team']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['team']['heading'] }}</h2>@endif
+        </div>
+        <ul class="sb-team">
+            @foreach($team as $m)
+            <li><span class="sb-team__face" aria-hidden="true">{{ mb_strtoupper(mb_substr(trim((string) $m['name']), 0, 1)) }}</span><div><h3>{{ $m['name'] }}</h3>@if($txt($m['role'] ?? null))<p class="sb-team__role">{{ $m['role'] }}</p>@endif@if($txt($m['description'] ?? null))<p>{{ $m['description'] }}</p>@endif</div></li>
+            @endforeach
+        </ul>
+    </div>
+</section>
+@endif
+
+@if($about)
+@php $aboutImg = $img($about['image_path'] ?? null); @endphp
+<section id="about" class="sb-section sb-section--tint"{!! $at('about') !!}>
+    <div class="sb-wrap sb-about{{ $aboutImg ? '' : ' sb-about--text' }}">
+        <div class="sb-about__body">
+            <p class="sb-tag">About us</p>
+            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
+            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
+        </div>
+        @if($aboutImg)<img class="sb-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
     </div>
 </section>
 @endif

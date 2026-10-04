@@ -84,30 +84,6 @@
 </section>
 @endif
 
-@if($about)
-@php $aboutImg = $img($about['image_path'] ?? null); @endphp
-<section id="about" class="gp-section gp-section--dark"{!! $at('about') !!}>
-    <div class="gp-wrap gp-about{{ $aboutImg ? '' : ' gp-about--text' }}">
-        @if($aboutImg)<img class="gp-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
-        <div class="gp-about__body">
-            <p class="gp-label gp-label--light">About the shop</p>
-            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
-            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
-            @if($txt($facts['service_area'] ?? null))<p class="gp-area">Serving {{ $facts['service_area'] }}</p>@endif
-        </div>
-    </div>
-</section>
-@endif
-
-@if($shown)
-<section class="gp-section gp-section--tight"{!! $at('gallery') !!} aria-label="Photos">
-    <div class="gp-wrap">
-        @if($txt($b['gallery']['heading'] ?? null))<h2 class="gp-gallery__head"{!! $f('heading') !!}>{{ $b['gallery']['heading'] }}</h2>@endif
-        <div class="gp-gallery">@foreach($shown as $g)<img src="{{ $img($g['image_path']) }}" alt="{{ $txt($g['alt'] ?? null) ?? '' }}" loading="lazy">@endforeach</div>
-    </div>
-</section>
-@endif
-
 @if($reviews)
 <section id="reviews" class="gp-section"{!! $at('reviews_strip') !!}>
     <div class="gp-wrap">
@@ -137,6 +113,30 @@
             @if($cta && $txt($cta['text'] ?? null))<p{!! $f('text') !!}>{{ $cta['text'] }}</p>@endif
         </div>
         @if($book)<a class="gp-button gp-button--white gp-button--lg" href="{{ $book }}"{!! $bookHref !== null ? $at('booking_button') : '' !!}>{{ $bookLabel }}</a>@endif
+    </div>
+</section>
+@endif
+
+@if($about)
+@php $aboutImg = $img($about['image_path'] ?? null); @endphp
+<section id="about" class="gp-section gp-section--dark"{!! $at('about') !!}>
+    <div class="gp-wrap gp-about{{ $aboutImg ? '' : ' gp-about--text' }}">
+        @if($aboutImg)<img class="gp-about__img" src="{{ $aboutImg }}" alt="{{ $txt($about['image_alt'] ?? null) ?? '' }}" loading="lazy">@endif
+        <div class="gp-about__body">
+            <p class="gp-label gp-label--light">About the shop</p>
+            @if($txt($about['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $about['heading'] }}</h2>@endif
+            <p{!! $f('text') !!}>{{ $about['text'] }}</p>
+            @if($txt($facts['service_area'] ?? null))<p class="gp-area">Serving {{ $facts['service_area'] }}</p>@endif
+        </div>
+    </div>
+</section>
+@endif
+
+@if($shown)
+<section class="gp-section gp-section--tight"{!! $at('gallery') !!} aria-label="Photos">
+    <div class="gp-wrap">
+        @if($txt($b['gallery']['heading'] ?? null))<h2 class="gp-gallery__head"{!! $f('heading') !!}>{{ $b['gallery']['heading'] }}</h2>@endif
+        <div class="gp-gallery">@foreach($shown as $g)<img src="{{ $img($g['image_path']) }}" alt="{{ $txt($g['alt'] ?? null) ?? '' }}" loading="lazy">@endforeach</div>
     </div>
 </section>
 @endif

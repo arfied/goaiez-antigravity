@@ -7,6 +7,7 @@
     $about = isset($b['about']) && $txt($b['about']['text'] ?? null) ? $b['about'] : null;
     $services = array_values(array_filter((array) ($b['services']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['name'] ?? null)));
     $reviews = array_values(array_filter((array) ($b['reviews_strip']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['text'] ?? null)));
+    $team = array_values(array_filter((array) ($b['team']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['name'] ?? null) && ! str_starts_with((string) $i['name'], 'demo·')));
     $faqs = array_values(array_filter((array) ($b['faq']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['question'] ?? null) && $txt($i['answer'] ?? null)));
     $gallery = array_values(array_filter((array) ($b['gallery']['items'] ?? []), fn ($i) => is_array($i) && $img($i['image_path'] ?? null)));
     $booking = $b['booking_button'] ?? null;
@@ -55,6 +56,27 @@
 </section>
 @endif
 
+@if($reviews)
+<section id="reviews" class="co-section"{!! $at('reviews_strip') !!}>
+    <div class="co-wrap">
+        <div class="co-head">
+            <p class="co-label">Reviews</p>
+            @if($txt($b['reviews_strip']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['reviews_strip']['heading'] }}</h2>@endif
+        </div>
+        <div class="co-reviews">
+            @foreach(array_slice($reviews, 0, 3) as $r)
+            @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
+            <figure>
+                @if($stars > 0)<p class="co-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
+                <blockquote><p>{{ $r['text'] }}</p></blockquote>
+                @if($txt($r['author'] ?? null))<figcaption><span class="co-avatar" aria-hidden="true">{{ mb_strtoupper(mb_substr(trim((string) $r['author']), 0, 1)) }}</span>{{ $r['author'] }}@if($txt($r['source'] ?? null)) <span class="co-source">· {{ $r['source'] }}</span>@endif</figcaption>@endif
+            </figure>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
 @if($services)
 <section id="services" class="co-section"{!! $at('services') !!}>
     <div class="co-wrap">
@@ -70,6 +92,36 @@
                 @if($txt($s['description'] ?? null))<p>{{ $s['description'] }}</p>@endif
                 @if($txt($s['price_text'] ?? null))<span class="co-price">{{ $s['price_text'] }}</span>@endif
             </li>
+            @endforeach
+        </ul>
+    </div>
+</section>
+@endif
+
+@if($book || $cta)
+<section class="co-section co-section--tight"{!! $cta ? $at('cta_band') : '' !!}>
+    <div class="co-wrap">
+        <div class="co-band">
+            <div>
+                @if($cta)<h2{!! $f('heading') !!}>{{ $cta['heading'] }}</h2>@else<h2>Let's talk</h2>@endif
+                @if($cta && $txt($cta['text'] ?? null))<p{!! $f('text') !!}>{{ $cta['text'] }}</p>@endif
+            </div>
+            @if($book)<a class="co-button co-button--white co-button--lg" href="{{ $book }}"{!! $bookHref !== null ? $at('booking_button') : '' !!}>{{ $bookLabel }}</a>@endif
+        </div>
+    </div>
+</section>
+@endif
+
+@if($team)
+<section id="team" class="co-section"{!! $at('team') !!}>
+    <div class="co-wrap">
+        <div class="co-head">
+            <p class="co-label">Our team</p>
+            @if($txt($b['team']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['team']['heading'] }}</h2>@endif
+        </div>
+        <ul class="co-team">
+            @foreach($team as $m)
+            <li><span class="co-team__face" aria-hidden="true">{{ mb_strtoupper(mb_substr(trim((string) $m['name']), 0, 1)) }}</span><div><h3>{{ $m['name'] }}</h3>@if($txt($m['role'] ?? null))<p class="co-team__role">{{ $m['role'] }}</p>@endif@if($txt($m['description'] ?? null))<p>{{ $m['description'] }}</p>@endif</div></li>
             @endforeach
         </ul>
     </div>
@@ -97,41 +149,6 @@
     <div class="co-wrap">
         @if($txt($b['gallery']['heading'] ?? null))<h2 class="co-gallery__head"{!! $f('heading') !!}>{{ $b['gallery']['heading'] }}</h2>@endif
         <div class="co-gallery">@foreach($shown as $g)<img src="{{ $img($g['image_path']) }}" alt="{{ $txt($g['alt'] ?? null) ?? '' }}" loading="lazy">@endforeach</div>
-    </div>
-</section>
-@endif
-
-@if($reviews)
-<section id="reviews" class="co-section"{!! $at('reviews_strip') !!}>
-    <div class="co-wrap">
-        <div class="co-head">
-            <p class="co-label">Reviews</p>
-            @if($txt($b['reviews_strip']['heading'] ?? null))<h2{!! $f('heading') !!}>{{ $b['reviews_strip']['heading'] }}</h2>@endif
-        </div>
-        <div class="co-reviews">
-            @foreach(array_slice($reviews, 0, 3) as $r)
-            @php $stars = is_numeric($r['rating'] ?? null) ? max(0, min(5, (int) round((float) $r['rating']))) : 0; @endphp
-            <figure>
-                @if($stars > 0)<p class="co-stars" aria-label="{{ $stars }} out of 5 stars">{{ str_repeat('★', $stars) }}</p>@endif
-                <blockquote><p>{{ $r['text'] }}</p></blockquote>
-                @if($txt($r['author'] ?? null))<figcaption><span class="co-avatar" aria-hidden="true">{{ mb_strtoupper(mb_substr(trim((string) $r['author']), 0, 1)) }}</span>{{ $r['author'] }}@if($txt($r['source'] ?? null)) <span class="co-source">· {{ $r['source'] }}</span>@endif</figcaption>@endif
-            </figure>
-            @endforeach
-        </div>
-    </div>
-</section>
-@endif
-
-@if($book || $cta)
-<section class="co-section co-section--tight"{!! $cta ? $at('cta_band') : '' !!}>
-    <div class="co-wrap">
-        <div class="co-band">
-            <div>
-                @if($cta)<h2{!! $f('heading') !!}>{{ $cta['heading'] }}</h2>@else<h2>Let's talk</h2>@endif
-                @if($cta && $txt($cta['text'] ?? null))<p{!! $f('text') !!}>{{ $cta['text'] }}</p>@endif
-            </div>
-            @if($book)<a class="co-button co-button--white co-button--lg" href="{{ $book }}"{!! $bookHref !== null ? $at('booking_button') : '' !!}>{{ $bookLabel }}</a>@endif
-        </div>
     </div>
 </section>
 @endif
