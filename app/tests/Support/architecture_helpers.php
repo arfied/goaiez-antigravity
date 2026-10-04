@@ -659,6 +659,10 @@ function outboundHttpPermittedFiles(): array
         // fal.ai (2026-10-02, the boss: low-cost FLUX pictures) — pictures only, returned inline (sync_mode), so the one
         // host is fal.run and no picture is fetched from anywhere else.
         'Services/Ai/FalImageClient.php',
+        // Pixabay (2026-10-04, the boss's template brief: a stock-photo fallback when a business has too few photos of its own) —
+        // a documented vendor JSON API with its own credential; searches pixabay.com/api and downloads only from pixabay.com or
+        // cdn.pixabay.com, never any other host.
+        'Services/Images/PixabayClient.php',
 
         // The embeddings client (lane L5 phase 1). A third file rather than a
         // widened second one, because Anthropic publishes no embeddings API and

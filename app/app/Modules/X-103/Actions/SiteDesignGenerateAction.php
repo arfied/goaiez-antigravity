@@ -65,6 +65,7 @@ final class SiteDesignGenerateAction
         private readonly StatedFacts $statedFacts,
         private readonly CompetitorDigest $peers,
         private readonly SiteImageGenerateAction $picture,
+        private readonly SiteStockPhotoAction $stock,
         private readonly PriceBook $priceBook,
         private readonly SiteBlockRenderer $renderer,
     ) {}
@@ -325,6 +326,10 @@ final class SiteDesignGenerateAction
             if ($made >= 3) {
                 continue;
             }
+            // On a template the banner tries a stock photo before a picture is made (below), so the AI's idea for it waits.
+            if ($template !== null && $blocks[$index]['type'] === 'hero' && $this->stock->available()) {
+                continue;
+            }
             $description = is_array($wanted) && is_string($wanted['description'] ?? null) ? trim($wanted['description']) : '';
             if ($description === '') {
                 continue;
@@ -419,6 +424,24 @@ final class SiteDesignGenerateAction
             }
             if ($items !== []) {
                 $blocks[] = ['type' => 'products', 'items' => $items, 'source' => 'website'];
+            }
+        }
+
+        // On a template, a banner the business has no wide photo for gets a stock photo of its trade before any picture is made
+        // (the boss's brief: the business's own photos first, a stock photo next, a made-up one last). It is marked as stock, and
+        // its alt text says so, so it is never taken for the business's own.
+        if ($template !== null && $heroIndex !== null && empty($blocks[$heroIndex]['image_path'])) {
+            try {
+                $stock = $this->stock->handle($businessId, (string) $template['id']);
+            } catch (Throwable) {
+                $stock = ['status' => 'none'];
+            }
+            if (($stock['status'] ?? null) === 'stored') {
+                $blocks[$heroIndex]['image_path'] = $stock['path'];
+                $blocks[$heroIndex]['image_alt'] = $stock['alt'];
+                $blocks[$heroIndex]['image_width'] = $stock['width'];
+                $blocks[$heroIndex]['image_height'] = $stock['height'];
+                $blocks[$heroIndex]['image_source'] = 'stock';
             }
         }
 

@@ -603,6 +603,43 @@ class SiteDesignGenerateActionTest extends TestCase
         Http::assertNotSent(fn ($r) => str_contains($r->url(), 'images/generations') || str_contains($r->url(), 'fal.run'));
     }
 
+    public function test_on_a_template_a_banner_without_a_wide_photo_of_its_own_gets_a_stock_photo_before_any_picture_is_made(): void
+    {
+        // Fixture taken from test_on_a_template_the_owners_own_photos_fill_the_banner_the_about_and_a_gallery_before_any_picture_is_made.
+        Storage::fake('local');
+        $page = $this->page([['type' => 'hero', 'headline' => 'Old headline']]);
+        app(SiteTemplateApplyAction::class)->handle($page->business_id, $page->id, 'calm-spa');
+        config(['credentials.pixabay_api_key' => 'fake-pixabay']);
+        $image = imagecreatetruecolor(1280, 853);
+        ob_start();
+        imagejpeg($image);
+        $jpeg = (string) ob_get_clean();
+        Http::fake([
+            'pixabay.com/api/*' => Http::response(['total' => 1, 'totalHits' => 1, 'hits' => [
+                ['id' => 7461, 'pageURL' => 'https://pixabay.com/photos/7461/', 'tags' => 'spa, stones, candles', 'largeImageURL' => 'https://pixabay.com/get/stones-7461.jpg', 'imageWidth' => 1920, 'imageHeight' => 1280],
+            ]], 200, ['Content-Type' => 'application/json']),
+            'pixabay.com/get/*' => Http::response($jpeg, 200, ['Content-Type' => 'image/jpeg']),
+        ]);
+        $this->fakeAnswer(json_encode([
+            'blocks' => [
+                ['type' => 'hero', 'headline' => 'Slow down 7462'],
+                ['type' => 'about', 'text' => 'A quiet house 7463.'],
+            ],
+            'images' => [['block_index' => 0, 'description' => 'a calm treatment room 7464']],
+        ]));
+
+        app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id);
+
+        $page->refresh();
+        $hero = $page->draft_meta['designs']['claude']['blocks'][0];
+        $this->assertSame('hero', $hero['type']);
+        $this->assertSame('site-inventory/'.$page->business_id.'/stock-pixabay-7461.jpg', $hero['image_path']);
+        $this->assertSame('stock', $hero['image_source']);
+        $this->assertSame('Spa, stones, candles (stock photo)', $hero['image_alt']);
+        Storage::disk('local')->assertExists($hero['image_path']);
+        Http::assertNotSent(fn ($r) => str_contains($r->url(), 'images/generations') || str_contains($r->url(), 'fal.run'));
+    }
+
     public function test_on_a_template_too_few_photos_make_no_gallery(): void
     {
         $page = $this->page([['type' => 'hero', 'headline' => 'Old headline']]);
