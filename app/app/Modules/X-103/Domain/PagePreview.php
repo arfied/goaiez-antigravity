@@ -56,7 +56,10 @@ final class PagePreview
         }
 
         $tokens = app(IndustryStartingPoints::class)->forBusiness($page->business_id);
-        unset($tokens['template']);
+        // A design made for the site's template is drawn through it; any other design is a theme look.
+        if (! is_string($design['template'] ?? null) || SiteTemplates::get($design['template']) === null) {
+            unset($tokens['template']);
+        }
         $theme = is_string($design['theme'] ?? null) ? SiteThemes::get($design['theme']) : null;
         if ($theme !== null) {
             $tokens['theme'] = $theme['id'];

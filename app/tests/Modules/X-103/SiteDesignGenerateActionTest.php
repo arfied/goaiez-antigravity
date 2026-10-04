@@ -9,12 +9,17 @@ use App\Models\Business;
 use App\Models\Location;
 use App\Models\User;
 use App\Modules\X103\Actions\SiteDesignGenerateAction;
+use App\Modules\X103\Actions\SiteDesignUseAction;
+use App\Modules\X103\Actions\SiteEditApplyAction;
+use App\Modules\X103\Actions\SiteTemplateApplyAction;
+use App\Modules\X103\Domain\PagePreview;
 use App\Modules\X103\Domain\SiteDesignEngines;
 use App\Modules\X103\Jobs\SiteDesignJob;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\SiteInventoryImage;
 use App\Modules\X103\Models\SiteInventoryPage;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Industry\IndustryStartingPoints;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -435,5 +440,79 @@ class SiteDesignGenerateActionTest extends TestCase
                 && str_contains($m[1], 'Montserrat, system-ui, sans-serif')
                 && ! str_contains($m[1], 'Trebuchet');
         });
+    }
+
+    public function test_on_a_template_the_ai_fills_its_sections_chooses_no_look_and_keeps_what_it_may_not_write(): void
+    {
+        $page = $this->page([
+            ['type' => 'hero', 'headline' => 'Old headline'],
+            ['type' => 'products', 'heading' => 'New from the kiln', 'items' => [['name' => 'Folk mug 7311', 'price_text' => '$38', 'image_path' => 'tenant/1/mug-7311.jpg']]],
+            ['type' => 'gallery', 'items' => [['image_path' => 'tenant/1/shop-7312.jpg']]],
+            ['type' => 'contact', 'phone' => '0100', 'hours' => [['day' => 'Saturday', 'open' => '10:00', 'close' => '18:00']], 'facts' => ['service_area' => 'Asheville 7313']],
+        ]);
+        app(SiteTemplateApplyAction::class)->handle($page->business_id, $page->id, 'maker-market');
+        $this->fakeAnswer(json_encode([
+            'theme' => 'bold-trade',
+            'style' => ['palette' => ['primary' => '#c2410c']],
+            'blocks' => [
+                ['type' => 'hero', 'headline' => 'Pottery made by hand 7314', 'variant' => 'cover'],
+                ['type' => 'team', 'heading' => 'Not in this template 7315', 'items' => [['name' => 'Sam', 'role' => 'Potter']]],
+                ['type' => 'about', 'heading' => 'Our story', 'text' => 'Two potters 7316.'],
+                ['type' => 'contact', 'phone' => '0100'],
+            ],
+            'explanation' => 'Filled the template.',
+        ]));
+
+        $res = app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id);
+
+        $this->assertSame('ready', $res['status']);
+        $page->refresh();
+        $design = $page->draft_meta['designs']['claude'];
+        $this->assertSame('maker-market', $design['template']);
+        $this->assertNull($design['theme']);
+        $this->assertNull($design['style']);
+        $this->assertSame(['hero', 'about', 'contact', 'products', 'gallery'], array_column($design['blocks'], 'type'));
+        $this->assertSame('Folk mug 7311', $design['blocks'][3]['items'][0]['name']);
+        $this->assertSame('tenant/1/shop-7312.jpg', $design['blocks'][4]['items'][0]['image_path']);
+        $this->assertSame('Saturday', $design['blocks'][2]['hours'][0]['day']);
+        $this->assertSame('Asheville 7313', $design['blocks'][2]['facts']['service_area']);
+        Http::assertSent(fn ($r) => str_contains($r->body(), 'Maker Market') && str_contains($r->body(), 'hero, about, reviews_strip, faq, cta_band, contact')
+            && ! str_contains($r->body(), 'Themes (use one id)') && ! str_contains($r->body(), 'Fonts you may use'));
+
+        $preview = app(PagePreview::class)->designHtml($page, 'claude');
+        $this->assertStringContainsString('Pottery made by hand 7314', $preview);
+        $this->assertStringContainsString('<li class="mm-product">', $preview);
+
+        app(SiteDesignUseAction::class)->handle($page->business_id, $page->id, 'claude');
+        app(SiteEditApplyAction::class)->handle($page->business_id, $page->id);
+        $this->assertSame('maker-market', app(IndustryStartingPoints::class)->forBusiness($page->business_id)['template']);
+    }
+
+    public function test_an_ai_design_keeps_the_owners_opening_hours_and_stated_facts(): void
+    {
+        $page = $this->page([
+            ['type' => 'hero', 'headline' => 'Old headline'],
+            ['type' => 'contact', 'phone' => '0100', 'hours' => [['day' => 'Monday', 'open' => '08:00', 'close' => '17:00']], 'facts' => ['licence_number' => 'LIC-7317'], 'industry_facts' => [['label' => 'Emergency', 'value' => 'Yes 7318']]],
+        ]);
+        $this->fakeAnswer(json_encode([
+            'theme' => 'bold-trade',
+            'blocks' => [
+                ['type' => 'hero', 'headline' => 'Designed 7319'],
+                ['type' => 'contact', 'phone' => '0100', 'email' => 'a@example.com'],
+            ],
+        ]));
+
+        app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id);
+
+        $page->refresh();
+        $design = $page->draft_meta['designs']['claude'];
+        $this->assertSame('bold-trade', $design['theme']);
+        $this->assertNull($design['template']);
+        $contact = $design['blocks'][1];
+        $this->assertSame('a@example.com', $contact['email']);
+        $this->assertSame('Monday', $contact['hours'][0]['day']);
+        $this->assertSame('LIC-7317', $contact['facts']['licence_number']);
+        $this->assertSame('Yes 7318', $contact['industry_facts'][0]['value']);
+        Http::assertSent(fn ($r) => str_contains($r->body(), 'Themes (use one id)'));
     }
 }

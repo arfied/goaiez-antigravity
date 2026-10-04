@@ -11,6 +11,7 @@ use App\Modules\X103\Domain\CompetitorDigest;
 use App\Modules\X103\Domain\SiteBlockRenderer;
 use App\Modules\X103\Domain\SiteDesignEngines;
 use App\Modules\X103\Domain\SiteFonts;
+use App\Modules\X103\Domain\SiteTemplates;
 use App\Modules\X103\Domain\SiteThemes;
 use App\Modules\X103\Domain\StatedFacts;
 use App\Modules\X103\Models\Page;
@@ -138,6 +139,10 @@ final class SiteDesignGenerateAction
             $themes[] = $id.' — '.$theme['label'].' (best for: '.$theme['for'].')';
         }
         $tokens = app(IndustryStartingPoints::class)->forBusiness($businessId);
+        // A site on a template (SiteTemplates): the AI fills that template's sections with words and chooses no look — the
+        // template's layout, colours and fonts stay exactly as they are (the boss's brief, 2026-10-04).
+        $template = SiteTemplates::get($tokens['template'] ?? null);
+        $templateSections = $template === null ? [] : array_values(array_intersect($template['sections'], BlockPatchSchema::ADDABLE_TYPES));
         // A summary of what the top local peers cover, never their own sentences (CompetitorDigest).
         $peerNotes = $this->peers->block($businessId);
         // Building a whole site: the first page chose the theme; every later page keeps it so the site looks like one brand.
@@ -152,11 +157,13 @@ final class SiteDesignGenerateAction
             ."\n\nThis page's current content (JSON):\n".json_encode($content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
             .($oldHero !== null && ! empty($oldHero['image_path']) ? "\n\nThe business already has a main picture; it is kept on the hero." : '')
             .($photoLines === [] ? '' : "\n\nPhotos from the business's own website — place one with \"owner_photo\": <its number> ONLY if it truly shows this business; otherwise describe a new one:\n".implode("\n", $photoLines))
-            ."\n\nThemes (use one id):\n".implode("\n", $themes)
+            .($template !== null
+                ? "\n\nThis site uses the \"".$template['label'].'" template, a finished page designed for '.$template['for'].'. Return these sections, in this order, and no others: '.implode(', ', $templateSections).'. Do not return a "theme", a "style" or any "variant": the template sets the whole look.'
+                : "\n\nThemes (use one id):\n".implode("\n", $themes))
             ."\n\nSection types and their fields: ".self::CATALOGUE
-            ."\n\nFonts you may use: ".implode(' | ', self::modernFontStacks())
-            ."\n\nThe brand's current colours and fonts (JSON): ".json_encode(['palette' => $tokens['palette'] ?? [], 'type_pairing' => $tokens['type_pairing'] ?? []], JSON_UNESCAPED_SLASHES)
-            .($siteTheme !== null || ! is_array($oldBrand) || $oldBrand === [] ? '' : "\n\nColours and fonts on the business's current website — keep the brand recognisable: use these colours for primary and accent where text stays easy to read, and choose the listed font closest to theirs (JSON): ".json_encode($oldBrand, JSON_UNESCAPED_SLASHES))
+            .($template !== null ? '' : "\n\nFonts you may use: ".implode(' | ', self::modernFontStacks())
+            ."\n\nThe brand's current colours and fonts (JSON): ".json_encode(['palette' => $tokens['palette'] ?? [], 'type_pairing' => $tokens['type_pairing'] ?? []], JSON_UNESCAPED_SLASHES))
+            .($template !== null || $siteTheme !== null || ! is_array($oldBrand) || $oldBrand === [] ? '' : "\n\nColours and fonts on the business's current website — keep the brand recognisable: use these colours for primary and accent where text stays easy to read, and choose the listed font closest to theirs (JSON): ".json_encode($oldBrand, JSON_UNESCAPED_SLASHES))
             .($crawled === '' ? '' : "\n\nText from the business's current website, for reference only:".$crawled)
             .($peerNotes === '' ? '' : "\n\n".$peerNotes);
 
@@ -207,9 +214,44 @@ final class SiteDesignGenerateAction
         if ($siteTheme !== null) {
             $theme = $siteTheme;
         }
+        if ($template !== null) {
+            $theme = null;
+            $sections = $template['sections'];
+            $blocks = array_values(array_filter($blocks, static fn (array $b): bool => in_array($b['type'], $sections, true)));
+            // The sections the AI may not write (its products, its photos, a form) stay as the owner has them.
+            $kept = array_column($blocks, 'type');
+            foreach ($current as $block) {
+                $type = is_array($block) ? ($block['type'] ?? null) : null;
+                if (is_string($type) && in_array($type, $sections, true) && ! in_array($type, $kept, true)
+                    && ! in_array($type, BlockPatchSchema::ADDABLE_TYPES, true)) {
+                    $blocks[] = $block;
+                    $kept[] = $type;
+                }
+            }
+        }
+        // The owner's own contact details the AI may not write — opening hours and the facts the owner stated (licence,
+        // insurance, area served) — stay on the contact section; an AI design used to drop them.
+        $ownerContact = null;
+        foreach ($current as $block) {
+            if (is_array($block) && ($block['type'] ?? null) === 'contact') {
+                $ownerContact = $block;
+                break;
+            }
+        }
+        if ($ownerContact !== null) {
+            foreach ($blocks as $i => $block) {
+                if ($block['type'] === 'contact') {
+                    foreach (['hours', 'facts', 'industry_facts'] as $key) {
+                        if (isset($ownerContact[$key]) && is_array($ownerContact[$key]) && ! isset($block[$key])) {
+                            $blocks[$i][$key] = $ownerContact[$key];
+                        }
+                    }
+                }
+            }
+        }
 
         $style = null;
-        if ($siteTheme === null && is_array($json['style'] ?? null) && $json['style'] !== []) {
+        if ($siteTheme === null && $template === null && is_array($json['style'] ?? null) && $json['style'] !== []) {
             $base = $theme !== null
                 ? ['palette' => SiteThemes::THEMES[$theme]['palette'], 'type_pairing' => SiteThemes::THEMES[$theme]['type_pairing']]
                 : ['palette' => $tokens['palette'] ?? [], 'type_pairing' => $tokens['type_pairing'] ?? []];
@@ -318,6 +360,7 @@ final class SiteDesignGenerateAction
         $meta['designs'][$engine] = [
             'status' => 'ready',
             'theme' => $theme,
+            'template' => $template === null ? null : $template['id'],
             'style' => $style,
             'blocks' => $blocks,
             'explanation' => is_string($json['explanation'] ?? null) ? mb_substr($json['explanation'], 0, 600) : '',
