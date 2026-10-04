@@ -1,0 +1,122 @@
+/* Main Street. Colours come only from the --color-* variables, so an owner's colour edits restyle it and the contrast rules still hold. */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 5rem; }
+body { margin: 0; background: var(--color-surface); color: var(--color-ink); font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.65; }
+img { max-width: 100%; display: block; }
+a { color: var(--color-accent-text); }
+a:focus-visible, summary:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
+h1, h2, h3 { font-family: var(--font-heading); line-height: 1.12; margin: 0; text-wrap: balance; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.8rem, 3.8vw, 2.6rem); font-weight: 700; }
+h3 { font-size: 1.12rem; font-weight: 700; }
+p { margin: 0; }
+.ms { overflow-x: clip; --line: color-mix(in srgb, var(--color-ink) 10%, transparent); --soft: color-mix(in srgb, var(--color-ink) 72%, transparent); --violet: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface)); --peach: color-mix(in srgb, var(--color-accent) 12%, var(--color-surface)); }
+.ms-wrap { max-width: 72rem; margin-inline: auto; padding-inline: clamp(1rem, 4vw, 2rem); }
+.ms-narrow { max-width: 46rem; }
+.ms-label { font-family: var(--font-heading); font-size: 0.85rem; font-weight: 700; color: var(--color-accent-text); }
+.ms-button { display: inline-flex; align-items: center; justify-content: center; padding: 0.7rem 1.3rem; border-radius: 14px; font-weight: 800; text-decoration: none; border: 2px solid transparent; white-space: nowrap; background: var(--color-primary); color: var(--color-on-primary); box-shadow: 0 4px 0 color-mix(in srgb, var(--color-primary) 55%, var(--color-ink)); transition: transform .12s ease, box-shadow .12s ease; }
+.ms-button:hover { transform: translateY(2px); box-shadow: 0 2px 0 color-mix(in srgb, var(--color-primary) 55%, var(--color-ink)); }
+.ms-button--lg { padding: 0.9rem 1.6rem; font-size: 1.03rem; }
+.ms-button--soft { background: var(--color-card); color: var(--color-ink); border-color: var(--line); box-shadow: 0 4px 0 var(--line); }
+.ms-button--white { background: var(--color-card); color: var(--color-ink); box-shadow: none; }
+.ms-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+/* navigation */
+.ms-nav { position: sticky; top: 0; z-index: 20; background: var(--color-surface); border-bottom: 1px solid var(--line); }
+.ms-nav__row { display: flex; align-items: center; gap: 1.75rem; min-height: 4.4rem; }
+.ms-brand { margin-right: auto; color: var(--color-ink); text-decoration: none; font-family: var(--font-heading); font-weight: 700; font-size: 1.2rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ms-nav__links { display: flex; gap: 1.5rem; }
+.ms-nav__links a { color: var(--color-ink); text-decoration: none; font-weight: 700; font-size: 0.97rem; }
+.ms-nav__links a:hover { color: var(--color-accent-text); }
+.ms-menu { display: none; position: relative; }
+.ms-menu summary { list-style: none; cursor: pointer; display: grid; gap: 4px; padding: 0.7rem 0.6rem; border-radius: 12px; background: var(--violet); }
+.ms-menu summary::-webkit-details-marker { display: none; }
+.ms-menu summary span { display: block; width: 1.25rem; height: 2.5px; border-radius: 2px; background: var(--color-ink); }
+.ms-menu nav { position: absolute; right: 0; top: calc(100% + 0.6rem); min-width: 13rem; display: grid; padding: 0.5rem; background: var(--color-card); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 16px 34px rgba(0,0,0,0.12); }
+.ms-menu nav a { padding: 0.7rem 0.9rem; color: var(--color-ink); text-decoration: none; font-weight: 700; border-radius: 10px; }
+.ms-menu nav a:hover { background: var(--violet); }
+@media (max-width: 54rem) { .ms-nav__links { display: none; } .ms-menu { display: block; } .ms-nav__row { gap: 0.6rem; } }
+@media (max-width: 30rem) { .ms-nav__book { display: none; } }
+
+/* hero: friendly words beside a photograph in an arch */
+.ms-hero { padding-block: clamp(3rem, 7vw, 5.5rem); }
+.ms-hero__grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(2rem, 6vw, 5rem); align-items: center; }
+.ms-hero__grid--text { grid-template-columns: 1fr; max-width: 48rem; }
+.ms-hero__body { display: grid; gap: 1.2rem; }
+.ms-hero__where { justify-self: start; padding: 0.3rem 0.85rem; border-radius: 999px; background: var(--peach); color: var(--color-accent-text); font-weight: 700; font-size: 0.9rem; }
+.ms-hero h1 { font-size: clamp(2.3rem, 5.4vw, 3.9rem); font-weight: 700; }
+.ms-hero__sub { font-size: clamp(1.08rem, 1.7vw, 1.25rem); color: var(--soft); max-width: 34rem; }
+.ms-hero__media { position: relative; }
+.ms-hero__media::before { content: ""; position: absolute; inset: -1rem 1.5rem 2rem -1rem; border-radius: 999px 999px 24px 24px; background: var(--violet); }
+.ms-hero__media img { position: relative; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 999px 999px 24px 24px; }
+@media (max-width: 48rem) { .ms-hero__grid { grid-template-columns: 1fr; } .ms-hero__media { max-width: 22rem; justify-self: center; } }
+
+/* sections */
+.ms-section { padding-block: clamp(3.5rem, 8vw, 6rem); }
+.ms-section--tight { padding-block: clamp(2rem, 5vw, 3.5rem); }
+.ms-section--card { background: var(--color-card); }
+.ms-head { display: grid; gap: 0.6rem; max-width: 44rem; margin-bottom: clamp(1.75rem, 4vw, 2.75rem); }
+.ms-head--center { justify-items: center; text-align: center; margin-inline: auto; }
+
+/* services in soft-coloured tiles */
+.ms-services { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(3, 1fr); }
+.ms-services--two { grid-template-columns: repeat(2, 1fr); }
+.ms-services__item { display: grid; align-content: start; gap: 0.55rem; padding: 1.6rem; border-radius: 22px; }
+.ms-tone0 { background: var(--violet); }
+.ms-tone1 { background: var(--peach); }
+.ms-tone2 { background: var(--color-card); border: 1px solid var(--line); }
+.ms-services p { color: var(--soft); font-size: 0.98rem; }
+.ms-price { justify-self: start; margin-top: 0.3rem; padding: 0.2rem 0.7rem; border-radius: 999px; background: var(--color-card); font-weight: 800; font-size: 0.9rem; }
+@media (max-width: 52rem) { .ms-services { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 36rem) { .ms-services, .ms-services--two { grid-template-columns: 1fr; } }
+
+/* about */
+.ms-about { display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(2rem, 5vw, 4.5rem); align-items: center; }
+.ms-about--text { grid-template-columns: 1fr; max-width: 48rem; }
+.ms-about__img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 32px 32px 32px 4px; }
+.ms-about__body { display: grid; gap: 1rem; }
+.ms-about__body > p:last-child { font-size: 1.1rem; color: var(--soft); }
+@media (max-width: 46rem) { .ms-about { grid-template-columns: 1fr; } .ms-about__img { aspect-ratio: 16 / 10; } }
+
+/* stats */
+.ms-stats { list-style: none; margin-block: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 1rem; text-align: center; }
+.ms-stats li { display: grid; gap: 0.15rem; padding: 1.25rem 1rem; border-radius: 20px; border: 2px dashed color-mix(in srgb, var(--color-primary) 35%, transparent); }
+.ms-stats strong { font-family: var(--font-heading); font-size: clamp(1.7rem, 3.4vw, 2.4rem); font-weight: 700; color: var(--color-primary); line-height: 1.1; }
+.ms-stats span { color: var(--soft); font-size: 0.92rem; }
+
+/* reviews */
+.ms-reviews { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+.ms-reviews figure { position: relative; margin: 0; display: grid; align-content: start; gap: 0.75rem; padding: 2rem 1.6rem 1.6rem; background: var(--color-card); border-radius: 22px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); }
+.ms-quote { font-family: var(--font-heading); font-size: 3.5rem; line-height: 0.6; color: var(--color-primary); }
+.ms-reviews blockquote { margin: 0; font-size: 1.06rem; }
+.ms-stars { color: var(--color-accent-text); letter-spacing: 0.1em; }
+.ms-reviews figcaption { font-weight: 800; }
+.ms-reviews figcaption span { font-weight: 400; color: var(--soft); }
+
+/* gallery */
+.ms-gallery__head { margin-bottom: 1.5rem; }
+.ms-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.85rem; }
+.ms-gallery img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 22px; }
+@media (max-width: 36rem) { .ms-gallery { grid-template-columns: 1fr 1fr; } }
+
+/* band */
+.ms-band { background: var(--color-primary); color: var(--color-on-primary); }
+.ms-band__inner { display: grid; justify-items: center; gap: 1rem; text-align: center; padding-block: clamp(3rem, 7vw, 4.75rem); }
+.ms-band h2 { color: inherit; }
+.ms-band p { max-width: 36rem; opacity: 0.9; }
+
+/* questions */
+.ms-faq { display: grid; gap: 0.65rem; }
+.ms-q { background: var(--color-card); border: 1px solid var(--line); border-radius: 18px; }
+.ms-q summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 1rem; padding: 1.1rem 1.3rem; font-weight: 800; }
+.ms-q summary::-webkit-details-marker { display: none; }
+.ms-q summary::after { content: "+"; flex: none; display: grid; place-items: center; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: var(--violet); color: var(--color-primary); }
+.ms-q[open] summary::after { content: "−"; }
+.ms-q p { padding: 0 1.3rem 1.2rem; color: var(--soft); }
+
+/* visit */
+.ms-visit { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1rem; }
+.ms-visit__card { display: grid; align-content: start; gap: 0.6rem; padding: 1.8rem; border-radius: 24px; background: var(--color-surface); }
+.ms-visit__phone a { font-family: var(--font-heading); font-weight: 700; font-size: 1.45rem; text-decoration: none; }
+.ms-hours { border-collapse: collapse; width: 100%; }
+.ms-hours th, .ms-hours td { padding: 0.55rem 0; border-bottom: 1px dashed var(--line); text-align: left; font-weight: 700; }
+.ms-hours td { text-align: right; font-weight: 400; font-variant-numeric: tabular-nums; }

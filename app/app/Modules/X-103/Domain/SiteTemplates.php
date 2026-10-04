@@ -162,6 +162,30 @@ final class SiteTemplates
             'type_pairing' => ['heading' => 'Merriweather, Georgia, serif', 'body' => 'Inter, system-ui, sans-serif'],
             'sections' => ['hero', 'stats', 'services', 'about', 'reviews_strip', 'gallery', 'booking_button', 'faq', 'cta_band', 'contact'],
         ],
+        'counsel' => [
+            'label' => 'Counsel',
+            'for' => 'Accountants, law firms, financial advisers, consultants — ivory and navy, a brass rule, credentials up front',
+            'families' => ['office'],
+            'palette' => ['surface' => '#f7f5f0', 'card' => '#ffffff', 'ink' => '#16223a', 'primary' => '#16223a', 'accent' => '#8a6516'],
+            'type_pairing' => ['heading' => 'Lora, Georgia, serif', 'body' => 'Inter, system-ui, sans-serif'],
+            'sections' => ['hero', 'stats', 'services', 'about', 'reviews_strip', 'booking_button', 'faq', 'cta_band', 'contact'],
+        ],
+        'clear-office' => [
+            'label' => 'Clear Office',
+            'for' => 'Insurance agencies, real estate offices, consultants, IT and marketing firms — white and deep teal, soft panels',
+            'families' => ['office'],
+            'palette' => ['surface' => '#ffffff', 'card' => '#f1f6f5', 'ink' => '#0e2422', 'primary' => '#0f6b62', 'accent' => '#0f6b62'],
+            'type_pairing' => ['heading' => 'DM Sans, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
+            'sections' => ['hero', 'stats', 'services', 'about', 'gallery', 'reviews_strip', 'booking_button', 'faq', 'cta_band', 'contact'],
+        ],
+        'main-street' => [
+            'label' => 'Main Street',
+            'for' => 'Tax preparers, real estate agents, tutors, photographers, local studios — warm cream and violet, a photo in an arch',
+            'families' => ['office'],
+            'palette' => ['surface' => '#fffaf3', 'card' => '#ffffff', 'ink' => '#23223a', 'primary' => '#5b3fa8', 'accent' => '#b8452a'],
+            'type_pairing' => ['heading' => 'Poppins, system-ui, sans-serif', 'body' => 'Nunito, system-ui, sans-serif'],
+            'sections' => ['hero', 'services', 'about', 'stats', 'reviews_strip', 'gallery', 'booking_button', 'faq', 'cta_band', 'contact'],
+        ],
     ];
 
     /**
