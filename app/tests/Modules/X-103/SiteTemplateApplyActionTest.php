@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Tests\Modules\X103;
 
 use App\Models\Business;
+use App\Models\Location;
 use App\Modules\X103\Actions\SiteEditApplyAction;
 use App\Modules\X103\Actions\SiteTemplateApplyAction;
 use App\Modules\X103\Actions\SiteThemeApplyAction;
 use App\Modules\X103\Domain\PagePreview;
 use App\Modules\X103\Domain\SiteTemplates;
 use App\Modules\X103\Models\Page;
+use App\Modules\X103\Models\SiteInventoryPage;
 use App\Services\Industry\IndustryStartingPoints;
 use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
@@ -96,5 +98,47 @@ class SiteTemplateApplyActionTest extends TestCase
         app(SiteThemeApplyAction::class)->handle($biz->id, $page->id, 'bold-trade');
         $this->assertArrayNotHasKey('template', app(IndustryStartingPoints::class)->forBusiness($biz->id));
         $this->assertStringContainsString('class="site-block hero', app(PagePreview::class)->html($page->refresh(), false));
+    }
+
+    /** The brand the crawl read from the business's old website (SiteBrandSignals). */
+    private function crawledBrand(Business $biz, array $brand): void
+    {
+        SiteInventoryPage::create(['business_id' => $biz->id, 'location_id' => Location::where('business_id', $biz->id)->value('id'),
+            'url' => 'https://example.com', 'status' => 'fetched', 'fetched_at' => now(), 'brand' => $brand]);
+    }
+
+    public function test_the_businesss_own_brand_colour_becomes_the_templates_accent_and_nothing_else_changes(): void
+    {
+        [$biz, $page] = $this->site();
+        $this->crawledBrand($biz, ['theme_color' => '#0A0A8A', 'colours' => ['#e63946']]);
+
+        app(SiteTemplateApplyAction::class)->handle($biz->id, $page->id, 'trades-pro');
+
+        $palette = app(IndustryStartingPoints::class)->forBusiness($biz->id)['palette'];
+        $this->assertSame('#0a0a8a', $palette['accent']);
+        foreach (['surface', 'card', 'ink', 'primary'] as $key) {
+            $this->assertSame(SiteTemplates::TEMPLATES['trades-pro']['palette'][$key], $palette[$key], $key);
+        }
+    }
+
+    public function test_a_brand_colour_that_would_leave_text_unreadable_on_the_template_is_passed_over(): void
+    {
+        [$biz, $page] = $this->site();
+        // Maker Market lays a faint accent tint under accent-coloured text; this red cannot keep that text readable, the navy can.
+        $this->crawledBrand($biz, ['colours' => ['#e63946', '#0a0a8a']]);
+
+        app(SiteTemplateApplyAction::class)->handle($biz->id, $page->id, 'maker-market');
+
+        $this->assertSame('#0a0a8a', app(IndustryStartingPoints::class)->forBusiness($biz->id)['palette']['accent']);
+    }
+
+    public function test_without_a_brand_colour_that_fits_the_template_keeps_its_own_accent(): void
+    {
+        [$biz, $page] = $this->site();
+        $this->crawledBrand($biz, ['colours' => ['#e63946']]);
+
+        app(SiteTemplateApplyAction::class)->handle($biz->id, $page->id, 'maker-market');
+
+        $this->assertSame(SiteTemplates::TEMPLATES['maker-market']['palette']['accent'], app(IndustryStartingPoints::class)->forBusiness($biz->id)['palette']['accent']);
     }
 }
