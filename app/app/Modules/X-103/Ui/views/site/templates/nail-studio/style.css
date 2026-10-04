@@ -1,0 +1,102 @@
+/* Nail Studio. Colours come only from the --color-* variables, so an owner's colour edits restyle it and the contrast rules still hold. */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 5rem; }
+body { margin: 0; background: var(--color-surface); color: var(--color-ink); font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.6; }
+img { max-width: 100%; display: block; }
+a { color: var(--color-ink); }
+a:focus-visible, summary:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 3px; }
+h1, h2, h3 { font-family: var(--font-heading); font-weight: 700; line-height: 1; margin: 0; text-wrap: balance; text-transform: uppercase; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.9rem, 4.5vw, 3.2rem); }
+p { margin: 0; }
+.ns { overflow-x: clip; --line: color-mix(in srgb, var(--color-ink) 16%, transparent); --muted: color-mix(in srgb, var(--color-ink) 66%, transparent); }
+.ns-wrap { max-width: 74rem; margin-inline: auto; padding-inline: clamp(1rem, 4vw, 2.25rem); }
+.ns-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--color-accent-text); }
+.ns-stars { letter-spacing: 0.15em; }
+.ns-button { display: inline-flex; align-items: center; justify-content: center; padding: 0.7rem 1.4rem; background: var(--color-primary); color: var(--color-on-primary); border: 2px solid var(--color-primary); font-family: var(--font-heading); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; white-space: nowrap; transition: background-color .2s ease, color .2s ease; }
+.ns-button:hover { background: transparent; color: var(--color-ink); }
+.ns-button--lg { padding: 1rem 1.9rem; }
+
+/* navigation */
+.ns-nav { position: sticky; top: 0; z-index: 20; background: var(--color-surface); border-bottom: 2px solid var(--color-ink); }
+.ns-nav__row { display: flex; align-items: center; gap: 2rem; min-height: 4.25rem; }
+.ns-brand { margin-right: auto; font-family: var(--font-heading); font-weight: 800; font-size: 1.15rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-ink); text-decoration: none; }
+.ns-nav__links { display: flex; gap: 1.75rem; }
+.ns-nav__links a { text-decoration: none; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
+.ns-nav__links a:hover { text-decoration: underline; text-underline-offset: 6px; }
+.ns-nav__book { padding: 0.5rem 1.1rem; }
+.ns-menu { display: none; position: relative; }
+.ns-menu summary { list-style: none; cursor: pointer; display: grid; gap: 6px; padding: 0.8rem 0.3rem; }
+.ns-menu summary::-webkit-details-marker { display: none; }
+.ns-menu summary span { display: block; width: 1.5rem; height: 2px; background: var(--color-ink); }
+.ns-menu nav { position: absolute; right: 0; top: calc(100% + 0.7rem); min-width: 12rem; display: grid; padding: 0.5rem; background: var(--color-surface); border: 2px solid var(--color-ink); }
+.ns-menu nav a { padding: 0.75rem 0.9rem; text-decoration: none; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
+.ns-menu nav a:hover { background: var(--color-card); }
+@media (max-width: 54rem) { .ns-nav__links { display: none; } .ns-menu { display: block; } .ns-nav__row { gap: 0.8rem; } }
+
+/* hero: one huge line of words, then the photograph full width */
+.ns-hero { padding-top: clamp(2.5rem, 7vw, 5rem); }
+.ns-hero h1 { font-size: clamp(2.8rem, 9vw, 7.5rem); max-width: 14ch; }
+.ns-hero__row { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1.5rem 3rem; padding-block: clamp(1.5rem, 4vw, 2.5rem); border-bottom: 2px solid var(--color-ink); }
+.ns-hero__sub { max-width: 34rem; font-size: clamp(1.05rem, 1.8vw, 1.2rem); color: var(--muted); }
+.ns-hero__img { width: 100%; height: clamp(18rem, 48vw, 36rem); object-fit: cover; }
+
+/* sections */
+.ns-section { padding-block: clamp(3.5rem, 8vw, 6rem); }
+.ns-section--tight { padding-bottom: 0; }
+.ns-section--ink { background: var(--color-ink); color: var(--color-surface); }
+.ns-section--ink .ns-label { color: var(--color-surface); }
+.ns-head { display: grid; gap: 0.75rem; margin-bottom: clamp(1.75rem, 4vw, 2.75rem); }
+.ns-head--row { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem 2rem; }
+.ns-prices { display: grid; gap: 2rem; }
+@media (min-width: 54rem) { .ns-prices { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr); align-items: start; } .ns-prices .ns-head { position: sticky; top: 6rem; } }
+.ns-table { width: 100%; border-collapse: collapse; border-top: 2px solid var(--color-ink); }
+.ns-table th, .ns-table td { padding: 1.1rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+.ns-table th { text-align: left; font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
+.ns-table th span { display: block; margin-top: 0.3rem; font-family: var(--font-body); font-weight: 400; font-size: 0.93rem; text-transform: none; letter-spacing: 0; color: var(--muted); }
+.ns-table td { text-align: right; font-family: var(--font-heading); font-weight: 700; font-size: 1.1rem; white-space: nowrap; padding-left: 1.5rem; }
+.ns-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; }
+.ns-grid img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; }
+.ns-about { display: grid; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+@media (min-width: 54rem) { .ns-about { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.ns-about--text { grid-template-columns: minmax(0, 48rem); }
+.ns-about__img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; filter: grayscale(0.15); }
+@media (max-width: 54rem) { .ns-about__img { aspect-ratio: 4 / 3; } }
+.ns-about__body { display: grid; gap: 1rem; }
+.ns-about__body > p:last-child { font-size: 1.12rem; color: var(--muted); }
+.ns-reviews { display: grid; gap: 2rem 3rem; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); }
+.ns-reviews blockquote { margin: 0; display: grid; gap: 0.9rem; padding-top: 1.25rem; border-top: 2px solid var(--color-surface); }
+.ns-reviews blockquote > p:not(.ns-stars) { font-size: 1.15rem; line-height: 1.5; }
+.ns-reviews cite { font-style: normal; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8; }
+.ns-book { border-block: 2px solid var(--color-ink); }
+.ns-book__row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem 2.5rem; padding-block: clamp(2.75rem, 6vw, 4rem); }
+.ns-book p { margin-top: 0.75rem; max-width: 36rem; color: var(--muted); }
+.ns-faq { display: grid; gap: 2rem; }
+@media (min-width: 54rem) { .ns-faq { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr); align-items: start; } }
+.ns-faq__list { border-top: 2px solid var(--color-ink); }
+.ns-q { border-bottom: 1px solid var(--line); }
+.ns-q summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 1.5rem; padding: 1.15rem 0; font-weight: 700; }
+.ns-q summary::-webkit-details-marker { display: none; }
+.ns-q summary::after { content: "+"; font-size: 1.4rem; line-height: 1; }
+.ns-q[open] summary::after { content: "−"; }
+.ns-q p { padding: 0 0 1.2rem; color: var(--muted); }
+.ns-visit { border-top: 2px solid var(--color-ink); }
+.ns-visit__grid { display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); align-items: start; }
+.ns-visit h2 { margin-top: 0.6rem; }
+.ns-visit__details { display: grid; gap: 0.4rem; }
+.ns-visit__details a { font-weight: 700; text-underline-offset: 5px; overflow-wrap: anywhere; }
+.ns-hours { border-collapse: collapse; width: 100%; }
+.ns-hours th, .ns-hours td { padding: 0.45rem 0; border-bottom: 1px solid var(--line); text-align: left; font-variant-numeric: tabular-nums; }
+.ns-hours th { font-weight: 700; }
+.ns-hours td { text-align: right; color: var(--muted); }
+
+/* what the publisher adds after the template: the system form, links to other pages, the machine-read lists, the copyright line */
+body > .site-block-form, body > .form-capture-x155, body > nav, body > [id$="-x176"] { max-width: 74rem; margin: 0 auto; padding: 1.5rem clamp(1rem, 4vw, 2.25rem); }
+body > [id$="-x176"] { font-size: 0.9rem; color: color-mix(in srgb, var(--color-ink) 70%, transparent); }
+#internal-links-x176 { border-top: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent); }
+#internal-links-x176 ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+.form-capture-x155 form { display: grid; gap: 0.8rem; max-width: 34rem; padding: 1.5rem; border: 2px solid var(--color-ink); }
+.form-capture-x155 input, .form-capture-x155 textarea, .form-capture-x155 select { font: inherit; width: 100%; padding: 0.75rem 0.85rem; border: 1px solid color-mix(in srgb, var(--color-ink) 30%, transparent); background: var(--color-surface); color: var(--color-ink); }
+.form-capture-x155 button { font: inherit; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.85rem; padding: 0.9rem 1.5rem; border: 0; background: var(--color-primary); color: var(--color-on-primary); cursor: pointer; }
+.site-footer { margin: 0; padding: 1.3rem clamp(1rem, 4vw, 2.25rem); background: var(--color-ink); color: var(--color-surface); text-align: center; font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; }
+.site-footer p { margin: 0; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .ns-button { transition: none; } }

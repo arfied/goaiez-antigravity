@@ -50,6 +50,38 @@ final class SiteTemplates
             'type_pairing' => ['heading' => 'DM Sans, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
             'sections' => ['hero', 'products', 'about', 'gallery', 'reviews_strip', 'faq', 'cta_band', 'contact'],
         ],
+        'trades-clean' => [
+            'label' => 'Trades Clean',
+            'for' => 'Plumbers, HVAC, electricians, cleaners — light and plain, built around the phone number',
+            'families' => ['trades'],
+            'palette' => ['surface' => '#ffffff', 'card' => '#f2f6fb', 'ink' => '#0d2238', 'primary' => '#0b5cc2', 'accent' => '#0b5cc2'],
+            'type_pairing' => ['heading' => 'Poppins, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
+            'sections' => ['hero', 'stats', 'services', 'about', 'gallery', 'reviews_strip', 'faq', 'cta_band', 'contact'],
+        ],
+        'spa-luxe' => [
+            'label' => 'Spa Luxe',
+            'for' => 'Day spas, massage, med-spas, wellness — dark and gold',
+            'families' => ['medspa', 'care'],
+            'palette' => ['surface' => '#0f0e0c', 'card' => '#1a1815', 'ink' => '#f3eee6', 'primary' => '#c8a96a', 'accent' => '#c8a96a'],
+            'type_pairing' => ['heading' => 'Playfair Display, Georgia, serif', 'body' => 'Lora, Georgia, serif'],
+            'sections' => ['hero', 'about', 'services', 'gallery', 'reviews_strip', 'booking_button', 'faq', 'cta_band', 'contact'],
+        ],
+        'nail-studio' => [
+            'label' => 'Nail Studio',
+            'for' => 'Nail, lash and brow studios — black and white, big type, a square photo grid',
+            'families' => ['care'],
+            'palette' => ['surface' => '#ffffff', 'card' => '#f4f4f2', 'ink' => '#121212', 'primary' => '#121212', 'accent' => '#9b2c58'],
+            'type_pairing' => ['heading' => 'Montserrat, system-ui, sans-serif', 'body' => 'Inter, system-ui, sans-serif'],
+            'sections' => ['hero', 'services', 'gallery', 'about', 'reviews_strip', 'booking_button', 'faq', 'cta_band', 'contact'],
+        ],
+        'corner-boutique' => [
+            'label' => 'Corner Boutique',
+            'for' => 'Boutiques, gift shops, florists and bakeries that sell online',
+            'families' => [],
+            'palette' => ['surface' => '#fbf7f2', 'card' => '#ffffff', 'ink' => '#2b2320', 'primary' => '#7a4b3a', 'accent' => '#9c5b48'],
+            'type_pairing' => ['heading' => 'Playfair Display, Georgia, serif', 'body' => 'Nunito, system-ui, sans-serif'],
+            'sections' => ['hero', 'products', 'about', 'gallery', 'reviews_strip', 'faq', 'cta_band', 'contact'],
+        ],
     ];
 
     /**

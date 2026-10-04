@@ -48,7 +48,11 @@ class StudioTemplatePickerTest extends TestCase
         }
         $this->assertLessThan(strpos($html, "applyTemplate('calm-spa')"), strpos($html, "applyTemplate('trades-pro')"));
 
-        $this->assertSame(['calm-spa', 'polish-bar', 'trades-pro', 'maker-market'], array_keys(SiteTemplates::forFamily('care')));
+        // The templates made for personal care come first, the rest after, each group in list order — however many there are.
+        $care = array_keys(array_filter(SiteTemplates::TEMPLATES, fn (array $t): bool => in_array('care', $t['families'], true)));
+        $this->assertContains('calm-spa', $care);
+        $this->assertNotContains('trades-pro', $care);
+        $this->assertSame(array_merge($care, array_values(array_diff(array_keys(SiteTemplates::TEMPLATES), $care))), array_keys(SiteTemplates::forFamily('care')));
         $this->assertSame(array_keys(SiteTemplates::TEMPLATES), array_keys(SiteTemplates::forFamily(null)));
     }
 
