@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X186\Ui;
 
 use App\Modules\X121\Actions\EntityReadAction;
+use App\Modules\X186\Actions\SequenceStopAction;
 use App\Modules\X186\Models\CampaignRun;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
@@ -17,9 +18,20 @@ class LiveRun extends Component
     #[Locked]
     public int $businessId = 0;
 
+    public ?int $lastStoppedCount = null;
+
+    public ?int $lastStoppedPersonId = null;
+
     public function mount(int $businessId = 0)
     {
         $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
+    }
+
+    /** Stops every campaign running for this person — the same stop as "Campaigns stopped or paused" (StopLog::stopRemaining). */
+    public function stop(int $personId, SequenceStopAction $action): void
+    {
+        $this->lastStoppedCount = $action->stopAllSequencesForPerson($this->businessId, $personId, 'manual');
+        $this->lastStoppedPersonId = $personId;
     }
 
     public function render()

@@ -31,8 +31,11 @@ final class SequenceStopAction
                 'stopped_reason' => $stoppedReason,
             ]);
 
-            Event::dispatch(new CampaignReplied($businessId, $run->campaign_id, $personId, $replyChannel));
-            Event::dispatch(new SequenceStopped($businessId, $run->campaign_id, $personId, "Inbound reply on {$replyChannel}"));
+            // A stop by hand is the owner's, not the customer's: no reply is announced for it.
+            if ($replyChannel !== 'manual') {
+                Event::dispatch(new CampaignReplied($businessId, $run->campaign_id, $personId, $replyChannel));
+            }
+            Event::dispatch(new SequenceStopped($businessId, $run->campaign_id, $personId, $replyChannel === 'manual' ? 'Stopped by hand' : "Inbound reply on {$replyChannel}"));
         }
 
         return $activeRuns->count();
