@@ -470,7 +470,8 @@ final class VoiceCalls
                     'business_id' => $businessId,
                     'customer_id' => $customer->id,
                     'channel' => OutreachChannel::Sms->value,
-                    'consent_type' => ConsentType::Express->value,
+                    // The caller rang; they never said yes to texts. Implied by the call, replies only (owner ruling D-1).
+                    'consent_type' => ConsentType::ImpliedByCall->value,
                     'captured_by' => CapturedBy::Tenant->value,
                     'capture_surface' => CaptureSurface::Call->value,
                     'disclosure_version' => '1.0',

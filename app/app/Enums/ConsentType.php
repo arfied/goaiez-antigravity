@@ -41,4 +41,15 @@ enum ConsentType: string
      * accident.
      */
     case TenantAttested = 'tenant_attested';
+
+    /**
+     * ⚠️ **NOT A YES. THE CALLER RANG THE BUSINESS, AND THAT IS ALL.** (owner ruling D-1, 2026-10-05)
+     *
+     * Written for an unknown caller when a call is recorded (`VoiceCalls`). Before this case the same row claimed `Express` —
+     * an agreement the caller never gave — and because `ConsentService::decide()` reads any record as permission for any
+     * purpose, it also let a business market to everybody who had ever phoned it. This case permits exactly one thing: a
+     * transactional reply about that call (the missed-call text-back, a callback note). Every other purpose is refused with
+     * `SendRefusalReason::RepliesOnly`, which only a real consent capture can lift.
+     */
+    case ImpliedByCall = 'implied_by_call';
 }

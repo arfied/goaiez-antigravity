@@ -70,6 +70,7 @@ final class SmsSendAction
                     SendRefusalReason::Litigator,
                     SendRefusalReason::NumberReassigned,
                     SendRefusalReason::NoConsentRecord,
+                    SendRefusalReason::RepliesOnly,
                     SendRefusalReason::StateUnknown,
                     SendRefusalReason::QuietHours,
                     SendRefusalReason::ConsentTooWeakForState,

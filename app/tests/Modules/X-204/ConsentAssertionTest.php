@@ -35,7 +35,7 @@ class ConsentAssertionTest extends TestCase
     {
         // N-001
         $this->assertTrue(class_exists(SendRefusalReason::class), 'System lacks P-060 code set definition');
-        $this->assertCount(21, SendRefusalReason::cases(), 'P-060 code set is 21 since e737094 (MessageTooLong)');
+        $this->assertCount(22, SendRefusalReason::cases(), 'P-060 code set is 22 since 2026-10-05 (RepliesOnly, owner ruling D-1)');
 
         $this->expectException(\InvalidArgumentException::class);
         SendPermit::create([

@@ -4,9 +4,15 @@ namespace Tests\Feature\Voice;
 
 use App\Contracts\VoiceProvider;
 use App\Enums\CallRoutingMode;
+use App\Enums\ConsentType;
+use App\Enums\OutreachChannel;
+use App\Enums\OutreachPurpose;
+use App\Enums\SendRefusalReason;
+use App\Models\ConsentRecord;
 use App\Models\Conversation;
 use App\Models\Customer;
 use App\Modules\X121\Models\Person;
+use App\Services\Consent\ConsentService;
 use App\Services\Sms\TenantNumbers;
 use App\Services\Voice\CallForwarding;
 use App\Services\Voice\InfobipVoiceProvider;
@@ -140,5 +146,47 @@ class VoiceCallIngestTest extends TestCase
 
         $secondConversation = Conversation::first();
         $this->assertSame($firstConversation->id, $secondConversation->id, 'The exact same Conversation ID must be returned.');
+    }
+
+    public function test_a_caller_who_only_rang_may_be_replied_to_about_the_call_and_never_marketed_to(): void
+    {
+        // Fixture taken from test_one_inbound_number_produces_one_conversation_and_never_a_second_person (owner ruling D-1).
+        $business = static::provisionTenant(['name' => 'Implied Consent Business']);
+        app(TenantNumbers::class)->releaseFromTenant($business->id);
+        $number = app(TenantNumbers::class)->assign($business->id, '+15555550191');
+        app(TenantNumbers::class)->bringIntoService($number, 'test');
+
+        Tenancy::actingAs($business->id, function () {
+            app(CallForwarding::class)->chooseMode(CallRoutingMode::Conditional, 'system');
+        });
+
+        $this->app->instance(VoiceProvider::class, app(InfobipVoiceProvider::class));
+        Http::fake([
+            'test.api-us.infobip.com/calls/1/calls/call-9191/history' => Http::response([
+                'callId' => 'call-9191',
+                'direction' => 'INBOUND',
+                'state' => 'NO_ANSWER',
+                'from' => '14155559191',
+                'to' => '15555550191',
+                'startTime' => '2026-01-15T11:59:30.000+0000',
+                'endTime' => '2026-01-15T12:00:00.000+0000',
+                'ringDuration' => 30,
+            ], 200),
+        ]);
+
+        app(VoiceCalls::class)->record('call-9191');
+
+        Tenancy::set($business->id);
+        $customer = Customer::query()->where('phone', '+14155559191')->firstOrFail();
+        $record = ConsentRecord::query()->where('customer_id', $customer->id)->firstOrFail();
+        $this->assertSame(ConsentType::ImpliedByCall, $record->consent_type);
+
+        // A reply about the call (the missed-call text-back) is permitted.
+        $this->assertTrue(app(ConsentService::class)->decide($customer, OutreachChannel::Sms, OutreachPurpose::Transactional)->isGranted());
+
+        // Marketing is not: the caller never agreed to it.
+        $marketing = app(ConsentService::class)->decide($customer, OutreachChannel::Sms, OutreachPurpose::Marketing);
+        $this->assertFalse($marketing->isGranted());
+        $this->assertSame(SendRefusalReason::RepliesOnly, $marketing->reason);
     }
 }

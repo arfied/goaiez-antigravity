@@ -146,6 +146,12 @@ enum SendRefusalReason: string
     case NoConsentRecord = 'no_consent_record';
 
     /**
+     * The only record is `ConsentType::ImpliedByCall`: the person rang the business, which lets it reply about that call and
+     * nothing more (owner ruling D-1, 2026-10-05). Durable — only a real consent capture lifts it.
+     */
+    case RepliesOnly = 'replies_only';
+
+    /**
      * ⚠️ THE ONE THAT WILL BE MET FIRST AND READ AS A BUG. No scrubbing register
      * has ever been loaded, so a marketing send cannot be proved clean. Every
      * marketing send is refused until `compliance_suppressions` has been
@@ -416,6 +422,10 @@ enum SendRefusalReason: string
             // satisfy.
             self::ConsentTooWeakForState,
 
+            // ⚠️ **NEEDS A REAL CONSENT, NOT A DIFFERENT HOUR** — a caller who only rang can be replied to about that call; a
+            // campaign retrying them would never succeed until they actually agree to more.
+            self::RepliesOnly,
+
             // ⚠️ **THE OWNER'S OWN INSTRUCTIONS, AND THE CAMPAIGN HAS NO
             // STANDING TO WAIT THEM OUT.** All three are reversible by a
             // person — un-archive, restore inside the seven days, and a merge
@@ -545,6 +555,7 @@ enum SendRefusalReason: string
             self::Litigator => 'they are on a suppression list',
             self::NumberReassigned => 'their number now belongs to somebody else',
             self::NoConsentRecord => 'we have no record of their permission',
+            self::RepliesOnly => 'they only called you, which lets us reply about the call and nothing more',
             self::Archived => 'you archived them',
             self::Deleted => 'you deleted them',
             self::MergedAway => 'you merged them into another contact',

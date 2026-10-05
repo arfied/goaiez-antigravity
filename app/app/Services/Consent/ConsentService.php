@@ -256,19 +256,6 @@ final class ConsentService
             return SendDecision::refused($refusal);
         }
 
-        // ⚠️ THE MARKETING FAIL-CLOSED. No scrubbing register has ever been
-        // loaded, so a marketing send cannot be proved clean against a list we
-        // are required to consult. Transactional is untouched, which is every
-        // message this product sends today (`24` §3.3), so this costs nothing
-        // until somebody builds a campaign — and then it costs them a
-        // conversation rather than a violation.
-        // ⚠️ THE SEND'S OWN CHANNEL, NOT "ANY CHANNEL" (1611). A federal DNC
-        // extract imported against the wrong `--channel` flag used to satisfy
-        // this gate for a channel it could never refuse anybody on.
-        if ($purpose->isSubjectToDoNotCall() && ! $this->registry->isLoaded($channel)) {
-            return SendDecision::refused(SendRefusalReason::RegistryNotLoaded);
-        }
-
         $record = ConsentRecord::query()
             ->where('customer_id', $customer->id)
             ->where('channel', $channel)
@@ -282,6 +269,26 @@ final class ConsentService
             ->orderByRaw('created_at DESC NULLS LAST')
             ->latest('id')
             ->first();
+
+        // ⚠️ A CALLER WHO ONLY RANG LET US REPLY ABOUT THAT CALL, NOTHING MORE (owner ruling D-1, 2026-10-05). Read here,
+        // ahead of the register check below, so a marketing send to such a contact is refused for the reason that stays true
+        // rather than for one an import would clear. Every earlier refusal (opt-out, do-not-call, litigator) keeps its place.
+        if ($record?->consent_type === ConsentType::ImpliedByCall && $purpose !== OutreachPurpose::Transactional) {
+            return SendDecision::refused(SendRefusalReason::RepliesOnly);
+        }
+
+        // ⚠️ THE MARKETING FAIL-CLOSED. No scrubbing register has ever been
+        // loaded, so a marketing send cannot be proved clean against a list we
+        // are required to consult. Transactional is untouched, which is every
+        // message this product sends today (`24` §3.3), so this costs nothing
+        // until somebody builds a campaign — and then it costs them a
+        // conversation rather than a violation.
+        // ⚠️ THE SEND'S OWN CHANNEL, NOT "ANY CHANNEL" (1611). A federal DNC
+        // extract imported against the wrong `--channel` flag used to satisfy
+        // this gate for a channel it could never refuse anybody on.
+        if ($purpose->isSubjectToDoNotCall() && ! $this->registry->isLoaded($channel)) {
+            return SendDecision::refused(SendRefusalReason::RegistryNotLoaded);
+        }
 
         if ($record === null) {
             return SendDecision::refused(SendRefusalReason::NoConsentRecord);
