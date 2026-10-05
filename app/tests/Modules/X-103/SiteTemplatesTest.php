@@ -206,7 +206,7 @@ class SiteTemplatesTest extends TestCase
             $this->assertStringNotContainsString('<b>BOLD_7731', $html, $id);
             $this->assertStringNotContainsString('javascript:', $html, $id);
             $this->assertStringNotContainsString('>Get a free quote</a>', $html, $id);
-            $this->assertStringNotContainsString('VIDEO_NAME_5521', $html, $id);
+            $this->assertStringContainsString('<h2>VIDEO_NAME_5521</h2>', $html, $id);
         }
     }
 
@@ -308,6 +308,39 @@ class SiteTemplatesTest extends TestCase
             $onePage = app(SiteBlockRenderer::class)->render($this->blocks(), ['tokens' => $tokens, 'editable' => false, 'site_pages' => [$pages[0]]] + self::CONTEXT);
             // The stylesheet names the attribute in a selector, so the needle is the attribute as a link carries it.
             $this->assertStringNotContainsString('aria-current="page">', $onePage, "$id: a one-page site keeps its section links");
+        }
+    }
+
+    public function test_every_template_plays_the_owners_video_exactly_as_the_publisher_declares_it(): void
+    {
+        foreach (array_keys(SiteTemplates::TEMPLATES) as $id) {
+            $this->assertStringNotContainsString('id="video"', $this->render($this->blocks(), $id), "$id: no video section without the owner's video");
+
+            $blocks = $this->blocks();
+            $blocks[] = ['type' => 'video_embed', 'name' => 'Our work <b>9901</b>', 'contentUrl' => 'https://www.youtube.com/watch?v=dQw4w9WgXc9', 'uploadDate' => '2026-01-01'];
+            $html = $this->render($blocks, $id);
+            $this->assertSame(1, substr_count($html, '<section id="video"'), $id);
+            $this->assertStringContainsString('src="https://www.youtube-nocookie.com/embed/dQw4w9WgXc9"', $html, $id);
+            $this->assertStringContainsString('Our work &lt;b&gt;9901&lt;/b&gt;', $html, $id);
+            $this->assertStringNotContainsString('<b>9901', $html, $id);
+            $this->assertMatchesRegularExpression('/<div class="video-item" data-name="Our work &lt;b&gt;9901&lt;\/b&gt;" data-url="https:\/\/www.youtube.com\/watch\?v=dQw4w9WgXc9">/', $html, $id);
+            $this->assertMatchesRegularExpression('/<section id="video"[^>]* data-block-index="\d+" data-block-type="video_embed"/', $html, $id);
+
+            // A video with no date is not declared to search engines, so it is not drawn either.
+            $undated = $this->blocks();
+            $undated[] = ['type' => 'video_embed', 'name' => 'Undated 9902', 'contentUrl' => 'https://vimeo.com/9903'];
+            $this->assertStringNotContainsString('Undated 9902', $this->render($undated, $id), $id);
+
+            // Two videos: both are drawn, each with its own block index.
+            $two = $this->blocks();
+            $two[] = ['type' => 'video_embed', 'name' => 'First 9904', 'contentUrl' => 'https://vimeo.com/9905', 'uploadDate' => '2026-01-01'];
+            $two[] = ['type' => 'video_embed', 'name' => 'Second 9906', 'contentUrl' => 'https://cdn.example.com/clip-9907.mp4', 'uploadDate' => '2026-01-01'];
+            $html = $this->render($two, $id);
+            $this->assertStringContainsString('src="https://player.vimeo.com/video/9905"', $html, $id);
+            $this->assertStringContainsString('<video controls preload="metadata" src="https://cdn.example.com/clip-9907.mp4"', $html, $id);
+            $this->assertStringContainsString('<p>First 9904</p>', $html, $id);
+            $this->assertStringContainsString('<p>Second 9906</p>', $html, $id);
+            $this->assertSame(2, substr_count($html, 'data-block-type="video_embed"'), $id);
         }
     }
 }

@@ -238,6 +238,32 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
         return $html;
     }
 
+    /**
+     * How a video's address plays on a page: a YouTube address becomes YouTube's own player at its no-cookie address, a
+     * Vimeo address Vimeo's player, a link to a video file (https) plays in the page, and any other http(s) address is a link
+     * to the video. An empty or unsafe address gives nothing to play.
+     *
+     * @return array{kind: string, src: string}
+     */
+    public static function videoPlayer(mixed $url): array
+    {
+        $address = is_scalar($url) ? trim((string) $url) : '';
+        if (preg_match('#^https?://(?:www\.|m\.)?(?:youtube\.com/(?:watch\?(?:[^\#]*&)?v=|shorts/|embed/|live/)|youtu\.be/)([A-Za-z0-9_-]{11})(?![A-Za-z0-9_-])#i', $address, $m) === 1) {
+            return ['kind' => 'embed', 'src' => 'https://www.youtube-nocookie.com/embed/'.$m[1]];
+        }
+        if (preg_match('#^https?://(?:www\.)?vimeo\.com/(\d+)(?:/([0-9a-f]{6,}))?(?![0-9])#i', $address, $m) === 1) {
+            return ['kind' => 'embed', 'src' => 'https://player.vimeo.com/video/'.$m[1].(($m[2] ?? '') !== '' ? '?h='.$m[2] : '')];
+        }
+        if (preg_match('#^https://#i', $address) === 1 && preg_match('#\.(mp4|webm|ogg|mov)$#i', (string) parse_url($address, PHP_URL_PATH)) === 1) {
+            return ['kind' => 'file', 'src' => $address];
+        }
+        if (preg_match('#^https?://[^\s]+$#i', $address) === 1) {
+            return ['kind' => 'link', 'src' => $address];
+        }
+
+        return ['kind' => 'none', 'src' => ''];
+    }
+
     public function isValidBlock(array $block): bool
     {
         return $this->validateBlock($block);

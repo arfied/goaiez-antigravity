@@ -140,6 +140,25 @@
 </section>
 @endif
 
+@if($videos)
+<section id="video" class="ns-section"{!! (count($videos) === 1 ? $videos[0]['at'] : '') !!}>
+    <div class="ns-wrap ns-faq">
+        <div class="ns-head">
+            <p class="ns-label">Video</p>
+            <h2{!! count($videos) === 1 ? $f('name') : '' !!}>{{ count($videos) === 1 ? $videos[0]['name'] : 'Videos' }}</h2>
+        </div>
+        <div id="videos-x176" class="ns-videos" style="display:grid;gap:1.5rem">
+            @foreach($videos as $video)
+            <div class="video-item" data-name="{{ $video['name'] }}" data-url="{{ $video['contentUrl'] }}"{!! count($videos) > 1 ? $video['at'] : '' !!}>
+@include('x-103::site.partials.video-player', ['video' => $video])
+                @if(count($videos) > 1)<p>{{ $video['name'] }}</p>@endif
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
 @if($faqs)
 <section id="faq" class="ns-section"{!! $at('faq') !!}>
     <div class="ns-wrap ns-faq">

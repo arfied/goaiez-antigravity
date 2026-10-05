@@ -122,8 +122,11 @@ class SiteBlockRendererTest extends TestCase
         $fixture = '<div id="videos-x176" data-block-index="0" data-block-type="video_embed">
   <div class="site-block__inner">
     <div class="media media--wide">
-      <div class="video-item" data-name="Test Video" data-url="https://video.com">Test Video</div>
+      <div class="video-item" data-name="Test Video" data-url="https://video.com">
+<a href="https://video.com" rel="noopener" style="display:grid;place-items:center;width:100%;aspect-ratio:16/9;background:var(--color-card);color:var(--color-ink);font-weight:600;text-decoration:none;border-radius:inherit"><span><span aria-hidden="true">▶</span> Watch the video</span></a>
+      </div>
     </div>
+    <p>Test Video</p>
   </div>
 </div>
 <div id="faq-x176" class="site-block faq site-block--band" data-block-index="1" data-block-type="faq">
@@ -463,5 +466,25 @@ class SiteBlockRendererTest extends TestCase
         $this->assertSame(substr_count($published, '<h2>'), substr_count($editor, ' data-field="heading"'));
         $this->assertGreaterThan(0, substr_count($editor, ' data-field="heading"'));
         $this->assertSame(preg_replace('/ data-field="[^"]*"/', '', $editor), $published);
+    }
+
+    public function test_a_video_plays_as_its_address_allows(): void
+    {
+        $renderer = new SiteBlockRenderer;
+        $video = fn (string $url): string => $renderer->render([['type' => 'video_embed', 'name' => 'Clip 9911', 'contentUrl' => $url, 'uploadDate' => '2026-01-01']], []);
+
+        $this->assertStringContainsString('<iframe src="https://www.youtube-nocookie.com/embed/dQw4w9WgXc9" title="Clip 9911"', $video('https://www.youtube.com/watch?v=dQw4w9WgXc9&t=30'));
+        $this->assertStringContainsString('<iframe src="https://www.youtube-nocookie.com/embed/dQw4w9WgXc9"', $video('https://youtu.be/dQw4w9WgXc9'));
+        $this->assertStringContainsString('<iframe src="https://player.vimeo.com/video/76979871?h=abcdef1234"', $video('https://vimeo.com/76979871/abcdef1234'));
+        $this->assertStringContainsString('<video controls preload="metadata" src="https://cdn.example.com/clip-9912.mp4"', $video('https://cdn.example.com/clip-9912.mp4'));
+
+        $unsafe = $video('javascript:alert(9913)');
+        $this->assertStringContainsString('<p>Clip 9911</p>', $unsafe);
+        $this->assertStringNotContainsString('<iframe', $unsafe);
+        $this->assertStringNotContainsString('href="javascript', $unsafe);
+
+        $this->assertSame(['kind' => 'link', 'src' => 'https://youtube.com/watch?v=123'], SiteBlockRenderer::videoPlayer('https://youtube.com/watch?v=123'));
+        $this->assertSame(['kind' => 'link', 'src' => 'http://example.com/clip.mp4'], SiteBlockRenderer::videoPlayer('http://example.com/clip.mp4'));
+        $this->assertSame(['kind' => 'none', 'src' => ''], SiteBlockRenderer::videoPlayer(''));
     }
 }

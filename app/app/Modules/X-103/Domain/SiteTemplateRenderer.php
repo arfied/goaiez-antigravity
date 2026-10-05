@@ -85,6 +85,9 @@ final class SiteTemplateRenderer
             'facts' => is_array($contact['facts'] ?? null) ? array_filter($contact['facts'], static fn (mixed $v): bool => $txt($v) !== null) : [],
             // Where the business's own contact form posts — the same endpoint the shared form section uses; '' draws no form.
             'formBase' => rtrim((string) ($context['form_action_base'] ?? ''), '/'),
+            // Every video the publisher declares to search engines (name, address and date all present), so the page shows
+            // exactly the videos its VideoObject lists — each with its own block index for the Studio.
+            'videos' => self::videos($contentBlocks, $txt),
             // The site's other pages for the menu (the publisher's site_pages); empty for a one-page site or a preview.
             'pages' => self::sitePages($context['site_pages'] ?? null, $txt),
         ])->render();
@@ -109,5 +112,25 @@ final class SiteTemplateRenderer
         }
 
         return count($out) >= 2 ? $out : [];
+    }
+
+    /**
+     * @param  array<int, mixed>  $contentBlocks
+     * @return list<array{name: string, contentUrl: string, at: string}>
+     */
+    private static function videos(array $contentBlocks, \Closure $txt): array
+    {
+        $out = [];
+        foreach ($contentBlocks as $i => $block) {
+            if (is_array($block) && ($block['type'] ?? null) === 'video_embed') {
+                $name = $txt($block['name'] ?? null);
+                $address = $txt($block['contentUrl'] ?? null);
+                if ($name !== null && $address !== null && $txt($block['uploadDate'] ?? null) !== null) {
+                    $out[] = ['name' => $name, 'contentUrl' => $address, 'at' => ' data-block-index="'.(int) $i.'" data-block-type="video_embed"'];
+                }
+            }
+        }
+
+        return $out;
     }
 }

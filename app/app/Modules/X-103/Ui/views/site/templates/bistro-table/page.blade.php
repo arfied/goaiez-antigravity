@@ -133,6 +133,25 @@
 </section>
 @endif
 
+@if($videos)
+<section id="video" class="bt-section"{!! (count($videos) === 1 ? $videos[0]['at'] : '') !!}>
+    <div class="bt-wrap bt-narrow">
+        <div class="bt-head">
+            <p class="bt-label">Video</p>
+            <h2{!! count($videos) === 1 ? $f('name') : '' !!}>{{ count($videos) === 1 ? $videos[0]['name'] : 'Videos' }}</h2>
+        </div>
+        <div id="videos-x176" class="bt-videos" style="display:grid;gap:1.5rem">
+            @foreach($videos as $video)
+            <div class="video-item" data-name="{{ $video['name'] }}" data-url="{{ $video['contentUrl'] }}"{!! count($videos) > 1 ? $video['at'] : '' !!}>
+@include('x-103::site.partials.video-player', ['video' => $video])
+                @if(count($videos) > 1)<p>{{ $video['name'] }}</p>@endif
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
 @if($faqs)
 <section id="faq" class="bt-section"{!! $at('faq') !!}>
     <div class="bt-wrap bt-narrow">

@@ -870,4 +870,31 @@ class SiteDesignGenerateActionTest extends TestCase
         $this->assertSame('https://youtu.be/owner8842', $blocks[1]['contentUrl']);
         $this->assertStringNotContainsString('made8845', json_encode($blocks));
     }
+
+    public function test_on_a_template_the_ai_never_writes_a_video_and_the_owners_video_is_kept(): void
+    {
+        // Fixture taken from test_on_a_template_the_ai_never_writes_the_team_and_the_owners_team_is_kept.
+        $page = $this->page([
+            ['type' => 'hero', 'headline' => 'Old headline'],
+            ['type' => 'video_embed', 'name' => 'A visit 9921', 'contentUrl' => 'https://youtu.be/dQw4w9WgXc9', 'uploadDate' => '2026-01-01'],
+            ['type' => 'contact', 'phone' => '0100'],
+        ]);
+        app(SiteTemplateApplyAction::class)->handle($page->business_id, $page->id, 'calm-spa');
+        $this->fakeAnswer(json_encode([
+            'blocks' => [
+                ['type' => 'hero', 'headline' => 'Slow down 9922'],
+                ['type' => 'contact', 'phone' => '0100'],
+            ],
+            'explanation' => 'Filled the template.',
+        ]));
+
+        $res = app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id);
+
+        $this->assertSame('ready', $res['status']);
+        $blocks = $page->refresh()->draft_meta['designs']['claude']['blocks'];
+        $videos = array_values(array_filter($blocks, static fn (array $b): bool => $b['type'] === 'video_embed'));
+        $this->assertCount(1, $videos);
+        $this->assertSame('A visit 9921', $videos[0]['name']);
+        Http::assertSent(fn ($r) => str_contains($r->body(), 'and no others: hero') && preg_match('/and no others: [^.]*video_embed/', $r->body()) !== 1);
+    }
 }

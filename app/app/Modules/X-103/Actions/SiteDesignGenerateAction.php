@@ -52,7 +52,7 @@ final class SiteDesignGenerateAction
      * invented staff), and reviews are real customers' words — the business's own approved reviews fill that section (below).
      * The owner's own section of either kind is kept as it is.
      */
-    private const OWNER_ONLY_ON_TEMPLATE = ['team', 'reviews_strip'];
+    private const OWNER_ONLY_ON_TEMPLATE = ['team', 'reviews_strip', 'video_embed'];
 
     public const PAGE_PURPOSES = [
         'home' => 'the home page: the whole business at a glance — a strong hero, the main services, why choose us, a few reviews if real ones are given, and a call to action',
