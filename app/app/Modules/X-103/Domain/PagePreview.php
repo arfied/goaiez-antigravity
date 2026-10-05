@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Storage;
 
 final class PagePreview
 {
-    private const CONTEXT = ['businessName' => '', 'deployHash' => 'weight', 'tenant_storage_url_prefix' => '/m/', 'form_action_base' => '/f'];
+    // 'preview': the page is drawn inside the sandboxed preview frame, where a YouTube or Vimeo player cannot load (no origin, no
+    // referrer — a black box), so a video section shows a card there instead; the live site plays it.
+    private const CONTEXT = ['businessName' => '', 'deployHash' => 'weight', 'tenant_storage_url_prefix' => '/m/', 'form_action_base' => '/f', 'preview' => true];
 
     public function html(Page $page, bool $proposed, ?int $selectedIndex = null, bool $editable = false): string
     {

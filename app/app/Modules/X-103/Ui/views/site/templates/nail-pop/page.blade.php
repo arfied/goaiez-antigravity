@@ -154,7 +154,7 @@
         <div id="videos-x176" class="np-videos" style="display:grid;gap:1.5rem">
             @foreach($videos as $video)
             <div class="video-item" data-name="{{ $video['name'] }}" data-url="{{ $video['contentUrl'] }}"{!! count($videos) > 1 ? $video['at'] : '' !!}>
-@include('x-103::site.partials.video-player', ['video' => $video])
+@include('x-103::site.partials.video-player', ['video' => $video, 'preview' => $preview])
                 @if(count($videos) > 1)<p>{{ $video['name'] }}</p>@endif
             </div>
             @endforeach

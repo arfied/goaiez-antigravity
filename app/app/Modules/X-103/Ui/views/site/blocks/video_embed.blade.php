@@ -6,7 +6,7 @@
   <div class="site-block__inner">
     <div class="media media--wide">
       <div class="video-item" data-name="{{ $block['name'] }}" data-url="{{ $block['contentUrl'] }}">
-@include('x-103::site.partials.video-player', ['video' => $block])
+@include('x-103::site.partials.video-player', ['video' => $block, 'preview' => ! empty($context['preview'])])
       </div>
     </div>
     <p>{{ $block['name'] }}</p>

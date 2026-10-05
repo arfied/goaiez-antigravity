@@ -365,4 +365,20 @@ class SiteTemplatesTest extends TestCase
             $this->assertMatchesRegularExpression('/<h1 style="position:absolute;[^"]*">Harbor Line Plumbing<\/h1>/', $html, "$id: no banner");
         }
     }
+
+    public function test_every_template_previews_a_service_video_as_a_card(): void
+    {
+        $blocks = $this->blocks();
+        $blocks[] = ['type' => 'video_embed', 'name' => 'Our work 9943', 'contentUrl' => 'https://vimeo.com/76979871', 'uploadDate' => '2026-01-01'];
+        foreach (array_keys(SiteTemplates::TEMPLATES) as $id) {
+            $tokens = app(IndustryStartingPoints::class)->for(null);
+            $tokens['template'] = $id;
+            $tokens['palette'] = SiteTemplates::TEMPLATES[$id]['palette'];
+            $tokens['type_pairing'] = SiteTemplates::TEMPLATES[$id]['type_pairing'];
+            $html = app(SiteBlockRenderer::class)->render($blocks, ['tokens' => $tokens, 'preview' => true] + self::CONTEXT);
+            $this->assertStringContainsString('Our work 9943</strong><br>Plays on your live site', $html, $id);
+            $this->assertStringNotContainsString('<iframe', $html, $id);
+            $this->assertStringContainsString('src="https://player.vimeo.com/video/76979871"', $this->render($blocks, $id), $id);
+        }
+    }
 }

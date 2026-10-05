@@ -487,4 +487,22 @@ class SiteBlockRendererTest extends TestCase
         $this->assertSame(['kind' => 'link', 'src' => 'http://example.com/clip.mp4'], SiteBlockRenderer::videoPlayer('http://example.com/clip.mp4'));
         $this->assertSame(['kind' => 'none', 'src' => ''], SiteBlockRenderer::videoPlayer(''));
     }
+
+    public function test_a_preview_shows_a_card_where_the_live_site_plays_a_service_player(): void
+    {
+        $renderer = new SiteBlockRenderer;
+        $block = ['type' => 'video_embed', 'name' => 'Clip 9941', 'contentUrl' => 'https://youtu.be/dQw4w9WgXcQ', 'uploadDate' => '2026-01-01'];
+
+        $preview = $renderer->render([$block], ['preview' => true]);
+        $this->assertStringContainsString('Clip 9941</strong><br>Plays on your live site', $preview);
+        $this->assertStringNotContainsString('<iframe', $preview);
+
+        $live = $renderer->render([$block], []);
+        $this->assertStringContainsString('<iframe src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"', $live);
+        $this->assertStringNotContainsString('Plays on your live site', $live);
+
+        // A video file plays in a preview as well: it needs no origin.
+        $file = $renderer->render([['type' => 'video_embed', 'name' => 'Clip 9942', 'contentUrl' => 'https://cdn.example.com/clip-9942.mp4', 'uploadDate' => '2026-01-01']], ['preview' => true]);
+        $this->assertStringContainsString('<video controls preload="metadata" src="https://cdn.example.com/clip-9942.mp4"', $file);
+    }
 }

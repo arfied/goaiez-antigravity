@@ -90,6 +90,8 @@ final class SiteTemplateRenderer
             'videos' => self::videos($contentBlocks, $txt),
             // The site's other pages for the menu (the publisher's site_pages); empty for a one-page site or a preview.
             'pages' => self::sitePages($context['site_pages'] ?? null, $txt),
+            // Drawn inside the Studio's preview frame (PagePreview), where a service's video player cannot load.
+            'preview' => ! empty($context['preview']),
         ])->render();
 
         return $html;

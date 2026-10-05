@@ -141,4 +141,17 @@ class SiteTemplateApplyActionTest extends TestCase
 
         $this->assertSame(SiteTemplates::TEMPLATES['maker-market']['palette']['accent'], app(IndustryStartingPoints::class)->forBusiness($biz->id)['palette']['accent']);
     }
+
+    public function test_the_studio_preview_shows_a_youtube_video_as_a_card(): void
+    {
+        // Fixture taken from site() in this file.
+        [$biz, $page] = $this->site();
+        $page->update(['draft_blocks' => array_merge($page->draft_blocks, [
+            ['type' => 'video_embed', 'name' => 'A visit 9944', 'contentUrl' => 'https://youtu.be/dQw4w9WgXcQ', 'uploadDate' => '2026-01-01'],
+        ])]);
+
+        $preview = app(PagePreview::class)->html($page->refresh(), false, null, true);
+        $this->assertStringContainsString('A visit 9944</strong><br>Plays on your live site', $preview);
+        $this->assertStringNotContainsString('youtube-nocookie.com', $preview);
+    }
 }
