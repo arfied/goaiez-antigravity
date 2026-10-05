@@ -19,6 +19,7 @@ use App\Modules\X157\Http\Middleware\ServeVerifiedCustomDomain;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
 use App\Modules\X157\Ui\EdgeStatusPer;
+use App\Services\Indexing\HostedIndexNowKeys;
 use App\Support\Tenancy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
@@ -211,6 +212,15 @@ final class ModuleServiceProvider extends ServiceProvider
                 'backLabel' => 'Back to the site',
             ], 201);
         })->whereNumber('business');
+
+        // The IndexNow key file (HostedIndexNowKeys): registered outside the web group and with no host, so it answers at the root of
+        // this application's host AND of every verified custom domain — the place IndexNow fetches it from.
+        Route::get('/{indexnowKey}.txt', function (string $indexnowKey) {
+            $key = HostedIndexNowKeys::key();
+            abort_unless(hash_equals($key, $indexnowKey), 404);
+
+            return response($key, 200)->header('Content-Type', 'text/plain; charset=utf-8');
+        })->where('indexnowKey', '[a-f0-9]{32}');
 
         Route::get('/sites/{business}/{deploy_hash}/sitemap.xml', function (string $business, string $deployHash) {
             return app(ServeDeploymentAction::class)->sitemap((int) $business, $deployHash);

@@ -716,11 +716,11 @@ function outboundHttpPermittedFiles(): array
         // list is one vendor; this is a consortium with a sharing rule, and a
         // row naming Bing alone would understate who receives the data.
         //
-        // ⛔ NOTHING IN THIS BUILD REACHES IT. `IndexNowKeys` resolves to
-        // `UnhostedIndexNowKeys`, which never returns a key, so
-        // `Indexing::announce()` refuses before the client is called — decision
-        // 5581's key-file constraint. The entry is here because the code exists
-        // and could, which is the only question this list asks.
+        // Reached since 2026-10-05 for HOSTED sites only: `IndexNowKeys` resolves to
+        // `HostedIndexNowKeys`, which returns a key for a location whose confirmed
+        // website is a custom domain we serve (the key file is ours to serve), and
+        // defers to `UnhostedIndexNowKeys` — still refusing, decision 5581 — for
+        // every WordPress site.
         'Services/Indexing/IndexNowSubmitter.php',
 
         // Google Search Console (row 15 slice 1). A documented vendor JSON API

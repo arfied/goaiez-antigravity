@@ -45,6 +45,7 @@ use App\Services\Consent\IdentifierHashEpochs;
 use App\Services\Fetch\DirectFetchGateway;
 use App\Services\Fetch\RobotsPolicy;
 use App\Services\Gsc\GoogleSearchConsoleClient;
+use App\Services\Indexing\HostedIndexNowKeys;
 use App\Services\Indexing\UnhostedIndexNowKeys;
 use App\Services\Links\TenantLinks;
 use App\Services\Mail\GmailApiClient;
@@ -463,6 +464,13 @@ class AppServiceProvider extends ServiceProvider
      * `/wp-content/uploads/` and can submit uploads and nothing else (5581).
      * Serving the site root is the plugin's job (F2).
      *
+     * ⭐ **2026-10-05 — THE DAY IT CHANGED, SAID OUT LOUD (owner: "yes").** A site this
+     * platform HOSTS serves `/{key}.txt` itself, so {@see HostedIndexNowKeys} returns a key
+     * for a location whose confirmed website is a custom domain verified to point at us,
+     * and hands every other location to {@see UnhostedIndexNowKeys} unchanged.
+     * `tests/Modules/X-157/HostedIndexNowKeysTest.php` asserts the binding (the
+     * `ActuationTest` named below was never written).
+     *
      * ⚠️ **BOUND RATHER THAN DEFAULTED, SO THE DAY IT CHANGES IS A DAY SOMEBODY
      * WROTE A LINE.** `ActuationTest` asserts this build still resolves
      * {@see UnhostedIndexNowKeys}: a slice that binds a real provider without
@@ -473,7 +481,7 @@ class AppServiceProvider extends ServiceProvider
      */
     private function registerIndexNowKeys(): void
     {
-        $this->app->bind(IndexNowKeys::class, UnhostedIndexNowKeys::class);
+        $this->app->bind(IndexNowKeys::class, HostedIndexNowKeys::class);
     }
 
     /**
