@@ -297,9 +297,11 @@ final class VoiceSpend
      * rang**. Rule 43's surviving half, applied: graceful degradation, never
      * hard-fail, never bill by surprise.
      *
-     * ⚠️ **AND IT NEVER TOUCHES A LIVE CALL, WHICH IS NOT A CHOICE THIS METHOD
-     * MADE.** There is no live-call code path in this application to touch — the
-     * only caller runs on a queue, minutes after the caller hung up.
+     * ⚠️ **AND IT NEVER TOUCHES A LIVE CALL ITSELF.** Its only caller runs on a
+     * queue, minutes after the caller hung up. Since 2026-10-05 the AI
+     * receptionist asks the same ceiling at the ring, through
+     * {@see self::allowsLiveAnswer()} — that is the one place it declines a live
+     * call, and a declined call still reaches the owner as a message.
      *
      * ⚠️ **THE FAIL-CLOSED DIRECTION COSTS SOMETHING HERE THAT IT DOES NOT COST
      * IN `PlacesSpend`**, and it is worth saying which. There, a closed budget
@@ -312,6 +314,26 @@ final class VoiceSpend
      * path is *no voicemail audio for anybody*.
      */
     public function allowsRecordingFetch(int $businessId): bool
+    {
+        return $this->withinTenantCeiling($businessId);
+    }
+
+    /**
+     * Whether the AI receptionist may pick up another call for this tenant today (AI receptionist plan, 2026-10-05) — the
+     * same ceiling, asked at the ring.
+     *
+     * ⚠️ A declined call is not dropped: the voice worker plays its fallback and takes a message. And until wave 3 meters a
+     * live call's own minutes, the count it reads is the carrier-recorded inbound minutes only.
+     */
+    public function allowsLiveAnswer(int $businessId): bool
+    {
+        return $this->withinTenantCeiling($businessId);
+    }
+
+    /**
+     * The arithmetic both ask: today's inbound seconds against the daily ceiling, where a ceiling of zero refuses.
+     */
+    private function withinTenantCeiling(int $businessId): bool
     {
         $ceiling = $this->dailyTenantMinutesCeiling();
 

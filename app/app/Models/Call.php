@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Concerns\BelongsToTenant;
 use App\Contracts\TenantScoped;
+use App\Enums\CallAnsweredBy;
 use App\Enums\CallOutcome;
 use Database\Factories\CallFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -48,6 +49,7 @@ use Illuminate\Support\Carbon;
  * @property ?Carbon $answered_at
  * @property ?Carbon $ended_at
  * @property ?int $ring_seconds
+ * @property ?CallAnsweredBy $answered_by
  * @property ?Voicemail $voicemail
  */
 final class Call extends Model implements TenantScoped
@@ -85,6 +87,7 @@ final class Call extends Model implements TenantScoped
     {
         return [
             'outcome' => CallOutcome::class,
+            'answered_by' => CallAnsweredBy::class,
             'started_at' => 'datetime',
             'answered_at' => 'datetime',
             'ended_at' => 'datetime',

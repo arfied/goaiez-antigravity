@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Concerns\BelongsToTenant;
 use App\Contracts\TenantScoped;
 use App\Enums\CallRoutingMode;
+use App\Enums\LiveAnswerMode;
 use Database\Factories\SupportSettingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -79,9 +80,15 @@ use Illuminate\Support\Carbon;
  * stamped by a save button would say a forward was confirmed by something that
  * has never dialled a number. Whoever builds the voice path writes both.
  *
+ * ⭐ **2026-10-05 — `live_agent_enabled` IS GONE AND `live_answer_mode` REPLACES IT** (owner ruling D-6, AI receptionist
+ * plan). The boolean had no reader and no writer; the receptionist needed one per-business answer instead — the AI picks up
+ * straight away (`ai_first`, the default) or the owner is rung first (`owner_first`). `CallForwarding` writes and reads it.
+ * The census above is kept as it was written, for the reason it gives.
+ *
  * @property int $business_id
  * @property CallRoutingMode $call_routing_mode
  * @property int $ring_timeout_seconds
+ * @property LiveAnswerMode $live_answer_mode
  * @property ?Carbon $forwarding_verified_at
  * @property ?Carbon $forwarding_broken_at
  */
@@ -123,7 +130,7 @@ final class SupportSetting extends Model implements TenantScoped
             'blocked_topics' => 'array',
             'agent_schedule' => 'array',
             'on_call_numbers' => 'array',
-            'live_agent_enabled' => 'boolean',
+            'live_answer_mode' => LiveAnswerMode::class,
             'booking_enabled' => 'boolean',
             'call_routing_mode' => CallRoutingMode::class,
             'forwarding_verified_at' => 'datetime',

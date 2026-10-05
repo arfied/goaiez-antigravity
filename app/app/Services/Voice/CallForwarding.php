@@ -6,6 +6,7 @@ namespace App\Services\Voice;
 
 use App\Enums\AutopilotActionType;
 use App\Enums\CallRoutingMode;
+use App\Enums\LiveAnswerMode;
 use App\Models\SupportSetting;
 use App\Services\ActivityService;
 use App\Services\AuditService;
@@ -239,6 +240,56 @@ final class CallForwarding
      * is, and `CLAUDE.md` is explicit that RLS catches a *forgotten* filter and
      * never a *wrong* one.
      */
+    /**
+     * Who picks up first when a call reaches this tenant's number (owner ruling D-6, 2026-10-05): the AI receptionist
+     * straight away unless the owner chose to be rung first. No row gives the same answer a new row would — the column's
+     * default — exactly as {@see self::modeFor()} does.
+     */
+    public function liveAnswerFor(): LiveAnswerMode
+    {
+        $settings = $this->row();
+
+        return $settings === null
+            ? LiveAnswerMode::AiFirst
+            : $settings->live_answer_mode;
+    }
+
+    /**
+     * Record who picks up first. Audited with both sides, for {@see self::chooseMode()}'s reason.
+     *
+     * @param  string  $actor  `audit_log`'s vocabulary — `user:14`, `support:9`.
+     */
+    public function chooseLiveAnswer(LiveAnswerMode $mode, string $actor): SupportSetting
+    {
+        // The fail-closed guard chooseMode() explains: no tenant, no transaction, no row written against nobody.
+        Tenancy::idOrFail();
+
+        return DB::transaction(function () use ($mode, $actor): SupportSetting {
+            $settings = SupportSetting::query()->lockForUpdate()->first();
+
+            $before = $settings === null
+                ? LiveAnswerMode::AiFirst
+                : $settings->live_answer_mode;
+
+            if ($settings === null) {
+                $settings = new SupportSetting;
+            }
+
+            // forceFill: `business_id` is guarded and `BelongsToTenant` fills it from context.
+            $settings->forceFill(['live_answer_mode' => $mode])->save();
+
+            $this->audit->recordChange(
+                'call_routing.live_answer_set',
+                $actor,
+                before: ['live_answer_mode' => $before->value],
+                after: ['live_answer_mode' => $mode->value],
+                entity: $settings,
+            );
+
+            return $settings->refresh();
+        });
+    }
+
     private function row(): ?SupportSetting
     {
         return SupportSetting::query()->first();

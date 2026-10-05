@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Services\Voice;
 
 use App\Contracts\VoiceProvider;
+use App\Enums\CallAnsweredBy;
+use App\Enums\CallOutcome;
 use App\Enums\CapturedBy;
 use App\Enums\CaptureSurface;
 use App\Enums\ConsentType;
@@ -123,6 +125,12 @@ use Throwable;
  */
 final class VoiceCalls
 {
+    /**
+     * The `provider_call_id` prefix of a call the AI receptionist answered, keyed on the voice worker's own call id so a
+     * retried call start finds the row it already wrote. The carrier's ids carry no prefix.
+     */
+    public const string LIVE_PREFIX = 'livekit:';
+
     public function __construct(
         private readonly VoiceProvider $provider,
         private readonly TenantNumbers $numbers,
@@ -199,6 +207,53 @@ final class VoiceCalls
             $businessId,
             fn (): VoiceIngestOutcome => $this->write($businessId, $facts),
         );
+    }
+
+    /**
+     * Write the row for a call the AI receptionist is answering now (AI receptionist plan, wave 2, 2026-10-05) — this file
+     * stays the only writer of `calls`.
+     *
+     * A worker that retries call start for the same call gets the same row back rather than a second one. No contact is
+     * created here: a first-time caller stays unmatched (`customer_id` null, as `InboundCall` allows) until the call ends and
+     * wave 3 records what they left.
+     *
+     * ⚠️ If the carrier's own call webhook also fires for a call routed to the voice worker, it arrives under the carrier's
+     * call id and would be a second row for one call. Whether it fires at all is a Phase 0 measurement on the real trunk,
+     * not something this method assumes either way.
+     */
+    public function answerLive(int $businessId, string $transportCallId, string $from, string $to): Call
+    {
+        return Tenancy::actingAs($businessId, fn (): Call => DB::transaction(function () use ($transportCallId, $from, $to): Call {
+            $providerCallId = self::LIVE_PREFIX.$transportCallId;
+
+            $call = Call::query()
+                ->where('provider_call_id', $providerCallId)
+                ->lockForUpdate()
+                ->first();
+
+            if ($call instanceof Call) {
+                return $call;
+            }
+
+            $customer = $this->contactFor($from);
+            $now = CarbonImmutable::now();
+
+            // forceFill through the model, for write()'s reason: `business_id` is guarded and filled from context.
+            $call = new Call;
+            $call->forceFill([
+                'provider_call_id' => $providerCallId,
+                'customer_id' => $customer?->getKey(),
+                'location_id' => $customer?->location_id,
+                'from_e164' => $from,
+                'to_e164' => $to,
+                'outcome' => CallOutcome::InProgress,
+                'answered_by' => CallAnsweredBy::Agent,
+                'started_at' => $now,
+                'answered_at' => $now,
+            ])->save();
+
+            return $call;
+        }));
     }
 
     /**
