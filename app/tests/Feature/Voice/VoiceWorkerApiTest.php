@@ -5,12 +5,16 @@ declare(strict_types=1);
 use App\Enums\CallAnsweredBy;
 use App\Enums\CallOutcome;
 use App\Enums\LiveAnswerMode;
+use App\Http\Controllers\Voice\Live\CallPriceToolController;
 use App\Http\Middleware\VerifyVoiceWorker;
 use App\Models\AuditLogEntry;
 use App\Models\Call;
 use App\Models\VoiceUsageEvent;
+use App\Modules\CAgent\Models\AgentRefusal;
 use App\Modules\CAgent\Models\AgentTurn;
+use App\Modules\X163\Models\PriceBookItem;
 use App\Services\Agent\AgentRules;
+use App\Services\Assistant\PriceBook;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Sms\TenantNumbers;
 use App\Services\Voice\CallForwarding;
@@ -329,4 +333,66 @@ test('a turns batch that is empty, too long or malformed is refused as invalid a
     }
 
     expect(Tenancy::actingAs($businessId, fn (): int => AgentTurn::query()->count()))->toBe(0);
+});
+
+test('a caller asking a price nobody has confirmed is refused with NO_FACT, and the refusal names the call', function (): void {
+    [$businessId, $token] = voiceLiveAnsweredCall('+15555550947', 'SCL_9314');
+    $body = json_encode(['question' => 'How much is your callout fee?']);
+
+    postVoiceTo("/api/voice/v1/calls/{$token}/tools/price", $body, signedVoiceHeaders($body))
+        ->assertOk()
+        ->assertExactJson(['status' => 'refused', 'refusal_code' => 'NO_FACT', 'say' => CallPriceToolController::NO_PRICE_WORDS]);
+
+    $refusal = Tenancy::actingAs($businessId, fn (): AgentRefusal => AgentRefusal::query()->sole());
+    $callId = Tenancy::actingAs($businessId, fn (): int => (int) Call::query()->where('provider_call_id', 'livekit:SCL_9314')->value('id'));
+    expect($refusal->refusal_code)->toBe('NO_FACT')
+        ->and((int) $refusal->call_id)->toBe($callId)
+        ->and($refusal->user_input)->toBe('How much is your callout fee?');
+});
+
+test('a confirmed price is given with how to say it and the business\'s price line, and nothing is refused', function (): void {
+    [$businessId, $token] = voiceLiveAnsweredCall('+15555550948', 'SCL_9315');
+    // PriceBook::set() is the owner typing a price, which confirms it on the spot.
+    Tenancy::actingAs($businessId, fn () => app(PriceBook::class)->set('Callout fee', 8500));
+    $disclaimer = Tenancy::actingAs($businessId, fn (): string => app(PriceBook::class)->disclaimer());
+    $body = json_encode(['question' => 'How much is your callout fee?']);
+
+    postVoiceTo("/api/voice/v1/calls/{$token}/tools/price", $body, signedVoiceHeaders($body))
+        ->assertOk()
+        ->assertExactJson([
+            'status' => 'price',
+            'service' => 'Callout fee',
+            'amount_cents' => 8500,
+            'currency' => 'USD',
+            'spoken' => '$85.00',
+            'disclaimer' => $disclaimer,
+        ]);
+
+    expect(Tenancy::actingAs($businessId, fn (): int => AgentRefusal::query()->count()))->toBe(0);
+});
+
+test('a price nobody has confirmed is never given on a call — UNCONFIRMED is refused and recorded', function (): void {
+    [$businessId, $token] = voiceLiveAnsweredCall('+15555550949', 'SCL_9316');
+    Tenancy::actingAs($businessId, function (): void {
+        app(PriceBook::class)->set('Callout fee', 8500);
+        PriceBookItem::query()->where('service_name', 'Callout fee')->update(['is_confirmed' => false, 'confirmed_at' => null]);
+    });
+    $body = json_encode(['question' => 'How much is your callout fee?']);
+
+    $response = postVoiceTo("/api/voice/v1/calls/{$token}/tools/price", $body, signedVoiceHeaders($body))
+        ->assertOk()
+        ->assertJson(['status' => 'refused', 'refusal_code' => 'UNCONFIRMED']);
+
+    expect($response->getContent())->not->toContain('8500')->not->toContain('85.00')
+        ->and(Tenancy::actingAs($businessId, fn (): int => AgentRefusal::query()->where('refusal_code', 'UNCONFIRMED')->count()))->toBe(1);
+});
+
+test('the price tool refuses a missing question and a token that opens to nothing', function (): void {
+    [, $token] = voiceLiveAnsweredCall('+15555550950', 'SCL_9317');
+
+    postVoiceTo("/api/voice/v1/calls/{$token}/tools/price", '{}', signedVoiceHeaders('{}'))
+        ->assertStatus(422)->assertJson(['status' => 'invalid']);
+
+    $body = json_encode(['question' => 'How much is your callout fee?']);
+    postVoiceTo('/api/voice/v1/calls/not-a-token/tools/price', $body, signedVoiceHeaders($body))->assertNotFound();
 });

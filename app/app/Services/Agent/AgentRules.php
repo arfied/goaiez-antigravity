@@ -13,9 +13,9 @@ namespace App\Services\Agent;
  * the same list through {@see self::forVoiceCall()}, so a rule added for one channel binds the other.
  *
  * ⛔ **THE PRICE RULE IS THE ONE LINE THAT DIFFERS, ON PURPOSE.** The SMS assistant is handed the business's price list and
- * may quote from it. The phone receptionist is handed NO price list — prices on a call will only ever come from the price
- * tool (wave 3) — so until that tool exists it says no amount of money at all and tells the caller the business will
- * confirm. That refusal is what journey 2 asks for on a just-signed-up number.
+ * may quote from it. The phone receptionist is handed NO price list: a price on a call comes only from the price tool
+ * (`CallPriceToolController`, wave 3b), which answers from confirmed prices and refuses otherwise. A just-signed-up business
+ * has none, so the receptionist says the business will confirm — the refusal journey 2 asks for.
  *
  * Nothing in this file is untrusted: every line is written in this repository, so none of it needs a fence.
  */
@@ -23,7 +23,7 @@ final class AgentRules
 {
     public const string SMS_PRICE_RULE = '- Never give a price that is not in the price list you were given, and never estimate one.';
 
-    public const string VOICE_PRICE_RULE = '- Never say a price, a fee or any amount of money. If the caller asks, say the business will confirm the price and get back to them.';
+    public const string VOICE_PRICE_RULE = '- Never say a price, a fee or any amount of money unless the price tool gave it to you on this call; then say it exactly as given, with the line the tool gave you to say with it. If the tool gives you no price, say the business will confirm the price and get back to them.';
 
     /**
      * The never-lines every channel shares, in the order the SMS prompt has always carried them.
