@@ -271,4 +271,33 @@ class X212Test extends TestCase
             ->assertDontSee('Import these')
             ->assertSee('[committed]');
     }
+
+    public function test_an_import_never_overwrites_a_contacts_name_or_email_with_a_blank(): void
+    {
+        // Fixture taken from test_committing_a_dry_run_imports_the_validated_records in this file.
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::set((int) $biz->id);
+        $ada = Person::create(['business_id' => $biz->id, 'first_name' => 'Ada 9971', 'email' => 'ada9971@example.test', 'phone' => '+15551239971']);
+        $grace = Person::create(['business_id' => $biz->id, 'first_name' => 'Grace', 'email' => 'grace9972@example.test', 'phone' => '+15551239972']);
+
+        $records = [
+            ['phone' => '+15551239971', 'email' => '', 'first_name' => ''],
+            ['phone' => '+15551239972', 'email' => 'new9973@example.test', 'first_name' => 'Grace Hopper 9974'],
+            ['phone' => '+15551239975', 'email' => '', 'first_name' => ''],
+        ];
+        $run = $this->dryRunAction->handle($biz->id, 'test_source', $records);
+        Livewire::actingAs($owner)->test(Commit::class)->call('commitRun', $run->id);
+
+        $this->assertEquals('committed', $run->refresh()->status);
+        // Blank cells change nothing on a contact the business already had.
+        $this->assertSame('Ada 9971', $ada->refresh()->first_name);
+        $this->assertSame('ada9971@example.test', $ada->email);
+        // What the file does give is imported.
+        $this->assertSame('Grace Hopper 9974', $grace->refresh()->first_name);
+        $this->assertSame('new9973@example.test', $grace->email);
+        // Only a new contact without a name gets the placeholder.
+        $this->assertSame('Imported Customer', Person::where('business_id', $biz->id)->where('phone', '+15551239975')->value('first_name'));
+        $this->assertSame(3, Person::where('business_id', $biz->id)->count());
+    }
 }
