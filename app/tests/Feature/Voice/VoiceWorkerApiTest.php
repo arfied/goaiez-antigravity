@@ -8,6 +8,7 @@ use App\Enums\LiveAnswerMode;
 use App\Http\Middleware\VerifyVoiceWorker;
 use App\Models\AuditLogEntry;
 use App\Models\Call;
+use App\Services\Agent\AgentRules;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Sms\TenantNumbers;
 use App\Services\Voice\CallForwarding;
@@ -214,4 +215,15 @@ test('a call token that was edited, is empty or has expired opens to nothing', f
 
     $this->travel(LiveCallTokens::LIFETIME_SECONDS + 1)->seconds();
     expect($tokens->open($token))->toBeNull();
+});
+
+test('call start hands the worker the receptionist instructions and the business name as a separate fact, and no price list', function (): void {
+    voiceLiveTenant('+15555550941');
+    $body = json_encode(['dialled_e164' => '+15555550941', 'from_e164' => '+14155550932', 'transport_call_id' => 'SCL_9308']);
+
+    $response = postVoice($body, signedVoiceHeaders($body))->assertOk()->assertJson(['status' => 'answer']);
+
+    expect($response->json('instructions'))->toBe(AgentRules::forVoiceCall())
+        ->and($response->json('facts'))->toBe(['business_name' => 'Harbor Plumbing 9301'])
+        ->and($response->getContent())->not->toContain('price list');
 });

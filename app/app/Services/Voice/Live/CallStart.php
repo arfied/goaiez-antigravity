@@ -8,6 +8,7 @@ use App\Enums\LiveAnswerMode;
 use App\Enums\LiveCallDecline;
 use App\Models\Business;
 use App\Models\Call;
+use App\Services\Agent\AgentRules;
 use App\Services\Ai\AiSpend;
 use App\Services\Sms\TenantNumbers;
 use App\Services\Voice\CallForwarding;
@@ -32,8 +33,9 @@ use App\Support\Tenancy;
  * words: the recording announcement, uninterruptible and always first, then the AI disclosure. A retry for a call already
  * answered gets the same call back without asking the gates again — the decision was made when the caller was picked up.
  *
- * The rules, facts and tools the agent speaks from are wave 2b; prices are only ever a tool call into X-163, never a list in
- * what this returns.
+ * With the first words come the instructions the receptionist speaks under ({@see AgentRules::forVoiceCall()}, the SMS
+ * assistant's never-list with a voice price rule) and the facts it may use, kept apart so the worker fences the facts as data.
+ * ⛔ No price list is ever in what this returns: prices on a call are only ever a tool call into X-163 (wave 3).
  */
 final class CallStart
 {
@@ -47,7 +49,7 @@ final class CallStart
     ) {}
 
     /**
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     public function handle(string $dialled, string $from, string $transportCallId): array
     {
@@ -91,6 +93,9 @@ final class CallStart
                 'announcement' => VoiceGreeting::ANNOUNCEMENT,
                 // The caller is told they are speaking to an AI before anything else is said to them.
                 'disclosure' => "You've reached {$name}. I'm their AI assistant — how can I help?",
+                'instructions' => AgentRules::forVoiceCall(),
+                // Tenant-typed, so it travels apart from the instructions and the worker fences it as data.
+                'facts' => ['business_name' => $name],
             ];
         });
     }
