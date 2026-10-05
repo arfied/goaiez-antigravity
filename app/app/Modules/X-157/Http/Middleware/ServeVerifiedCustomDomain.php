@@ -48,7 +48,7 @@ class ServeVerifiedCustomDomain
             if ($path === 'sitemap.xml') {
                 return $action->sitemap($row->business_id, $latest->deploy_hash, $host);
             } elseif ($path === 'robots.txt') {
-                return $action->robots($row->business_id, $latest->deploy_hash);
+                return $action->robots($row->business_id, $latest->deploy_hash, $host);
             } else {
                 return $action->llms($row->business_id, $latest->deploy_hash);
             }

@@ -63,7 +63,7 @@ class ServeDeploymentAction
         return response($xml, 200)->header('Content-Type', 'application/xml');
     }
 
-    public function robots(int $businessId, string $deployHash)
+    public function robots(int $businessId, string $deployHash, ?string $customHost = null)
     {
         Tenancy::set($businessId);
 
@@ -74,6 +74,18 @@ class ServeDeploymentAction
         abort_if($zone === null || ! $zone->has_valid_ssl, 404);
 
         $sitemapUrl = route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash]).'/sitemap.xml';
+
+        // On a verified custom domain the whole host is the site, and its sitemap is the one that domain serves itself — a search
+        // engine only trusts a sitemap on another host when both are verified to the same owner (owner, 2026-10-05).
+        if ($customHost !== null) {
+            $txt = "User-agent: *\n";
+            $txt .= "Allow: /\n";
+            $txt .= "Disallow: /sites/{$businessId}/{$deployHash}/dni\n";
+            $txt .= "Disallow: /sites/{$businessId}/{$deployHash}/forms/\n";
+            $txt .= "Sitemap: https://{$customHost}/sitemap.xml\n";
+
+            return response($txt, 200)->header('Content-Type', 'text/plain');
+        }
 
         $txt = "User-agent: *\n";
         $txt .= "Allow: /sites/{$businessId}/\n";

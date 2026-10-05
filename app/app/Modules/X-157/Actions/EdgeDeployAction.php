@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X157\Actions;
 
+use App\Jobs\Sites\AnnounceHostedPageJob;
 use App\Models\Business;
 use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X103\Actions\PageVersionAction;
@@ -497,6 +498,13 @@ JS;
                 domainName: $canonicalHost,
                 deployHash: $deployHash
             ));
+
+            // A page on a verified custom domain is a site we host: its address goes to the search engines that take IndexNow
+            // (Bing, and the answers built on its index) through Indexing, which records every attempt (owner, 2026-10-05). A
+            // variant arm shares the control's address and is not announced again.
+            if ($verified !== null && $verified !== '' && $pageVariantId === null && isset($seoResult['canonical']) && is_string($seoResult['canonical'])) {
+                AnnounceHostedPageJob::dispatch($businessId, $seoResult['canonical']);
+            }
 
             return [
                 'status' => 'deployed',
