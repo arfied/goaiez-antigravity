@@ -143,7 +143,8 @@ final class SchedulingEngine
     }
 
     /**
-     * Book appointment and generate conference link (G18-27).
+     * Book appointment. No conference link is stored: G18-27 is specced, not built — there is no meeting provider, and a made-up
+     * address was saved here before (owner, 2026-10-05: remove it).
      */
     public function book(
         int $businessId,
@@ -184,7 +185,6 @@ final class SchedulingEngine
                 'end_time' => Carbon::parse($endTime),
                 'is_member' => $isMember,
                 'status' => 'booked',
-                'conference_link' => 'https://meet.goaiez.com/room-'.rand(1000, 9999),
             ]);
 
             Event::dispatch(new AppointmentBooked(

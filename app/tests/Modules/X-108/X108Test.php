@@ -376,9 +376,10 @@ class X108Test extends TestCase
     }
 
     /**
-     * [G18-27] a booking generates its own conference link
+     * [G18-27] specced, not built: with no meeting provider a booking stores no conference link — never a made-up address
+     * (owner, 2026-10-05).
      */
-    public function test_g18_27_conference_link_generation(): void
+    public function test_g18_27_a_booking_stores_no_made_up_conference_link(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Conf Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -387,7 +388,7 @@ class X108Test extends TestCase
         $end = now()->addDay()->addHour()->toIso8601String();
 
         $apt = $this->book->handle($biz->id, 'Video Consultation', $start, $end);
-        $this->assertNotNull($apt->conference_link);
+        $this->assertNull($apt->conference_link);
 
         $initialCount = Appointment::count();
         try {
