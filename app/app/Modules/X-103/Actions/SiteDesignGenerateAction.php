@@ -209,7 +209,7 @@ final class SiteDesignGenerateAction
                 if ($json === null) {
                     $reason = 'not_json';
                 } else {
-                    $blocks = $this->sections($json, $response->model->value);
+                    $blocks = $this->sections($json, $response->model->value, $current);
                     if ($blocks === []) {
                         $reason = 'no_valid_blocks';
                     }
@@ -532,14 +532,19 @@ final class SiteDesignGenerateAction
      * The AI's sections, each cleaned by the same rules as every AI edit; anything else is dropped.
      *
      * @param  array<string, mixed>  $json
+     * @param  array<int, mixed>  $current
      * @return list<array<string, mixed>>
      */
-    private function sections(array $json, string $modelValue): array
+    private function sections(array $json, string $modelValue, array $current): array
     {
         $blocks = [];
         foreach (is_array($json['blocks'] ?? null) ? $json['blocks'] : [] as $block) {
             $type = is_array($block) ? ($block['type'] ?? null) : null;
             if (! is_string($type) || ! in_array($type, BlockPatchSchema::ADDABLE_TYPES, true)) {
+                continue;
+            }
+            // A video only with an address already on the page: the designer has no words from the owner to take one from.
+            if ($type === 'video_embed' && ! BlockPatchSchema::ownerGaveVideo($block['contentUrl'] ?? null, '', $current)) {
                 continue;
             }
             $clean = BlockPatchSchema::modelBlock($type, $block, $block['items'] ?? null);

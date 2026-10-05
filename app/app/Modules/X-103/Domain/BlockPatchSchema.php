@@ -141,6 +141,50 @@ final class BlockPatchSchema
         ];
     }
 
+    /**
+     * A video is the owner's: the AI may put a video address on a page only when the owner gave it — in their own words
+     * (with or without https:// and www.), or already on the page. An address the AI made up would show a video the
+     * business never made and tell search engines about it (the publisher writes a VideoObject for every video section).
+     *
+     * @param  array<int, mixed>  $currentBlocks
+     */
+    public static function ownerGaveVideo(mixed $url, string $ownerWords, array $currentBlocks): bool
+    {
+        $address = is_scalar($url) ? trim((string) $url) : '';
+        if ($address === '') {
+            return false;
+        }
+        foreach ($currentBlocks as $block) {
+            if (is_array($block) && ($block['type'] ?? null) === 'video_embed' && is_scalar($block['contentUrl'] ?? null)
+                && trim((string) $block['contentUrl']) === $address) {
+                return true;
+            }
+        }
+        $bare = (string) preg_replace('#^(https?://)?(www\.)?#i', '', $address);
+
+        return $bare !== '' && str_contains(strtolower($ownerWords), strtolower($bare));
+    }
+
+    /**
+     * An AI patch that would write a video address the owner did not give: adding a video section, or changing a
+     * video's address.
+     *
+     * @param  array<string, mixed>  $patch
+     * @param  array<int, mixed>  $currentBlocks
+     */
+    public static function patchInventsVideo(array $patch, string $ownerWords, array $currentBlocks): bool
+    {
+        $op = $patch['op'] ?? null;
+        if ($op === 'add_block' && ($patch['type'] ?? null) === 'video_embed') {
+            return ! self::ownerGaveVideo(is_array($patch['fields'] ?? null) ? ($patch['fields']['contentUrl'] ?? null) : null, $ownerWords, $currentBlocks);
+        }
+        if ($op === 'set_string' && ($patch['field'] ?? null) === 'contentUrl') {
+            return ! self::ownerGaveVideo($patch['value'] ?? null, $ownerWords, $currentBlocks);
+        }
+
+        return false;
+    }
+
     public static function isSafeLink(string $value): bool
     {
         return preg_match('#^(https?://|tel:|mailto:)#i', trim($value)) === 1;

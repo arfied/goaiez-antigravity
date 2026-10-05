@@ -90,6 +90,10 @@ final class SitePageProposeAction
         $leftOut = [];
         foreach ($response->json['blocks'] ?? [] as $block) {
             $type = is_array($block) ? ($block['type'] ?? '') : '';
+            if (is_array($block) && $type === 'video_embed' && ! BlockPatchSchema::ownerGaveVideo($block['contentUrl'] ?? null, $request, [])) {
+                // A video the owner did not give an address for is made up; the page is made without it.
+                continue;
+            }
             if (is_array($block) && is_string($type) && in_array($type, BlockPatchSchema::ADDABLE_TYPES, true)) {
                 // Only the fields the AI may write; a file path, the type or a javascript: link is dropped here.
                 $clean = BlockPatchSchema::modelBlock($type, $block, $block['items'] ?? null);

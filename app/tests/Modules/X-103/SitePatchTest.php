@@ -404,4 +404,69 @@ class SitePatchTest extends TestCase
         $this->assertSame('Kept headline 9124', $blocks[0]['headline']);
         $this->assertEquals(['type' => 'about', 'text' => 'Unchanged'], $blocks[1]);
     }
+
+    public function test_the_ai_never_makes_up_a_video()
+    {
+        // Fixture taken from ownersPage() and aiAnswers() in this file.
+        $page = $this->ownersPage('SitePatchVideo');
+        $this->aiAnswers([
+            ['op' => 'set_string', 'block_index' => 0, 'field' => 'headline', 'value' => 'Kept headline 8831'],
+            ['op' => 'add_block', 'block_index' => 2, 'type' => 'video_embed', 'fields' => ['name' => 'Our story 8832', 'contentUrl' => 'https://www.youtube.com/watch?v=made8833', 'uploadDate' => '2026-01-01']],
+        ]);
+
+        Livewire::test(Pages::class)
+            ->set('editRequest', [$page->id => 'Make it look great'])
+            ->call('askEdit', $page->id)
+            ->assertSet('error', null);
+
+        $page->refresh();
+        $blocks = $page->draft_meta['pending_edit']['blocks'];
+        $this->assertSame(['hero', 'about'], array_column($blocks, 'type'));
+        $this->assertSame('Kept headline 8831', $blocks[0]['headline']);
+        $this->assertStringNotContainsString('made8833', json_encode($blocks));
+    }
+
+    public function test_a_video_the_owner_gave_the_address_for_is_added()
+    {
+        // Fixture taken from ownersPage() and aiAnswers() in this file. A test of its own: Http::fake stacks, so a second
+        // fake in one test is never reached. The owner gave the address without https:// and www.
+        $page = $this->ownersPage('SitePatchVideoOwner');
+        $this->aiAnswers([
+            ['op' => 'add_block', 'block_index' => 2, 'type' => 'video_embed', 'fields' => ['name' => 'Our story 8834', 'contentUrl' => 'https://www.youtube.com/watch?v=owner8835', 'uploadDate' => '2026-01-01']],
+        ]);
+
+        Livewire::test(Pages::class)
+            ->set('editRequest', [$page->id => 'Add my video youtube.com/watch?v=owner8835 at the end'])
+            ->call('askEdit', $page->id)
+            ->assertSet('error', null);
+
+        $page->refresh();
+        $blocks = $page->draft_meta['pending_edit']['blocks'];
+        $this->assertSame(['hero', 'about', 'video_embed'], array_column($blocks, 'type'));
+        $this->assertSame('https://www.youtube.com/watch?v=owner8835', $blocks[2]['contentUrl']);
+    }
+
+    public function test_the_ai_never_changes_a_video_to_an_address_the_owner_did_not_give()
+    {
+        // Fixture taken from test_one_forbidden_edit_is_dropped_and_the_valid_edits_beside_it_are_still_proposed.
+        $page = $this->ownersPage('SitePatchVideoAddress');
+        $page->update(['draft_blocks' => [
+            ['type' => 'hero', 'headline' => 'Old', 'subline' => 'Old'],
+            ['type' => 'video_embed', 'name' => 'Our work 8836', 'contentUrl' => 'https://vimeo.com/8837', 'uploadDate' => '2026-01-01'],
+        ]]);
+        $this->aiAnswers([
+            ['op' => 'set_string', 'block_index' => 1, 'field' => 'contentUrl', 'value' => 'https://vimeo.com/made8838'],
+            ['op' => 'set_string', 'block_index' => 1, 'field' => 'name', 'value' => 'Our latest work 8839'],
+        ]);
+
+        Livewire::test(Pages::class)
+            ->set('editRequest', [$page->id => 'Make it look great'])
+            ->call('askEdit', $page->id)
+            ->assertSet('error', null);
+
+        $page->refresh();
+        $video = $page->draft_meta['pending_edit']['blocks'][1];
+        $this->assertSame('https://vimeo.com/8837', $video['contentUrl']);
+        $this->assertSame('Our latest work 8839', $video['name']);
+    }
 }

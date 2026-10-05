@@ -121,6 +121,11 @@ final class SiteEditProposeAction
         $kept = [];
         foreach ($patches as $patch) {
             if (is_array($patch) && in_array($patch['op'] ?? null, BlockPatchSchema::MODEL_OPS, true)) {
+                if (BlockPatchSchema::patchInventsVideo($patch, $request, $currentBlocks)) {
+                    $dropped[] = 'invented_video';
+
+                    continue;
+                }
                 $kept[] = $patch;
             } else {
                 $dropped[] = is_array($patch) && is_string($patch['op'] ?? null) ? $patch['op'] : '(not a patch)';

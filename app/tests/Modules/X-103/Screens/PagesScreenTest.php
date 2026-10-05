@@ -1921,4 +1921,46 @@ class PagesScreenTest extends TestCase
             ->assertSet('success', null)
             ->assertSet('error', 'The AI did not propose a change. Name the block and the exact words you want, for example: on the hero, set the headline to …');
     }
+
+    public function test_make_me_a_page_keeps_a_video_only_with_the_address_the_owner_gave(): void
+    {
+        // Fixture taken from test_make_me_a_page_writes_any_section_but_never_a_file_path_or_an_unsafe_link.
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['name' => 'Pages Test Video', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
+        Tenancy::set($biz->id);
+
+        $made = json_encode(['title' => 'Distinctive video page 8851', 'slug' => 'our-videos', 'blocks' => [
+            ['type' => 'hero', 'headline' => 'Distinctive headline 8852'],
+            ['type' => 'video_embed', 'name' => 'Our work 8853', 'contentUrl' => 'https://vimeo.com/owner8854', 'uploadDate' => '2026-01-01'],
+            ['type' => 'video_embed', 'name' => 'A tour 8855', 'contentUrl' => 'https://vimeo.com/made8856', 'uploadDate' => '2026-01-01'],
+        ], 'explanation' => 'A video page.']);
+
+        Http::fake([
+            'api.anthropic.com/*' => Http::response(
+                json_encode([
+                    'content' => [['type' => 'text', 'text' => $made]],
+                    'stop_reason' => 'end_turn',
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
+            'api.openai.com/*' => Http::response([
+                'id' => 'msg_edit',
+                'choices' => [['message' => ['content' => $made]]],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 10, 'total_tokens' => 20],
+            ]),
+        ]);
+
+        Livewire::actingAs($owner)->test(Pages::class)
+            ->set('pageRequest', 'make a page with our video https://vimeo.com/owner8854')
+            ->call('makePage')
+            ->assertSet('success', fn ($s) => str_contains((string) $s, 'with 2 blocks'));
+
+        $page = Page::where('business_id', $biz->id)->where('slug', 'our-videos')->first();
+        $this->assertNotNull($page);
+        $this->assertSame(['hero', 'video_embed'], array_column($page->draft_blocks, 'type'));
+        $this->assertSame('https://vimeo.com/owner8854', $page->draft_blocks[1]['contentUrl']);
+        $this->assertStringNotContainsString('made8856', json_encode($page->draft_blocks));
+    }
 }

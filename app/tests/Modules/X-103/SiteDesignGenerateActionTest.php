@@ -848,4 +848,26 @@ class SiteDesignGenerateActionTest extends TestCase
         $page->refresh();
         $this->assertSame('Owner is reviewing 7535', $page->draft_meta['pending_edit']['blocks'][0]['headline']);
     }
+
+    public function test_the_designer_keeps_the_owners_video_and_never_makes_one_up(): void
+    {
+        // Fixture taken from test_a_design_is_a_json_page_cleaned_by_the_same_rules_as_every_ai_edit.
+        $page = $this->page([
+            ['type' => 'hero', 'headline' => 'Old headline'],
+            ['type' => 'video_embed', 'name' => 'Our work 8841', 'contentUrl' => 'https://youtu.be/owner8842', 'uploadDate' => '2026-01-01'],
+        ]);
+        $this->fakeAnswer(json_encode(['blocks' => [
+            ['type' => 'hero', 'headline' => 'Designed 8843'],
+            ['type' => 'video_embed', 'name' => 'Our work 8841', 'contentUrl' => 'https://youtu.be/owner8842', 'uploadDate' => '2026-01-01'],
+            ['type' => 'video_embed', 'name' => 'Behind the scenes 8844', 'contentUrl' => 'https://youtu.be/made8845', 'uploadDate' => '2026-01-01'],
+        ]]));
+
+        $res = app(SiteDesignGenerateAction::class)->handle($page->business_id, $page->id);
+
+        $this->assertSame('ready', $res['status']);
+        $blocks = $page->refresh()->draft_meta['designs']['claude']['blocks'];
+        $this->assertSame(['hero', 'video_embed'], array_column($blocks, 'type'));
+        $this->assertSame('https://youtu.be/owner8842', $blocks[1]['contentUrl']);
+        $this->assertStringNotContainsString('made8845', json_encode($blocks));
+    }
 }
