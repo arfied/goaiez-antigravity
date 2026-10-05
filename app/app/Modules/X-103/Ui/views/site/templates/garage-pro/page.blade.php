@@ -1,6 +1,7 @@
 {{-- Garage Pro — auto repair shops, tyre and brake centres, mechanics: steel grey and racing red, an angled photo, numbered services. A frozen layout: the AI fills the blocks, never this markup. --}}
 @php
     $hero = $b['hero'] ?? null;
+    $h1 = ($hero ? $txt($hero['headline'] ?? null) : null) ?? ($name !== '' ? $name : null);
     $heroImg = $hero ? $img($hero['image_path'] ?? null) : null;
     $heroHref = $hero && $txt($hero['cta_label'] ?? null) ? $link($hero['cta_url'] ?? null) : null;
     $stats = array_values(array_filter((array) ($b['stats']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['value'] ?? null)));
@@ -42,11 +43,12 @@
     </div>
 </header>
 
+@if(! $hero && $h1 !== null)<h1 style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0">{{ $h1 }}</h1>@endif
 @if($hero)
 <section class="gp-hero{{ $heroImg ? '' : ' gp-hero--plain' }}"{!! $at('hero') !!}>
     <div class="gp-hero__body">
         <div class="gp-hero__inner">
-            <h1{!! $f('headline') !!}>{{ $hero['headline'] }}</h1>
+            @if($h1 !== null)<h1{!! $f('headline') !!}>{{ $h1 }}</h1>@endif
             @if($txt($hero['subline'] ?? null))<p class="gp-hero__sub"{!! $f('subline') !!}>{{ $hero['subline'] }}</p>@endif
             <div class="gp-actions">
                 @if($heroHref)<a class="gp-button gp-button--lg" href="{{ $heroHref }}"{!! $f('cta_label') !!}>{{ $hero['cta_label'] }}</a>@endif

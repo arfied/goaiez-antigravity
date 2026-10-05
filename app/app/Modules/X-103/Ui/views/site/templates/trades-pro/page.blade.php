@@ -25,6 +25,7 @@
     $phoneSvg = '<svg class="tp-ico-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>';
     $pinSvg = '<svg class="tp-ico-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>';
     $hero = $b['hero'] ?? null;
+    $h1 = ($hero ? $txt($hero['headline'] ?? null) : null) ?? ($name !== '' ? $name : null);
     $heroImg = $hero ? $img($hero['image_path'] ?? null) : null;
     $heroHref = $hero && $txt($hero['cta_label'] ?? null) ? $link($hero['cta_url'] ?? null) : null;
     $services = array_values(array_filter((array) ($b['services']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['name'] ?? null)));
@@ -62,12 +63,13 @@
     </div>
 </header>
 
+@if(! $hero && $h1 !== null)<h1 style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0">{{ $h1 }}</h1>@endif
 @if($hero)
 <section class="tp-hero{{ $heroImg ? '' : ' tp-hero--plain' }}"{!! $at('hero') !!}>
     @if($heroImg)<img class="tp-hero__img" src="{{ $heroImg }}" alt="{{ $txt($hero['image_alt'] ?? null) ?? '' }}">@endif
     <div class="tp-wrap tp-hero__body">
         @if($area)<p class="tp-eyebrow tp-eyebrow--light">{!! $pinSvg !!}Serving {{ $area }}</p>@endif
-        <h1{!! $f('headline') !!}>{{ $hero['headline'] }}</h1>
+        @if($h1 !== null)<h1{!! $f('headline') !!}>{{ $h1 }}</h1>@endif
         @if($txt($hero['subline'] ?? null))<p class="tp-hero__sub"{!! $f('subline') !!}>{{ $hero['subline'] }}</p>@endif
         <div class="tp-actions">
             @if($heroHref)<a class="tp-button tp-button--primary tp-button--lg" href="{{ $heroHref }}"{!! $f('cta_label') !!}>{{ $hero['cta_label'] }}</a>@endif

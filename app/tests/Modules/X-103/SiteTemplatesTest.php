@@ -343,4 +343,26 @@ class SiteTemplatesTest extends TestCase
             $this->assertSame(2, substr_count($html, 'data-block-type="video_embed"'), $id);
         }
     }
+
+    public function test_every_template_page_has_exactly_one_main_heading(): void
+    {
+        foreach (array_keys(SiteTemplates::TEMPLATES) as $id) {
+            $html = $this->render($this->blocks(), $id);
+            $this->assertSame(1, substr_count($html, '<h1'), $id);
+            $this->assertMatchesRegularExpression('/<h1[^>]*>Plumbing fixed right, the first time<\/h1>/', $html, $id);
+
+            // A blank headline: the business's name, never an empty heading.
+            $blank = $this->blocks();
+            $blank[0]['headline'] = '  ';
+            $html = $this->render($blank, $id);
+            $this->assertSame(1, substr_count($html, '<h1'), "$id: blank headline");
+            $this->assertMatchesRegularExpression('/<h1[^>]*>Harbor Line Plumbing<\/h1>/', $html, "$id: blank headline");
+
+            // No banner at all: the business's name, as a heading only search engines and screen readers see.
+            $noHero = array_values(array_filter($this->blocks(), static fn (array $b): bool => $b['type'] !== 'hero'));
+            $html = $this->render($noHero, $id);
+            $this->assertSame(1, substr_count($html, '<h1'), "$id: no banner");
+            $this->assertMatchesRegularExpression('/<h1 style="position:absolute;[^"]*">Harbor Line Plumbing<\/h1>/', $html, "$id: no banner");
+        }
+    }
 }

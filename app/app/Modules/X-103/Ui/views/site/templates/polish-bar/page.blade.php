@@ -1,6 +1,7 @@
 {{-- Polish Bar — nail salons, lash and brow bars. A frozen layout: the AI fills the blocks, never this markup. --}}
 @php
     $hero = $b['hero'] ?? null;
+    $h1 = ($hero ? $txt($hero['headline'] ?? null) : null) ?? ($name !== '' ? $name : null);
     $heroImg = $hero ? $img($hero['image_path'] ?? null) : null;
     $about = isset($b['about']) && $txt($b['about']['text'] ?? null) ? $b['about'] : null;
     $services = array_values(array_filter((array) ($b['services']['items'] ?? []), fn ($i) => is_array($i) && $txt($i['name'] ?? null)));
@@ -33,11 +34,12 @@
     </div>
 </header>
 
+@if(! $hero && $h1 !== null)<h1 style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0">{{ $h1 }}</h1>@endif
 @if($hero)
 <section class="pb-hero{{ $heroImg ? '' : ' pb-hero--text' }}"{!! $at('hero') !!}>
     <div class="pb-wrap pb-hero__grid">
         <div class="pb-hero__body">
-            <h1{!! $f('headline') !!}>{{ $hero['headline'] }}</h1>
+            @if($h1 !== null)<h1{!! $f('headline') !!}>{{ $h1 }}</h1>@endif
             @if($txt($hero['subline'] ?? null))<p class="pb-hero__sub"{!! $f('subline') !!}>{{ $hero['subline'] }}</p>@endif
             <div class="pb-actions">
                 @if($heroHref)<a class="pb-button pb-button--pop" href="{{ $heroHref }}"{!! $f('cta_label') !!}>{{ $hero['cta_label'] }}</a>@elseif($book)<a class="pb-button pb-button--pop" href="{{ $book }}">{{ $bookLabel }}</a>@endif
