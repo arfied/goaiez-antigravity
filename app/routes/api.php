@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\PlaceSuggestionController;
 use App\Http\Controllers\Api\PublicAuditController;
 use App\Http\Controllers\Api\WidgetReviewController;
 use App\Http\Controllers\Voice\Live\CallEndController;
+use App\Http\Controllers\Voice\Live\CallMessageController;
 use App\Http\Controllers\Voice\Live\CallPriceToolController;
 use App\Http\Controllers\Voice\Live\CallStartController;
 use App\Http\Controllers\Voice\Live\CallTurnsController;
@@ -186,6 +187,7 @@ Route::prefix('voice/v1')->middleware(['throttle:300,1', VerifyVoiceWorker::clas
     Route::post('/calls', CallStartController::class)->name('api.voice.calls.start');
     Route::post('/calls/{callToken}/turns', CallTurnsController::class)->where('callToken', '[A-Za-z0-9_~-]{1,1024}')->name('api.voice.calls.turns');
     Route::post('/calls/{callToken}/tools/price', CallPriceToolController::class)->where('callToken', '[A-Za-z0-9_~-]{1,1024}')->name('api.voice.calls.tools.price');
+    Route::post('/calls/{callToken}/message', CallMessageController::class)->where('callToken', '[A-Za-z0-9_~-]{1,1024}')->name('api.voice.calls.message');
     Route::post('/calls/{callToken}/end', CallEndController::class)->where('callToken', '[A-Za-z0-9_~-]{1,1024}')->name('api.voice.calls.end');
 });
 

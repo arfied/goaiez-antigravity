@@ -7,6 +7,7 @@ use App\Enums\CallOutcome;
 use App\Enums\LiveAnswerMode;
 use App\Http\Controllers\Voice\Live\CallPriceToolController;
 use App\Http\Middleware\VerifyVoiceWorker;
+use App\Jobs\Voice\NotifyOwnerOfCallMessageJob;
 use App\Models\AuditLogEntry;
 use App\Models\Call;
 use App\Models\VoiceUsageEvent;
@@ -23,6 +24,7 @@ use App\Services\Voice\RecordingAnnouncement;
 use App\Services\Voice\RecordingAnnouncementAttestation;
 use App\Services\Voice\VoiceGreeting;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
@@ -395,4 +397,41 @@ test('the price tool refuses a missing question and a token that opens to nothin
 
     $body = json_encode(['question' => 'How much is your callout fee?']);
     postVoiceTo('/api/voice/v1/calls/not-a-token/tools/price', $body, signedVoiceHeaders($body))->assertNotFound();
+});
+
+test('a message the caller leaves is kept on the call, the first one stands, and the owner is told once', function (): void {
+    [$businessId, $token] = voiceLiveAnsweredCall('+15555550951', 'SCL_9318');
+    Queue::fake();
+
+    $first = json_encode(['message' => 'Leak under the sink 9431, please ring back today.', 'name' => 'Dana 9432', 'callback' => '+1 415 555 0999']);
+    postVoiceTo("/api/voice/v1/calls/{$token}/message", $first, signedVoiceHeaders($first))
+        ->assertOk()->assertExactJson(['status' => 'taken']);
+
+    $second = json_encode(['message' => 'Actually never mind 9433.']);
+    postVoiceTo("/api/voice/v1/calls/{$token}/message", $second, signedVoiceHeaders($second))
+        ->assertOk()->assertExactJson(['status' => 'taken']);
+
+    $call = Tenancy::actingAs($businessId, fn (): Call => Call::query()->where('provider_call_id', 'livekit:SCL_9318')->firstOrFail());
+    expect($call->message_text)->toBe('Leak under the sink 9431, please ring back today.')
+        ->and($call->message_name)->toBe('Dana 9432')
+        ->and($call->message_callback)->toBe('+1 415 555 0999')
+        ->and($call->message_left_at)->not->toBeNull();
+
+    Queue::assertPushed(NotifyOwnerOfCallMessageJob::class, 1);
+    Queue::assertPushed(NotifyOwnerOfCallMessageJob::class, fn (NotifyOwnerOfCallMessageJob $job): bool => $job->providerCallId === 'livekit:SCL_9318');
+});
+
+test('a message with no words, or a callback that is not a phone number, is refused; a token that opens to nothing is a 404', function (): void {
+    [$businessId, $token] = voiceLiveAnsweredCall('+15555550952', 'SCL_9319');
+
+    foreach ([['message' => '   '], ['message' => 'Hi', 'callback' => 'ring me maybe']] as $i => $payload) {
+        $body = json_encode($payload);
+        postVoiceTo("/api/voice/v1/calls/{$token}/message", $body, signedVoiceHeaders($body, at: time() - $i))
+            ->assertStatus(422)->assertJson(['status' => 'invalid']);
+    }
+
+    $body = json_encode(['message' => 'Hello']);
+    postVoiceTo('/api/voice/v1/calls/not-a-token/message', $body, signedVoiceHeaders($body))->assertNotFound();
+
+    expect(Tenancy::actingAs($businessId, fn () => Call::query()->firstOrFail()->message_text))->toBeNull();
 });

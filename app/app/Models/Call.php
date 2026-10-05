@@ -50,6 +50,11 @@ use Illuminate\Support\Carbon;
  * @property ?Carbon $ended_at
  * @property ?int $ring_seconds
  * @property ?CallAnsweredBy $answered_by
+ * @property ?string $message_name
+ * @property ?string $message_callback
+ * @property ?string $message_text
+ * @property ?Carbon $message_left_at
+ * @property ?Carbon $message_notified_at
  * @property ?Voicemail $voicemail
  */
 final class Call extends Model implements TenantScoped
@@ -91,6 +96,8 @@ final class Call extends Model implements TenantScoped
             'started_at' => 'datetime',
             'answered_at' => 'datetime',
             'ended_at' => 'datetime',
+            'message_left_at' => 'datetime',
+            'message_notified_at' => 'datetime',
         ];
     }
 }

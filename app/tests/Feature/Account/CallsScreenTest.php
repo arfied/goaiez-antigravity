@@ -207,3 +207,22 @@ test('the panel says the receptionist is not answering yet until the platform sw
 
     Http::assertNothingSent();
 });
+
+test('a message the AI receptionist took is on the calls page, labelled as what it heard', function () {
+    Http::fake();
+
+    Call::factory()->create([
+        'message_text' => 'Leak under the sink 9451, please ring back today.',
+        'message_name' => 'Dana 9452',
+        'message_callback' => '+14155559453',
+        'message_left_at' => now(),
+    ]);
+
+    Livewire::test(Calls::class)
+        ->assertSee('Leak under the sink 9451, please ring back today.')
+        ->assertSee('From Dana 9452')
+        ->assertSee('Ring back on +14155559453')
+        ->assertSee('written as it heard it');
+
+    Http::assertNothingSent();
+});

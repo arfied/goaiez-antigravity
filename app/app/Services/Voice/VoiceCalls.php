@@ -17,6 +17,7 @@ use App\Enums\VoicemailAudioState;
 use App\Enums\VoiceUsageKind;
 use App\Events\Voice\CallMissed;
 use App\Jobs\Voice\FetchVoicemailRecordingJob;
+use App\Jobs\Voice\NotifyOwnerOfCallMessageJob;
 use App\Models\Call;
 use App\Models\Conversation;
 use App\Models\Customer;
@@ -307,6 +308,58 @@ final class VoiceCalls
                 $businessId,
                 CarbonImmutable::instance($call->ended_at),
             );
+        }
+
+        return $call;
+    }
+
+    /**
+     * Keep the message a caller left with the AI receptionist, and tell the owner (AI receptionist plan, wave 3c, 2026-10-05).
+     *
+     * One message per call, and the first one stands: a worker retrying the request, or a second message on the same call,
+     * changes nothing and tells the owner nothing twice. The owner is told after the commit, by email, and the email carries
+     * neither the message nor the number — those are on their calls page, behind their login
+     * ({@see NotifyOwnerOfCallMessageJob}).
+     *
+     * ⛔ It writes no consent and creates no contact: being rung back is what the caller asked for, and nothing more.
+     *
+     * @return Call|null null when the id names no call the receptionist answered for this tenant
+     */
+    public function leaveLiveMessage(int $businessId, int $callId, string $text, ?string $name, ?string $callback): ?Call
+    {
+        $fresh = false;
+
+        $call = Tenancy::actingAs($businessId, function () use ($callId, $text, $name, $callback, &$fresh): ?Call {
+            return DB::transaction(function () use ($callId, $text, $name, $callback, &$fresh): ?Call {
+                $call = Call::query()
+                    ->whereKey($callId)
+                    ->where('answered_by', CallAnsweredBy::Agent->value)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (! $call instanceof Call || $call->message_left_at !== null) {
+                    return $call instanceof Call ? $call : null;
+                }
+
+                $call->forceFill([
+                    'message_text' => $text,
+                    'message_name' => $name,
+                    'message_callback' => $callback,
+                    'message_left_at' => CarbonImmutable::now(),
+                ])->save();
+
+                $fresh = true;
+
+                return $call;
+            });
+        });
+
+        if (! $call instanceof Call) {
+            return null;
+        }
+
+        if ($fresh) {
+            NotifyOwnerOfCallMessageJob::dispatch($businessId, $call->location_id, $call->provider_call_id);
         }
 
         return $call;

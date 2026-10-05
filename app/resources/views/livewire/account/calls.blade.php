@@ -302,6 +302,23 @@
                             {{ $call->outcome->label() }}@if ($call->started_at) · {{ $call->started_at->diffForHumans() }}@endif
                         </span>
 
+                        {{--
+                            The message the caller left with the AI receptionist (wave 3c). Labelled as what the
+                            receptionist heard, for the transcript's reason below: it is a machine's hearing of a phone line.
+                        --}}
+                        @if ($call->message_text)
+                            <span class="text-base text-ink-2">
+                                Your AI receptionist took this message, written as it heard it:
+                            </span>
+                            @if ($call->message_name)
+                                <span class="text-base text-ink-2">From {{ $call->message_name }}</span>
+                            @endif
+                            @if ($call->message_callback)
+                                <span class="text-base text-ink-2">Ring back on {{ $call->message_callback }}</span>
+                            @endif
+                            <span class="text-base text-ink" data-testid="call-message">{{ $call->message_text }}</span>
+                        @endif
+
                         @if ($call->voicemail)
                             <span class="text-base text-ink-2">
                                 {{ $call->voicemail->audio_state->label() }}@if ($call->voicemail->recording_seconds) · {{ $call->voicemail->recording_seconds }}s @endif
