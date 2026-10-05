@@ -257,6 +257,62 @@ final class VoiceCalls
     }
 
     /**
+     * Settle a call the AI receptionist answered, now that the voice worker says it has ended (AI receptionist plan, wave 3a).
+     *
+     * The row becomes `Answered` with its end time, and the call's minutes go on the inbound voice meter under the same
+     * `livekit:` handle, so the daily ceiling call start asks counts live calls too. Ending a call that is already settled
+     * changes nothing and meters nothing again — the meter's own `(provider_call_id, kind)` key would refuse a second row
+     * anyway, and the settled check means it is never asked.
+     *
+     * @return Call|null null when the id names no call the receptionist answered for this tenant
+     */
+    public function endLive(int $businessId, int $callId): ?Call
+    {
+        // Set inside the transaction only when this request is the one that settled the call.
+        $seconds = null;
+
+        $call = Tenancy::actingAs($businessId, function () use ($callId, &$seconds): ?Call {
+            return DB::transaction(function () use ($callId, &$seconds): ?Call {
+                $call = Call::query()
+                    ->whereKey($callId)
+                    ->where('answered_by', CallAnsweredBy::Agent->value)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (! $call instanceof Call || $call->outcome->isSettled()) {
+                    return $call instanceof Call ? $call : null;
+                }
+
+                $now = CarbonImmutable::now();
+                $answeredAt = $call->answered_at === null ? $now : CarbonImmutable::instance($call->answered_at);
+
+                $call->forceFill(['outcome' => CallOutcome::Answered, 'ended_at' => $now])->save();
+                $seconds = max(0, (int) $answeredAt->diffInSeconds($now));
+
+                return $call;
+            });
+        });
+
+        if (! $call instanceof Call) {
+            return null;
+        }
+
+        // After the commit, for record()'s reason: the meter is platform-scoped and takes the business id as its whole
+        // attribution.
+        if ($seconds !== null && $call->ended_at !== null) {
+            $this->spend->record(
+                VoiceUsageKind::InboundMinutes,
+                $call->provider_call_id,
+                $seconds,
+                $businessId,
+                CarbonImmutable::instance($call->ended_at),
+            );
+        }
+
+        return $call;
+    }
+
+    /**
      * Attach the recording the vendor holds for this call.
      *
      * ⚠️ **THE ROW IS CREATED HERE AND THE AUDIO IS FETCHED LATER**, because the

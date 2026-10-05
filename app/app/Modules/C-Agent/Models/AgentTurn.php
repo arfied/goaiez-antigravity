@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $agent_reply
  * @property ?string $intent
  * @property ?array<string, mixed> $context
+ * @property ?int $call_id
+ * @property ?array<string, int|float> $metrics
  */
 class AgentTurn extends Model
 {
@@ -24,5 +26,6 @@ class AgentTurn extends Model
 
     protected $casts = [
         'turn_number' => 'integer',
+        'metrics' => 'array',
     ];
 }

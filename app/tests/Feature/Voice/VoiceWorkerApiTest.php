@@ -8,6 +8,8 @@ use App\Enums\LiveAnswerMode;
 use App\Http\Middleware\VerifyVoiceWorker;
 use App\Models\AuditLogEntry;
 use App\Models\Call;
+use App\Models\VoiceUsageEvent;
+use App\Modules\CAgent\Models\AgentTurn;
 use App\Services\Agent\AgentRules;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Sms\TenantNumbers;
@@ -226,4 +228,105 @@ test('call start hands the worker the receptionist instructions and the business
     expect($response->json('instructions'))->toBe(AgentRules::forVoiceCall())
         ->and($response->json('facts'))->toBe(['business_name' => 'Harbor Plumbing 9301'])
         ->and($response->getContent())->not->toContain('price list');
+});
+
+function postVoiceTo(string $path, string $body, array $headers): TestResponse
+{
+    return test()->call('POST', $path, [], [], [], array_combine(
+        array_map(fn (string $h): string => 'HTTP_'.strtoupper(str_replace('-', '_', $h)), array_keys($headers)),
+        array_values($headers),
+    ), $body);
+}
+
+/**
+ * A call the receptionist has answered: [business id, call token].
+ *
+ * @return array{0: int, 1: string}
+ */
+function voiceLiveAnsweredCall(string $e164, string $transportCallId): array
+{
+    $businessId = voiceLiveTenant($e164);
+    $body = json_encode(['dialled_e164' => $e164, 'from_e164' => '+14155550932', 'transport_call_id' => $transportCallId]);
+    $token = (string) postVoice($body, signedVoiceHeaders($body))->assertOk()->json('call_token');
+
+    return [$businessId, $token];
+}
+
+test('what was said on a call is recorded once per turn, however often the worker sends the batch', function (): void {
+    [$businessId, $token] = voiceLiveAnsweredCall('+15555550942', 'SCL_9309');
+
+    $first = json_encode(['turns' => [
+        ['turn' => 1, 'caller' => 'How much is your callout fee?', 'agent' => 'The business will confirm the price and get back to you.', 'metrics' => ['llm_ttft_ms' => 180]],
+        ['turn' => 2, 'caller' => 'Okay, thanks.', 'agent' => 'You are welcome.'],
+    ]]);
+    postVoiceTo("/api/voice/v1/calls/{$token}/turns", $first, signedVoiceHeaders($first))
+        ->assertOk()->assertExactJson(['status' => 'recorded', 'written' => 2]);
+
+    $retry = json_encode(['turns' => [
+        ['turn' => 2, 'caller' => 'Okay, thanks.', 'agent' => 'You are welcome.'],
+        ['turn' => 3, 'caller' => 'Bye.', 'agent' => 'Goodbye.'],
+    ]]);
+    postVoiceTo("/api/voice/v1/calls/{$token}/turns", $retry, signedVoiceHeaders($retry))
+        ->assertOk()->assertExactJson(['status' => 'recorded', 'written' => 1]);
+
+    $turns = Tenancy::actingAs($businessId, fn () => AgentTurn::query()->whereNotNull('call_id')->orderBy('turn_number')->get());
+    expect($turns->pluck('turn_number')->all())->toBe([1, 2, 3])
+        ->and($turns[0]->user_message)->toBe('How much is your callout fee?')
+        ->and($turns[0]->metrics)->toBe(['llm_ttft_ms' => 180])
+        ->and($turns[1]->metrics)->toBeNull();
+});
+
+test('a call token that opens to nothing, or to another business\'s call, is a 404 and writes nothing', function (): void {
+    [$businessA] = voiceLiveAnsweredCall('+15555550943', 'SCL_9310');
+    [$businessB] = voiceLiveAnsweredCall('+15555550944', 'SCL_9311');
+    $callOfB = Tenancy::actingAs($businessB, fn (): int => (int) Call::query()->firstOrFail()->getKey());
+
+    $body = json_encode(['turns' => [['turn' => 1, 'caller' => 'Hello', 'agent' => 'Hi']]]);
+    postVoiceTo('/api/voice/v1/calls/not-a-token/turns', $body, signedVoiceHeaders($body, at: time() - 2))->assertNotFound();
+
+    // A token that names business A and B's call: the call is not A's, so it is not found.
+    $crossed = app(LiveCallTokens::class)->mint($businessA, $callOfB);
+    postVoiceTo("/api/voice/v1/calls/{$crossed}/turns", $body, signedVoiceHeaders($body, at: time() - 1))->assertNotFound();
+    postVoiceTo("/api/voice/v1/calls/{$crossed}/end", '{}', signedVoiceHeaders('{}'))->assertNotFound();
+
+    expect(Tenancy::actingAs($businessA, fn (): int => AgentTurn::query()->count()))->toBe(0)
+        ->and(Tenancy::actingAs($businessB, fn (): int => AgentTurn::query()->count()))->toBe(0)
+        ->and(Tenancy::actingAs($businessB, fn () => Call::query()->firstOrFail()->outcome))->toBe(CallOutcome::InProgress);
+});
+
+test('ending a call settles it as answered and puts its minutes on the voice meter once', function (): void {
+    [$businessId, $token] = voiceLiveAnsweredCall('+15555550945', 'SCL_9312');
+    $this->travel(90)->seconds();
+
+    postVoiceTo("/api/voice/v1/calls/{$token}/end", '{}', signedVoiceHeaders('{}', at: time() - 1))
+        ->assertOk()->assertExactJson(['status' => 'ended']);
+    postVoiceTo("/api/voice/v1/calls/{$token}/end", '{}', signedVoiceHeaders('{}'))
+        ->assertOk()->assertExactJson(['status' => 'ended']);
+
+    $call = Tenancy::actingAs($businessId, fn (): Call => Call::query()->where('provider_call_id', 'livekit:SCL_9312')->firstOrFail());
+    expect($call->outcome)->toBe(CallOutcome::Answered)
+        ->and($call->ended_at)->not->toBeNull();
+
+    $meter = VoiceUsageEvent::query()->where('provider_call_id', 'livekit:SCL_9312')->get();
+    expect($meter)->toHaveCount(1)
+        ->and($meter[0]->business_id)->toBe($businessId)
+        ->and($meter[0]->billable_seconds)->toBe(90);
+});
+
+test('a turns batch that is empty, too long or malformed is refused as invalid and writes nothing', function (): void {
+    [$businessId, $token] = voiceLiveAnsweredCall('+15555550946', 'SCL_9313');
+
+    foreach ([
+        ['turns' => []],
+        ['turns' => [['turn' => 0, 'caller' => 'a', 'agent' => 'b']]],
+        ['turns' => [['turn' => 1, 'caller' => 'a']]],
+        ['turns' => [['turn' => 1, 'caller' => 'a', 'agent' => 'b', 'metrics' => ['Bad Key' => 1]]]],
+        ['turns' => array_fill(0, 51, ['turn' => 1, 'caller' => 'a', 'agent' => 'b'])],
+    ] as $i => $payload) {
+        $body = json_encode($payload);
+        postVoiceTo("/api/voice/v1/calls/{$token}/turns", $body, signedVoiceHeaders($body, at: time() - $i))
+            ->assertStatus(422)->assertJson(['status' => 'invalid']);
+    }
+
+    expect(Tenancy::actingAs($businessId, fn (): int => AgentTurn::query()->count()))->toBe(0);
 });
