@@ -6,8 +6,10 @@ namespace App\Livewire\Account;
 
 use App\Contracts\VoiceProvider;
 use App\Enums\CallRoutingMode;
+use App\Enums\LiveAnswerMode;
 use App\Models\Call;
 use App\Models\SupportSetting;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Sms\TenantNumbers;
 use App\Services\Voice\CallForwarding;
 use App\Services\Voice\RecordingAnnouncement;
@@ -72,11 +74,17 @@ final class Calls extends Component
      */
     public string $mode = '';
 
+    /**
+     * Who picks up first (owner ruling D-6, 2026-10-05) — a string for `$mode`'s reason.
+     */
+    public string $liveAnswer = '';
+
     public function mount(CallForwarding $forwarding): void
     {
         abort_if(Tenancy::id() === null, 403);
 
         $this->mode = $forwarding->modeFor()->value;
+        $this->liveAnswer = $forwarding->liveAnswerFor()->value;
     }
 
     public function save(CallForwarding $forwarding): void
@@ -104,6 +112,30 @@ final class Calls extends Component
     }
 
     /**
+     * Who picks up first: the AI receptionist straight away, or the owner's phone first (owner ruling D-6, 2026-10-05).
+     *
+     * The same split as {@see self::save()}: this validates one answer and calls one method, and only an owner or a manager
+     * may move it — it decides whether a customer's call reaches a person or an AI first.
+     */
+    public function saveLiveAnswer(CallForwarding $forwarding): void
+    {
+        Gate::authorize('create', SupportSetting::class);
+
+        $validated = $this->validate([
+            'liveAnswer' => ['required', Rule::enum(LiveAnswerMode::class)],
+        ], [
+            'liveAnswer.required' => 'Choose who picks up first.',
+            'liveAnswer.enum' => 'Choose who picks up first.',
+        ]);
+
+        $mode = LiveAnswerMode::from($validated['liveAnswer']);
+
+        $forwarding->chooseLiveAnswer($mode, 'user:'.(auth()->id() ?? 'unknown'));
+
+        Toaster::success('Saved — '.mb_strtolower($mode->label()));
+    }
+
+    /**
      * How many calls the history shows.
      *
      * ⚠️ **A FIXED WINDOW RATHER THAN A PAGINATOR, AND IT IS THE MOBILE FLOOR
@@ -120,6 +152,7 @@ final class Calls extends Component
         TenantNumbers $numbers,
         VoiceProvider $voice,
         RecordingAnnouncement $announcement,
+        DefaultsRegistry $registry,
     ): View {
         // Refused rather than resolved when there is no tenant — `Knowledge`'s
         // reasoning exactly: internal staff belong to no business by design, so
@@ -139,6 +172,14 @@ final class Calls extends Component
             'ringSeconds' => $forwarding->ringTimeoutSeconds(),
             'mayChoose' => Gate::allows('create', SupportSetting::class),
             'modes' => CallRoutingMode::cases(),
+
+            // Who picks up first (owner ruling D-6). Re-read rather than `$this->liveAnswer`, for `current`'s reason.
+            'currentLiveAnswer' => $forwarding->liveAnswerFor(),
+            'liveAnswerModes' => LiveAnswerMode::cases(),
+
+            // ⚠️ WHETHER THE RECEPTIONIST ANSWERS AT ALL TODAY. The platform switch is off until the voice worker and its
+            // vendors exist, and a panel offering a choice about an AI that answers nothing must say so rather than imply it.
+            'receptionistLive' => $registry->value('voice.live_agent.enabled') === true,
 
             // ⛔ **THE EXTERNAL GATE, SHOWN TO THE OWNER RATHER THAN HIDDEN FROM
             // THEM** (T176 §7 item 3). Until Infobip activates Voice/Calls on the

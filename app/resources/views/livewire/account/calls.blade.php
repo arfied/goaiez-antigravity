@@ -105,6 +105,63 @@
         @endif
     </div>
 
+    {{--
+        Owner ruling D-6 (2026-10-05): who picks up first — the AI receptionist straight away (the default) or the owner's
+        own phone first. ⚠️ Nothing here claims the receptionist is answering: while the platform switch is off the panel
+        says so, and the ring-me-first option says plainly that it takes a message until ringing the owner is built.
+    --}}
+    <div class="rounded-[--radius-panel] border border-rule bg-card p-5">
+        <h2 class="font-display text-lg font-semibold text-ink">Who picks up first</h2>
+
+        @unless ($receptionistLive)
+            <p class="mt-2 text-base text-ink-2" data-testid="receptionist-not-live">
+                Your AI receptionist is not answering calls yet — we are still switching it on. What you choose here is
+                kept for when it is.
+            </p>
+        @endunless
+
+        @if ($mayChoose)
+            <form wire:submit="saveLiveAnswer" class="mt-4 space-y-5">
+                <fieldset>
+                    <legend class="text-lg font-medium text-ink">When a call comes in</legend>
+
+                    <div class="mt-3 space-y-3">
+                        @foreach ($liveAnswerModes as $option)
+                            <label class="flex gap-3 rounded-[--radius-card] border border-rule p-4">
+                                <input
+                                    type="radio"
+                                    wire:model="liveAnswer"
+                                    value="{{ $option->value }}"
+                                    class="mt-1"
+                                >
+                                <span>
+                                    <span class="block text-base font-medium text-ink">{{ $option->label() }}</span>
+                                    <span class="block text-base text-ink-2">{{ $option->description() }}</span>
+                                    @if ($option === \App\Enums\LiveAnswerMode::OwnerFirst)
+                                        <span class="block text-base text-ink-2" data-testid="owner-first-not-ready">
+                                            Not ready yet: until it is, we take a message instead of answering.
+                                        </span>
+                                    @endif
+                                </span>
+                            </label>
+                        @endforeach
+                    </div>
+
+                    @error('liveAnswer') <p class="mt-2 text-base text-alert" role="alert">{{ $message }}</p> @enderror
+                </fieldset>
+
+                <x-ui.submit target="saveLiveAnswer" busy="Saving…">Save</x-ui.submit>
+            </form>
+        @else
+            <p class="mt-2 text-base text-ink-2">
+                Someone else sets this. Only an owner or a manager can change who picks up first — this is what you have
+                now.
+            </p>
+            <p class="mt-3 text-base font-medium text-ink">{{ $currentLiveAnswer->label() }}</p>
+            <p class="mt-1 text-base text-ink-2">{{ $currentLiveAnswer->description() }}</p>
+        @endif
+    </div>
+
     <div class="rounded-[--radius-panel] border border-rule bg-card p-5">
         <h2 class="font-display text-lg font-semibold text-ink">Sending us the calls you miss</h2>
 
