@@ -18,16 +18,17 @@
     $openHours = array_values(array_filter($hours, fn ($h) => is_array($h) && $txt($h['day'] ?? null)));
     $nav = array_filter(['services' => $services ? 'Services' : null, 'firm' => $about ? 'The firm' : null, 'clients' => $reviews ? 'Clients' : null, 'contact' => 'Contact']);
     $form = is_array($b['form'] ?? null) && is_array($b['form']['fields'] ?? null) && $txt($b['form']['definition_id'] ?? null) && $formBase !== '' ? $b['form'] : null;
+    $navLinks = $pages !== [] ? $pages : array_map(static fn (string $id, string $label): array => ['label' => $label, 'href' => '#'.$id, 'current' => false], array_keys($nav), array_values($nav));
 @endphp
 <div class="cn" id="top">
 <header class="cn-nav">
     <div class="cn-wrap cn-nav__row">
         <a class="cn-brand" href="#top">{{ $name }}</a>
-        <nav class="cn-nav__links" aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
+        <nav class="cn-nav__links" aria-label="Sections">@foreach($navLinks as $navLink)<a href="{{ $navLink['href'] }}"@if($navLink['current']) aria-current="page"@endif>{{ $navLink['label'] }}</a>@endforeach</nav>
         @if($phone)<a class="cn-nav__call" href="{{ $tel }}">{{ $phone }}</a>@endif
         <details class="cn-menu">
             <summary aria-label="Menu"><span></span><span></span></summary>
-            <nav aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
+            <nav aria-label="Sections">@foreach($navLinks as $navLink)<a href="{{ $navLink['href'] }}"@if($navLink['current']) aria-current="page"@endif>{{ $navLink['label'] }}</a>@endforeach</nav>
         </details>
     </div>
 </header>

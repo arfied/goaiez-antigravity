@@ -16,16 +16,17 @@
     $shown = count($gallery) >= 3 ? array_slice($gallery, 0, min(6, intdiv(count($gallery), 3) * 3)) : $gallery;
     $nav = array_filter(['menu' => $menu ? 'Menu' : null, 'about' => $about ? 'About' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => 'Find us']);
     $form = is_array($b['form'] ?? null) && is_array($b['form']['fields'] ?? null) && $txt($b['form']['definition_id'] ?? null) && $formBase !== '' ? $b['form'] : null;
+    $navLinks = $pages !== [] ? $pages : array_map(static fn (string $id, string $label): array => ['label' => $label, 'href' => '#'.$id, 'current' => false], array_keys($nav), array_values($nav));
 @endphp
 <div class="cc" id="top">
 <header class="cc-nav">
     <div class="cc-wrap cc-nav__row">
         <a class="cc-brand" href="#top"><span class="cc-brand__mark" aria-hidden="true">{{ mb_strtoupper(mb_substr($name !== '' ? $name : 'C', 0, 1)) }}</span><span>{{ $name }}</span></a>
-        <nav class="cc-nav__links" aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
+        <nav class="cc-nav__links" aria-label="Sections">@foreach($navLinks as $navLink)<a href="{{ $navLink['href'] }}"@if($navLink['current']) aria-current="page"@endif>{{ $navLink['label'] }}</a>@endforeach</nav>
         @if($phone)<a class="cc-button cc-button--soft cc-nav__call" href="{{ $tel }}">{{ $phone }}</a>@endif
         <details class="cc-menu">
             <summary aria-label="Menu"><span></span><span></span></summary>
-            <nav aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
+            <nav aria-label="Sections">@foreach($navLinks as $navLink)<a href="{{ $navLink['href'] }}"@if($navLink['current']) aria-current="page"@endif>{{ $navLink['label'] }}</a>@endforeach</nav>
         </details>
     </div>
 </header>

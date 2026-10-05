@@ -132,3 +132,4 @@ body > [id$="-x176"] { font-size: 0.9rem; color: color-mix(in srgb, var(--color-
 .sb-form__trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .sb-form__send { justify-self: start; background: var(--color-primary); color: var(--color-on-primary); border-color: transparent; cursor: pointer; }
 .sb-form { margin-inline: auto; }
+.sb nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: 0.3em; text-decoration-thickness: 2px; }

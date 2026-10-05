@@ -16,16 +16,17 @@
     $shown = count($gallery) >= 3 ? array_slice($gallery, 0, min(6, intdiv(count($gallery), 3) * 3)) : $gallery;
     $nav = array_filter(['menu' => $menu ? 'Menu' : null, 'story' => $about ? 'Our story' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => 'Hours & visit']);
     $form = is_array($b['form'] ?? null) && is_array($b['form']['fields'] ?? null) && $txt($b['form']['definition_id'] ?? null) && $formBase !== '' ? $b['form'] : null;
+    $navLinks = $pages !== [] ? $pages : array_map(static fn (string $id, string $label): array => ['label' => $label, 'href' => '#'.$id, 'current' => false], array_keys($nav), array_values($nav));
 @endphp
 <div class="bt" id="top">
 <header class="bt-nav">
     <div class="bt-wrap bt-nav__row">
         <a class="bt-brand" href="#top">{{ $name }}</a>
-        <nav class="bt-nav__links" aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
+        <nav class="bt-nav__links" aria-label="Sections">@foreach($navLinks as $navLink)<a href="{{ $navLink['href'] }}"@if($navLink['current']) aria-current="page"@endif>{{ $navLink['label'] }}</a>@endforeach</nav>
         @if($book)<a class="bt-button bt-nav__book" href="{{ $book }}">{{ $bookHref !== null || $heroHref !== null ? $bookLabel : 'Call' }}</a>@endif
         <details class="bt-menu">
             <summary aria-label="Menu"><span></span><span></span></summary>
-            <nav aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
+            <nav aria-label="Sections">@foreach($navLinks as $navLink)<a href="{{ $navLink['href'] }}"@if($navLink['current']) aria-current="page"@endif>{{ $navLink['label'] }}</a>@endforeach</nav>
         </details>
     </div>
 </header>

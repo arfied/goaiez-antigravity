@@ -18,16 +18,17 @@
     $shown = count($gallery) >= 4 ? array_slice($gallery, 0, min(8, intdiv(count($gallery), 4) * 4)) : $gallery;
     $nav = array_filter(['packages' => $services ? 'Packages' : null, 'work' => $shown ? 'Our work' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => 'Contact']);
     $form = is_array($b['form'] ?? null) && is_array($b['form']['fields'] ?? null) && $txt($b['form']['definition_id'] ?? null) && $formBase !== '' ? $b['form'] : null;
+    $navLinks = $pages !== [] ? $pages : array_map(static fn (string $id, string $label): array => ['label' => $label, 'href' => '#'.$id, 'current' => false], array_keys($nav), array_values($nav));
 @endphp
 <div class="ds" id="top">
 <header class="ds-nav">
     <div class="ds-wrap ds-nav__row">
         <a class="ds-brand" href="#top">{{ $name }}</a>
-        <nav class="ds-nav__links" aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
+        <nav class="ds-nav__links" aria-label="Sections">@foreach($navLinks as $navLink)<a href="{{ $navLink['href'] }}"@if($navLink['current']) aria-current="page"@endif>{{ $navLink['label'] }}</a>@endforeach</nav>
         @if($book)<a class="ds-button ds-nav__book" href="{{ $book }}">{{ $bookHref !== null ? 'Book' : $bookLabel }}</a>@endif
         <details class="ds-menu">
             <summary aria-label="Menu"><span></span><span></span></summary>
-            <nav aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
+            <nav aria-label="Sections">@foreach($navLinks as $navLink)<a href="{{ $navLink['href'] }}"@if($navLink['current']) aria-current="page"@endif>{{ $navLink['label'] }}</a>@endforeach</nav>
         </details>
     </div>
 </header>

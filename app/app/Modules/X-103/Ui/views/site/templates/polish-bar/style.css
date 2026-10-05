@@ -152,3 +152,4 @@ body > [id$="-x176"] { font-size: 0.9rem; color: color-mix(in srgb, var(--color-
 .pb-form__trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .pb-form__send { justify-self: start; background: var(--color-primary); color: var(--color-on-primary); border-color: transparent; cursor: pointer; }
 .pb-form { margin-inline: auto; }
+.pb nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: 0.3em; text-decoration-thickness: 2px; }

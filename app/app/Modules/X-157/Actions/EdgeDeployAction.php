@@ -381,6 +381,8 @@ JS;
                         'tenant_storage_url_prefix' => route('x-157.site.media', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false).'/',
                         'form_action_base' => route('x-157.site', ['business' => $businessId, 'deploy_hash' => $deployHash], absolute: false),
                         'tokens' => app(IndustryStartingPoints::class)->forBusiness($businessId),
+                        // A site template's menu links the site's pages (a template otherwise only jumps within this page).
+                        'site_pages' => self::sitePages($businessId, $linkBase, (string) $page->slug),
                     ];
                     if (SiteTemplates::get($context['tokens']['template'] ?? null) === null) {
                         $html .= '<header class="site-header"><p class="site-header__name">'.e($businessName)."</p></header>\n";
@@ -488,5 +490,33 @@ JS;
                 'measured_ttfb_ms' => $measuredTtfbMs,
             ];
         });
+    }
+
+    /**
+     * The site's published top-level pages for a template's menu: the home page first, then the rest in address order, at most
+     * six, with the page being published marked as current. Addresses are built exactly as the internal-links list builds them.
+     *
+     * @return list<array{label: string, href: string, current: bool}>
+     */
+    private static function sitePages(int $businessId, string $linkBase, string $currentSlug): array
+    {
+        $current = trim($currentSlug, '/');
+        $home = [];
+        $rest = [];
+        foreach (app(PageReadAction::class)->publishedFor($businessId) as $sitePage) {
+            $slug = trim((string) $sitePage->slug, '/');
+            $title = trim((string) $sitePage->title);
+            if ($title === '' || str_contains($slug, '/')) {
+                continue;
+            }
+            $entry = ['label' => $title, 'href' => $linkBase.'/'.$slug, 'current' => $slug === $current];
+            if ($slug === '' || $slug === 'home') {
+                $home[] = $entry;
+            } else {
+                $rest[] = $entry;
+            }
+        }
+
+        return array_slice(array_merge($home, $rest), 0, 6);
     }
 }

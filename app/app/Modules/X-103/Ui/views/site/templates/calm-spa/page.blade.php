@@ -21,16 +21,17 @@
     $nav = array_filter(['treatments' => $services ? 'Treatments' : null, 'about' => $about ? 'About' : null, 'reviews' => $reviews ? 'Reviews' : null, 'visit' => 'Visit']);
     $leaf = '<svg class="cs-leaf" viewBox="0 0 40 12" aria-hidden="true"><path d="M2 6h13M25 6h13"/><path d="M20 1c3 2 3 8 0 10-3-2-3-8 0-10z"/></svg>';
     $form = is_array($b['form'] ?? null) && is_array($b['form']['fields'] ?? null) && $txt($b['form']['definition_id'] ?? null) && $formBase !== '' ? $b['form'] : null;
+    $navLinks = $pages !== [] ? $pages : array_map(static fn (string $id, string $label): array => ['label' => $label, 'href' => '#'.$id, 'current' => false], array_keys($nav), array_values($nav));
 @endphp
 <div class="cs" id="top">
 <header class="cs-nav">
     <div class="cs-wrap cs-nav__row">
         <a class="cs-brand" href="#top">{{ $name }}</a>
-        <nav class="cs-nav__links" aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
+        <nav class="cs-nav__links" aria-label="Sections">@foreach($navLinks as $navLink)<a href="{{ $navLink['href'] }}"@if($navLink['current']) aria-current="page"@endif>{{ $navLink['label'] }}</a>@endforeach</nav>
         @if($book)<a class="cs-button cs-button--solid cs-nav__book" href="{{ $book['href'] }}">{{ $book['field'] === 'label' ? 'Book now' : ($book['field'] === null ? 'Call us' : $book['label']) }}</a>@endif
         <details class="cs-menu">
             <summary aria-label="Menu"><span></span><span></span></summary>
-            <nav aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
+            <nav aria-label="Sections">@foreach($navLinks as $navLink)<a href="{{ $navLink['href'] }}"@if($navLink['current']) aria-current="page"@endif>{{ $navLink['label'] }}</a>@endforeach</nav>
         </details>
     </div>
 </header>

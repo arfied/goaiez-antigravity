@@ -146,3 +146,4 @@ p { margin: 0; }
 .ms-form__trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .ms-form__send { justify-self: start; background: var(--color-primary); color: var(--color-on-primary); border-color: transparent; cursor: pointer; }
 .ms-form { margin-inline: auto; }
+.ms nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: 0.3em; text-decoration-thickness: 2px; }

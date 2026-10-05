@@ -286,4 +286,28 @@ class SiteTemplatesTest extends TestCase
             $this->assertSame(0, substr_count($this->render($noForm, $id), '<form '), "$id: no form without the business's own");
         }
     }
+
+    public function test_a_site_of_several_pages_gets_page_links_in_both_menus_of_every_template(): void
+    {
+        $pages = [
+            ['label' => 'Home', 'href' => '/home', 'current' => true],
+            ['label' => 'Services 7711', 'href' => '/services', 'current' => false],
+            ['label' => 'Bad 7712', 'href' => 'javascript:alert(1)', 'current' => false],
+        ];
+        foreach (SiteTemplates::TEMPLATES as $id => $template) {
+            $tokens = app(IndustryStartingPoints::class)->for(null);
+            $tokens['template'] = $id;
+            $tokens['palette'] = $template['palette'];
+            $tokens['type_pairing'] = $template['type_pairing'];
+
+            $html = app(SiteBlockRenderer::class)->render($this->blocks(), ['tokens' => $tokens, 'editable' => false, 'site_pages' => $pages] + self::CONTEXT);
+            $this->assertSame(2, substr_count($html, '<a href="/home" aria-current="page">Home</a>'), $id);
+            $this->assertSame(2, substr_count($html, '<a href="/services">Services 7711</a>'), $id);
+            $this->assertStringNotContainsString('Bad 7712', $html, $id);
+
+            $onePage = app(SiteBlockRenderer::class)->render($this->blocks(), ['tokens' => $tokens, 'editable' => false, 'site_pages' => [$pages[0]]] + self::CONTEXT);
+            // The stylesheet names the attribute in a selector, so the needle is the attribute as a link carries it.
+            $this->assertStringNotContainsString('aria-current="page">', $onePage, "$id: a one-page site keeps its section links");
+        }
+    }
 }

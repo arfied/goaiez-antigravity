@@ -20,16 +20,17 @@
     $area = $facts['service_area'] ?? null;
     $nav = array_filter(['services' => $services ? 'Services' : null, 'about' => $about ? 'Our story' : null, 'reviews' => $reviews ? 'Reviews' : null, 'contact' => 'Contact']);
     $form = is_array($b['form'] ?? null) && is_array($b['form']['fields'] ?? null) && $txt($b['form']['definition_id'] ?? null) && $formBase !== '' ? $b['form'] : null;
+    $navLinks = $pages !== [] ? $pages : array_map(static fn (string $id, string $label): array => ['label' => $label, 'href' => '#'.$id, 'current' => false], array_keys($nav), array_values($nav));
 @endphp
 <div class="th" id="top">
 <header class="th-nav">
     <div class="th-wrap th-nav__row">
         <a class="th-brand" href="#top">{{ $name }}</a>
-        <nav class="th-nav__links" aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
+        <nav class="th-nav__links" aria-label="Sections">@foreach($navLinks as $navLink)<a href="{{ $navLink['href'] }}"@if($navLink['current']) aria-current="page"@endif>{{ $navLink['label'] }}</a>@endforeach</nav>
         @if($phone)<a class="th-button th-nav__call" href="{{ $tel }}" aria-label="Call {{ $phone }}">{!! $phoneSvg !!}<span>{{ $phone }}</span></a>@endif
         <details class="th-menu">
             <summary aria-label="Menu"><span></span><span></span><span></span></summary>
-            <nav aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
+            <nav aria-label="Sections">@foreach($navLinks as $navLink)<a href="{{ $navLink['href'] }}"@if($navLink['current']) aria-current="page"@endif>{{ $navLink['label'] }}</a>@endforeach</nav>
         </details>
     </div>
 </header>

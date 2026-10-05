@@ -85,8 +85,29 @@ final class SiteTemplateRenderer
             'facts' => is_array($contact['facts'] ?? null) ? array_filter($contact['facts'], static fn (mixed $v): bool => $txt($v) !== null) : [],
             // Where the business's own contact form posts — the same endpoint the shared form section uses; '' draws no form.
             'formBase' => rtrim((string) ($context['form_action_base'] ?? ''), '/'),
+            // The site's other pages for the menu (the publisher's site_pages); empty for a one-page site or a preview.
+            'pages' => self::sitePages($context['site_pages'] ?? null, $txt),
         ])->render();
 
         return $html;
+    }
+
+    /**
+     * The menu's page links: a label and a root-relative address each, the current one marked; none unless there are two.
+     *
+     * @return list<array{label: string, href: string, current: bool}>
+     */
+    private static function sitePages(mixed $pages, \Closure $txt): array
+    {
+        $out = [];
+        foreach (is_array($pages) ? $pages : [] as $page) {
+            $label = is_array($page) ? $txt($page['label'] ?? null) : null;
+            $href = is_array($page) && is_string($page['href'] ?? null) ? $page['href'] : '';
+            if ($label !== null && preg_match('#^/[A-Za-z0-9/_.-]*$#', $href) === 1 && ! str_starts_with($href, '//')) {
+                $out[] = ['label' => $label, 'href' => $href, 'current' => ($page['current'] ?? false) === true];
+            }
+        }
+
+        return count($out) >= 2 ? $out : [];
     }
 }

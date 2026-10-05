@@ -39,6 +39,7 @@
     $area = $facts['service_area'] ?? null;
     $nav = array_filter(['services' => $services ? 'Services' : null, 'about' => $about ? 'About' : null, 'reviews' => $reviews ? 'Reviews' : null, 'faq' => $faqs ? 'FAQ' : null, 'contact' => 'Contact']);
     $form = is_array($b['form'] ?? null) && is_array($b['form']['fields'] ?? null) && $txt($b['form']['definition_id'] ?? null) && $formBase !== '' ? $b['form'] : null;
+    $navLinks = $pages !== [] ? $pages : array_map(static fn (string $id, string $label): array => ['label' => $label, 'href' => '#'.$id, 'current' => false], array_keys($nav), array_values($nav));
 @endphp
 <div class="tp" id="top">
 @if($trust || $phone)
@@ -52,11 +53,11 @@
 <header class="tp-nav">
     <div class="tp-wrap tp-nav__row">
         <a class="tp-brand" href="#top">@if($name !== '')<span class="tp-brand__mark" aria-hidden="true">{{ mb_strtoupper(mb_substr($name, 0, 1)) }}</span><span>{{ $name }}</span>@endif</a>
-        <nav class="tp-nav__links" aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
+        <nav class="tp-nav__links" aria-label="Sections">@foreach($navLinks as $navLink)<a href="{{ $navLink['href'] }}"@if($navLink['current']) aria-current="page"@endif>{{ $navLink['label'] }}</a>@endforeach</nav>
         @if($phone)<a class="tp-button tp-button--primary tp-nav__call" href="{{ $tel }}" aria-label="Call {{ $phone }}">{!! $phoneSvg !!}<span>{{ $phone }}</span></a>@endif
         <details class="tp-menu">
             <summary aria-label="Menu"><span></span><span></span><span></span></summary>
-            <nav aria-label="Sections">@foreach($nav as $id => $label)<a href="#{{ $id }}">{{ $label }}</a>@endforeach</nav>
+            <nav aria-label="Sections">@foreach($navLinks as $navLink)<a href="{{ $navLink['href'] }}"@if($navLink['current']) aria-current="page"@endif>{{ $navLink['label'] }}</a>@endforeach</nav>
         </details>
     </div>
 </header>
