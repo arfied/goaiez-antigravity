@@ -319,6 +319,27 @@
                             <span class="text-base text-ink" data-testid="call-message">{{ $call->message_text }}</span>
                         @endif
 
+                        {{--
+                            What was said, when the AI receptionist answered. Folded, because twenty calls of conversation
+                            would bury the list an owner opened to see who rang; labelled as a machine's hearing of a phone
+                            line, for the transcript's reason below.
+                        --}}
+                        @if (! empty($turns[$call->id]))
+                            <details class="mt-1" data-testid="call-turns">
+                                <summary class="text-base text-ink-2">What was said, as your AI receptionist heard it</summary>
+                                <ul class="mt-1 space-y-1">
+                                    @foreach ($turns[$call->id] as $turn)
+                                        @if ($turn['caller'] !== '')
+                                            <li class="text-base text-ink"><span class="text-ink-2">Caller:</span> {{ $turn['caller'] }}</li>
+                                        @endif
+                                        @if ($turn['agent'] !== '')
+                                            <li class="text-base text-ink"><span class="text-ink-2">Receptionist:</span> {{ $turn['agent'] }}</li>
+                                        @endif
+                                    @endforeach
+                                </ul>
+                            </details>
+                        @endif
+
                         @if ($call->voicemail)
                             <span class="text-base text-ink-2">
                                 {{ $call->voicemail->audio_state->label() }}@if ($call->voicemail->recording_seconds) · {{ $call->voicemail->recording_seconds }}s @endif

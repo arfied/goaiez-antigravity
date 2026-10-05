@@ -9,6 +9,7 @@ use App\Enums\CallRoutingMode;
 use App\Enums\LiveAnswerMode;
 use App\Models\Call;
 use App\Models\SupportSetting;
+use App\Modules\CAgent\Actions\AgentVoiceTurnReadAction;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Sms\TenantNumbers;
 use App\Services\Voice\CallForwarding;
@@ -224,12 +225,18 @@ final class Calls extends Component
             //
             // ⚠️ **`id` IS THE TIE-BREAK**, so two calls in the same second have
             // a stable order rather than whatever the planner returns.
-            'calls' => Call::query()
+            'calls' => $calls = Call::query()
                 ->with('voicemail')
                 ->orderByRaw('started_at DESC NULLS LAST')
                 ->orderByDesc('id')
                 ->limit(self::RECENT_CALLS)
                 ->get(),
+
+            // What was said on the calls the AI receptionist answered, read through C-Agent's own reader so this screen
+            // never reaches into its table. One query for the twenty rows, not one per row.
+            'turns' => app(AgentVoiceTurnReadAction::class)->forCalls(
+                $calls->pluck('id')->map(fn (mixed $id): int => (int) $id)->values()->all(),
+            ),
         ]);
     }
 }

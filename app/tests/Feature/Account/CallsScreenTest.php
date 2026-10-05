@@ -9,6 +9,7 @@ use App\Livewire\Account\Calls;
 use App\Models\Call;
 use App\Models\SupportSetting;
 use App\Models\User;
+use App\Modules\CAgent\Actions\AgentVoiceTurnRecordAction;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\Voice\CallForwarding;
 use App\Support\Tenancy;
@@ -225,4 +226,22 @@ test('a message the AI receptionist took is on the calls page, labelled as what 
         ->assertSee('written as it heard it');
 
     Http::assertNothingSent();
+});
+
+test('what was said on a call the AI receptionist answered is on the calls page, in order, and only on that call', function () {
+    Http::fake();
+
+    $answered = Call::factory()->create(['started_at' => now()]);
+    $other = Call::factory()->create(['started_at' => now()->subMinute()]);
+    app(AgentVoiceTurnRecordAction::class)->record((int) $answered->id, [
+        ['turn' => 2, 'caller' => 'Can someone come today 9472?', 'agent' => 'I will pass that on 9473.', 'metrics' => []],
+        ['turn' => 1, 'caller' => 'Hi, my sink is leaking 9470.', 'agent' => 'Sorry to hear that 9471.', 'metrics' => []],
+    ]);
+
+    $html = Livewire::test(Calls::class)->html();
+
+    expect($html)->toContain('What was said, as your AI receptionist heard it')
+        ->and(substr_count($html, 'data-testid="call-turns"'))->toBe(1)
+        ->and(strpos($html, 'my sink is leaking 9470'))->toBeLessThan(strpos($html, 'Can someone come today 9472'))
+        ->and($html)->toContain('I will pass that on 9473.');
 });
