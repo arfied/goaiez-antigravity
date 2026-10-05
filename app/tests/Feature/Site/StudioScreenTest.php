@@ -9,8 +9,10 @@ use App\Exceptions\TenantNotResolved;
 use App\Livewire\Site\Studio;
 use App\Models\User;
 use App\Modules\X103\Models\Page;
+use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Tests\TestCase;
 
 test('the studio renders for a tenant owner', function () {
     $user = User::factory()->create(['role' => UserRole::Owner]);
@@ -204,7 +206,7 @@ test('the preview is a centered page and the clicked block carries the outline a
 
 test('ask on an empty page refuses with a sentence and opens no proposal', function () {
     $user = User::factory()->create(['role' => UserRole::Owner]);
-    $business = \Tests\TestCase::provisionTenant([
+    $business = TestCase::provisionTenant([
         'owner_user_id' => $user->id,
         'name' => 'Studio Test Business',
     ]);
@@ -219,7 +221,7 @@ test('ask on an empty page refuses with a sentence and opens no proposal', funct
 
     $this->actingAs($user);
 
-    \Livewire\Livewire::test(Studio::class)
+    Livewire::test(Studio::class)
         ->set('pageId', $page->id)
         ->set('request', 'rewrite this page')
         ->call('ask')
@@ -232,7 +234,7 @@ test('ask on an empty page refuses with a sentence and opens no proposal', funct
 
 test('ask that sets the headline and the subline on a hero returns a proposal carrying both', function () {
     $user = User::factory()->create(['role' => UserRole::Owner]);
-    $business = \Tests\TestCase::provisionTenant([
+    $business = TestCase::provisionTenant([
         'owner_user_id' => $user->id,
         'name' => 'Studio Test Business 2',
     ]);
@@ -245,8 +247,8 @@ test('ask that sets the headline and the subline on a hero returns a proposal ca
     $page->draft_blocks = [['type' => 'hero', 'headline' => 'old', 'subline' => 'old']];
     $page->save();
 
-    \Illuminate\Support\Facades\Http::fake([
-        'api.openai.com/*' => \Illuminate\Support\Facades\Http::response([
+    Http::fake([
+        'api.openai.com/*' => Http::response([
             'id' => 'msg_edit',
             'choices' => [
                 ['message' => ['content' => json_encode([
@@ -263,7 +265,7 @@ test('ask that sets the headline and the subline on a hero returns a proposal ca
 
     $this->actingAs($user);
 
-    \Livewire\Livewire::test(Studio::class)
+    Livewire::test(Studio::class)
         ->set('pageId', $page->id)
         ->set('request', 'on the hero, set the headline and the subline')
         ->call('ask')
@@ -272,4 +274,53 @@ test('ask that sets the headline and the subline on a hero returns a proposal ca
     $page->refresh();
     expect($page->draft_meta['pending_edit']['blocks'][0]['headline'])->toBe('Asul and Blue');
     expect($page->draft_meta['pending_edit']['blocks'][0]['subline'])->toBe('Soft serve and milk tea, made to order');
+});
+
+test('the page picker is a dropdown above the preview and the left page list is gone', function () {
+    // Fixture taken from the test above: an owner, a business and two pages.
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = $this->provisionTenant(['owner_user_id' => $user->id, 'name' => 'Studio Test Business']);
+    $home = Page::create(['business_id' => $business->id, 'title' => 'Home 7741', 'slug' => 'home', 'is_published' => true, 'draft_blocks' => [['type' => 'hero', 'headline' => 'H']]]);
+    $about = Page::create(['business_id' => $business->id, 'title' => 'About 7742', 'slug' => 'about', 'is_published' => true, 'draft_blocks' => [['type' => 'hero', 'headline' => 'A']]]);
+    $this->actingAs($user);
+
+    $html = Livewire::test(Studio::class)->set('pageId', $about->id)->html();
+
+    expect($html)->toContain('<select id="studio-page"')
+        ->and($html)->toMatch('/<option value="'.$about->id.'" selected[^>]*>About 7742<\/option>/')
+        ->and($html)->toMatch('/<option value="'.$home->id.'"\s*>Home 7741<\/option>/')
+        ->and($html)->not->toContain('w-48 shrink-0 border-r');
+});
+
+test('while an AI design runs the studio says so and keeps checking, and stops when it is done', function () {
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = $this->provisionTenant(['owner_user_id' => $user->id, 'name' => 'Studio Test Business']);
+    $home = Page::create(['business_id' => $business->id, 'title' => 'Home', 'slug' => 'home', 'is_published' => true,
+        'draft_blocks' => [['type' => 'hero', 'headline' => 'H']], 'draft_meta' => ['designs' => ['claude' => ['status' => 'running']]]]);
+    $about = Page::create(['business_id' => $business->id, 'title' => 'About', 'slug' => 'about', 'is_published' => true,
+        'draft_blocks' => [['type' => 'hero', 'headline' => 'A']]]);
+    $this->actingAs($user);
+
+    $designing = Livewire::test(Studio::class)->set('pageId', $home->id)->html();
+    expect($designing)->toContain('The AI is designing this page')->and($designing)->toContain('wire:poll.5s');
+
+    $elsewhere = Livewire::test(Studio::class)->set('pageId', $about->id)->html();
+    expect($elsewhere)->toContain('The AI is designing 1 of your pages')->and($elsewhere)->toContain('wire:poll.5s');
+
+    $home->update(['draft_meta' => ['designs' => ['claude' => ['status' => 'ready', 'blocks' => [['type' => 'hero', 'headline' => 'D']]]]]]);
+    $done = Livewire::test(Studio::class)->set('pageId', $home->id)->html();
+    expect($done)->not->toContain('The AI is designing')->and($done)->not->toContain('wire:poll');
+});
+
+test('the main buttons say what they are doing while they work', function () {
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = $this->provisionTenant(['owner_user_id' => $user->id, 'name' => 'Studio Test Business']);
+    $page = Page::create(['business_id' => $business->id, 'title' => 'Home', 'slug' => 'home', 'is_published' => false, 'draft_blocks' => [['type' => 'hero', 'headline' => 'H']]]);
+    $this->actingAs($user);
+
+    $html = Livewire::test(Studio::class)->set('pageId', $page->id)->html();
+
+    expect($html)->toContain('<span wire:loading wire:target="ask">Asking the AI…</span>')
+        ->and($html)->toContain('<span wire:loading wire:target="askDesign">Starting the designer…</span>')
+        ->and($html)->toContain('Updating the preview…');
 });

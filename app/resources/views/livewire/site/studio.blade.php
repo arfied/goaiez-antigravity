@@ -10,27 +10,47 @@
                 }
             }
          ">
-        <!-- Left Rail: Pages -->
-        <div class="w-48 shrink-0 border-r border-rule p-4 overflow-y-auto">
-            <h2 class="text-sm font-semibold mb-2">Pages</h2>
-            <ul class="space-y-1">
-                @foreach($pages as $page)
-                    <li>
-                        <button wire:click="$set('pageId', {{ $page->id }})" 
-                                class="w-full text-left px-2 py-1 text-sm rounded hover:bg-canvas {{ $pageId === $page->id ? 'font-bold bg-card' : '' }}">
-                            {{ $page->title ?: 'Untitled' }}
-                        </button>
-                    </li>
-                @endforeach
-            </ul>
-        </div>
-
         <!-- Main Content -->
         <div class="flex-1 min-w-0 p-4">
             @if($pageId)
+                @php
+                    // An AI design runs in the background (a queued job); the bar shows it until the design is ready.
+                    $designing = static fn ($p): bool => collect($p->draft_meta['designs'] ?? [])->contains(fn ($d) => is_array($d) && ($d['status'] ?? null) === 'running');
+                    $thisPageDesigning = isset($selectedPage) && $designing($selectedPage);
+                    $pagesDesigning = $pages->filter($designing)->count();
+                @endphp
+                <div class="flex flex-wrap items-center gap-2 mb-3">
+                    @if($thisPageDesigning || $pagesDesigning > 0)
+                        <div wire:poll.5s class="flex items-center gap-2 p-2 rounded bg-attention-bg text-attention text-sm" role="status">
+                            <span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden="true"></span>
+                            @if($thisPageDesigning)
+                                The AI is designing this page — usually a minute or two. You can keep working; the design appears here when it is ready.
+                            @else
+                                The AI is designing {{ $pagesDesigning }} of your pages — usually a minute or two each. You can keep working.
+                            @endif
+                        </div>
+                    @endif
+                    <div wire:loading.flex wire:target="ask,askSection,askDesign,designWithAi,designWithAll,buildWholeSite" class="items-center gap-2 text-sm text-ink" role="status">
+                        <span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden="true"></span> The AI is working on it…
+                    </div>
+                    <div wire:loading.flex wire:target="applyProposal,discardProposal,publish,applyTemplate,applyTheme,setCorners,useDesign,proposeLayout,addSection,undo,arrangeSection,setBlockField,editInline,pageId" class="items-center gap-2 text-sm text-ink" role="status">
+                        <span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden="true"></span> Working…
+                    </div>
+                    <div class="ml-auto flex items-center gap-2">
+                        <label for="studio-page" class="text-sm font-bold text-ink">Page</label>
+                        <select id="studio-page" x-on:change="$wire.set('pageId', parseInt($event.target.value, 10))" class="border border-rule rounded p-2 text-sm bg-paper text-ink">
+                            @foreach($pages as $page)
+                                <option value="{{ $page->id }}" @selected($pageId === $page->id)>{{ $page->title ?: 'Untitled' }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
                 <div class="flex gap-4">
                     <!-- Canvas -->
-                    <div class="flex-1 min-w-0">
+                    <div class="flex-1 min-w-0 relative">
+                        <div wire:loading.flex wire:target="ask,askSection,askDesign,designWithAi,designWithAll,buildWholeSite,applyProposal,discardProposal,publish,applyTemplate,applyTheme,setCorners,useDesign,proposeLayout,addSection,undo,arrangeSection,setBlockField,editInline,pageId" class="absolute inset-0 z-10 items-center justify-center gap-2 bg-paper/80 backdrop-blur-sm text-ink font-bold">
+                            <span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden="true"></span> Updating the preview…
+                        </div>
                         <iframe title="Site preview"
                                 sandbox="allow-scripts"
                                 srcdoc="{{ $previewHtml }}"
@@ -59,21 +79,21 @@
 
                             @if(isset($selectedPage) && isset($selectedPage->draft_meta['pending_edit']))
                                 <div class="flex items-center gap-2 mb-2">
-                                    <button wire:click="applyProposal" class="flex-1 text-center px-4 py-2 bg-ink text-paper font-bold rounded">Apply</button>
+                                    <button wire:click="applyProposal" class="flex-1 text-center px-4 py-2 bg-ink text-paper font-bold rounded" wire:loading.attr="disabled" wire:loading.class="opacity-60" wire:target="applyProposal"><span wire:loading.remove wire:target="applyProposal">Apply</span><span wire:loading wire:target="applyProposal">Applying…</span></button>
                                     <button wire:click="discardProposal" class="text-sm underline text-ink-2">Discard</button>
                                 </div>
                             @elseif(empty($selectedPage->draft_blocks))
                                 <a href="{{ route('x-103.site-build') }}" class="block w-full text-center px-4 py-2 bg-ink text-paper font-bold rounded mb-2">Generate site</a>
                             @elseif($this->draftDiffersFromPublished($selectedPage))
-                                <button wire:click="publish({{ $pageId }})" class="block w-full text-center px-4 py-2 bg-ink text-paper font-bold rounded mb-2">Publish draft</button>
+                                <button wire:click="publish({{ $pageId }})" class="block w-full text-center px-4 py-2 bg-ink text-paper font-bold rounded mb-2" wire:loading.attr="disabled" wire:loading.class="opacity-60" wire:target="publish"><span wire:loading.remove wire:target="publish">Publish draft</span><span wire:loading wire:target="publish">Publishing…</span></button>
                             @endif
                             
                             @if(isset($selectedPage) && !empty($selectedPage->draft_blocks))
                             <div class="mt-4">
                                 <label for="ask-input" class="block text-sm font-bold text-ink mb-1">Ask AI to edit</label>
                                 <textarea id="ask-input" wire:model="request" class="w-full border border-rule rounded p-2 text-sm bg-paper text-ink" placeholder="E.g. Make it sound more professional..."></textarea>
-                                <button wire:click="ask" class="block w-full text-center px-4 py-2 bg-ink text-paper font-bold rounded mt-2">Ask</button>
-                                <button wire:click="askDesign" class="block w-full text-center px-4 py-2 border border-rule text-ink font-bold rounded mt-2">Make it look great</button>
+                                <button wire:click="ask" class="block w-full text-center px-4 py-2 bg-ink text-paper font-bold rounded mt-2" wire:loading.attr="disabled" wire:loading.class="opacity-60" wire:target="ask"><span wire:loading.remove wire:target="ask">Ask</span><span wire:loading wire:target="ask">Asking the AI…</span></button>
+                                <button wire:click="askDesign" class="block w-full text-center px-4 py-2 border border-rule text-ink font-bold rounded mt-2" wire:loading.attr="disabled" wire:loading.class="opacity-60" wire:target="askDesign"><span wire:loading.remove wire:target="askDesign">Make it look great</span><span wire:loading wire:target="askDesign">Starting the designer…</span></button>
                             </div>
                             @endif
                             @if(isset($selectedPage))
@@ -114,16 +134,15 @@
                                     @endforeach
                                     <button wire:click="designWithAll" class="px-3 py-1 text-sm border border-rule rounded text-ink font-bold">All four</button>
                                 </div>
-                                <button wire:click="buildWholeSite" class="mt-2 block w-full text-center px-4 py-2 border border-rule text-ink font-bold rounded">Build the whole site with AI</button>
-                                @php $anyRunning = collect($designs)->contains(fn ($d) => ($d['status'] ?? null) === 'running'); @endphp
-                                <ul class="mt-2 text-xs text-ink-2"@if($anyRunning) wire:poll.5s @endif>
+                                <button wire:click="buildWholeSite" class="mt-2 block w-full text-center px-4 py-2 border border-rule text-ink font-bold rounded" wire:loading.attr="disabled" wire:loading.class="opacity-60" wire:target="buildWholeSite"><span wire:loading.remove wire:target="buildWholeSite">Build the whole site with AI</span><span wire:loading wire:target="buildWholeSite">Starting…</span></button>
+                                <ul class="mt-2 text-xs text-ink-2">
                                     @foreach(\App\Modules\X103\Domain\SiteDesignEngines::ENGINES as $engineKey => $engineInfo)
                                         @php $d = $designs[$engineKey] ?? null; @endphp
                                         @if(is_array($d))
                                             <li class="mt-1">
                                                 {{ $engineInfo['label'] }}:
                                                 @if(($d['status'] ?? null) === 'running')
-                                                    designing…
+                                                    <span class="inline-flex items-center gap-1"><span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden="true"></span> designing…</span>
                                                 @elseif(($d['status'] ?? null) === 'ready')
                                                     <button wire:click="$set('showDesign', '{{ $engineKey }}')" class="underline text-ink{{ $showDesign === $engineKey ? ' font-bold' : '' }}">show</button>
                                                     · <button wire:click="useDesign('{{ $engineKey }}')" class="underline text-ink">use this design</button>
@@ -194,7 +213,7 @@
                                 </div>
                                 <label for="section-ask" class="block text-xs text-ink-2 mt-2 mb-1">Or say what to change here</label>
                                 <input id="section-ask" type="text" wire:model="sectionRequest" class="w-full border border-rule rounded p-2 text-sm bg-paper text-ink" placeholder="e.g. mention we work weekends">
-                                <button wire:click="askSection('custom')" class="mt-2 w-full px-4 py-2 bg-ink text-paper font-bold rounded">Ask about this section</button>
+                                <button wire:click="askSection('custom')" class="mt-2 w-full px-4 py-2 bg-ink text-paper font-bold rounded" wire:loading.attr="disabled" wire:loading.class="opacity-60" wire:target="askSection"><span wire:loading.remove wire:target="askSection">Ask about this section</span><span wire:loading wire:target="askSection">Asking the AI…</span></button>
                             </div>
                             @if($selectedBlockType === 'hero')
                                 <div class="mt-3">
