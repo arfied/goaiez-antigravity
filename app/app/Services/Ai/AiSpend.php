@@ -158,6 +158,23 @@ final class AiSpend
 
     public const string REFUSAL_COST_CAP = 'ai_cost_cap_reached';
 
+    /**
+     * What an owner reads when one of the three refusals above stopped an AI job — the reason in words and where it is fixed
+     * (owner, 2026-10-05: "Build the whole site with AI" printed `did not finish (ai_plan_inactive)` three times).
+     *
+     * ⛔ NULL FOR ANY OTHER CODE, ON PURPOSE (N387). A caller shows an unknown code as the code, so a new refusal reason is
+     * seen for what it is rather than absorbed into a plausible sentence.
+     */
+    public static function ownerSentence(string $code): ?string
+    {
+        return match ($code) {
+            self::REFUSAL_PLAN_INACTIVE => 'the plan on this account is not active — add a card on Your plan, or ask us to extend the trial',
+            self::REFUSAL_CREDIT_EXHAUSTED => 'the AI credit for this month is used up — you can top up on Your plan',
+            self::REFUSAL_COST_CAP => 'the AI spending limit for this month is reached — it resets next month, or ask us to raise it',
+            default => null,
+        };
+    }
+
     public function __construct(
         private readonly DefaultsRegistry $registry = new DefaultsRegistry,
         private readonly AiCredits $credits = new AiCredits,

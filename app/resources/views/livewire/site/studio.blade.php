@@ -147,7 +147,12 @@
                                                     <button wire:click="$set('showDesign', '{{ $engineKey }}')" class="underline text-ink{{ $showDesign === $engineKey ? ' font-bold' : '' }}">show</button>
                                                     · <button wire:click="useDesign('{{ $engineKey }}')" class="underline text-ink">use this design</button>
                                                 @else
-                                                    did not finish ({{ $d['reason'] ?? 'unknown' }})
+                                                    @php $why = \App\Services\Ai\AiSpend::ownerSentence((string) ($d['reason'] ?? '')); @endphp
+                                                    @if ($why !== null)
+                                                        did not finish — {{ $why }}.
+                                                    @else
+                                                        did not finish ({{ $d['reason'] ?? 'unknown' }})
+                                                    @endif
                                                 @endif
                                             </li>
                                         @endif

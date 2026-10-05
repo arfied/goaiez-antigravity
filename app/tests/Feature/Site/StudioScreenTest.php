@@ -9,6 +9,7 @@ use App\Exceptions\TenantNotResolved;
 use App\Livewire\Site\Studio;
 use App\Models\User;
 use App\Modules\X103\Models\Page;
+use App\Services\Ai\AiSpend;
 use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -323,4 +324,31 @@ test('the main buttons say what they are doing while they work', function () {
     expect($html)->toContain('<span wire:loading wire:target="ask">Asking the AI…</span>')
         ->and($html)->toContain('<span wire:loading wire:target="askDesign">Starting the designer…</span>')
         ->and($html)->toContain('Updating the preview…');
+});
+
+test('an AI design the spend gate refused says why in words, and any other failure still shows its code', function () {
+    // Fixture taken from 'while an AI design runs the studio says so and keeps checking, and stops when it is done'.
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = $this->provisionTenant(['owner_user_id' => $user->id, 'name' => 'Studio Test Business']);
+    $home = Page::create(['business_id' => $business->id, 'title' => 'Home', 'slug' => 'home', 'is_published' => true,
+        'draft_blocks' => [['type' => 'hero', 'headline' => 'H']], 'draft_meta' => ['designs' => [
+            'claude' => ['status' => 'failed', 'reason' => AiSpend::REFUSAL_PLAN_INACTIVE],
+            'gemini' => ['status' => 'failed', 'reason' => 'model_timeout_9461'],
+        ]]]);
+    $this->actingAs($user);
+
+    $html = Livewire::test(Studio::class)->set('pageId', $home->id)->html();
+
+    expect($html)->toContain('did not finish — '.AiSpend::ownerSentence(AiSpend::REFUSAL_PLAN_INACTIVE).'.')
+        ->and($html)->not->toContain('(ai_plan_inactive)')
+        ->and($html)->toContain('did not finish (model_timeout_9461)');
+});
+
+test('every AI spend refusal has an owner sentence and no other code does', function () {
+    foreach ([AiSpend::REFUSAL_PLAN_INACTIVE, AiSpend::REFUSAL_CREDIT_EXHAUSTED, AiSpend::REFUSAL_COST_CAP] as $code) {
+        expect(AiSpend::ownerSentence($code))->toBeString()->not->toContain($code);
+    }
+
+    expect(AiSpend::ownerSentence('model_timeout_9461'))->toBeNull()
+        ->and(AiSpend::ownerSentence(''))->toBeNull();
 });
