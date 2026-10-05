@@ -73,6 +73,9 @@ return [
 
     'pixabay_api_key' => env('PIXABAY_API_KEY'),
 
+    // The AI receptionist's voice worker signs every request with this (VerifyVoiceWorker, plan 2026-10-05).
+    'voice_worker_secret' => env('VOICE_WORKER_SECRET'),
+
     /*
     | Infobip — numbers, SMS/10DLC, WhatsApp, voice, and brand registration.
     | `CLAUDE.md` names it the single vendor for all of those; email is

@@ -1010,6 +1010,18 @@ final class DefaultsManifest
              * thing worth refusing to quote (157); an operational ceiling on a
              * live product feature is not.
              */
+            'voice.live_agent.enabled' => [
+                'seed' => false,
+                'group' => 'Messaging',
+                'description' => 'Whether the AI receptionist answers calls live — the voice worker asks /api/voice/v1/calls at every ring and is told "disabled" while this is off, so it plays its fallback and takes a message. Off until the voice worker, its speech and language vendors and the Infobip SIP trunk exist (plan 2026-10-05). Separate from voice.enabled, which only records calls after they end.',
+            ],
+
+            'voice.worker.max_request_age_seconds' => [
+                'seed' => 60,
+                'group' => 'Messaging',
+                'description' => 'How old a signed request from the voice worker may be before it is refused, and how long its signature is remembered so the same request cannot be replayed.',
+            ],
+
             'voice.tenant_daily_inbound_minutes_ceiling' => [
                 'seed' => 240,
                 'group' => 'Messaging',

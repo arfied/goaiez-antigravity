@@ -8,7 +8,9 @@ use App\Http\Controllers\Api\PixelIngestController;
 use App\Http\Controllers\Api\PlaceSuggestionController;
 use App\Http\Controllers\Api\PublicAuditController;
 use App\Http\Controllers\Api\WidgetReviewController;
+use App\Http\Controllers\Voice\Live\CallStartController;
 use App\Http\Middleware\ResolveWidget;
+use App\Http\Middleware\VerifyVoiceWorker;
 use App\Modules\X102\Http\Controllers\ChatCaptureController;
 use App\Modules\X102\Http\Controllers\ChatStartController;
 use App\Modules\X102\Http\Controllers\ChatTurnController;
@@ -167,6 +169,19 @@ Route::post('/chat/{key}/turn', ChatTurnController::class)
 Route::post('/chat/{key}/capture', ChatCaptureController::class)
     ->middleware('throttle:chat-capture')
     ->name('api.chat.capture');
+
+/*
+|--------------------------------------------------------------------------
+| The AI receptionist's voice brain API (plan 2026-10-05)
+|--------------------------------------------------------------------------
+|
+| Called only by the voice worker, which carries live call audio outside this host. Every request is signed
+| (VerifyVoiceWorker); the tenant is never read from the request body — later endpoints derive it from a signed call token.
+| tests/Feature/Architecture/VoiceTest.php holds both rules.
+*/
+Route::prefix('voice/v1')->middleware(['throttle:300,1', VerifyVoiceWorker::class])->group(function (): void {
+    Route::post('/calls', CallStartController::class)->name('api.voice.calls.start');
+});
 
 Route::middleware('auth:sanctum')->group(function (): void {
     /*

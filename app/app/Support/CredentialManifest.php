@@ -132,6 +132,13 @@ final class CredentialManifest
                 'degradation' => 'Site pictures keep using OpenAI images, which cost roughly ten times more per picture.',
             ],
 
+            'voice_worker_secret' => [
+                'vendor' => 'Voice worker',
+                'label' => 'Voice worker signing key',
+                'description' => 'The shared HMAC-SHA256 key the AI receptionist\'s voice worker signs every request to this application with (plan 2026-10-05). Generate a long random value, set it here and the same value in the worker\'s environment.',
+                'degradation' => 'Every request from the voice worker is refused with a 401 — deliberately, because an API that answered unsigned requests would let anybody fetch a business\'s call brief. The worker then plays its fallback and takes a message; no call is answered by the AI.',
+            ],
+
             'pixabay_api_key' => [
                 'vendor' => 'Stock photos',
                 'label' => 'Pixabay API key (stock photos)',
