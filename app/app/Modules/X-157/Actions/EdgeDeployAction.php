@@ -233,6 +233,8 @@ JS;
             // The system contact form is collected here and written AFTER the page's content (MAIN-1047): visitors
             // should meet the business before a form. Every case that emitted it before still emits it.
             $formHtml = '';
+            // On a site template the business's form is handed to the template as its form section instead (MAIN-1121).
+            $templateForm = null;
             if ($commitId) {
                 $version = app(PageVersionAction::class)->forCommit($commitId);
                 if ($version) {
@@ -302,6 +304,14 @@ JS;
                                 'context' => ['form_action_base' => $formActionBase],
                             ])->render();
                             $formHtml .= "</div>\n";
+                            $templateForm = [
+                                'type' => 'form',
+                                'source' => 'forms',
+                                'definition_id' => (int) $definition['id'],
+                                'fields' => $definition['fields'],
+                                'required' => $definition['required'],
+                                'honeypot' => $definition['honeypot'],
+                            ];
                         }
                     }
                     if ($hasDni) {
@@ -386,6 +396,11 @@ JS;
                     ];
                     if (SiteTemplates::get($context['tokens']['template'] ?? null) === null) {
                         $html .= '<header class="site-header"><p class="site-header__name">'.e($businessName)."</p></header>\n";
+                    } elseif ($templateForm !== null) {
+                        // A template draws the form in its own look, in its own form section — not appended after the whole page
+                        // in the shared stylesheet the template replaces. The empty marker stays so the site law can see the slot.
+                        $contentBlocks[] = $templateForm;
+                        $formHtml = "<div class=\"form-capture-x155\"></div>\n";
                     }
                     $html .= app(SiteBlockRenderer::class)->render($contentBlocks, $context);
                 }
