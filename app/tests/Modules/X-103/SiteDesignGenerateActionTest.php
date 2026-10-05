@@ -720,6 +720,21 @@ class SiteDesignGenerateActionTest extends TestCase
         $this->assertSame(['hero', 'about'], array_column($page->draft_meta['designs']['claude']['blocks'], 'type'));
     }
 
+    public function test_on_a_template_another_page_of_the_site_uses_only_the_sections_that_suit_it(): void
+    {
+        // Fixture taken from test_on_a_template_the_ai_never_writes_the_team_and_the_owners_team_is_kept.
+        $home = $this->page([['type' => 'hero', 'headline' => 'Old headline']]);
+        app(SiteTemplateApplyAction::class)->handle($home->business_id, $home->id, 'calm-spa');
+        $services = Page::create(['business_id' => $home->business_id, 'slug' => 'services', 'title' => 'Services', 'draft_blocks' => [['type' => 'hero', 'headline' => 'Our treatments 7731']], 'is_published' => false]);
+        $this->fakeAnswer(json_encode(['blocks' => [['type' => 'hero', 'headline' => 'Treatments 7732'], ['type' => 'services', 'items' => [['name' => 'Massage 7733']]]]]));
+
+        $res = app(SiteDesignGenerateAction::class)->handle($services->business_id, $services->id);
+
+        $this->assertSame('ready', $res['status']);
+        Http::assertSent(fn ($r) => str_contains($r->body(), 'Calm Spa') && str_contains($r->body(), 'and only those that suit this page')
+            && ! str_contains($r->body(), 'and no others'));
+    }
+
     public function test_on_a_template_too_few_photos_make_no_gallery(): void
     {
         $page = $this->page([['type' => 'hero', 'headline' => 'Old headline']]);

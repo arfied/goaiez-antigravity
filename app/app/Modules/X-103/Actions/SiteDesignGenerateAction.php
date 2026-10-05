@@ -168,7 +168,13 @@ final class SiteDesignGenerateAction
             .($oldHero !== null && ! empty($oldHero['image_path']) ? "\n\nThe business already has a main picture; it is kept on the hero." : '')
             .($photoLines === [] ? '' : "\n\nPhotos from the business's own website — place one with \"owner_photo\": <its number> ONLY if it truly shows this business; otherwise describe a new one:\n".implode("\n", $photoLines))
             .($template !== null
-                ? "\n\nThis site uses the \"".$template['label'].'" template, a finished page designed for '.$template['for'].'. Return these sections, in this order, and no others: '.implode(', ', $templateSections).'. Leave out a stats section unless the facts or the business\'s own website give real numbers. Do not return a "theme", a "style" or any "variant": the template sets the whole look.'
+                ? "\n\nThis site uses the \"".$template['label'].'" template, a finished page designed for '.$template['for'].'. '
+                    // The home page fills the whole template; another page of the site (services, about, contact) uses only the
+                    // sections that suit it, so the whole site is not the same page four times.
+                    .($purpose !== null && (string) $page->slug !== 'home'
+                        ? 'Use only these sections, in this order, and only those that suit this page — always the hero: '.implode(', ', $templateSections).'.'
+                        : 'Return these sections, in this order, and no others: '.implode(', ', $templateSections).'.')
+                    .' Leave out a stats section unless the facts or the business\'s own website give real numbers. Do not return a "theme", a "style" or any "variant": the template sets the whole look.'
                 : "\n\nThemes (use one id):\n".implode("\n", $themes))
             ."\n\nSection types and their fields: ".self::CATALOGUE
             .($template !== null ? '' : "\n\nFonts you may use: ".implode(' | ', self::modernFontStacks())
