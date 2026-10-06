@@ -139,6 +139,14 @@ final class PlatformHealthChecks
     public const string STALE_KEY = 'ops.heartbeat_stale_minutes';
 
     /**
+     * The AI receptionist's voice worker (plan 2026-10-05): the `source` its beats are written under, and the `subject` of
+     * its `HeartbeatSilent` rows. ⛔ Never renamed, for {@see self::PROCESSES}' reason.
+     */
+    public const string VOICE_WORKER = 'voice_worker';
+
+    public const string VOICE_WORKER_STALE_KEY = 'voice.worker.heartbeat_stale_minutes';
+
+    /**
      * How long the credential bell stays quiet for one key after ringing
      * (9320–9327).
      *
@@ -331,10 +339,10 @@ final class PlatformHealthChecks
         $stale = $this->defaults->int(self::STALE_KEY);
 
         if ($stale <= 0) {
-            return 0;
+            return $this->sweepVoiceWorker($now);
         }
 
-        $raised = 0;
+        $raised = $this->sweepVoiceWorker($now);
 
         foreach (self::PROCESSES as $process) {
             $last = $this->health->lastBeat($process);
@@ -376,6 +384,57 @@ final class PlatformHealthChecks
         }
 
         return $raised;
+    }
+
+    /**
+     * The voice worker's silence (AI receptionist plan, 2026-10-05) — asked only while the receptionist is switched on.
+     *
+     * ⚠️ **NOT ONE OF {@see self::PROCESSES}.** Those beat on every install and their coverage panel speaks for them alone.
+     * The worker runs on its own server and matters only while `voice.live_agent.enabled` is on; with it off, a stopped
+     * worker is the expected state and pages nobody.
+     *
+     * ⛔ **WITH THE SWITCH ON, NEVER BEATEN IS SILENT — THE OPPOSITE OF THE RULE ABOVE, ON PURPOSE.** The switch on means
+     * calls are being sent to a worker; a worker that has never reported is a receptionist that has never answered, which
+     * is an outage rather than a fresh install.
+     *
+     * @return int how many alerts were raised
+     */
+    public function sweepVoiceWorker(?CarbonImmutable $now = null): int
+    {
+        $now ??= CarbonImmutable::now();
+
+        if ($this->defaults->value('voice.live_agent.enabled') !== true) {
+            return 0;
+        }
+
+        $stale = $this->defaults->int(self::VOICE_WORKER_STALE_KEY);
+
+        if ($stale <= 0) {
+            return 0;
+        }
+
+        $last = $this->health->lastBeat(self::VOICE_WORKER);
+        $age = $last === null ? null : (int) $last->diffInMinutes($now, absolute: true);
+
+        if ($age !== null && $age < $stale) {
+            return 0;
+        }
+
+        $summary = $age === null
+            ? 'The AI receptionist is switched on and its voice worker has never reported. Calls sent to it are not being answered.'
+            : 'The AI receptionist\'s voice worker has not reported for '.self::silenceLength($age).'. Calls sent to it may not be answered.';
+
+        return $this->alerts->raise(
+            OperatorAlertKind::HeartbeatSilent,
+            self::VOICE_WORKER,
+            $summary,
+            [
+                'process' => self::VOICE_WORKER,
+                'minutes_since_last_beat' => $age,
+                'stale_after_minutes' => $stale,
+            ],
+            origin: AlertOrigin::Platform,
+        ) === null ? 0 : 1;
     }
 
     /**

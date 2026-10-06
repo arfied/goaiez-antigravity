@@ -17,6 +17,8 @@ use App\Modules\X163\Models\PriceBookItem;
 use App\Services\Agent\AgentRules;
 use App\Services\Assistant\PriceBook;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Ops\PlatformHealth;
+use App\Services\Ops\PlatformHealthChecks;
 use App\Services\Sms\TenantNumbers;
 use App\Services\Voice\CallForwarding;
 use App\Services\Voice\Live\LiveCallTokens;
@@ -434,4 +436,15 @@ test('a message with no words, or a callback that is not a phone number, is refu
     postVoiceTo('/api/voice/v1/calls/not-a-token/message', $body, signedVoiceHeaders($body))->assertNotFound();
 
     expect(Tenancy::actingAs($businessId, fn () => Call::query()->firstOrFail()->message_text))->toBeNull();
+});
+
+test('a signed heartbeat from the voice worker is recorded as a beat, and an unsigned one is refused', function (): void {
+    config(['credentials.voice_worker_secret' => 'voice-secret-9101']);
+    expect(app(PlatformHealth::class)->lastBeat(PlatformHealthChecks::VOICE_WORKER))->toBeNull();
+
+    postVoiceTo('/api/voice/v1/heartbeat', '{}', ['Content-Type' => 'application/json'])->assertUnauthorized();
+    expect(app(PlatformHealth::class)->lastBeat(PlatformHealthChecks::VOICE_WORKER))->toBeNull();
+
+    postVoiceTo('/api/voice/v1/heartbeat', '{}', signedVoiceHeaders('{}'))->assertOk()->assertExactJson(['status' => 'ok']);
+    expect(app(PlatformHealth::class)->lastBeat(PlatformHealthChecks::VOICE_WORKER))->not->toBeNull();
 });

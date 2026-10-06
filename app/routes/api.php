@@ -13,6 +13,7 @@ use App\Http\Controllers\Voice\Live\CallMessageController;
 use App\Http\Controllers\Voice\Live\CallPriceToolController;
 use App\Http\Controllers\Voice\Live\CallStartController;
 use App\Http\Controllers\Voice\Live\CallTurnsController;
+use App\Http\Controllers\Voice\Live\HeartbeatController;
 use App\Http\Middleware\ResolveWidget;
 use App\Http\Middleware\VerifyVoiceWorker;
 use App\Modules\X102\Http\Controllers\ChatCaptureController;
@@ -184,6 +185,7 @@ Route::post('/chat/{key}/capture', ChatCaptureController::class)
 | tests/Feature/Architecture/VoiceTest.php holds both rules.
 */
 Route::prefix('voice/v1')->middleware(['throttle:300,1', VerifyVoiceWorker::class])->group(function (): void {
+    Route::post('/heartbeat', HeartbeatController::class)->name('api.voice.heartbeat');
     Route::post('/calls', CallStartController::class)->name('api.voice.calls.start');
     Route::post('/calls/{callToken}/turns', CallTurnsController::class)->where('callToken', '[A-Za-z0-9_~-]{1,1024}')->name('api.voice.calls.turns');
     Route::post('/calls/{callToken}/tools/price', CallPriceToolController::class)->where('callToken', '[A-Za-z0-9_~-]{1,1024}')->name('api.voice.calls.tools.price');

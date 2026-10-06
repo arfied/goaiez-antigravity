@@ -66,6 +66,17 @@ class SigningTest(unittest.TestCase):
         with self.assertRaises(BrainUnavailable):
             BrainClient("https://brain.test", "s", transport=FakeTransport(body=b"<html>")).start_call("+1", "+2", "SCL_4")
 
+    def test_the_heartbeat_is_signed_and_names_no_business(self):
+        transport = FakeTransport(body=b'{"status":"ok"}')
+        client = BrainClient("https://brain.test", "s", transport=transport, clock=lambda: 1759680000)
+
+        self.assertEqual(client.heartbeat()["status"], "ok")
+
+        url, body, headers = transport.calls[0]
+        self.assertEqual(url, "https://brain.test/api/voice/v1/heartbeat")
+        self.assertEqual(body, b"{}")
+        self.assertEqual(headers[SIGNATURE_HEADER], sign("s", 1759680000, "{}"))
+
     def test_a_worker_with_no_secret_refuses_to_start(self):
         with self.assertRaises(ValueError):
             BrainClient("https://brain.test", "")

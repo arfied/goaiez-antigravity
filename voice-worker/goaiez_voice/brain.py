@@ -89,7 +89,17 @@ class BrainClient:
             raise BrainUnavailable("the brain answered with JSON that is not an object")
         return status, data
 
-    # The five calls the receptionist makes, by the routes Laravel serves.
+    # The calls the worker makes, by the routes Laravel serves.
+
+    def heartbeat(self) -> Dict[str, Any]:
+        """Say the worker is alive. Sent every 30 seconds; the brain pages the operator when beats stop while the
+        receptionist is switched on (voice.worker.heartbeat_stale_minutes)."""
+        status, data = self.post("/api/voice/v1/heartbeat", {})
+        if status >= 500:
+            raise BrainUnavailable("heartbeat answered {}".format(status))
+        data["_status"] = status
+        return data
+
 
     def start_call(self, dialled_e164: str, from_e164: str, transport_call_id: str) -> Dict[str, Any]:
         status, data = self.post("/api/voice/v1/calls", {

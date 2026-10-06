@@ -1016,6 +1016,12 @@ final class DefaultsManifest
                 'description' => 'Whether the AI receptionist answers calls live — the voice worker asks /api/voice/v1/calls at every ring and is told "disabled" while this is off, so it plays its fallback and takes a message. Off until the voice worker, its speech and language vendors and the Infobip SIP trunk exist (plan 2026-10-05). Separate from voice.enabled, which only records calls after they end.',
             ],
 
+            'voice.worker.heartbeat_stale_minutes' => [
+                'seed' => 3,
+                'group' => 'Messaging',
+                'description' => 'How many minutes the AI receptionist\'s voice worker may go without reporting before the operator is paged — asked only while voice.live_agent.enabled is on. The worker reports every 30 seconds, so 3 minutes is several missed beats, not one slow one. ⚠️ With the receptionist on, a worker that has NEVER reported pages too: calls are being sent to something that has never answered. 0 turns the check off.',
+            ],
+
             'voice.worker.max_request_age_seconds' => [
                 'seed' => 60,
                 'group' => 'Messaging',
