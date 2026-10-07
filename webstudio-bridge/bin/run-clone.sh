@@ -69,35 +69,73 @@ else
 fi
 
 echo "## step run claude"
-CMD="claude -p \"/clone-website $URL\" --model claude-opus-5-5 --output-format stream-json --verbose --permission-mode dontAsk --allowedTools \"Bash,Read,Edit,Write,Glob,Grep,WebFetch,mcp__playwright__*\" --mcp-config $WORKDIR/mcp.json --strict-mcp-config"
+CMD=(claude -p "/clone-website $URL" --model claude-opus-5-5 --output-format stream-json --verbose --permission-mode dontAsk --allowedTools "Bash,Read,Edit,Write,Glob,Grep,WebFetch,mcp__playwright__*" --mcp-config "$WORKDIR/mcp.json" --strict-mcp-config)
 if [ -f "$DIR/../.agents/supervisor/.spike.env" ]; then
     set -a; . "$DIR/../.agents/supervisor/.spike.env"; set +a
 fi
 if [ -n "$CLONE_BUDGET_USD" ]; then
-    CMD="$CMD --max-budget-usd \"$CLONE_BUDGET_USD\""
+    CMD+=(--max-budget-usd "$CLONE_BUDGET_USD")
 fi
 if [ "$DRY_RUN" = "1" ]; then
-    echo "cd $WORKDIR/app && $CMD > ../evidence/claude.stream.jsonl"
+    echo "cd $WORKDIR/app && ${CMD[*]} > ../evidence/claude.stream.jsonl"
 else
-    (cd "$WORKDIR/app" && eval "$CMD" > "../evidence/claude.stream.jsonl")
+    (cd "$WORKDIR/app" && "${CMD[@]}" > "../evidence/claude.stream.jsonl")
 fi
 
 echo "## step static render"
 if [ "$DRY_RUN" = "1" ]; then
     echo "cd $WORKDIR/app"
     echo "PATH=$NODE24:\$PATH npm run build"
-    echo "PATH=$NODE24:\$PATH npm run start -- -p <free_port> &"
-    echo "node script to run Playwright, fetch routes, inline CSS, drop scripts, prepend inception mark -> evidence/pages/<route>.html"
-    echo "Playwright: screenshots 1280 & 390 -> evidence/shots/"
+    echo "PORT=\$(node -e 'const s=require(\"net\").createServer().listen(0,()=>{console.log(s.address().port);s.close()})')"
+    echo "PATH=$NODE24:\$PATH npm run start -- -p \$PORT &"
+    echo "find src/app -name page.tsx | awk -F/ '{ route = \"/\"; skip = 0; for (i=3; i<NF; i++) { if (\$i ~ /\\(.*\\)/ || \$i ~ /\\[.*\\]/) { skip = 1; break; } if (route == \"/\") route = route \$i; else route = route \"/\" \$i; } if (!skip) print route; }' > ../evidence/routes.txt"
+    echo "node \"$DIR/bin/render-pages.mjs\" --base \"http://127.0.0.1:\$PORT\" --routes \"../evidence/routes.txt\" --pages \"../evidence/pages\" --shots \"../evidence/shots\" --source \"$URL\""
 else
-    echo "Not fully implemented since coder never runs run-clone.sh for real"
+    cd "$WORKDIR/app"
+    PATH=$NODE24:$PATH npm run build
+    PORT=$(node -e 'const s=require("net").createServer().listen(0,()=>{console.log(s.address().port);s.close()})')
+    PATH=$NODE24:$PATH npm run start -- -p $PORT &
+    SERVER_PID=$!
+
+    function write_report {
+        kill $SERVER_PID || true
+        cd "$WORKDIR"
+        echo "# Clone Report" > "evidence/report.md"
+        echo "Wall time: $SECONDS seconds" >> "evidence/report.md"
+        if [ -f "evidence/claude.stream.jsonl" ]; then
+            grep '"type":"result"' "evidence/claude.stream.jsonl" | tail -n 1 >> "evidence/report.md" || true
+        fi
+        echo "## Converter Output" >> "evidence/report.md"
+        if [ -f "evidence/convert.out" ]; then cat "evidence/convert.out" >> "evidence/report.md"; fi
+        echo "## Screenshots" >> "evidence/report.md"
+        ls -1 "evidence/shots/"*.png 2>/dev/null >> "evidence/report.md" || true
+        echo "## Skipped" >> "evidence/report.md"
+        if [ -z "$WS_SHARE_LINK" ]; then echo "import: skipped (no WS_SHARE_LINK)" >> "evidence/report.md"; fi
+    }
+    trap write_report EXIT
+
+    timeout 60 bash -c "until curl -s -o /dev/null http://127.0.0.1:$PORT/; do sleep 1; done" || { echo "Server failed to start"; exit 1; }
+
+    find src/app -name page.tsx | awk -F/ '{
+        route = "/";
+        skip = 0;
+        for (i=3; i<NF; i++) {
+            if ($i ~ /\(.*\)/ || $i ~ /\[.*\]/) { skip = 1; break; }
+            if (route == "/") route = route $i;
+            else route = route "/" $i;
+        }
+        if (!skip) print route;
+    }' > ../evidence/routes.txt
+
+    node "$DIR/bin/render-pages.mjs" --base "http://127.0.0.1:$PORT" --routes "../evidence/routes.txt" --pages "../evidence/pages" --shots "../evidence/shots" --source "$URL"
+    cd "$DIR/.."
 fi
 
 echo "## step html-to-bundle"
 if [ "$DRY_RUN" = "1" ]; then
-    echo "cd /home/goaiez/public_html/webstudio && pnpm exec tsx --conditions=webstudio $DIR/bin/html-to-bundle.ts $WORKDIR/evidence/pages $WORKDIR/evidence/bundle.json"
+    echo "cd /home/goaiez/public_html/webstudio && pnpm exec tsx --conditions=webstudio $DIR/bin/html-to-bundle.ts $WORKDIR/evidence/pages $WORKDIR/evidence/bundle.json > $WORKDIR/evidence/convert.out"
 else
-    cd /home/goaiez/public_html/webstudio && pnpm exec tsx --conditions=webstudio "$DIR/bin/html-to-bundle.ts" "$WORKDIR/evidence/pages" "$WORKDIR/evidence/bundle.json"
+    cd /home/goaiez/public_html/webstudio && pnpm exec tsx --conditions=webstudio "$DIR/bin/html-to-bundle.ts" "$WORKDIR/evidence/pages" "$WORKDIR/evidence/bundle.json" > "$WORKDIR/evidence/convert.out"
 fi
 
 echo "## step import"
@@ -117,5 +155,5 @@ echo "## step report.md"
 if [ "$DRY_RUN" = "1" ]; then
     echo "write evidence/report.md"
 else
-    echo "Report" > "$WORKDIR/evidence/report.md"
+    echo "Report is written via EXIT trap"
 fi

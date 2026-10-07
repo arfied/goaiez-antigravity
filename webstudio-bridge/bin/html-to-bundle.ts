@@ -4,20 +4,44 @@ import { generateFragmentFromTailwind } from "/home/goaiez/public_html/webstudio
 import fs from "node:fs/promises";
 import path from "node:path";
 
+import { getStyleDeclKey } from "/home/goaiez/public_html/webstudio/packages/sdk/src/schema/styles.ts";
+import { publishedProjectBundle, bundleVersion } from "/home/goaiez/public_html/webstudio/packages/protocol/src/schema.ts";
+
 async function run() {
   const args = process.argv.slice(2);
-  const pagesDir = args[0];
-  const outJson = args[1];
+  let pagesDir = "";
+  let outJson = "";
+  let title = "";
+  let domain = "";
+  
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--title") {
+      title = args[++i];
+    } else if (args[i] === "--domain") {
+      domain = args[++i];
+    } else if (!pagesDir) {
+      pagesDir = args[i];
+    } else if (!outJson) {
+      outJson = args[i];
+    }
+  }
+
   if (!pagesDir || !outJson) {
-    console.error("Usage: html-to-bundle.ts <pages-dir> <out.json>");
+    console.error("Usage: html-to-bundle.ts <pages-dir> <out.json> [--title <t>] [--domain <d>]");
     process.exit(1);
   }
   
+  const defaultName = path.basename(path.resolve(pagesDir, ".."));
+  if (!title) title = defaultName;
+  if (!domain) domain = defaultName;
+
   const files = await fs.readdir(pagesDir);
   const htmlFiles = files.filter(f => f.endsWith(".html"));
 
-  const bundle = {
-    bundleVersion: "1",
+  const bundle: any = {
+    bundleVersion: bundleVersion,
+    projectTitle: title,
+    projectDomain: domain,
     build: {
       id: "build_1",
       projectId: "project_1",
@@ -25,15 +49,15 @@ async function run() {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       pages: {
-        homePage: {
-          id: "page_index",
-          name: "index",
-          title: "index",
-          path: "",
-          rootInstanceId: "root_index",
-          meta: {}
-        },
-        pages: []
+        homePageId: "page_index",
+        rootFolderId: "folder_root",
+        pages: [],
+        folders: [{
+          id: "folder_root",
+          name: "Root",
+          slug: "",
+          children: []
+        }]
       },
       breakpoints: [],
       styles: [],
@@ -93,15 +117,16 @@ async function run() {
       id: pageId,
       name: route,
       title: route,
-      path: route === "index" ? "" : route,
+      path: route === "index" ? "" : ("/" + route),
       rootInstanceId: rootId,
       meta: {}
     };
+    
+    bundle.build.pages.pages.push(page);
+    bundle.build.pages.folders[0].children.push(pageId);
+    
     if (route === "index") {
-      bundle.build.pages.homePage = page;
       bundle.page = page;
-    } else {
-      bundle.build.pages.pages.push(page);
     }
     bundle.pages.push(page);
 
@@ -117,13 +142,14 @@ async function run() {
     for (const inst of fragment.instances || []) instancesMap.set(inst.id, inst);
     
     for (const bp of fragment.breakpoints || []) {
-       if (!bundle.build.breakpoints.some(b => b[0] === bp.id)) {
+       if (!bundle.build.breakpoints.some((b: any) => b[0] === bp.id)) {
            bundle.build.breakpoints.push([bp.id, bp]);
        }
     }
     for (const style of fragment.styles || []) {
-       if (!bundle.build.styles.some(s => s[0] === style.id)) {
-           bundle.build.styles.push([style.id, style]);
+       const key = getStyleDeclKey(style);
+       if (!bundle.build.styles.some((s: any) => s[0] === key)) {
+           bundle.build.styles.push([key, style]);
        }
     }
     for (const prop of fragment.props || []) {
@@ -141,7 +167,20 @@ async function run() {
     bundle.build.instances.push([id, inst]);
   }
 
+  const parsed = publishedProjectBundle.safeParse(bundle);
+  if (!parsed.success) {
+    for (const issue of parsed.error.issues) {
+      console.error(`${issue.path.join(".")}: ${issue.message}`);
+    }
+    process.exit(1);
+  } else {
+    console.log("bundle: ok (schema)");
+  }
+
   await fs.writeFile(outJson, JSON.stringify(bundle, null, 2));
+
+  const written = JSON.parse(await fs.readFile(outJson, "utf8"));
+  console.log(`bundle: instances ${written.build.instances.length} · styles ${written.build.styles.length} · styleSources ${written.build.styleSources.length} · breakpoints ${written.build.breakpoints.length} · pages ${written.pages.length}`);
 }
 
 run().catch(e => {
