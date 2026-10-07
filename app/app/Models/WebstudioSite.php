@@ -36,4 +36,10 @@ class WebstudioSite extends Model implements TenantScoped
     public const SOURCE_CLONE = 'clone';
 
     public const SOURCE_TEMPLATE = 'template';
+
+    public const CREATING = 'creating';
+
+    public const READY = 'ready';
+
+    public const CREATION_FAILED = 'failed';
 }

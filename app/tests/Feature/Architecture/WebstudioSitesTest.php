@@ -51,3 +51,16 @@ it('webstudio_template_projects is platform-level: no business_id column and no 
     $table = DB::selectOne("select relrowsecurity from pg_class where relname = 'webstudio_template_projects'");
     expect($table->relrowsecurity)->toBeFalse();
 });
+
+it('the template job passes the secret and the source project env-only', function () {
+    $job = file_get_contents(app_path('Jobs/Webstudio/CreateWebstudioSiteFromTemplateJob.php'));
+    expect($job)->toContain("'WS_CLONE_FROM' =>")
+        ->and($job)->toContain("'WS_AUTH_SECRET' =>");
+
+    $lines = explode("\n", $job);
+    foreach ($lines as $i => $line) {
+        if (str_contains($line, 'new Process(')) {
+            expect($line)->not->toContain('WS_');
+        }
+    }
+});

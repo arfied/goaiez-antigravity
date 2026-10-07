@@ -5,13 +5,14 @@ const origin = process.env.WS_BUILDER_ORIGIN;
 const secret = process.env.WS_AUTH_SECRET;
 const email = process.env.WS_SERVICE_EMAIL || 'hello@webstudio.is';
 const title = process.env.WS_PROJECT_TITLE;
+const cloneFrom = process.env.WS_CLONE_FROM;
 
 if (process.env.WS_INSECURE_TLS === '1') {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 }
 
 if (!origin || !secret || !title) {
-  console.error("Missing required env vars");
+  console.error("Missing required env vars. WS_CLONE_FROM is optional.");
   process.exit(1);
 }
 
@@ -87,31 +88,50 @@ async function run() {
   const cookies = cookiesArr.map(c => c.split(';')[0]).join('; ');
 
   // 2. Create project
-  const projectBody = JSON.stringify({ "0": { title } });
-  const projectRes = await request(`${origin}/trpc/project.create?batch=1`, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'sec-fetch-site': 'same-origin',
-      'sec-fetch-mode': 'cors',
-      'origin': origin,
-      'cookie': cookies,
-      'x-csrf-token': csrfToken,
-      'content-length': Buffer.byteLength(projectBody)
-    }
-  }, projectBody);
+  let projectBody;
+  let projectRes;
+
+  if (cloneFrom) {
+    projectBody = JSON.stringify({ "0": { projectId: cloneFrom, title } });
+    projectRes = await request(`${origin}/trpc/project.clone?batch=1`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'sec-fetch-site': 'same-origin',
+        'sec-fetch-mode': 'cors',
+        'origin': origin,
+        'cookie': cookies,
+        'x-csrf-token': csrfToken,
+        'content-length': Buffer.byteLength(projectBody)
+      }
+    }, projectBody);
+  } else {
+    projectBody = JSON.stringify({ "0": { title } });
+    projectRes = await request(`${origin}/trpc/project.create?batch=1`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'sec-fetch-site': 'same-origin',
+        'sec-fetch-mode': 'cors',
+        'origin': origin,
+        'cookie': cookies,
+        'x-csrf-token': csrfToken,
+        'content-length': Buffer.byteLength(projectBody)
+      }
+    }, projectBody);
+  }
 
   let projectData;
   try {
     projectData = JSON.parse(projectRes.data);
   } catch (e) {
-    console.error("Failed to parse project.create response:");
+    console.error(`Failed to parse ${cloneFrom ? 'project.clone' : 'project.create'} response:`);
     console.error(projectRes.data.substring(0, 300));
     process.exit(1);
   }
 
   if (!projectData[0] || !projectData[0].result || !projectData[0].result.data) {
-    console.error("Unexpected project.create response shape:");
+    console.error(`Unexpected ${cloneFrom ? 'project.clone' : 'project.create'} response shape:`);
     console.error(projectRes.data.substring(0, 300));
     process.exit(1);
   }
