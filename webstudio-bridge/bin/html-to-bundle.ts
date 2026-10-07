@@ -3,6 +3,7 @@ import { generateFragmentFromHtml } from "/home/goaiez/public_html/webstudio/pac
 import { generateFragmentFromTailwind } from "/home/goaiez/public_html/webstudio/apps/builder/app/shared/tailwind/tailwind.ts";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { randomUUID } from "node:crypto";
 
 import { getStyleDeclKey } from "/home/goaiez/public_html/webstudio/packages/sdk/src/schema/styles.ts";
 import { publishedProjectBundle, bundleVersion } from "/home/goaiez/public_html/webstudio/packages/protocol/src/schema.ts";
@@ -13,12 +14,18 @@ async function run() {
   let outJson = "";
   let title = "";
   let domain = "";
+  let projectId = "";
+  let assetsManifest = "";
   
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--title") {
       title = args[++i];
     } else if (args[i] === "--domain") {
       domain = args[++i];
+    } else if (args[i] === "--project-id") {
+      projectId = args[++i];
+    } else if (args[i] === "--assets-manifest") {
+      assetsManifest = args[++i];
     } else if (!pagesDir) {
       pagesDir = args[i];
     } else if (!outJson) {
@@ -163,11 +170,56 @@ async function run() {
     }
   }
 
+
+  let manifest = [];
+  if (assetsManifest) {
+    manifest = JSON.parse(await fs.readFile(assetsManifest, "utf8"));
+  }
+
+  let assetsDeclared = 0;
+  let propsRebound = 0;
+  let propsLeft = 0;
+
+  const manifestMap = new Map();
+  for (const entry of manifest) {
+    if (entry.error) continue;
+    const assetId = randomUUID();
+    const asset = {
+      id: assetId,
+      projectId: projectId,
+      size: entry.size,
+      name: entry.name,
+      format: entry.mime.split("/")[1] || "png",
+      meta: { width: entry.width, height: entry.height },
+      type: "image",
+      createdAt: new Date().toISOString()
+    };
+    bundle.assets.push(asset);
+    manifestMap.set(entry.name, assetId);
+    assetsDeclared++;
+  }
+
   for (const [id, inst] of instancesMap) {
     bundle.build.instances.push([id, inst]);
   }
+  
+  for (const [id, prop] of bundle.build.props) {
+    const inst = instancesMap.get(prop.instanceId);
+    if (inst && inst.component === "Image" && prop.name === "src" && prop.type === "string") {
+      if (manifestMap.has(prop.value)) {
+        prop.type = "asset";
+        prop.value = manifestMap.get(prop.value);
+        propsRebound++;
+      } else {
+        propsLeft++;
+      }
+    }
+  }
+  
+  console.log(`assets: ${assetsDeclared} declared · ${propsRebound} image props rebound · ${propsLeft} left as strings`);
 
   const parsed = publishedProjectBundle.safeParse(bundle);
+
   if (!parsed.success) {
     for (const issue of parsed.error.issues) {
       console.error(`${issue.path.join(".")}: ${issue.message}`);

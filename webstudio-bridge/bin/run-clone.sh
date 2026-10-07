@@ -136,10 +136,15 @@ else
 fi
 
 echo "## step html-to-bundle"
+MANIFEST_ARG=""
+if [ -s "$WORKDIR/evidence/assets/manifest.json" ]; then
+    MANIFEST_ARG="--assets-manifest $WORKDIR/evidence/assets/manifest.json --project-id 00000000-0000-4000-8000-000000000000"
+fi
+
 if [ "$DRY_RUN" = "1" ]; then
-    echo "cd /home/goaiez/public_html/webstudio && pnpm exec tsx --conditions=webstudio $DIR/bin/html-to-bundle.ts $WORKDIR/evidence/pages $WORKDIR/evidence/bundle.json > $WORKDIR/evidence/convert.out"
+    echo "cd /home/goaiez/public_html/webstudio && pnpm exec tsx --conditions=webstudio $DIR/bin/html-to-bundle.ts $WORKDIR/evidence/pages $WORKDIR/evidence/bundle.json $MANIFEST_ARG > $WORKDIR/evidence/convert.out"
 else
-    cd /home/goaiez/public_html/webstudio && pnpm exec tsx --conditions=webstudio "$DIR/bin/html-to-bundle.ts" "$WORKDIR/evidence/pages" "$WORKDIR/evidence/bundle.json" > "$WORKDIR/evidence/convert.out"
+    cd /home/goaiez/public_html/webstudio && pnpm exec tsx --conditions=webstudio "$DIR/bin/html-to-bundle.ts" "$WORKDIR/evidence/pages" "$WORKDIR/evidence/bundle.json" $MANIFEST_ARG > "$WORKDIR/evidence/convert.out"
 fi
 
 if [ -z "$WS_SHARE_LINK" ] && [ "$WS_AUTO_PROJECT" = "1" ] && [ -n "$WS_AUTH_SECRET" ]; then
@@ -159,11 +164,21 @@ if [ -n "$WS_SHARE_LINK" ]; then
         echo "WS=\"$WORKDIR/ws\""
         echo "mkdir -p \"$WORKDIR/ws/.webstudio\""
         echo "cp \"$WORKDIR/evidence/bundle.json\" \"$WORKDIR/ws/.webstudio/data.json\""
-        echo "(cd \"$WS\" && NODE_TLS_REJECT_UNAUTHORIZED=\"\${WS_INSECURE_TLS:+0}\" node /home/goaiez/public_html/webstudio/packages/cli/local.js import --to \"$WS_SHARE_LINK\" --skip-assets)"
+        if [ -s "$WORKDIR/evidence/assets/manifest.json" ]; then
+            echo "mkdir -p \"$WS/.webstudio/assets\" && cp \"$WORKDIR/evidence/assets/\"*.* \"$WS/.webstudio/assets/\""
+            echo "(cd \"$WS\" && NODE_TLS_REJECT_UNAUTHORIZED=\"\${WS_INSECURE_TLS:+0}\" node /home/goaiez/public_html/webstudio/packages/cli/local.js import --to \"$WS_SHARE_LINK\")"
+        else
+            echo "(cd \"$WS\" && NODE_TLS_REJECT_UNAUTHORIZED=\"\${WS_INSECURE_TLS:+0}\" node /home/goaiez/public_html/webstudio/packages/cli/local.js import --to \"$WS_SHARE_LINK\" --skip-assets)"
+        fi
     else
         mkdir -p "$WORKDIR/ws/.webstudio"
         cp "$WORKDIR/evidence/bundle.json" "$WORKDIR/ws/.webstudio/data.json"
-        (cd "$WS" && NODE_TLS_REJECT_UNAUTHORIZED="${WS_INSECURE_TLS:+0}" node /home/goaiez/public_html/webstudio/packages/cli/local.js import --to "$WS_SHARE_LINK" --skip-assets)
+        if [ -s "$WORKDIR/evidence/assets/manifest.json" ]; then
+            mkdir -p "$WS/.webstudio/assets" && cp "$WORKDIR/evidence/assets/"*.* "$WS/.webstudio/assets/" || true
+            (cd "$WS" && NODE_TLS_REJECT_UNAUTHORIZED="${WS_INSECURE_TLS:+0}" node /home/goaiez/public_html/webstudio/packages/cli/local.js import --to "$WS_SHARE_LINK")
+        else
+            (cd "$WS" && NODE_TLS_REJECT_UNAUTHORIZED="${WS_INSECURE_TLS:+0}" node /home/goaiez/public_html/webstudio/packages/cli/local.js import --to "$WS_SHARE_LINK" --skip-assets)
+        fi
     fi
 else
     echo "import: skipped (no WS_SHARE_LINK)"

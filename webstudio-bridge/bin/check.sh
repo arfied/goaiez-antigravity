@@ -54,9 +54,19 @@ if ! grep -q 'project.mjs' "$DIR/.dry/run-clone-auto.out"; then
 fi
 
 echo "Running run-clone.sh dry run (link)..."
+rm -rf "$DIR/.dry/clones"
 WS_SHARE_LINK='https://example.invalid/?authToken=x' bash "$DIR/bin/run-clone.sh" --dry-run https://example.com 0 > "$DIR/.dry/run-clone-link.out"
 
 if ! grep -q 'import --to' "$DIR/.dry/run-clone-link.out" || ! grep -q -e '--skip-assets' "$DIR/.dry/run-clone-link.out" || grep -q ' link --link' "$DIR/.dry/run-clone-link.out"; then
     echo "Error: Output must contain import --to and --skip-assets and NOT contain link --link"
+    exit 1
+fi
+
+echo "Running run-clone.sh dry run (with manifest)..."
+mkdir -p "$DIR/.dry/clones/0/example-com/evidence/assets"
+echo '[{"url":"http://x","name":"x"}]' > "$DIR/.dry/clones/0/example-com/evidence/assets/manifest.json"
+WS_SHARE_LINK='https://example.invalid/?authToken=x' bash "$DIR/bin/run-clone.sh" --dry-run https://example.com 0 > "$DIR/.dry/run-clone-manifest.out"
+if ! grep -q -e '--assets-manifest' "$DIR/.dry/run-clone-manifest.out" || grep -q -e '--skip-assets' "$DIR/.dry/run-clone-manifest.out"; then
+    echo "Error: Output must contain --assets-manifest and NOT contain --skip-assets when manifest is present"
     exit 1
 fi

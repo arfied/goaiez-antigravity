@@ -1,6 +1,7 @@
 import { chromium } from "/home/goaiez/agents/grs-antig/app/node_modules/playwright/index.mjs";
 import fs from "node:fs/promises";
 import path from "node:path";
+import crypto from "node:crypto";
 
 async function run() {
   const args = process.argv.slice(2);
@@ -24,6 +25,11 @@ async function run() {
   const browser = await chromium.launch();
   const context = await browser.newContext();
   let fail = false;
+  
+  const assetsDir = path.join(pagesDir, "..", "assets");
+  await fs.mkdir(assetsDir, { recursive: true });
+  
+  const manifestMap = new Map(); // url -> entry
 
   for (const route of routes) {
     const page = await context.newPage();
@@ -47,14 +53,123 @@ async function run() {
         return contents.join('\n');
       });
 
-      await page.evaluate((css) => {
+      const imagesData = await page.evaluate(async () => {
+        const uniqueUrls = new Set();
+        for (const img of document.images) {
+          if (img.currentSrc) uniqueUrls.add(img.currentSrc);
+          else if (img.src) uniqueUrls.add(img.src);
+        }
+        
+        for (const el of document.querySelectorAll('*')) {
+          const bg = window.getComputedStyle(el).backgroundImage;
+          const match = bg.match(/url\(['"]?(.*?)['"]?\)/);
+          if (match && match[1]) {
+            let u = match[1];
+            if (!u.startsWith('data:')) {
+              uniqueUrls.add(new URL(u, document.baseURI).href);
+            }
+          }
+        }
+        
+        const results = [];
+        for (const url of uniqueUrls) {
+          try {
+            const res = await fetch(url);
+            if (!res.ok) {
+              results.push({ url, error: res.statusText });
+              continue;
+            }
+            const mime = res.headers.get('content-type') || "image/png";
+            const buffer = await res.arrayBuffer();
+            const bytes = new Uint8Array(buffer);
+            let binary = '';
+            for (let i = 0; i < bytes.byteLength; i++) {
+              binary += String.fromCharCode(bytes[i]);
+            }
+            const base64 = btoa(binary);
+            
+            let width = 0, height = 0;
+            let isImg = false;
+            for (const img of document.images) {
+              if (img.currentSrc === url || img.src === url) {
+                width = img.naturalWidth;
+                height = img.naturalHeight;
+                isImg = true;
+                break;
+              }
+            }
+            if (!isImg) {
+              await new Promise((resolve) => {
+                const i = new Image();
+                i.onload = () => { width = i.naturalWidth; height = i.naturalHeight; resolve(); };
+                i.onerror = resolve;
+                i.src = url;
+              });
+            }
+            
+            results.push({ url, base64, mime, width, height, size: buffer.byteLength });
+          } catch (e) {
+            results.push({ url, error: e.message });
+          }
+        }
+        return results;
+      });
+      
+      const toRewrite = [];
+      for (const data of imagesData) {
+        if (!manifestMap.has(data.url)) {
+          if (data.error) {
+            manifestMap.set(data.url, { url: data.url, error: data.error });
+          } else {
+            const hash = crypto.createHash("sha256").update(data.url).digest("hex").slice(0, 8);
+            let basename = data.url.split('/').pop().split('?')[0].replace(/[^a-zA-Z0-9.\-]/g, '_');
+            if (!basename) basename = "image";
+            const finalName = `${hash}-${basename}`;
+            
+            manifestMap.set(data.url, {
+              url: data.url,
+              name: finalName,
+              mime: data.mime,
+              size: data.size,
+              width: data.width,
+              height: data.height
+            });
+            
+            const buf = Buffer.from(data.base64, "base64");
+            await fs.writeFile(path.join(assetsDir, finalName), buf);
+          }
+        }
+        
+        const entry = manifestMap.get(data.url);
+        if (!entry.error) {
+          toRewrite.push({ url: data.url, name: entry.name });
+        }
+      }
+
+      await page.evaluate(({ css, toRewrite }) => {
         document.querySelectorAll('script').forEach(n => n.remove());
         document.querySelectorAll('link[rel="stylesheet"]').forEach(n => n.remove());
         
         const style = document.createElement('style');
         style.textContent = css;
         document.head.appendChild(style);
-      }, styles);
+        
+        for (const { url, name } of toRewrite) {
+          for (const img of document.images) {
+            if (img.currentSrc === url || img.src === url || img.getAttribute("src") === url) {
+              img.setAttribute("src", name);
+              img.removeAttribute("srcset");
+            }
+          }
+          
+          for (const el of document.querySelectorAll('*')) {
+            const styleAttr = el.getAttribute('style');
+            if (styleAttr && styleAttr.includes(url)) {
+              el.setAttribute('style', styleAttr.split(url).join(name));
+            }
+          }
+        }
+      }, { css: styles, toRewrite });
 
       const html = await page.evaluate(() => document.documentElement.outerHTML);
       const outPath = path.join(pagesDir, `${name}.html`);
@@ -86,6 +201,10 @@ async function run() {
   }
 
   await browser.close();
+  
+  const manifest = Array.from(manifestMap.values());
+  await fs.writeFile(path.join(assetsDir, "manifest.json"), JSON.stringify(manifest, null, 2));
+  
   if (fail) process.exit(1);
 }
 

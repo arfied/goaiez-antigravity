@@ -33,6 +33,24 @@ if grep -q "<script" "$OUT_FILE"; then echo "script tag still present"; FAIL=1; 
 if [ ! -f "$TEST_DIR/shots/clone-index-1280.png" ]; then echo "missing 1280 shot"; FAIL=1; fi
 if [ ! -f "$TEST_DIR/shots/clone-index-390.png" ]; then echo "missing 390 shot"; FAIL=1; fi
 
+MANIFEST="$TEST_DIR/assets/manifest.json"
+if [ ! -f "$MANIFEST" ]; then echo "missing manifest.json"; FAIL=1; fi
+
+ASSET_NAME=$(node -e "const m=require('$MANIFEST'); console.log(m[0].name)")
+if [[ ! "$ASSET_NAME" == *-pic.png ]]; then echo "wrong asset name: $ASSET_NAME"; FAIL=1; fi
+
+if ! node -e "const m=require('$MANIFEST'); if(m.length!==1 || m[0].width!==2 || m[0].height!==2) process.exit(1)" ; then
+  echo "manifest contents wrong"; FAIL=1;
+fi
+
+if ! grep -q "<img src=\"$ASSET_NAME\"" "$OUT_FILE"; then echo "HTML img src not rewritten to $ASSET_NAME"; FAIL=1; fi
+
+if [ ! -f "$TEST_DIR/assets/$ASSET_NAME" ]; then echo "saved image file missing"; FAIL=1; fi
+
+ORIG_SIZE=$(stat -c%s "$DIR/fixtures/render/pic.png")
+SAVED_SIZE=$(stat -c%s "$TEST_DIR/assets/$ASSET_NAME")
+if [ "$ORIG_SIZE" -ne "$SAVED_SIZE" ]; then echo "size mismatch: $ORIG_SIZE vs $SAVED_SIZE"; FAIL=1; fi
+
 if [ "$FAIL" -ne 0 ]; then
   echo "Test failed!"
   exit 1

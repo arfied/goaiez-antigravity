@@ -36,5 +36,34 @@ if (b.build.styles.some(s => s[0] === null)) {
 }
 " || FAIL=1
 
+# New test for images
+mkdir -p "$TEST_DIR/assets"
+echo '<img src="abcdef12-pic.png" alt="pic">' > "$TEST_DIR/pages/pic.html"
+echo '[{"url":"http://example.com/pic.png","name":"abcdef12-pic.png","mime":"image/png","size":100,"width":2,"height":2}]' > "$TEST_DIR/assets/manifest.json"
+
+OUTPUT2=$(pnpm exec tsx --conditions=webstudio "$DIR/bin/html-to-bundle.ts" "$TEST_DIR/pages" "$TEST_DIR/bundle2.json" --assets-manifest "$TEST_DIR/assets/manifest.json" --project-id 00000000-0000-4000-8000-000000000000)
+
+echo "$OUTPUT2"
+
+if ! echo "$OUTPUT2" | grep -q "assets: 1 declared · 1 image props rebound · 0 left as strings"; then echo "missing assets print"; FAIL=1; fi
+if ! echo "$OUTPUT2" | grep -q "bundle: ok (schema)"; then echo "missing bundle: ok (schema)"; FAIL=1; fi
+
+node -e "
+const b = require('$TEST_DIR/bundle2.json');
+if (b.assets.length !== 1) {
+  console.error('assets length ' + b.assets.length); process.exit(1);
+}
+const assetId = b.assets[0].id;
+let foundProp = false;
+for (const [id, prop] of b.build.props) {
+  if (prop.name === 'src' && prop.type === 'asset' && prop.value === assetId) {
+    foundProp = true;
+  }
+}
+if (!foundProp) {
+  console.error('rebound prop not found'); process.exit(1);
+}
+" || FAIL=1
+
 rm -rf "$TEST_DIR"
 exit $FAIL
