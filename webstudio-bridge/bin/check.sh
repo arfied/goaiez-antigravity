@@ -45,3 +45,10 @@ if [ -n "$(git -C /home/goaiez/public_html/webstudio status --short)" ]; then
 fi
 
 echo "OK"
+
+echo "Running run-clone.sh dry run (auto project)..."
+WS_AUTO_PROJECT=1 WS_AUTH_SECRET=dummy bash "$DIR/bin/run-clone.sh" --dry-run https://example.com 0 > "$DIR/.dry/run-clone-auto.out"
+if ! grep -q 'project.mjs' "$DIR/.dry/run-clone-auto.out"; then
+    echo "Error: Output does not contain project.mjs"
+    exit 1
+fi

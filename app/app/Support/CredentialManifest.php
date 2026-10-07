@@ -53,6 +53,12 @@ final class CredentialManifest
     public static function credentials(): array
     {
         return [
+            'webstudio_auth_secret' => [
+                'vendor' => 'Webstudio',
+                'label' => 'Webstudio Builder Auth Secret',
+                'description' => 'The AUTH_SECRET env var from the builder to allow programmatic dev login. Set on the runner as WS_AUTH_SECRET.',
+                'degradation' => 'Automatic project creation for a clone is skipped; the clone runs, but requires manual import.',
+            ],
             'google_places_key' => [
                 'vendor' => 'Google',
                 'label' => 'Places API (New) key',

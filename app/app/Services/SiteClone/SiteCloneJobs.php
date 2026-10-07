@@ -158,4 +158,19 @@ final class SiteCloneJobs
             default => 'Unknown error.',
         };
     }
+
+    public function editorUrl(SiteCloneJob $job): ?string
+    {
+        if ($job->status !== SiteCloneJob::DONE || $job->webstudio_project_id === null || $job->editor_token === null) {
+            return null;
+        }
+
+        $origin = rtrim(config('site_clone.builder_origin', 'https://wstd.dev:5174'), '/');
+        $parsed = parse_url($origin);
+        $scheme = $parsed['scheme'] ?? 'https';
+        $host = $parsed['host'] ?? '';
+        $port = isset($parsed['port']) ? ':'.$parsed['port'] : '';
+
+        return $scheme.'://p-'.$job->webstudio_project_id.'.'.$host.$port.'/?authToken='.$job->editor_token;
+    }
 }

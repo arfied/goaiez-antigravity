@@ -23,6 +23,7 @@ class SiteCloneJob extends Model implements TenantScoped
             'heartbeat_at' => 'datetime',
             'started_at' => 'datetime',
             'finished_at' => 'datetime',
+            'editor_token' => 'encrypted',
         ];
     }
 

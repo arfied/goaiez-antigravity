@@ -142,6 +142,16 @@ else
     cd /home/goaiez/public_html/webstudio && pnpm exec tsx --conditions=webstudio "$DIR/bin/html-to-bundle.ts" "$WORKDIR/evidence/pages" "$WORKDIR/evidence/bundle.json" > "$WORKDIR/evidence/convert.out"
 fi
 
+if [ -z "$WS_SHARE_LINK" ] && [ "$WS_AUTO_PROJECT" = "1" ] && [ -n "$WS_AUTH_SECRET" ]; then
+    echo "## step project creation"
+    if [ "$DRY_RUN" = "1" ]; then
+        echo "WS_PROJECT_TITLE=\"$SLUG\" node \"$DIR/bin/project.mjs\" > \"$WORKDIR/evidence/project.json\""
+    else
+        WS_PROJECT_TITLE="$SLUG" node "$DIR/bin/project.mjs" > "$WORKDIR/evidence/project.json"
+        export WS_SHARE_LINK=$(node -e "console.log(require('$WORKDIR/evidence/project.json').shareLink)")
+    fi
+fi
+
 echo "## step import"
 if [ -n "$WS_SHARE_LINK" ]; then
     WS="$WORKDIR/ws"

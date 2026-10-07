@@ -74,7 +74,12 @@
                                     <div class="font-bold">{{ $item->host }}</div>
                                     <div class="text-xs">{{ $item->created_at->diffForHumans() }}</div>
                                 </div>
-                                <div class="px-2 py-1 rounded bg-paper border border-rule text-xs uppercase">{{ $item->status }}</div>
+                                <div class="flex items-center gap-4">
+                                    <div class="px-2 py-1 rounded bg-paper border border-rule text-xs uppercase">{{ $item->status }}</div>
+                                    @if ($jobs->editorUrl($item) !== null)
+                                        <button type="button" wire:click="openEditor({{ $item->id }})" class="text-attention hover:underline font-bold">Open editor</button>
+                                    @endif
+                                </div>
                             </li>
                         @endforeach
                     </ul>

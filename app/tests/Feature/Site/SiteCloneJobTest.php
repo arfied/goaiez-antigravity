@@ -169,3 +169,22 @@ it('request dispatches to queue', function () {
 
     Queue::assertPushedOn('clone', RunSiteCloneJob::class);
 });
+
+it('stores project and token when automatic project creation runs', function () {
+    config(['credentials.webstudio_auth_secret' => 'dummy']);
+    config(['site_clone.runner' => base_path('tests/Fixtures/site-clone/fake-runner.sh')]);
+
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = $this->provisionTenant([
+        'owner_user_id' => $user->id,
+        'name' => 'Studio Test Business',
+    ]);
+
+    $res = app(SiteCloneJobs::class)->request($business->id, $user->id, 'http://93.184.216.34/', true);
+    (new RunSiteCloneJob($res['job_id'], $business->id))->handle(app(SiteCloneJobs::class), app(DefaultsRegistry::class));
+
+    $row = SiteCloneJob::find($res['job_id']);
+    expect($row->status)->toBe(SiteCloneJob::DONE);
+    expect($row->webstudio_project_id)->toBe('fake-uuid-456');
+    expect($row->editor_token)->toBe('fake-token-value-abc123');
+});

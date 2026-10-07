@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Site;
 
 use App\Enums\UserRole;
+use App\Models\SiteCloneJob;
 use App\Services\SiteClone\SiteCloneJobs;
 use App\Support\Tenancy;
 use Illuminate\Contracts\View\View;
@@ -50,11 +51,23 @@ class SiteClone extends Component
         }
     }
 
+    public function openEditor(int $jobId, SiteCloneJobs $jobs): mixed
+    {
+        $job = SiteCloneJob::where('business_id', $this->businessId)->find($jobId);
+        $url = $job === null ? null : $jobs->editorUrl($job);
+        if ($url === null) {
+            return null;
+        }
+
+        return redirect()->away($url);
+    }
+
     public function render(SiteCloneJobs $jobs): View
     {
         return view('livewire.site.clone', [
             'active' => $jobs->active($this->businessId),
             'history' => $jobs->history($this->businessId),
+            'jobs' => $jobs,
         ]);
     }
 }

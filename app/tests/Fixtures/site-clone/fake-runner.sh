@@ -11,4 +11,7 @@ printf '%s\n' '{"type":"assistant","message":{"content":[{"type":"tool_use","nam
 if [ "$MODE" = "hang" ]; then sleep 600; fi
 if [ "$MODE" = "fail" ]; then echo "boom" >&2; exit 1; fi
 echo "## step static render"; echo "## step html-to-bundle"; echo '{"pages":[]}' > "$WORKDIR/evidence/bundle.json"
+if [ "$MODE" = "ok" ] && [ "$WS_AUTO_PROJECT" = "1" ]; then
+    echo '{"projectId":"fake-uuid-456","token":"fake-token-value-abc123"}' > "$WORKDIR/evidence/project.json"
+fi
 echo "## step import"; echo "import: skipped (no WS_SHARE_LINK)"; echo "## step report.md"

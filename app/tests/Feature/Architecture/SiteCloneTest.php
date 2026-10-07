@@ -61,3 +61,37 @@ it('routes/console.php schedules queue:work with clone queue', function () {
     $console = file_get_contents(base_path('routes/console.php'));
     expect($console)->toContain('queue:work --queue=clone');
 });
+
+it('view contains no authToken', function () {
+    $view = file_get_contents(resource_path('views/livewire/site/clone.blade.php'));
+    expect($view)->not->toContain('authToken');
+});
+
+it('job file passes WS_AUTH_SECRET safely', function () {
+    $job = file_get_contents(app_path('Jobs/SiteClone/RunSiteCloneJob.php'));
+    // Make sure it doesn't just blindly assign WS_AUTH_SECRET
+    $lines = explode("\n", $job);
+    $foundEnvAuthSecret = false;
+    $foundPlatformCredentialsHas = false;
+    $insideHasBlock = false;
+
+    foreach ($lines as $line) {
+        if (str_contains($line, "PlatformCredentials::has('webstudio_auth_secret')")) {
+            $insideHasBlock = true;
+            $foundPlatformCredentialsHas = true;
+        }
+        if (str_contains($line, "['WS_AUTH_SECRET']")) {
+            if (! $insideHasBlock) {
+                // found outside the has block!
+                $this->fail('WS_AUTH_SECRET is set outside the has("webstudio_auth_secret") block.');
+            }
+            $foundEnvAuthSecret = true;
+        }
+        if ($insideHasBlock && str_contains($line, '}')) {
+            $insideHasBlock = false;
+        }
+    }
+
+    expect($foundEnvAuthSecret)->toBeTrue()
+        ->and($foundPlatformCredentialsHas)->toBeTrue();
+});

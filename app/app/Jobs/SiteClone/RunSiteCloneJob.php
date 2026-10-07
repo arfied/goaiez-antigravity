@@ -88,6 +88,13 @@ final class RunSiteCloneJob implements ShouldQueue
                     'PATH' => getenv('PATH'),
                 ];
 
+                if (PlatformCredentials::has('webstudio_auth_secret')) {
+                    $env['WS_AUTO_PROJECT'] = '1';
+                    $env['WS_AUTH_SECRET'] = PlatformCredentials::get('webstudio_auth_secret');
+                    $env['WS_BUILDER_ORIGIN'] = config('site_clone.builder_origin');
+                    $env['WS_INSECURE_TLS'] = config('site_clone.builder_insecure_tls') ? '1' : '0';
+                }
+
                 $process = new Process(
                     ['setsid', 'bash', config('site_clone.runner'), $row->url, (string) $this->businessId],
                     base_path('..'),
@@ -265,13 +272,28 @@ final class RunSiteCloneJob implements ShouldQueue
 
                 if ($rc === 0 && $bundleExists) {
                     $setMessage(SiteCloneJobs::MESSAGES['done']);
-                    $row->update([
+                    $update = [
                         'status' => SiteCloneJob::DONE,
                         'progress' => 100,
                         'message' => $row->message,
                         'logs' => $row->getAttribute('logs'),
                         'finished_at' => now(),
-                    ]);
+                    ];
+
+                    $projectJsonPath = $workDir.'/evidence/project.json';
+                    if (file_exists($projectJsonPath)) {
+                        $projectData = json_decode(file_get_contents($projectJsonPath), true);
+                        if (is_array($projectData)) {
+                            if (isset($projectData['projectId'])) {
+                                $update['webstudio_project_id'] = $projectData['projectId'];
+                            }
+                            if (isset($projectData['token'])) {
+                                $update['editor_token'] = $projectData['token'];
+                            }
+                        }
+                    }
+
+                    $row->update($update);
                 } else {
                     $outAll = $process->getOutput();
                     $errAll = $process->getErrorOutput();

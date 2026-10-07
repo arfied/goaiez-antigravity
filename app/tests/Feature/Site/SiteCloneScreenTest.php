@@ -173,3 +173,86 @@ test('a bad address is refused and no row is written', function () {
 
     expect(SiteCloneJob::count())->toBe(0);
 });
+
+test('the editor action redirects to the builder for a done job with both fields', function () {
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = $this->provisionTenant([
+        'owner_user_id' => $user->id,
+        'name' => 'Studio Test Business',
+    ]);
+
+    $this->actingAs($user);
+
+    config(['site_clone.builder_origin' => 'https://wstd.dev:5174']);
+
+    $job = SiteCloneJob::create([
+        'business_id' => $business->id,
+        'user_id' => $user->id,
+        'url' => 'http://93.184.216.34/',
+        'host' => '93.184.216.34',
+        'slug' => '93-184-216-34',
+        'status' => SiteCloneJob::DONE,
+        'progress' => 100,
+        'message' => 'Done.',
+        'webstudio_project_id' => 'fake-uuid-456',
+        'editor_token' => 'fake-token-value-abc123',
+    ]);
+
+    Livewire::test(SiteClone::class)
+        ->call('openEditor', $job->id)
+        ->assertRedirect('https://p-fake-uuid-456.wstd.dev:5174/?authToken=fake-token-value-abc123');
+});
+
+test('the editor action does not redirect for a failed job', function () {
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = $this->provisionTenant([
+        'owner_user_id' => $user->id,
+        'name' => 'Studio Test Business',
+    ]);
+
+    $this->actingAs($user);
+
+    $job = SiteCloneJob::create([
+        'business_id' => $business->id,
+        'user_id' => $user->id,
+        'url' => 'http://93.184.216.34/',
+        'host' => '93.184.216.34',
+        'slug' => '93-184-216-34',
+        'status' => SiteCloneJob::FAILED,
+        'progress' => 100,
+        'message' => 'Failed.',
+        'webstudio_project_id' => 'fake-uuid-456',
+        'editor_token' => 'fake-token-value-abc123',
+    ]);
+
+    Livewire::test(SiteClone::class)
+        ->call('openEditor', $job->id)
+        ->assertNoRedirect();
+});
+
+test('the rendered screen shows Open editor and does not contain authToken', function () {
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = $this->provisionTenant([
+        'owner_user_id' => $user->id,
+        'name' => 'Studio Test Business',
+    ]);
+
+    $this->actingAs($user);
+
+    $job = SiteCloneJob::create([
+        'business_id' => $business->id,
+        'user_id' => $user->id,
+        'url' => 'http://93.184.216.34/',
+        'host' => '93.184.216.34',
+        'slug' => '93-184-216-34',
+        'status' => SiteCloneJob::DONE,
+        'progress' => 100,
+        'message' => 'Done.',
+        'webstudio_project_id' => 'fake-uuid-456',
+        'editor_token' => 'fake-token-value-abc123',
+    ]);
+
+    $this->get(route('site.clone'))
+        ->assertSee('Open editor')
+        ->assertDontSee('authToken', false);
+});
