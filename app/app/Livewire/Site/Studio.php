@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Livewire\Site;
 
 use App\Enums\UserRole;
+use App\Models\Business;
+use App\Models\WebstudioTemplateProject;
 use App\Modules\X103\Actions\PageLayoutProposeAction;
 use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X103\Actions\PageUndoAction;
@@ -33,6 +35,7 @@ use App\Modules\X157\Actions\LatestDeploymentForPageAction;
 use App\Modules\X157\Actions\PlatformSiteAddressAction;
 use App\Services\Industry\IndustryStartingPoints;
 use App\Services\SiteClone\SiteCloneJobs;
+use App\Services\Webstudio\WebstudioSites;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -577,6 +580,20 @@ class Studio extends Component
         }
     }
 
+    public function startInWebstudio(string $templateId, WebstudioSites $sites): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
+        $this->error = null;
+        $this->success = null;
+
+        $res = $sites->fromTemplate($this->businessId, $templateId, (string) (Business::whereKey($this->businessId)->value('name') ?? 'My website'));
+        if ($res['status'] === 'queued') {
+            $this->success = 'Your site is being prepared in the editor. Follow it under Clone my website.';
+        } else {
+            $this->error = $sites->ownerSentence($res['reason']);
+        }
+    }
+
     public function setCorners(string $corners, SiteCornersSetAction $action): void
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner), 403);
@@ -761,6 +778,7 @@ HTML;
             'currentTheme' => app(IndustryStartingPoints::class)->forBusiness($this->businessId)['theme'] ?? null,
             'currentCorners' => app(IndustryStartingPoints::class)->forBusiness($this->businessId)['corners'] ?? null,
             'currentTemplate' => app(IndustryStartingPoints::class)->forBusiness($this->businessId)['template'] ?? null,
+            'webstudioTemplates' => WebstudioTemplateProject::query()->pluck('template_id')->all(),
             'templates' => SiteTemplates::forFamily(app(IndustryStartingPoints::class)->forBusiness($this->businessId)['family'] ?? null),
         ]);
     }

@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Models\WebstudioSite;
 use App\Models\WebstudioTemplateProject;
 use App\Services\Webstudio\WebstudioSites;
-use App\Support\PlatformCredentials;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Queue;
 

@@ -12,6 +12,7 @@ use App\Models\SiteCloneJob;
 use App\Models\User;
 use App\Models\WebstudioSite;
 use App\Services\SiteClone\SiteCloneJobs;
+use App\Services\Webstudio\WebstudioSites;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
@@ -355,4 +356,42 @@ test('a site of another tenant cannot be published from this screen', function (
 
     Tenancy::set((int) $bizB->id);
     expect($siteOfB->refresh()->publish_status)->toBe('never');
+});
+
+test('the screen renders a creating site with its message and no editor or publish buttons', function () {
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = $this->provisionTenant([
+        'owner_user_id' => $user->id,
+        'name' => 'Studio Test Business',
+    ]);
+
+    $this->actingAs($user);
+
+    WebstudioSite::create(['business_id' => $business->id, 'project_id' => null, 'editor_token' => null, 'title' => 'Trades Pro site',
+        'source' => WebstudioSite::SOURCE_TEMPLATE, 'template_id' => 'trades-pro',
+        'creation_status' => WebstudioSite::CREATING, 'creation_message' => WebstudioSites::MESSAGES['creating']]);
+
+    $this->get(route('site.clone'))
+        ->assertSee(WebstudioSites::MESSAGES['creating'])
+        ->assertDontSee('Open editor')
+        ->assertDontSee('>Publish<', false);
+});
+
+test('the screen renders a failed creating site with its message and no editor or publish buttons', function () {
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = $this->provisionTenant([
+        'owner_user_id' => $user->id,
+        'name' => 'Studio Test Business',
+    ]);
+
+    $this->actingAs($user);
+
+    WebstudioSite::create(['business_id' => $business->id, 'project_id' => null, 'editor_token' => null, 'title' => 'Trades Pro site',
+        'source' => WebstudioSite::SOURCE_TEMPLATE, 'template_id' => 'trades-pro',
+        'creation_status' => WebstudioSite::CREATION_FAILED, 'creation_message' => WebstudioSites::MESSAGES['creation_failed']]);
+
+    $this->get(route('site.clone'))
+        ->assertSee(WebstudioSites::MESSAGES['creation_failed'])
+        ->assertDontSee('Open editor')
+        ->assertDontSee('>Publish<', false);
 });

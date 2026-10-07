@@ -108,6 +108,9 @@
                                 <div class="flex flex-wrap gap-2">
                                     @foreach($templates as $templateKey => $templateInfo)
                                         <button wire:click="applyTemplate('{{ $templateKey }}')" title="Best for: {{ $templateInfo['for'] }}" class="px-3 py-1 text-sm border border-rule rounded text-ink{{ $currentTemplate === $templateKey ? ' font-bold' : '' }}">{{ $templateInfo['label'] }}</button>
+                                        @if (in_array($templateKey, $webstudioTemplates, true))
+                                            <button wire:click="startInWebstudio('{{ $templateKey }}')" title="Open this template in the full editor" class="px-3 py-1 text-sm border border-rule rounded text-attention">Start in Webstudio</button>
+                                        @endif
                                     @endforeach
                                 </div>
                             </div>

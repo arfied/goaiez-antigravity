@@ -6,7 +6,7 @@
     @endif
 
     @if ($sites->isNotEmpty())
-        <div class="mb-6" @if ($sites->contains(fn ($s) => $s->publish_status === \App\Models\WebstudioSite::PUBLISHING)) wire:poll.3s @endif>
+        <div class="mb-6" @if ($sites->contains(fn ($s) => $s->publish_status === \App\Models\WebstudioSite::PUBLISHING || $s->creation_status === \App\Models\WebstudioSite::CREATING)) wire:poll.3s @endif>
             <h2 class="text-lg font-bold text-ink mb-4">Your sites</h2>
             <div class="border border-rule rounded bg-canvas overflow-hidden">
                 <ul class="divide-y divide-rule text-sm text-ink">
@@ -14,16 +14,27 @@
                         <li class="p-3 flex items-center justify-between">
                             <div>
                                 <div class="font-bold">{{ $site->title }}</div>
-                                <div class="text-xs">{{ $site->publish_message }}</div>
+                                @if ($site->creation_status !== \App\Models\WebstudioSite::READY)
+                                    <div class="text-xs">{{ $site->creation_message }}</div>
+                                @else
+                                    <div class="text-xs">{{ $site->publish_message }}</div>
+                                @endif
                             </div>
                             <div class="flex items-center gap-4">
-                                <div class="px-2 py-1 rounded bg-paper border border-rule text-xs uppercase">{{ $site->publish_status }}</div>
-                                @if ($siteSvc->siteUrl($site) !== null)
-                                    <a href="{{ $siteSvc->siteUrl($site) }}" target="_blank" rel="noopener" class="text-attention hover:underline font-bold">View site</a>
-                                @endif
-                                <button type="button" wire:click="openSiteEditor({{ $site->id }})" class="text-attention hover:underline font-bold">Open editor</button>
-                                @if ($site->publish_status !== \App\Models\WebstudioSite::PUBLISHING)
-                                    <button type="button" wire:click="publish({{ $site->id }})" class="px-4 py-2 bg-ink text-canvas rounded font-bold hover:opacity-90">Publish</button>
+                                @if ($site->creation_status !== \App\Models\WebstudioSite::READY)
+                                    <div class="px-2 py-1 rounded bg-paper border border-rule text-xs uppercase">{{ $site->creation_status }}</div>
+                                    @if ($siteSvc->siteUrl($site) !== null)
+                                        <a href="{{ $siteSvc->siteUrl($site) }}" target="_blank" rel="noopener" class="text-attention hover:underline font-bold">View site</a>
+                                    @endif
+                                @else
+                                    <div class="px-2 py-1 rounded bg-paper border border-rule text-xs uppercase">{{ $site->publish_status }}</div>
+                                    @if ($siteSvc->siteUrl($site) !== null)
+                                        <a href="{{ $siteSvc->siteUrl($site) }}" target="_blank" rel="noopener" class="text-attention hover:underline font-bold">View site</a>
+                                    @endif
+                                    <button type="button" wire:click="openSiteEditor({{ $site->id }})" class="text-attention hover:underline font-bold">Open editor</button>
+                                    @if ($site->publish_status !== \App\Models\WebstudioSite::PUBLISHING)
+                                        <button type="button" wire:click="publish({{ $site->id }})" class="px-4 py-2 bg-ink text-canvas rounded font-bold hover:opacity-90">Publish</button>
+                                    @endif
                                 @endif
                             </div>
                         </li>
