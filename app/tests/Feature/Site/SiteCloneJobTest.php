@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use App\Jobs\SiteClone\RunSiteCloneJob;
 use App\Models\SiteCloneJob;
 use App\Models\User;
+use App\Models\WebstudioSite;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\SiteClone\SiteCloneJobs;
 use App\Support\PlatformCredentials;
@@ -187,4 +188,22 @@ it('stores project and token when automatic project creation runs', function () 
     expect($row->status)->toBe(SiteCloneJob::DONE);
     expect($row->webstudio_project_id)->toBe('fake-uuid-456');
     expect($row->editor_token)->toBe('fake-token-value-abc123');
+});
+
+it('records a webstudio site when the clone made a project', function () {
+    config(['credentials.webstudio_auth_secret' => 'x']);
+
+    $user = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+    $business = $this->provisionTenant(['owner_user_id' => $user->id]);
+
+    $res = app(SiteCloneJobs::class)->request($business->id, $user->id, 'https://example.com', true);
+    expect($res['status'])->toBe('queued');
+
+    $jobId = $res['job_id'];
+
+    (new RunSiteCloneJob($jobId, $business->id))->handle(app(SiteCloneJobs::class), app(DefaultsRegistry::class));
+
+    $site = WebstudioSite::where('project_id', 'fake-uuid-456')->first();
+    expect($site)->not->toBeNull()
+        ->and($site->site_clone_job_id)->toBe($jobId);
 });

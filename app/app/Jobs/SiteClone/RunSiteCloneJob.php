@@ -7,6 +7,7 @@ namespace App\Jobs\SiteClone;
 use App\Models\SiteCloneJob;
 use App\Services\Config\DefaultsRegistry;
 use App\Services\SiteClone\SiteCloneJobs;
+use App\Services\Webstudio\WebstudioSites;
 use App\Support\PlatformCredentials;
 use App\Support\Tenancy;
 use Illuminate\Bus\Queueable;
@@ -292,8 +293,11 @@ final class RunSiteCloneJob implements ShouldQueue
                             }
                         }
                     }
-
                     $row->update($update);
+
+                    if (isset($update['webstudio_project_id'])) {
+                        app(WebstudioSites::class)->fromCloneJob($row->refresh());
+                    }
                 } else {
                     $outAll = $process->getOutput();
                     $errAll = $process->getErrorOutput();

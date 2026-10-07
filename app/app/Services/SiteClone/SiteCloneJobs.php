@@ -6,6 +6,7 @@ namespace App\Services\SiteClone;
 
 use App\Jobs\SiteClone\RunSiteCloneJob;
 use App\Models\SiteCloneJob;
+use App\Services\Webstudio\WebstudioSites;
 use App\Support\PublicAddress;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
@@ -165,12 +166,6 @@ final class SiteCloneJobs
             return null;
         }
 
-        $origin = rtrim(config('site_clone.builder_origin', 'https://wstd.dev:5174'), '/');
-        $parsed = parse_url($origin);
-        $scheme = $parsed['scheme'] ?? 'https';
-        $host = $parsed['host'] ?? '';
-        $port = isset($parsed['port']) ? ':'.$parsed['port'] : '';
-
-        return $scheme.'://p-'.$job->webstudio_project_id.'.'.$host.$port.'/?authToken='.$job->editor_token;
+        return WebstudioSites::editorUrlFor($job->webstudio_project_id, $job->editor_token);
     }
 }
