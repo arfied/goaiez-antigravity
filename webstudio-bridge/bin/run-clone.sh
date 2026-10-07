@@ -159,13 +159,11 @@ if [ -n "$WS_SHARE_LINK" ]; then
         echo "WS=\"$WORKDIR/ws\""
         echo "mkdir -p \"$WORKDIR/ws/.webstudio\""
         echo "cp \"$WORKDIR/evidence/bundle.json\" \"$WORKDIR/ws/.webstudio/data.json\""
-        echo "(cd \"$WORKDIR/ws\" && node /home/goaiez/public_html/webstudio/packages/cli/local.js link --link \"$WS_SHARE_LINK\")"
-        echo "(cd \"$WORKDIR/ws\" && node /home/goaiez/public_html/webstudio/packages/cli/local.js import)"
+        echo "(cd \"$WS\" && NODE_TLS_REJECT_UNAUTHORIZED=\"\${WS_INSECURE_TLS:+0}\" node /home/goaiez/public_html/webstudio/packages/cli/local.js import --to \"$WS_SHARE_LINK\" --skip-assets)"
     else
         mkdir -p "$WORKDIR/ws/.webstudio"
         cp "$WORKDIR/evidence/bundle.json" "$WORKDIR/ws/.webstudio/data.json"
-        (cd "$WORKDIR/ws" && node /home/goaiez/public_html/webstudio/packages/cli/local.js link --link "$WS_SHARE_LINK")
-        (cd "$WORKDIR/ws" && node /home/goaiez/public_html/webstudio/packages/cli/local.js import)
+        (cd "$WS" && NODE_TLS_REJECT_UNAUTHORIZED="${WS_INSECURE_TLS:+0}" node /home/goaiez/public_html/webstudio/packages/cli/local.js import --to "$WS_SHARE_LINK" --skip-assets)
     fi
 else
     echo "import: skipped (no WS_SHARE_LINK)"
