@@ -5,6 +5,7 @@ namespace App\Modules\X157\Http\Middleware;
 use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X103\Actions\PageVariantReadAction;
 use App\Modules\X157\Actions\ServeDeploymentAction;
+use App\Modules\X157\Actions\StaticSiteDeployAction;
 use App\Modules\X157\Models\CustomDomainRequest;
 use App\Modules\X157\Models\Deployment;
 use App\Support\Tenancy;
@@ -52,6 +53,16 @@ class ServeVerifiedCustomDomain
             } else {
                 return $action->llms($row->business_id, $latest->deploy_hash);
             }
+        }
+
+        $static = Deployment::where('business_id', $row->business_id)
+            ->where('kind', StaticSiteDeployAction::KIND)
+            ->where('status', 'deployed')
+            ->whereHas('edgeZone', fn ($q) => $q->where('has_valid_ssl', true))
+            ->latest('id')
+            ->first();
+        if ($static !== null) {
+            return $action->file($row->business_id, $static->deploy_hash, $path);   // a whole-host static site: every GET is a file or an honest 404
         }
 
         // "/" is the home page; "/<slug>" is that page. A slug nobody published

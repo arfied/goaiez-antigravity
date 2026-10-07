@@ -4,11 +4,65 @@ namespace App\Modules\X157\Actions;
 
 use App\Modules\X103\Actions\PageReadAction;
 use App\Modules\X157\Models\Deployment;
+use App\Modules\X157\Actions\StaticSiteDeployAction;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Storage;
 
 class ServeDeploymentAction
 {
+    /** Extension → Content-Type for a static artifact. The deploy action accepts ONLY these extensions, so the two cannot drift. */
+    public const MIME = [
+        'html' => 'text/html', 'css' => 'text/css', 'js' => 'text/javascript', 'mjs' => 'text/javascript', 'json' => 'application/json',
+        'map' => 'application/json', 'webmanifest' => 'application/manifest+json', 'txt' => 'text/plain', 'xml' => 'application/xml',
+        'png' => 'image/png', 'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'gif' => 'image/gif', 'svg' => 'image/svg+xml',
+        'webp' => 'image/webp', 'avif' => 'image/avif', 'ico' => 'image/x-icon', 'woff' => 'font/woff', 'woff2' => 'font/woff2',
+        'ttf' => 'font/ttf', 'otf' => 'font/otf', 'mp4' => 'video/mp4', 'webm' => 'video/webm', 'pdf' => 'application/pdf',
+    ];
+
+    public function file(int $businessId, string $deployHash, string $path)
+    {
+        Tenancy::set($businessId);
+
+        $deployment = Deployment::where('business_id', $businessId)->where('deploy_hash', $deployHash)->firstOrFail();
+        abort_if($deployment->status !== 'deployed', 404);
+
+        $zone = $deployment->edgeZone;
+        abort_if($zone === null || ! $zone->has_valid_ssl, 404);
+
+        abort_if($deployment->kind !== StaticSiteDeployAction::KIND, 404);
+
+        $path = trim($path, '/');
+        if ($path === '') {
+            $path = 'index.html';
+        }
+
+        $components = explode('/', $path);
+        foreach ($components as $component) {
+            abort_if(! preg_match('/^[A-Za-z0-9_-][A-Za-z0-9._-]*$/', $component), 404);
+        }
+
+        if (! str_contains(end($components), '.')) {
+            $path .= '/index.html';
+        }
+
+        $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        abort_if(! array_key_exists($ext, self::MIME), 404);
+
+        $bytes = Storage::disk('local')->get("sites-static/{$deployHash}/{$path}");
+        abort_if($bytes === null, 404);
+
+        if ($ext === 'html') {
+            Deployment::whereKey($deployment->id)->increment('served_count');
+            $cache = 'no-cache';
+        } elseif (str_starts_with($path, 'assets/')) {
+            $cache = 'public, max-age=31536000, immutable';
+        } else {
+            $cache = 'public, max-age=300';
+        }
+
+        return response($bytes, 200)->header('Content-Type', self::MIME[$ext])->header('Cache-Control', $cache);
+    }
+
     /** The latest deployed control arm of the published page with this slug, at the platform address (wave 821). */
     public function latestPage(int $businessId, string $slug)
     {
@@ -40,6 +94,10 @@ class ServeDeploymentAction
         $zone = $deployment->edgeZone;
         abort_if($zone === null || ! $zone->has_valid_ssl, 404);
 
+        if ($deployment->kind === StaticSiteDeployAction::KIND) {
+            return $this->file($businessId, $deployHash, '');
+        }
+
         $html = Storage::disk('local')->get("sites/{$deployHash}.html");
         abort_if($html === null, 404);
 
@@ -57,6 +115,12 @@ class ServeDeploymentAction
 
         $zone = $deployment->edgeZone;
         abort_if($zone === null || ! $zone->has_valid_ssl, 404);
+
+        if ($deployment->kind === StaticSiteDeployAction::KIND) {
+            if (Storage::disk('local')->exists("sites-static/{$deployHash}/sitemap.xml")) {
+                return $this->file($businessId, $deployHash, 'sitemap.xml');
+            }
+        }
 
         $xml = app(SitemapRenderAction::class)->handle($businessId, $customHost);
 
@@ -105,6 +169,12 @@ class ServeDeploymentAction
 
         $zone = $deployment->edgeZone;
         abort_if($zone === null || ! $zone->has_valid_ssl, 404);
+
+        if ($deployment->kind === StaticSiteDeployAction::KIND) {
+            if (Storage::disk('local')->exists("sites-static/{$deployHash}/llms.txt")) {
+                return $this->file($businessId, $deployHash, 'llms.txt');
+            }
+        }
 
         $txt = Storage::disk('local')->get("sites/{$deployHash}.llms.txt");
         abort_if($txt === null, 404);

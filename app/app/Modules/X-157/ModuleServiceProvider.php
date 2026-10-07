@@ -232,6 +232,15 @@ final class ModuleServiceProvider extends ServiceProvider
 
         Route::get('/sites/{business}/{deploy_hash}/llms.txt', fn (string $business, string $deployHash) => app(ServeDeploymentAction::class)->llms((int) $business, $deployHash))->whereNumber('business');
 
+        // A static page at one of those paths is shadowed.
+        Route::get('/sites/{business}/{deploy_hash}/{path}', fn (string $business, string $deployHash, string $path) => app(ServeDeploymentAction::class)->file((int) $business, $deployHash, $path))
+            ->name('x-157.site.file')->whereNumber('business')->where('path', '.*');
+
+        // Every path on a verified custom host must reach ServeVerifiedCustomDomain (a `web` group middleware, which runs only after a route has
+        // matched). Laravel matches fallback routes last whatever their registration order (AbstractRouteCollection::matchAgainstRoutes), so this
+        // cannot shadow a real route; on the platform host an unknown path still answers 404.
+        Route::fallback(static fn () => abort(404))->middleware('web');
+
         Event::listen(PageUnpublished::class, function (PageUnpublished $e): void {
             Deployment::where('business_id', $e->businessId)
                 ->where('page_id', $e->pageId)

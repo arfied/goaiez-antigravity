@@ -20,6 +20,7 @@ use App\Modules\X137\Actions\CallAttributeAction;
 use App\Modules\X139\Domain\ConversionUploadEngine;
 use App\Modules\X153\Actions\AlertSendAction;
 use App\Modules\X157\Actions\EdgeDeployAction;
+use App\Modules\X157\Actions\StaticSiteDeployAction;
 use App\Modules\X165\Actions\PlanProposeAction;
 use App\Modules\X172\Actions\PortalLinkAction;
 use App\Modules\X176\Actions\InternalLinkRenderAction;
@@ -272,6 +273,11 @@ final class DefaultsManifest
                 'seed' => EdgeDeployAction::SPEED_BUDGET_MS,
                 'group' => 'Content',
                 'description' => 'Deploy speed budget ms.',
+            ],
+            'sites.deploy.static_max_bytes' => [
+                'seed' => StaticSiteDeployAction::MAX_BYTES,
+                'group' => 'Content',
+                'description' => 'Deploy static artifact max bytes.',
             ],
             'sites.deploy.pricebook_items_max' => [
                 'seed' => EdgeDeployAction::PRICEBOOK_ITEMS_MAX,
