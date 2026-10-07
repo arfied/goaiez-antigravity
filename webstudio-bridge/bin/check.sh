@@ -18,6 +18,9 @@ bash "$DIR/tests/html-to-bundle.test.sh"
 echo "Running render-pages.test.sh..."
 bash "$DIR/tests/render-pages.test.sh"
 
+echo "Running publish-static.test.sh..."
+bash "$DIR/tests/publish-static.test.sh"
+
 echo "Running run-clone.sh dry run..."
 WS_SHARE_LINK=dummy bash "$DIR/bin/run-clone.sh" --dry-run https://example.com 0 > "$DIR/.dry/run-clone.out"
 
