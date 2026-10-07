@@ -50,3 +50,9 @@ bash webstudio-bridge/bin/patches-apply.sh
 ```
 
 A Webstudio upgrade means re-deriving the patch (the check script will say `DOES NOT APPLY`).
+
+## Templates (T1)
+- The render command renders every template to standalone HTML pages with sample content.
+- The import script turns each page into a Webstudio template project.
+- The map file keeps track of imports.
+- T1b records the map in a table and the picker uses it.

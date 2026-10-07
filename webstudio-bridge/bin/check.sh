@@ -50,6 +50,9 @@ if [ -n "$(git -C /home/goaiez/public_html/webstudio status --short)" ]; then
     exit 1
 fi
 
+echo "Running templates-import.test.sh..."
+bash "$DIR/tests/templates-import.test.sh"
+
 echo "OK"
 
 echo "Running run-clone.sh dry run (auto project)..."
