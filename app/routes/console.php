@@ -197,6 +197,11 @@ Schedule::command('audits:prune')
     ->withoutOverlapping(180)
     ->runInBackground();
 
+Schedule::command('site-clone:prune-evidence')
+    ->dailyAt('03:25')
+    ->withoutOverlapping(180)
+    ->runInBackground();
+
 Schedule::command('numbers:return-parked')
     ->dailyAt('03:20')
     ->withoutOverlapping(180)

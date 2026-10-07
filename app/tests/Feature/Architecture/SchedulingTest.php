@@ -104,6 +104,7 @@ function schedulingOverlapWindows(): array
         'auth:prune-magic-links' => 180,
         'auth:prune-failed-sign-ins' => 180,
         'jobs:prune-failed' => 180,
+        'site-clone:prune-evidence' => 180,
         'numbers:return-parked' => 180,
         'numbers:recover-rested' => 180,
         'trials:prune-origins' => 180,

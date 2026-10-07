@@ -35,3 +35,18 @@ The publish operation has three scripts and steps:
 **Unmeasured items**:
 - Image assets on publish (no project with images exists yet).
 - Multi-page exports.
+
+## Builder chrome patch (W3b)
+
+A tenant opens the Webstudio editor with an `authToken`, but the editor's Share, Publish and Clone top bar buttons, as well as Dashboard and Clone menu items, belong to the account owner (publishing happens on the clone screen). This patch hides them for token sessions while leaving the owner's logged-in session unchanged.
+
+The Webstudio checkout at `/home/goaiez/public_html/webstudio` is pinned by `webstudio-bridge/webstudio.lock`.
+
+**Owner procedure:**
+From this repository's root, run:
+```bash
+bash webstudio-bridge/bin/patches-check.sh
+bash webstudio-bridge/bin/patches-apply.sh
+```
+
+A Webstudio upgrade means re-deriving the patch (the check script will say `DOES NOT APPLY`).

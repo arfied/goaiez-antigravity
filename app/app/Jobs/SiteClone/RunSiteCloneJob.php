@@ -70,6 +70,11 @@ final class RunSiteCloneJob implements ShouldQueue
 
                 $workDir = config('site_clone.root').'/'.$this->businessId.'/'.$row->slug;
 
+                // A re-clone of the same host replaces its directory (plan W5): Claude must never start inside the previous clone's files.
+                if (str_starts_with($workDir, (string) config('site_clone.root')) && is_dir($workDir)) {
+                    File::deleteDirectory($workDir);
+                }
+
                 $row->update([
                     'status' => SiteCloneJob::RUNNING,
                     'started_at' => now(),

@@ -61,3 +61,4 @@ if ! git apply --check --reverse "$patch_file"; then
     echo "Assertion failed: git apply --check --reverse <patch>" >&2
     exit 1
 fi
+echo "patches.test.sh PASSED"
