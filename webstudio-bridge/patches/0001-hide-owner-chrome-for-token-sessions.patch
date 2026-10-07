@@ -1,0 +1,139 @@
+--- a/apps/builder/app/builder/shared/topbar.tsx	2026-10-07 16:00:27.844206410 -0500
++++ b/apps/builder/app/builder/shared/topbar.tsx	2026-10-07 16:00:43.543324626 -0500
+@@ -15,7 +15,7 @@
+ import type { Project } from "@webstudio-is/project";
+ import { isPage, isPageTemplate } from "@webstudio-is/sdk";
+ import { $pages } from "~/shared/sync/data-stores";
+-import { $editingPageId, $editingTemplateId } from "~/shared/nano-states";
++import { $authToken, $editingPageId, $editingTemplateId } from "~/shared/nano-states";
+ 
+ import { ShareButton } from "~/builder/features/share";
+ import { PublishButton } from "~/builder/features/publish";
+@@ -170,6 +170,7 @@
+ 
+ export const Topbar = ({ project, css, loading, isUiHidden }: TopbarProps) => {
+   const pages = useStore($pages);
++  const authToken = useStore($authToken);
+   const notifications = useStore($notifications);
+   const [isRevealed, setIsRevealed] = useState(false);
+   const [isPointerInside, setIsPointerInside] = useState(false);
+@@ -257,9 +258,14 @@
+             <SyncStatusDot />
+             <SyncStatus />
+             <BuilderModeDropDown />
+-            <ShareButton projectId={project.id} />
+-            <PublishButton projectId={project.id} />
+-            <CloneButton />
++            {/* goaiez: a tenant opens this builder with a token; Share, Publish and Clone belong to the account owner (publishing happens on the clone screen) */}
++            {authToken === undefined && (
++              <>
++                <ShareButton projectId={project.id} />
++                <PublishButton projectId={project.id} />
++                <CloneButton />
++              </>
++            )}
+           </>
+         }
+         loading={loading}
+--- a/apps/builder/app/builder/features/menu/menu.tsx	2026-10-07 16:00:27.847206432 -0500
++++ b/apps/builder/app/builder/features/menu/menu.tsx	2026-10-07 16:01:03.214472754 -0500
+@@ -97,13 +97,15 @@
+     <DropdownMenu modal={false} defaultOpen={defaultOpen}>
+       <MenuButton />
+       <DropdownMenuContent collisionPadding={4} width="regular">
+-        <DropdownMenuItem
+-          onSelect={() => {
+-            window.location.href = dashboardUrl({ origin: window.origin });
+-          }}
+-        >
+-          Dashboard
+-        </DropdownMenuItem>
++        {authToken === undefined && (
++          <DropdownMenuItem
++            onSelect={() => {
++              window.location.href = dashboardUrl({ origin: window.origin });
++            }}
++          >
++            Dashboard
++          </DropdownMenuItem>
++        )}
+         <Tooltip side="right" content={undefined}>
+           <DropdownMenuItem
+             onSelect={() => {
+@@ -221,40 +223,42 @@
+           </DropdownMenuItem>
+         </Tooltip>
+ 
+-        <Tooltip
+-          side="right"
+-          sideOffset={10}
+-          content={
+-            authTokenPermission.canClone === false
+-              ? "Cloning has been disabled by the project owner"
+-              : undefined
+-          }
+-        >
+-          <DropdownMenuItem
+-            onSelect={() => {
+-              if ($authToken.get() === undefined) {
+-                $isCloneDialogOpen.set(true);
+-                return;
+-              }
+-            }}
+-            disabled={authTokenPermission.canClone === false}
+-            asChild={cloneIsExternal}
+-          >
+-            {cloneIsExternal ? (
+-              <a
+-                className={menuItemCss()}
+-                href={cloneProjectUrl({
+-                  origin: window.origin,
+-                  sourceAuthToken: authToken,
+-                })}
+-              >
+-                Clone
+-              </a>
+-            ) : (
+-              "Clone"
+-            )}
+-          </DropdownMenuItem>
+-        </Tooltip>
++        {authToken === undefined && (
++          <Tooltip
++            side="right"
++            sideOffset={10}
++            content={
++              authTokenPermission.canClone === false
++                ? "Cloning has been disabled by the project owner"
++                : undefined
++            }
++          >
++            <DropdownMenuItem
++              onSelect={() => {
++                if ($authToken.get() === undefined) {
++                  $isCloneDialogOpen.set(true);
++                  return;
++                }
++              }}
++              disabled={authTokenPermission.canClone === false}
++              asChild={cloneIsExternal}
++            >
++              {cloneIsExternal ? (
++                <a
++                  className={menuItemCss()}
++                  href={cloneProjectUrl({
++                    origin: window.origin,
++                    sourceAuthToken: authToken,
++                  })}
++                >
++                  Clone
++                </a>
++              ) : (
++                "Clone"
++              )}
++            </DropdownMenuItem>
++          </Tooltip>
++        )}
+ 
+         <DropdownMenuSeparator />
+ 
