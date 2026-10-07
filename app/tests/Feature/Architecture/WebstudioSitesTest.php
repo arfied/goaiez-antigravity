@@ -43,3 +43,11 @@ it('view does not leak internal details', function () {
     expect($view)->not->toContain('publish_error')
         ->and($view)->not->toContain('authToken');
 });
+
+it('webstudio_template_projects is platform-level: no business_id column and no row-level security', function () {
+    $columns = DB::select("select column_name from information_schema.columns where table_name = 'webstudio_template_projects' and column_name = 'business_id'");
+    expect(count($columns))->toBe(0);
+
+    $table = DB::selectOne("select relrowsecurity from pg_class where relname = 'webstudio_template_projects'");
+    expect($table->relrowsecurity)->toBeFalse();
+});
