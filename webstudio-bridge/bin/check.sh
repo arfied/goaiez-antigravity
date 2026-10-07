@@ -26,6 +26,13 @@ if ! grep -q 'ws/.webstudio/data.json' "$DIR/.dry/run-clone.out"; then
     exit 1
 fi
 
+CLONES_MKDIR_LINE=$(grep -n 'mkdir -p /home/goaiez/public_html/clones' "$DIR/.dry/run-clone.out" | cut -d: -f1)
+EVIDENCE_MKDIR_LINE=$(grep -n 'mkdir -p .*evidence/pages' "$DIR/.dry/run-clone.out" | head -n 1 | cut -d: -f1)
+if [ -z "$CLONES_MKDIR_LINE" ] || [ -z "$EVIDENCE_MKDIR_LINE" ] || [ "$CLONES_MKDIR_LINE" -ge "$EVIDENCE_MKDIR_LINE" ]; then
+    echo "Error: mkdir -p clones must precede mkdir -p evidence/pages"
+    exit 1
+fi
+
 if grep -q 'cd /home/goaiez/public_html/webstudio && node packages/cli' "$DIR/.dry/run-clone.out"; then
     echo "Error: Output contains cd /home/goaiez/public_html/webstudio && node packages/cli"
     exit 1

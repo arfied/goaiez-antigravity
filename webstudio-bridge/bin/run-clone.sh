@@ -39,8 +39,10 @@ fi
 echo "## step setup workdir"
 if [ "$DRY_RUN" = "1" ]; then
     mkdir -p "$DIR/.dry/clones/$BUSINESS_ID"
+    echo "mkdir -p $CLONE_ROOT"
     echo "mkdir -p $WORKDIR/evidence/pages $WORKDIR/evidence/shots $WORKDIR/app"
 else
+    mkdir -p "$CLONE_ROOT"
     if [ ! -f "$CLONE_ROOT/.htaccess" ]; then
         echo "Require all denied" > "$CLONE_ROOT/.htaccess"
     else
