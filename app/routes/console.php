@@ -60,6 +60,11 @@ Schedule::command('ops:watch-platform-health')
     ->withoutOverlapping(10)
     ->runInBackground();
 
+Schedule::command('queue:work --queue=clone --max-jobs=1 --stop-when-empty --sleep=0 --timeout=1620')
+    ->everyMinute()
+    ->withoutOverlapping(4)
+    ->runInBackground();
+
 Schedule::command('pixel:watch-canary')
     ->everyFiveMinutes()
     ->withoutOverlapping(10);

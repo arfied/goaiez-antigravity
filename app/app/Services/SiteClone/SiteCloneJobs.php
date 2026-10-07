@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Services\SiteClone;
 
+use App\Jobs\SiteClone\RunSiteCloneJob;
 use App\Models\SiteCloneJob;
 use App\Support\PublicAddress;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 
 final class SiteCloneJobs
 {
@@ -23,8 +25,11 @@ final class SiteCloneJobs
         'failed' => 'Failed.',
     ];
 
+    public const ERRORS = ['failed' => 'Clone failed. Please try again.', 'timeout' => 'The clone took too long and was stopped. Please try again.', 'interrupted' => 'The clone was interrupted. Please try again.', 'no_credential' => 'Cloning is not switched on for this platform yet.'];
+
     public function request(int $businessId, int $userId, string $url, bool $attested): array
     {
+        $this->recoverStale($businessId);
         if (! $attested) {
             return ['status' => 'refused', 'reason' => 'not_attested'];
         }
@@ -65,6 +70,8 @@ final class SiteCloneJobs
                 'message' => self::MESSAGES['queued'],
             ]);
 
+            RunSiteCloneJob::dispatch($job->id, $businessId)->onQueue('clone');
+
             return ['status' => 'queued', 'job_id' => $job->id];
         } catch (QueryException $e) {
             if ($e->getCode() === '23505') {
@@ -103,6 +110,8 @@ final class SiteCloneJobs
 
     public function active(int $businessId): ?SiteCloneJob
     {
+        $this->recoverStale($businessId);
+
         return SiteCloneJob::where('business_id', $businessId)
             ->whereIn('status', SiteCloneJob::ACTIVE)
             ->first();
@@ -114,6 +123,29 @@ final class SiteCloneJobs
             ->latest()
             ->limit($limit)
             ->get();
+    }
+
+    public function recoverStale(int $businessId): void
+    {
+        $staleJobs = SiteCloneJob::where('business_id', $businessId)
+            ->where('status', SiteCloneJob::RUNNING)
+            ->where('heartbeat_at', '<', now()->subSeconds(120))
+            ->get();
+
+        foreach ($staleJobs as $job) {
+            if ($job->pid === null || ! posix_kill($job->pid, 0)) {
+                $job->update([
+                    'status' => SiteCloneJob::FAILED,
+                    'error' => self::ERRORS['interrupted'],
+                    'internal_error' => 'stale heartbeat',
+                    'finished_at' => now(),
+                ]);
+
+                if ($job->work_dir !== null && str_starts_with($job->work_dir, config('site_clone.root'))) {
+                    File::deleteDirectory($job->work_dir);
+                }
+            }
+        }
     }
 
     public function ownerSentence(string $reason): string

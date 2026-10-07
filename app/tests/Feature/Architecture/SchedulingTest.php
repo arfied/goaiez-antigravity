@@ -63,6 +63,7 @@ function schedulingOverlapWindows(): array
     return [
         // Every minute.
         'ops:heartbeat' => 4,
+        'queue:work' => 4, // the clone worker
 
         // Every five minutes.
         'pixel:watch-canary' => 10,

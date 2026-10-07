@@ -28,10 +28,12 @@ if [ -z "$SLUG" ]; then
     SLUG=$(echo "$URL" | tr '.' '-' | tr '[:upper:]' '[:lower:]')
 fi
 
+CLONE_ROOT="${CLONE_ROOT:-/home/goaiez/public_html/clones}"
+
 if [ "$DRY_RUN" = "1" ]; then
     WORKDIR="$DIR/.dry/clones/$BUSINESS_ID/$SLUG"
 else
-    WORKDIR="/home/goaiez/public_html/clones/$BUSINESS_ID/$SLUG"
+    WORKDIR="$CLONE_ROOT/$BUSINESS_ID/$SLUG"
 fi
 
 echo "## step setup workdir"
@@ -39,12 +41,12 @@ if [ "$DRY_RUN" = "1" ]; then
     mkdir -p "$DIR/.dry/clones/$BUSINESS_ID"
     echo "mkdir -p $WORKDIR/evidence/pages $WORKDIR/evidence/shots $WORKDIR/app"
 else
-    if [ ! -f "/home/goaiez/public_html/clones/.htaccess" ]; then
-        echo "Require all denied" > "/home/goaiez/public_html/clones/.htaccess"
+    if [ ! -f "$CLONE_ROOT/.htaccess" ]; then
+        echo "Require all denied" > "$CLONE_ROOT/.htaccess"
     else
-        if [ "$(cat "/home/goaiez/public_html/clones/.htaccess")" != "Require all denied" ]; then
-            echo "Error: /home/goaiez/public_html/clones/.htaccess differs"
-            cat "/home/goaiez/public_html/clones/.htaccess"
+        if [ "$(cat "$CLONE_ROOT/.htaccess")" != "Require all denied" ]; then
+            echo "Error: $CLONE_ROOT/.htaccess differs"
+            cat "$CLONE_ROOT/.htaccess"
             exit 1
         fi
     fi

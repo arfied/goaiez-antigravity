@@ -45,3 +45,19 @@ it('view does not leak internal details', function () {
         ->and($model)->toContain('pid')
         ->and($model)->toContain('editor_token');
 });
+
+it('job file contains no public_html or shell evasion', function () {
+    $job = file_get_contents(app_path('Jobs/SiteClone/RunSiteCloneJob.php'));
+    expect($job)->not->toContain('public_html')
+        ->and($job)->not->toContain('eval(')
+        ->and($job)->not->toContain('shell_exec(')
+        ->and($job)->not->toContain('exec(')
+        ->and($job)->not->toContain('passthru(')
+        ->and($job)->not->toContain('proc_open(')
+        ->and($job)->toContain('new Process(');
+});
+
+it('routes/console.php schedules queue:work with clone queue', function () {
+    $console = file_get_contents(base_path('routes/console.php'));
+    expect($console)->toContain('queue:work --queue=clone');
+});

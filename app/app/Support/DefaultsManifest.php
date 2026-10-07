@@ -2935,6 +2935,16 @@ final class DefaultsManifest
                 'group' => 'Sites',
                 'description' => 'Maximum number of pages followed on the same host breadth-first when fetching a tenant site.',
             ],
+            'sites.clone.max_concurrent' => [
+                'seed' => 2,
+                'group' => 'Sites',
+                'description' => 'How many website clones may run at once across the whole platform; a queued clone waits for a free slot.',
+            ],
+            'sites.clone.timeout_seconds' => [
+                'seed' => 1200,
+                'group' => 'Sites',
+                'description' => 'A website clone running longer than this is stopped and reported as failed.',
+            ],
             'sites.images.max_per_site' => [
                 'seed' => 60,
                 'group' => 'Sites',
