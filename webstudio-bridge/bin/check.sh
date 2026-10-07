@@ -19,7 +19,17 @@ echo "Running render-pages.test.sh..."
 bash "$DIR/tests/render-pages.test.sh"
 
 echo "Running run-clone.sh dry run..."
-bash "$DIR/bin/run-clone.sh" --dry-run https://example.com 0 > /dev/null
+WS_SHARE_LINK=dummy bash "$DIR/bin/run-clone.sh" --dry-run https://example.com 0 > "$DIR/.dry/run-clone.out"
+
+if ! grep -q 'ws/.webstudio/data.json' "$DIR/.dry/run-clone.out"; then
+    echo "Error: Output does not contain ws/.webstudio/data.json"
+    exit 1
+fi
+
+if grep -q 'cd /home/goaiez/public_html/webstudio && node packages/cli' "$DIR/.dry/run-clone.out"; then
+    echo "Error: Output contains cd /home/goaiez/public_html/webstudio && node packages/cli"
+    exit 1
+fi
 
 echo "Checking owner checkout again..."
 if [ -n "$(git -C /home/goaiez/public_html/webstudio status --short)" ]; then

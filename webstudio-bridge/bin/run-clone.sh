@@ -140,12 +140,18 @@ fi
 
 echo "## step import"
 if [ -n "$WS_SHARE_LINK" ]; then
+    WS="$WORKDIR/ws"
     if [ "$DRY_RUN" = "1" ]; then
-        echo "cd /home/goaiez/public_html/webstudio && node packages/cli/local.js link --link \"$WS_SHARE_LINK\""
-        echo "cd /home/goaiez/public_html/webstudio && node packages/cli/local.js import"
+        echo "WS=\"$WORKDIR/ws\""
+        echo "mkdir -p \"$WORKDIR/ws/.webstudio\""
+        echo "cp \"$WORKDIR/evidence/bundle.json\" \"$WORKDIR/ws/.webstudio/data.json\""
+        echo "(cd \"$WORKDIR/ws\" && node /home/goaiez/public_html/webstudio/packages/cli/local.js link --link \"$WS_SHARE_LINK\")"
+        echo "(cd \"$WORKDIR/ws\" && node /home/goaiez/public_html/webstudio/packages/cli/local.js import)"
     else
-        cd /home/goaiez/public_html/webstudio && node packages/cli/local.js link --link "$WS_SHARE_LINK"
-        cd /home/goaiez/public_html/webstudio && node packages/cli/local.js import
+        mkdir -p "$WORKDIR/ws/.webstudio"
+        cp "$WORKDIR/evidence/bundle.json" "$WORKDIR/ws/.webstudio/data.json"
+        (cd "$WORKDIR/ws" && node /home/goaiez/public_html/webstudio/packages/cli/local.js link --link "$WS_SHARE_LINK")
+        (cd "$WORKDIR/ws" && node /home/goaiez/public_html/webstudio/packages/cli/local.js import)
     fi
 else
     echo "import: skipped (no WS_SHARE_LINK)"
