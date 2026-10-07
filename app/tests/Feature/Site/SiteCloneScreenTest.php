@@ -9,6 +9,7 @@ use App\Exceptions\TenantNotResolved;
 use App\Livewire\Site\SiteClone;
 use App\Models\SiteCloneJob;
 use App\Models\User;
+use App\Services\SiteClone\SiteCloneJobs;
 use Livewire\Livewire;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -21,7 +22,7 @@ test('renders for an owner', function () {
 
     $this->actingAs($user);
     $response = $this->get(route('site.clone'));
-    
+
     $response->assertOk()
         ->assertSee('Website address to clone')
         ->assertSee('Start cloning')
@@ -79,7 +80,7 @@ test('a public address queues one job, and a second start is refused with the sa
         ->call('start');
 
     expect(SiteCloneJob::count())->toBe(1);
-    
+
     $job = SiteCloneJob::first();
     expect($job->status)->toBe('queued')
         ->and($job->host)->toBe('93.184.216.34')
@@ -108,7 +109,7 @@ test('cancel', function () {
         ->set('url', 'http://93.184.216.34/')
         ->set('attested', true)
         ->call('start');
-        
+
     $component->call('cancel')
         ->assertSee('Website address to clone');
 
@@ -126,13 +127,49 @@ test('the Studio shows the banner while a job is active', function () {
 
     $this->actingAs($user);
 
-    app(\App\Services\SiteClone\SiteCloneJobs::class)->request($business->id, $user->id, 'http://93.184.216.34/', true);
+    app(SiteCloneJobs::class)->request($business->id, $user->id, 'http://93.184.216.34/', true);
 
     $this->get(route('site.studio'))
         ->assertSee('Your website clone is in progress');
 
-    app(\App\Services\SiteClone\SiteCloneJobs::class)->cancel($business->id, SiteCloneJob::first()->id);
+    app(SiteCloneJobs::class)->cancel($business->id, SiteCloneJob::first()->id);
 
     $this->get(route('site.studio'))
         ->assertDontSee('Your website clone is in progress');
+});
+
+test('an unattested request is refused and no row is written', function () {
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = $this->provisionTenant([
+        'owner_user_id' => $user->id,
+        'name' => 'Studio Test Business',
+    ]);
+
+    $this->actingAs($user);
+
+    Livewire::test(SiteClone::class)
+        ->set('url', 'http://93.184.216.34/')
+        ->set('attested', false)
+        ->call('start')
+        ->assertSee("Confirm you may use this website's content");
+
+    expect(SiteCloneJob::count())->toBe(0);
+});
+
+test('a bad address is refused and no row is written', function () {
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = $this->provisionTenant([
+        'owner_user_id' => $user->id,
+        'name' => 'Studio Test Business',
+    ]);
+
+    $this->actingAs($user);
+
+    Livewire::test(SiteClone::class)
+        ->set('url', 'ftp://example.com/')
+        ->set('attested', true)
+        ->call('start')
+        ->assertSee('Enter a full web address starting with http:// or https://');
+
+    expect(SiteCloneJob::count())->toBe(0);
 });

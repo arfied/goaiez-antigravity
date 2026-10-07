@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\SiteClone;
 
 use App\Models\SiteCloneJob;
@@ -24,31 +26,31 @@ final class SiteCloneJobs
     public function request(int $businessId, int $userId, string $url, bool $attested): array
     {
         if (! $attested) {
-            return ['status' => 'refused', 'reason' => $reason === 'not_attested'];
+            return ['status' => 'refused', 'reason' => 'not_attested'];
         }
 
         $parsed = parse_url($url);
         if (! isset($parsed['scheme']) || ! in_array($parsed['scheme'], ['http', 'https']) || ! isset($parsed['host'])) {
-            return ['status' => 'refused', 'reason' => $reason === 'bad_url'];
+            return ['status' => 'refused', 'reason' => 'bad_url'];
         }
 
         $host = $parsed['host'];
         if (! PublicAddress::reaches($host)) {
-            return ['status' => 'refused', 'reason' => $reason === 'private_address'];
+            return ['status' => 'refused', 'reason' => 'private_address'];
         }
 
         $activeJob = SiteCloneJob::where('business_id', $businessId)
             ->whereIn('status', SiteCloneJob::ACTIVE)
             ->first();
         if ($activeJob) {
-            return ['status' => 'refused', 'reason' => $reason === 'already_running', 'job_id' => $activeJob->id];
+            return ['status' => 'refused', 'reason' => 'already_running', 'job_id' => $activeJob->id];
         }
 
         $activeJobUser = SiteCloneJob::where('user_id', $userId)
             ->whereIn('status', SiteCloneJob::ACTIVE)
             ->first();
         if ($activeJobUser) {
-            return ['status' => 'refused', 'reason' => $reason === 'already_running', 'job_id' => $activeJobUser->id];
+            return ['status' => 'refused', 'reason' => 'already_running', 'job_id' => $activeJobUser->id];
         }
 
         try {
@@ -72,7 +74,7 @@ final class SiteCloneJobs
                     ->whereIn('status', SiteCloneJob::ACTIVE)
                     ->first();
                 if ($activeJob) {
-                    return ['status' => 'refused', 'reason' => $reason === 'already_running', 'job_id' => $activeJob->id];
+                    return ['status' => 'refused', 'reason' => 'already_running', 'job_id' => $activeJob->id];
                 }
             }
             throw $e;
