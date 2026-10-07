@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Enums\UserRole;
 use App\Jobs\SiteClone\RunSiteCloneJob;
-use App\Models\Business;
 use App\Models\SiteCloneJob;
 use App\Models\User;
 use App\Services\Config\DefaultsRegistry;
@@ -28,7 +28,7 @@ afterEach(function () {
 it('runs a successful clone', function () {
     expect(PlatformCredentials::has('anthropic_api_key'))->toBeTrue();
 
-    $user = User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+    $user = User::factory()->create(['role' => UserRole::Owner]);
     $business = $this->provisionTenant([
         'owner_user_id' => $user->id,
         'name' => 'Studio Test Business',
@@ -56,7 +56,7 @@ it('runs a successful clone', function () {
 });
 
 it('fails the clone and cleans up on runner failure', function () {
-    $user = User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+    $user = User::factory()->create(['role' => UserRole::Owner]);
     $business = $this->provisionTenant([
         'owner_user_id' => $user->id,
         'name' => 'Studio Test Business',
@@ -75,7 +75,7 @@ it('fails the clone and cleans up on runner failure', function () {
 });
 
 it('times out and cleans up', function () {
-    $user = User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+    $user = User::factory()->create(['role' => UserRole::Owner]);
     $business = $this->provisionTenant([
         'owner_user_id' => $user->id,
         'name' => 'Studio Test Business',
@@ -96,7 +96,7 @@ it('times out and cleans up', function () {
 });
 
 it('returns if cancelled before start', function () {
-    $user = User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+    $user = User::factory()->create(['role' => UserRole::Owner]);
     $business = $this->provisionTenant([
         'owner_user_id' => $user->id,
         'name' => 'Studio Test Business',
@@ -114,7 +114,7 @@ it('returns if cancelled before start', function () {
 
 it('fails on no credential', function () {
     config(['credentials.anthropic_api_key' => null]);
-    $user = User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+    $user = User::factory()->create(['role' => UserRole::Owner]);
     $business = $this->provisionTenant([
         'owner_user_id' => $user->id,
         'name' => 'Studio Test Business',
@@ -130,7 +130,7 @@ it('fails on no credential', function () {
 });
 
 it('recovers on read', function () {
-    $user = User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+    $user = User::factory()->create(['role' => UserRole::Owner]);
     $business = $this->provisionTenant([
         'owner_user_id' => $user->id,
         'name' => 'Studio Test Business',
@@ -159,7 +159,7 @@ it('recovers on read', function () {
 
 it('request dispatches to queue', function () {
     Queue::fake();
-    $user = User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+    $user = User::factory()->create(['role' => UserRole::Owner]);
     $business = $this->provisionTenant([
         'owner_user_id' => $user->id,
         'name' => 'Studio Test Business',

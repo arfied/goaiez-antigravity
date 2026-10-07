@@ -79,6 +79,8 @@ final class RunSiteCloneJob implements ShouldQueue
                     'logs' => [SiteCloneJobs::MESSAGES['preparing']],
                 ]);
 
+                $deadline = time() + $registry->int('sites.clone.timeout_seconds');
+
                 $env = [
                     'ANTHROPIC_API_KEY' => PlatformCredentials::get('anthropic_api_key'),
                     'CLONE_ROOT' => config('site_clone.root'),
@@ -226,12 +228,13 @@ final class RunSiteCloneJob implements ShouldQueue
                             }
                             $row->update(['finished_at' => now()]);
                             $process->stop(0);
+
                             return;
                         }
                         $lastStatusCheck = $now;
                     }
 
-                    if (now()->getTimestamp() - $row->started_at->getTimestamp() > $registry->int('sites.clone.timeout_seconds')) {
+                    if (time() > $deadline) {
                         posix_kill(-$pid, SIGTERM);
                         $waitStart = time();
                         while (posix_kill(-$pid, 0) && time() - $waitStart < 10) {
@@ -250,6 +253,7 @@ final class RunSiteCloneJob implements ShouldQueue
                             File::deleteDirectory($workDir);
                         }
                         $process->stop(0);
+
                         return;
                     }
                 }
