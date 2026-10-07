@@ -6,7 +6,9 @@ namespace App\Livewire\Site;
 
 use App\Enums\UserRole;
 use App\Models\SiteCloneJob;
+use App\Models\WebstudioSite;
 use App\Services\SiteClone\SiteCloneJobs;
+use App\Services\Webstudio\WebstudioSites;
 use App\Support\Tenancy;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
@@ -62,12 +64,35 @@ class SiteClone extends Component
         return redirect()->away($url);
     }
 
-    public function render(SiteCloneJobs $jobs): View
+    public function publish(int $siteId, WebstudioSites $sites): void
     {
+        $this->notice = null;
+        $res = $sites->requestPublish($this->businessId, $siteId);
+        if ($res['status'] === 'refused') {
+            $this->notice = $sites->ownerSentence($res['reason']);
+        }
+    }
+
+    public function openSiteEditor(int $siteId, WebstudioSites $sites): mixed
+    {
+        $site = WebstudioSite::where('business_id', $this->businessId)->find($siteId);
+        if ($site === null) {
+            return null;
+        }
+
+        return redirect()->away($sites->editorUrl($site));
+    }
+
+    public function render(SiteCloneJobs $jobs, WebstudioSites $sites): View
+    {
+        $sites->recoverStale($this->businessId);
+
         return view('livewire.site.clone', [
             'active' => $jobs->active($this->businessId),
             'history' => $jobs->history($this->businessId),
             'jobs' => $jobs,
+            'sites' => $sites->all($this->businessId),
+            'siteSvc' => $sites,
         ]);
     }
 }

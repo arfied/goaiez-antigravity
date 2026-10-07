@@ -1,7 +1,9 @@
 <?php
 
+use App\Enums\UserRole;
 use App\Jobs\Webstudio\PublishWebstudioSiteJob;
 use App\Models\SiteCloneJob;
+use App\Models\User;
 use App\Models\WebstudioSite;
 use App\Modules\X157\Actions\PlatformSiteAddressAction;
 use App\Modules\X157\Actions\StaticSiteDeployAction;
@@ -29,7 +31,7 @@ afterEach(function () {
 });
 
 it('publishes a site: the publisher output becomes a static deployment and the row records it', function () {
-    $user = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+    $user = User::factory()->create(['role' => UserRole::Owner]);
     $business = $this->provisionTenant(['owner_user_id' => $user->id]);
 
     $site = WebstudioSite::create(['business_id' => $business->id, 'project_id' => 'proj-'.Str::random(8), 'editor_token' => 'tok-x', 'title' => 'example.com']);
@@ -63,7 +65,7 @@ it('publishes a site: the publisher output becomes a static deployment and the r
 it('fails honestly when the publisher fails', function () {
     config(['site_clone.publisher' => base_path('tests/Fixtures/site-clone/fake-publisher-fail.sh')]);
 
-    $user = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+    $user = User::factory()->create(['role' => UserRole::Owner]);
     $business = $this->provisionTenant(['owner_user_id' => $user->id]);
 
     $site = WebstudioSite::create(['business_id' => $business->id, 'project_id' => 'proj-'.Str::random(8), 'editor_token' => 'tok-x', 'title' => 'example.com', 'publish_status' => WebstudioSite::PUBLISHING]);
@@ -87,7 +89,7 @@ it('fails honestly when the publisher fails', function () {
 });
 
 it('refuses a second publish while one is running', function () {
-    $user = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+    $user = User::factory()->create(['role' => UserRole::Owner]);
     $business = $this->provisionTenant(['owner_user_id' => $user->id]);
 
     $site = WebstudioSite::create(['business_id' => $business->id, 'project_id' => 'proj-'.Str::random(8), 'editor_token' => 'tok-x', 'title' => 'example.com']);
@@ -101,8 +103,8 @@ it('refuses a second publish while one is running', function () {
 });
 
 it('refuses a site of another tenant', function () {
-    $userA = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
-    $userB = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+    $userA = User::factory()->create(['role' => UserRole::Owner]);
+    $userB = User::factory()->create(['role' => UserRole::Owner]);
     $bizA = $this->provisionTenant(['owner_user_id' => $userA->id, 'name' => 'Tenant A']);
     $bizB = $this->provisionTenant(['owner_user_id' => $userB->id, 'name' => 'Tenant B']);
 
@@ -116,7 +118,7 @@ it('refuses a site of another tenant', function () {
 });
 
 it('creates a site row from a finished clone job and not from one without a project', function () {
-    $user = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+    $user = User::factory()->create(['role' => UserRole::Owner]);
     $business = $this->provisionTenant(['owner_user_id' => $user->id]);
 
     $job = SiteCloneJob::create(['business_id' => $business->id, 'status' => SiteCloneJob::DONE, 'webstudio_project_id' => 'proj-1', 'editor_token' => 'tok-1', 'host' => 'example.com', 'url' => 'https://example.com/', 'slug' => 'example-com', 'user_id' => $user->id]);
@@ -136,7 +138,7 @@ it('creates a site row from a finished clone job and not from one without a proj
 });
 
 it('recovers a stale publishing row', function () {
-    $user = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+    $user = User::factory()->create(['role' => UserRole::Owner]);
     $business = $this->provisionTenant(['owner_user_id' => $user->id]);
 
     $site = WebstudioSite::create(['business_id' => $business->id, 'project_id' => 'proj-'.Str::random(8), 'editor_token' => 'tok-x', 'title' => 'example.com', 'publish_status' => WebstudioSite::PUBLISHING, 'publish_started_at' => now()->subMinutes(30)]);

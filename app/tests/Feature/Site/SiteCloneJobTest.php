@@ -193,7 +193,7 @@ it('stores project and token when automatic project creation runs', function () 
 it('records a webstudio site when the clone made a project', function () {
     config(['credentials.webstudio_auth_secret' => 'x']);
 
-    $user = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+    $user = User::factory()->create(['role' => UserRole::Owner]);
     $business = $this->provisionTenant(['owner_user_id' => $user->id]);
 
     $res = app(SiteCloneJobs::class)->request($business->id, $user->id, 'https://example.com', true);

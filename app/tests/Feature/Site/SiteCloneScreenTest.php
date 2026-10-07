@@ -6,10 +6,15 @@ namespace Tests\Feature\Site;
 
 use App\Enums\UserRole;
 use App\Exceptions\TenantNotResolved;
+use App\Jobs\Webstudio\PublishWebstudioSiteJob;
 use App\Livewire\Site\SiteClone;
 use App\Models\SiteCloneJob;
 use App\Models\User;
+use App\Models\WebstudioSite;
 use App\Services\SiteClone\SiteCloneJobs;
+use App\Support\Tenancy;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -255,4 +260,99 @@ test('the rendered screen shows Open editor and does not contain authToken', fun
     $this->get(route('site.clone'))
         ->assertSee('Open editor')
         ->assertDontSee('authToken', false);
+});
+
+test('the screen lists a site with its message and a Publish button, and not before one exists', function () {
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = $this->provisionTenant([
+        'owner_user_id' => $user->id,
+        'name' => 'Studio Test Business',
+    ]);
+
+    $this->actingAs($user);
+    $this->get(route('site.clone'))->assertOk()->assertDontSee('Your sites');
+
+    WebstudioSite::create(['business_id' => $business->id, 'project_id' => 'proj-'.Str::random(8), 'editor_token' => 'tok-x', 'title' => 'example.com']);
+
+    $this->get(route('site.clone'))
+        ->assertSee('Your sites')
+        ->assertSee('example.com')
+        ->assertSee('Not published yet')
+        ->assertSee('Publish')
+        ->assertDontSee('View site')
+        ->assertDontSee('authToken', false);
+});
+
+test('publish queues the job and the row turns to publishing', function () {
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = $this->provisionTenant([
+        'owner_user_id' => $user->id,
+        'name' => 'Studio Test Business',
+    ]);
+
+    $this->actingAs($user);
+    $site = WebstudioSite::create(['business_id' => $business->id, 'project_id' => 'proj-'.Str::random(8), 'editor_token' => 'tok-x', 'title' => 'example.com']);
+
+    Queue::fake();
+    Livewire::test(SiteClone::class)->call('publish', $site->id)->assertSee('Publishing…');
+    Queue::assertPushedOn('clone', PublishWebstudioSiteJob::class);
+
+    expect($site->refresh()->publish_status)->toBe('publishing');
+    Livewire::test(SiteClone::class)->assertDontSee('>Publish<', false);
+});
+
+test('a published site shows View site pointing at the platform address', function () {
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = $this->provisionTenant([
+        'owner_user_id' => $user->id,
+        'name' => 'Studio Test Business',
+    ]);
+
+    $this->actingAs($user);
+    WebstudioSite::create(['business_id' => $business->id, 'project_id' => 'proj-'.Str::random(8), 'editor_token' => 'tok-x', 'title' => 'example.com', 'publish_status' => 'published', 'deploy_hash' => 'deploy_abcdefghijklmnop', 'published_at' => now()]);
+
+    $this->get(route('site.clone'))
+        ->assertSee('View site')
+        ->assertSee('/sites/'.$business->id.'/deploy_abcdefghijklmnop', false)
+        ->assertDontSee('authToken', false);
+});
+
+test('open site editor redirects to the builder', function () {
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = $this->provisionTenant([
+        'owner_user_id' => $user->id,
+        'name' => 'Studio Test Business',
+    ]);
+
+    $this->actingAs($user);
+    $site = WebstudioSite::create(['business_id' => $business->id, 'project_id' => 'proj-'.Str::random(8), 'editor_token' => 'tok-x', 'title' => 'example.com']);
+
+    config(['site_clone.builder_origin' => 'https://wstd.dev:5174']);
+
+    Livewire::test(SiteClone::class)
+        ->call('openSiteEditor', $site->id)
+        ->assertRedirect('https://p-'.$site->project_id.'.wstd.dev:5174/?authToken=tok-x');
+});
+
+test('a site of another tenant cannot be published from this screen', function () {
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $business = $this->provisionTenant([
+        'owner_user_id' => $user->id,
+        'name' => 'Studio Test Business',
+    ]);
+
+    $this->actingAs($user);
+
+    $userB = User::factory()->create(['role' => UserRole::Owner]);
+    $bizB = $this->provisionTenant(['owner_user_id' => $userB->id, 'name' => 'Tenant B']);
+    Tenancy::set((int) $bizB->id);
+    $siteOfB = WebstudioSite::create(['business_id' => $bizB->id, 'project_id' => 'proj-b', 'editor_token' => 'tok-b', 'title' => 'b.example']);
+    Tenancy::set((int) $business->id);
+
+    Queue::fake();
+    Livewire::test(SiteClone::class)->call('publish', $siteOfB->id)->assertSee('That site was not found.');
+    Queue::assertNothingPushed();
+
+    Tenancy::set((int) $bizB->id);
+    expect($siteOfB->refresh()->publish_status)->toBe('never');
 });
