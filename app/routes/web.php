@@ -144,6 +144,7 @@ use App\Livewire\Setup\FindBusiness;
 use App\Livewire\Setup\HowCustomersReach;
 use App\Livewire\Setup\ReviewRules;
 use App\Livewire\Setup\Welcome;
+use App\Livewire\Site\SiteClone;
 use App\Livewire\Site\Studio;
 use App\Livewire\Support\Accounts as SupportAccounts;
 use App\Livewire\Support\DataRequestQueue as SupportDataRequestQueue;
@@ -2273,3 +2274,6 @@ Route::get('/{token}', ShortLinkController::class)
 Route::middleware(['auth', 'tenant.role'])
     ->get('/app/site', Studio::class)
     ->name('site.studio');
+Route::middleware(['auth', 'tenant.role'])
+    ->get('/app/site/clone', SiteClone::class)
+    ->name('site.clone');

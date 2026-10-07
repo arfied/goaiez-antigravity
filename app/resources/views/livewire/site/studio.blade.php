@@ -12,6 +12,11 @@
          ">
         <!-- Main Content -->
         <div class="flex-1 min-w-0 p-4">
+            @if($cloneActive)
+                <div class="flex items-center gap-2 p-2 rounded bg-attention-bg text-attention text-sm mb-3">
+                    Your website clone is in progress. <a href="{{ route('site.clone') }}" class="underline hover:opacity-80">See progress</a>
+                </div>
+            @endif
             @if($pageId)
                 @php
                     // An AI design runs in the background (a queued job); the bar shows it until the design is ready.

@@ -139,6 +139,7 @@ final class OwnerNav
             // Architecture/OwnerNavTest fails the build on an owner screen
             // with neither a nav entry nor a written exclusion.
             OwnerNavItem::make('Site studio', 'site.studio', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
+            OwnerNavItem::make('Clone my website', 'site.clone', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
             OwnerNavItem::make('Pages', 'x-103.pages', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
             OwnerNavItem::make('Build my site', 'x-103.site-build', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),
             OwnerNavItem::make('Site Inventory', 'x-103.site-inventory', OwnerNavItem::GROUP_MORE, section: 'Reviews & your website'),

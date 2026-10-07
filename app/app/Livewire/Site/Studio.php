@@ -32,6 +32,7 @@ use App\Modules\X103\Models\PageVersion;
 use App\Modules\X157\Actions\LatestDeploymentForPageAction;
 use App\Modules\X157\Actions\PlatformSiteAddressAction;
 use App\Services\Industry\IndustryStartingPoints;
+use App\Services\SiteClone\SiteCloneJobs;
 use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -749,7 +750,10 @@ HTML;
             }
         }
 
+        $cloneActive = app(SiteCloneJobs::class)->active($this->businessId) !== null;
+
         return view('livewire.site.studio', [
+            'cloneActive' => $cloneActive,
             'pages' => $pages,
             'selectedPage' => $selectedPage,
             'previewHtml' => $previewHtml,
