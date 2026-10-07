@@ -8,7 +8,7 @@ mkdir -p "$TEST_DIR/pages" "$TEST_DIR/shots"
 # find a free port
 PORT=$(node -e 'const s=require("net").createServer().listen(0,()=>{console.log(s.address().port);s.close()})')
 
-python3 -m http.server "$PORT" --bind 127.0.0.1 --directory "$DIR/fixtures/render" &
+python3 -m http.server "$PORT" --bind 127.0.0.1 --directory "$DIR/fixtures/render" >/dev/null 2> "$TEST_DIR/server.log" &
 SERVER_PID=$!
 
 trap 'kill $SERVER_PID || true; rm -rf "$TEST_DIR"' EXIT
@@ -50,6 +50,12 @@ if [ ! -f "$TEST_DIR/assets/$ASSET_NAME" ]; then echo "saved image file missing"
 ORIG_SIZE=$(stat -c%s "$DIR/fixtures/render/pic.png")
 SAVED_SIZE=$(stat -c%s "$TEST_DIR/assets/$ASSET_NAME")
 if [ "$ORIG_SIZE" -ne "$SAVED_SIZE" ]; then echo "size mismatch: $ORIG_SIZE vs $SAVED_SIZE"; FAIL=1; fi
+ERRS=$(grep -c " 404 " "$TEST_DIR/server.log" || true)
+if [ "$ERRS" -ne 0 ]; then
+  echo "server had 404s:"
+  cat "$TEST_DIR/server.log"
+  FAIL=1
+fi
 
 if [ "$FAIL" -ne 0 ]; then
   echo "Test failed!"

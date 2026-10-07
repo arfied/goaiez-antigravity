@@ -39,6 +39,16 @@ async function run() {
     try {
       await page.goto(base + route, { waitUntil: "networkidle" });
       
+      const nameSafe = name.replace(/\//g, "-");
+      
+      const origViewport = page.viewportSize();
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.screenshot({ path: path.join(shotsDir, `clone-${nameSafe}-1280.png`), fullPage: true });
+      
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.screenshot({ path: path.join(shotsDir, `clone-${nameSafe}-390.png`), fullPage: true });
+      if (origViewport) await page.setViewportSize(origViewport);
+      
       const styles = await page.evaluate(async () => {
         const links = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
         const contents = [];
@@ -146,6 +156,7 @@ async function run() {
         }
       }
 
+      await page.route('**/*', route => route.abort());
       await page.evaluate(({ css, toRewrite }) => {
         document.querySelectorAll('script').forEach(n => n.remove());
         document.querySelectorAll('link[rel="stylesheet"]').forEach(n => n.remove());
@@ -172,17 +183,11 @@ async function run() {
       }, { css: styles, toRewrite });
 
       const html = await page.evaluate(() => document.documentElement.outerHTML);
+      await page.unroute('**/*');
       const outPath = path.join(pagesDir, `${name}.html`);
       await fs.mkdir(path.dirname(outPath), { recursive: true });
       await fs.writeFile(outPath, `<!-- @webstudio/inception/1 -->\n${html}`);
 
-      const nameSafe = name.replace(/\//g, "-");
-      
-      await page.setViewportSize({ width: 1280, height: 900 });
-      await page.screenshot({ path: path.join(shotsDir, `clone-${nameSafe}-1280.png`), fullPage: true });
-      
-      await page.setViewportSize({ width: 390, height: 844 });
-      await page.screenshot({ path: path.join(shotsDir, `clone-${nameSafe}-390.png`), fullPage: true });
 
       if (source) {
         await page.goto(source + route, { waitUntil: "networkidle" });
